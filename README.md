@@ -67,7 +67,11 @@ export default () => (
 
 ### Why It Works Like This
 
-Data attributes give us style encapsulation and `_jsxStyleInject` is heavily optimized for injecting styles upon render, only injecting a certain component's style once (even if the component is included multiple times) and keeping track of styles for server-side rendering (discussed in the next section).
+Data attributes give us style encapsulation and `_jsxStyleInject` is heavily optimized for:
+
+- Injecting styles upon render
+- Only injecting a certain component's style once (even if the component is included multiple times)
+- Keeping track of styles for server-side rendering (discussed in the next section).
 
 ## Server-Side Rendering
 
