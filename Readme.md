@@ -10,7 +10,7 @@ Just include `<style jsx>`.
 export default () => (
   <div>
     <p>only this paragraph will get the style :O</p>
-    { /* you can include <Component />s here that include<p>
+    { /* you can include <Component />s here that include
          other <p>s that don't get unexpected styles! */ }
     <style jsx>{`
       p {
