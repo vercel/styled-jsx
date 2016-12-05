@@ -108,4 +108,4 @@ used.
 
 ## Author
 
-Guillermo Rauch ([@rauchg](https://twitter.com/rauchg) - [▲ZEIT](https://zeit.co)
+Guillermo Rauch ([@rauchg](https://twitter.com/rauchg)) - [▲ZEIT](https://zeit.co)
