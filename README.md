@@ -1,18 +1,17 @@
 # styled-jsx
 
-Full, scoped and component-friendly CSS support for JSX (SSR+browser).
+Full, scoped and component-friendly CSS support for JSX (SSR + browser).
 
 ## Features
 
 - Full CSS support, no tradeoffs in power
-- Runtime size: *500b*
-- Complete isolation: selectors, animations, keyframes
-- Built in CSS prefixing
+- Runtime size of just **500 bytes**
+- Complete isolation: Selectors, animations, keyframes
+- Built-in CSS-prefixing
 - Very fast, minimal and efficient transpilation (see below)
-- High performant runtime CSS injection when not server-rendering
-- Future-proof: equivalent to server-renderable "Shadow CSS"
-- Works like the deprecated `<style scoped>`, but the styles
-  get injected only once per component
+- High-performance runtime-CSS-injection when not server-rendering
+- Future-proof: Equivalent to server-renderable "Shadow CSS"
+- Works like the deprecated `<style scoped>`, but the styles get injected only once per component
 
 ## Usage
 
@@ -53,10 +52,11 @@ export default () => (
 
 ## How It Works
 
-The example above compiles to
+The example above compiles to the following:
 
 ```js
 import _jsxStyleInject from 'styled-jsx/inject'
+
 export default () => (
   <div>
     <p data-jsx='cn2o3j'>only this paragraph will get the style :O</p>
@@ -65,35 +65,36 @@ export default () => (
 )
 ```
 
+### Why It Works Like This
+
 - Data attributes give us style encapsulation.
 - `_jsxStyleInject` is heavily optimized for:
-	- injecting styles upon render
-	- only injecting a certain componen'ts style once, even if the component is included multiple times
-	- keeping track of styles for server-side rendering
+ - injecting styles upon render
+ - only injecting a certain componen'ts style once, even if the component is included multiple times
+ - keeping track of styles for server-side rendering
 
-## Server-side rendering
+## Server-Side Rendering
 
-In the server rendering pipeline, you can obtain the entire
-CSS text of all the combined components by invoking `flush`
+In the server rendering pipeline, you can obtain the entire CSS text of all the combined components by invoking `flush`:
 
 ```js
 import flush from 'styled-jsx/flush'
+
 // …
 // <render here>
 // …
+
 const styles = flush()
+
 for (let id in styles) {
   const css = styles[id]
   console.log(id, css)
 }
 ```
 
-This API is also available on the client. Instead of returning
-the CSS text, it returns a reference to the created `<style>` tag.
+This API is also available on the client: Instead of returning the CSS text, it returns a reference to the automatically generated `<style>` tag.
 
-This is useful for performing diffs of elements between top-level
-`render()` calls, and ditching style elements that are not longer
-used.
+This is useful for performing diffs of elements between top-level `render()` calls, and ditching style elements that are no longer being used.
 
 ## Credits
 
