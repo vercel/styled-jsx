@@ -6,7 +6,7 @@ import test from 'ava'
 import {transformFile} from 'babel-core'
 
 // Ours
-import plugin from '../babel'
+import plugin from '../dist/babel'
 import read from './_read'
 
 const transform = file => (
