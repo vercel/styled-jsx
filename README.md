@@ -1,10 +1,40 @@
 # styled-jsx
 
-Full, scoped and component-friendly CSS support for JSX (SSR+browser)
+Full, scoped and component-friendly CSS support for JSX (SSR+browser).
 
-## How it works
+## Features
 
-Just include `<style jsx>`.
+- Full CSS support, no tradeoffs in power
+- Runtime size: *500b*
+- Complete isolation: selectors, animations, keyframes
+- Built in CSS prefixing
+- Very fast, minimal and efficient transpilation (see below)
+- High performant runtime CSS injection when not server-rendering
+- Future-proof: equivalent to server-renderable "Shadow CSS"
+- Works like the deprecated `<style scoped>`, but the styles
+  get injected only once per component
+
+## Usage
+
+Firstly, install the package:
+
+```bash
+$ npm install --save styled-jsx
+```
+
+Next, add `styled-jsx/babel` to `plugins` in your babel configuration:
+
+```json
+{
+  "babel": {
+    "plugins": [
+      "styled-jsx/babel"
+    ]
+  }
+}
+```
+
+As the last step, simply include `<style jsx>` in your code:
 
 ```js
 export default () => (
@@ -21,19 +51,7 @@ export default () => (
 )
 ```
 
-## Features
-
-- Full CSS support, no tradeoffs in power
-- Runtime size: *500b*
-- Complete isolation: selectors, animations, keyframes
-- Built in CSS prefixing
-- Very fast, minimal and efficient transpilation (see below)
-- High performant runtime CSS injection when not server-rendering
-- Future-proof: equivalent to server-renderable "Shadow CSS"
-- Works like the deprecated `<style scoped>`, but the styles
-  get injected only once per component
-
-## How it works
+## How It Works
 
 The example above compiles to
 
@@ -53,15 +71,7 @@ export default () => (
 	- only injecting a certain componen'ts style once, even if the component is included multiple times
 	- keeping track of styles for server-side rendering
 
-## How to use
-
-Add `styled-jsx` to `dependencies` inside `package.json`
-
-### Babel
-
-Add `styled-jsx/babel` to `plugins` in your babel configuration
-
-### Server-side rendering
+## Server-side rendering
 
 In the server rendering pipeline, you can obtain the entire
 CSS text of all the combined components by invoking `flush`
