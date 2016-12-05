@@ -24,7 +24,7 @@ export default () => (
 ## Features
 
 - Full CSS support, no tradeoffs in power
-- Runtime size: *300b*
+- Runtime size: *500b*
 - Complete isolation: selectors, animations, keyframes
 - Built in CSS prefixing
 - Very fast, minimal and efficient transpilation (see below)
