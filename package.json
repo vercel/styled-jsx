@@ -6,7 +6,8 @@
   "main": "./dist/flush.js",
   "files": [
     "dist",
-    "lib"
+    "lib",
+    "babel.js"
   ],
   "dependencies": {
     "babel-plugin-syntax-jsx": "^6.18.0"

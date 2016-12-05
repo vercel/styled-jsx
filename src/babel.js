@@ -1,6 +1,6 @@
 import jsx from 'babel-plugin-syntax-jsx'
-import murmurHash from './lib/murmurhash2'
-import transform from './lib/style-transform'
+import murmurHash from '../lib/murmurhash2'
+import transform from '../lib/style-transform'
 
 const STYLE_ATTRIBUTE = 'jsx'
 const MARKUP_ATTRIBUTE = 'data-jsx'
