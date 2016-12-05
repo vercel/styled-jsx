@@ -3,6 +3,10 @@
   "version": "0.0.1",
   "license": "MIT",
   "main": "./flush.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zeit/styled-jsx.git"
+  },
   "dependencies": {
     "babel": "^6.5.2",
     "babel-core": "^6.18.2",
