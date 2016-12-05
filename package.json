@@ -11,12 +11,13 @@
   "devDependencies": {
     "ava": "^0.17.0",
     "babel-cli": "^6.18.0",
-    "babel-preset-es2015": "^6.16.0",
     "babel-plugin-transform-runtime": "^6.15.0",
+    "babel-preset-es2015": "^6.16.0",
     "babel-preset-react": "^6.16.0",
     "babel-preset-stage-3": "^6.16.0",
     "babel-register": "^6.18.0",
-    "fs-promise": "^1.0.0"
+    "fs-promise": "^1.0.0",
+    "xo": "^0.17.1"
   },
   "babel": {
     "presets": [
@@ -29,11 +30,28 @@
     ]
   },
   "scripts": {
-    "test": "ava test/styles.js"
+    "test": "xo && ava test/styles.js"
   },
   "ava": {
     "require": [
       "babel-register"
     ]
+  },
+  "xo": {
+    "esnext": true,
+    "space": true,
+    "semicolon": false,
+    "ignores": [
+      "lib/**",
+      "test/fixtures/**"
+    ],
+    "envs": [
+      "node",
+      "browser"
+    ],
+    "rules": {
+      "import/no-unresolved": 0,
+      "new-cap": 0
+    }
   }
 }

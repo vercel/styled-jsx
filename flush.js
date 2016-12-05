@@ -1,9 +1,16 @@
 import memory from './memory'
-export default function flush () {
+
+export default function flush() {
   const ret = {}
-  for (let i in memory) {
+
+  for (const i in memory) {
+    if (!{}.hasOwnProperty.call(memory, i)) {
+      continue
+    }
+
     ret[i] = memory[i]
     delete memory[i]
   }
+
   return ret
 }

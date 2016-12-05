@@ -1,9 +1,9 @@
 import memory from './memory'
 
-const isBrowser = 'undefined' !== typeof window
+const isBrowser = typeof window !== 'undefined'
 const tags = {}
 
-export default function inject (id, css) {
+export default function inject(id, css) {
   if (isBrowser) {
     // if the tag is already present we ignore it!
     if (!tags[id]) {
@@ -16,11 +16,10 @@ export default function inject (id, css) {
   }
 }
 
-function makeStyleTag (str) {
+function makeStyleTag(str) {
   // based on implementation by glamor
   const tag = document.createElement('style')
   tag.type = 'text/css'
-  tag.appendChild(document.createTextNode(str))
-  (document.head || document.getElementsByTagName('head')[0]).appendChild(tag)
+  tag.appendChild(document.createTextNode(str))(document.head || document.getElementsByTagName('head')[0]).appendChild(tag)
   return tag
 }
