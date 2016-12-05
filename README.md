@@ -18,7 +18,7 @@ Full, scoped and component-friendly CSS support for JSX (SSR + browser).
 Firstly, install the package:
 
 ```bash
-$ npm install --save styled-jsx
+$ npm install --save-dev styled-jsx
 ```
 
 Next, add `styled-jsx/babel` to `plugins` in your babel configuration:
