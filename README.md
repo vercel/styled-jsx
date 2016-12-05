@@ -1,5 +1,8 @@
 # styled-jsx
 
+[![Build Status](https://travis-ci.org/zeit/styled-jsx.svg?branch=master)](https://travis-ci.org/zeit/styled-jsx)
+[![Slack Channel](https://zeit-slackin.now.sh/badge.svg)](https://zeit.chat)
+
 Full, scoped and component-friendly CSS support for JSX (SSR + browser).
 
 ## Features
