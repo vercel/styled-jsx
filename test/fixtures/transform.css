@@ -1,0 +1,26 @@
+p {
+  color: red;
+}
+
+* {
+  color: blue;
+}
+
+[href="woot"] {
+  color: red;
+}
+
+p, h1 {
+  color: blue;
+}
+
+@keyframes hahaha {
+  from { top: 0 }
+  to { top: 100 }
+}
+
+@media (min-width: 500px) {
+  .test {
+    color: red;
+  }
+}
