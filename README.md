@@ -71,7 +71,7 @@ Data attributes give us style encapsulation and `_jsxStyleInject` is heavily opt
 
 - Injecting styles upon render
 - Only injecting a certain component's style once (even if the component is included multiple times)
-- Keeping track of styles for server-side rendering (discussed in the next section).
+- Keeping track of styles for server-side rendering (discussed in the next section)
 
 ## Server-Side Rendering
 
