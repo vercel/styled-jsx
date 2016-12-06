@@ -1,6 +1,6 @@
 {
   "name": "styled-jsx",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "license": "MIT",
   "repository": "zeit/styled-jsx",
   "main": "./dist/flush.js",
