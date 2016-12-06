@@ -29,7 +29,7 @@ export default function ({types: t}) {
     visitor: {
       JSXOpeningElement(path, state) {
         if (state.hasJSXStyle) {
-          if (state.ignoreClosing === null) {
+          if (state.ignoreClosing == null) {
             // this flag has a two-fold purpose:
             // - ignore the opening tag of the parent element
             //   of the style tag, since we don't want to add
@@ -64,7 +64,7 @@ export default function ({types: t}) {
       },
       JSXElement: {
         enter(path, state) {
-          if (state.hasJSXStyle === null) {
+          if (state.hasJSXStyle == null) {
             const styles = findStyles(path.node.children)
 
             if (styles.length > 0) {

@@ -6,13 +6,14 @@ import test from 'ava'
 import {transformFile} from 'babel-core'
 
 // Ours
-import plugin from '../dist/babel'
+import plugin from '../src/babel'
 import read from './_read'
 
 const transform = file => (
   new Promise((resolve, reject) => {
     transformFile(path.resolve(__dirname, file), {
       plugins: [
+        'transform-runtime',
         plugin
       ]
     }, (err, data) => {
