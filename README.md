@@ -6,17 +6,6 @@
 
 Full, scoped and component-friendly CSS support for JSX (SSR + browser).
 
-## Features
-
-- Full CSS support, no tradeoffs in power
-- Runtime size of just **500 bytes**
-- Complete isolation: Selectors, animations, keyframes
-- Built-in CSS-prefixing
-- Very fast, minimal and efficient transpilation (see below)
-- High-performance runtime-CSS-injection when not server-rendering
-- Future-proof: Equivalent to server-renderable "Shadow CSS"
-- Works like the deprecated `<style scoped>`, but the styles get injected only once per component
-
 ## Usage
 
 Firstly, install the package:
@@ -53,6 +42,17 @@ export default () => (
   </div>
 )
 ```
+
+## Features
+
+- Full CSS support, no tradeoffs in power
+- Runtime size of just **500 bytes**
+- Complete isolation: Selectors, animations, keyframes
+- Built-in CSS-prefixing
+- Very fast, minimal and efficient transpilation (see below)
+- High-performance runtime-CSS-injection when not server-rendering
+- Future-proof: Equivalent to server-renderable "Shadow CSS"
+- Works like the deprecated `<style scoped>`, but the styles get injected only once per component
 
 ## How It Works
 
