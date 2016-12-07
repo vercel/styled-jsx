@@ -20,6 +20,8 @@ function makeStyleTag(str) {
   // based on implementation by glamor
   const tag = document.createElement('style')
   tag.type = 'text/css'
-  tag.appendChild(document.createTextNode(str))(document.head || document.getElementsByTagName('head')[0]).appendChild(tag)
+  tag.appendChild(document.createTextNode(str))
+  const head = document.head || document.getElementsByTagName('head')[0]
+  head.appendChild(tag)
   return tag
 }
