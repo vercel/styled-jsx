@@ -9,7 +9,7 @@
     "lib",
     "babel.js",
     "flush.js",
-    "injext.js",
+    "inject.js",
     "memory.js"
   ],
   "dependencies": {
