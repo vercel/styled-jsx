@@ -7,7 +7,10 @@
   "files": [
     "dist",
     "lib",
-    "babel.js"
+    "babel.js",
+    "flush.js",
+    "injext.js",
+    "memory.js"
   ],
   "dependencies": {
     "babel-plugin-syntax-jsx": "^6.18.0"
