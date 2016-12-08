@@ -18,15 +18,13 @@ Next, add `styled-jsx/babel` to `plugins` in your babel configuration:
 
 ```json
 {
-  "babel": {
-    "plugins": [
-      "styled-jsx/babel"
-    ]
-  }
+  "plugins": [
+    "styled-jsx/babel"
+  ]
 }
 ```
 
-As the last step, simply include `<style jsx>` in your code:
+Now add `<style jsx>` to your code and fill it with CSS:
 
 ```js
 export default () => (
