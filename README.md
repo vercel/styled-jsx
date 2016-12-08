@@ -54,7 +54,7 @@ export default () => (
 
 ## How It Works
 
-The example above compiles to the following:
+The example above transpiles to the following:
 
 ```js
 import _jsxStyleInject from 'styled-jsx/inject'
@@ -77,7 +77,7 @@ Data attributes give us style encapsulation and `_jsxStyleInject` is heavily opt
 
 ## Server-Side Rendering
 
-In the server rendering pipeline, you can obtain the entire CSS text of all the combined components by invoking `flush`:
+In the server rendering pipeline, you can obtain the entire CSS of all components by invoking `flush`:
 
 ```js
 import flush from 'styled-jsx/flush'
