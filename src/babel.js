@@ -73,6 +73,7 @@ export default function ({types: t}) {
             if (styles.length > 0) {
               state.jsxId = ''
               state.styles = []
+
               for (const style of styles) {
                 if (style.children.length !== 1) {
                   throw path.buildCodeFrameError(`Expected a child under ` +
@@ -100,6 +101,7 @@ export default function ({types: t}) {
 
                 const styleText = getExpressionText(expression)
                 const styleId = String(murmurHash(styleText))
+
                 state.styles.push([
                   styleId,
                   styleText
@@ -119,6 +121,7 @@ export default function ({types: t}) {
             if (el.name && el.name.name === 'style') {
               // we replace styles with the function call
               const [id, css] = state.styles.shift()
+
               path.replaceWith(
                 t.JSXExpressionContainer(
                   t.callExpression(
