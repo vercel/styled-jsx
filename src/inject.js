@@ -1,3 +1,4 @@
+// Ours
 import memory from './memory'
 
 const isBrowser = typeof window !== 'undefined'

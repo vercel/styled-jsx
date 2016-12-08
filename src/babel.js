@@ -1,4 +1,7 @@
+// Packages
 import jsx from 'babel-plugin-syntax-jsx'
+
+// Ours
 import murmurHash from '../lib/murmurhash2'
 import transform from '../lib/style-transform'
 
