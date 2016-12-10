@@ -3,8 +3,9 @@
 [![Build Status](https://travis-ci.org/zeit/styled-jsx.svg?branch=master)](https://travis-ci.org/zeit/styled-jsx)
 [![XO code style](https://img.shields.io/badge/code_style-XO-5ed9c7.svg)](https://github.com/sindresorhus/xo)
 [![Slack Channel](https://zeit-slackin.now.sh/badge.svg)](https://zeit.chat)
+[![npm](https://img.shields.io/npm/v/styled-jsx.svg)](https://www.npmjs.com/package/styled-jsx)
 
-Full, scoped and component-friendly CSS support for JSX (SSR + browser).
+Full, scoped and component-friendly CSS support for JSX (rendered on the server or the client).
 
 ## Usage
 
@@ -18,15 +19,13 @@ Next, add `styled-jsx/babel` to `plugins` in your babel configuration:
 
 ```json
 {
-  "babel": {
-    "plugins": [
-      "styled-jsx/babel"
-    ]
-  }
+  "plugins": [
+    "styled-jsx/babel"
+  ]
 }
 ```
 
-As the last step, simply include `<style jsx>` in your code:
+Now add `<style jsx>` to your code and fill it with CSS:
 
 ```js
 export default () => (
@@ -56,7 +55,7 @@ export default () => (
 
 ## How It Works
 
-The example above compiles to the following:
+The example above transpiles to the following:
 
 ```js
 import _jsxStyleInject from 'styled-jsx/inject'
@@ -79,7 +78,7 @@ Data attributes give us style encapsulation and `_jsxStyleInject` is heavily opt
 
 ## Server-Side Rendering
 
-In the server rendering pipeline, you can obtain the entire CSS text of all the combined components by invoking `flush`:
+In the server rendering pipeline, you can obtain the entire CSS of all components by invoking `flush`:
 
 ```js
 import flush from 'styled-jsx/flush'

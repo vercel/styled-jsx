@@ -6,13 +6,14 @@ import test from 'ava'
 import {transformFile} from 'babel-core'
 
 // Ours
-import plugin from '../dist/babel'
+import plugin from '../src/babel'
 import read from './_read'
 
 const transform = file => (
   new Promise((resolve, reject) => {
     transformFile(path.resolve(__dirname, file), {
       plugins: [
+        'transform-runtime',
         plugin
       ]
     }, (err, data) => {
@@ -27,6 +28,12 @@ const transform = file => (
 test('works with stateless', async t => {
   const {code} = await transform('./fixtures/stateless.js')
   const out = await read('./fixtures/stateless.out.js')
+  t.is(code, out.trim())
+})
+
+test('ignores whitespace around expression container', async t => {
+  const {code} = await transform('./fixtures/whitespace.js')
+  const out = await read('./fixtures/whitespace.out.js')
   t.is(code, out.trim())
 })
 

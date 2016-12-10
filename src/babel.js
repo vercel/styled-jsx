@@ -1,4 +1,7 @@
+// Packages
 import jsx from 'babel-plugin-syntax-jsx'
+
+// Ours
 import murmurHash from '../lib/murmurhash2'
 import transform from '../lib/style-transform'
 
@@ -90,13 +93,20 @@ export default function ({types: t}) {
           state.styles = []
 
           for (const style of styles) {
+            // compute children excluding whitespace
+            const children = style.children.filter((c) => (
+              t.isJSXExpressionContainer(c) ||
+              // ignore whitespace around the expression container
+              (t.isJSXText(c) && '' !== c.value.trim())
+            ))
+
             if (style.children.length !== 1) {
               throw path.buildCodeFrameError(`Expected a child under ` +
                 `JSX Style tag, but got ${style.children.length} ` +
                 `(eg: <style jsx>{\`hi\`}</style>)`)
             }
 
-            const child = style.children[0]
+            const child = children[0]
 
             if (!t.isJSXExpressionContainer(child)) {
               throw path.buildCodeFrameError(`Expected a child of ` +
