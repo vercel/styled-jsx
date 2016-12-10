@@ -7,7 +7,8 @@ import transform from '../lib/style-transform'
 
 const STYLE_ATTRIBUTE = 'jsx'
 const MARKUP_ATTRIBUTE = 'data-jsx'
-const INJECT_METHOD = '_jsxStyleInject'
+const STYLE_COMPONENT = '_JSXStyle'
+const STYLE_COMPONENT_CSS = 'css'
 
 export default function ({types: t}) {
   const findStyles = children => (
@@ -123,14 +124,19 @@ export default function ({types: t}) {
               const [id, css] = state.styles.shift()
 
               path.replaceWith(
-                t.JSXExpressionContainer(
-                  t.callExpression(
-                    t.identifier(INJECT_METHOD),
+                t.JSXElement(
+                  t.JSXOpeningElement(
+                    t.JSXIdentifier(STYLE_COMPONENT),
                     [
-                      t.stringLiteral(id),
-                      t.stringLiteral(transform(id, css))
-                    ]
-                  )
+                      t.JSXAttribute(
+                        t.JSXIdentifier(STYLE_COMPONENT_CSS),
+                        t.JSXExpressionContainer(t.stringLiteral(transform(id, css)))
+                      )
+                    ],
+                    true
+                  ),
+                  null,
+                  []
                 )
               )
             }
@@ -147,13 +153,13 @@ export default function ({types: t}) {
           state.file.hasJSXStyle = false
         },
         exit({node, scope}, state) {
-          if (!(state.file.hasJSXStyle && !scope.hasBinding(INJECT_METHOD))) {
+          if (!(state.file.hasJSXStyle && !scope.hasBinding(STYLE_COMPONENT))) {
             return
           }
 
           const importDeclaration = t.importDeclaration(
-            [t.importDefaultSpecifier(t.identifier(INJECT_METHOD))],
-            t.stringLiteral('styled-jsx/inject')
+            [t.importDefaultSpecifier(t.identifier(STYLE_COMPONENT))],
+            t.stringLiteral('styled-jsx/style')
           )
 
           node.body.unshift(importDeclaration)
