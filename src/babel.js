@@ -94,13 +94,13 @@ export default function ({types: t}) {
 
           for (const style of styles) {
             // compute children excluding whitespace
-            const children = style.children.filter((c) => (
+            const children = style.children.filter(c => (
               t.isJSXExpressionContainer(c) ||
               // ignore whitespace around the expression container
-              (t.isJSXText(c) && '' !== c.value.trim())
+              (t.isJSXText(c) && c.value.trim() !== '')
             ))
 
-            if (style.children.length !== 1) {
+            if (children.length !== 1) {
               throw path.buildCodeFrameError(`Expected a child under ` +
                 `JSX Style tag, but got ${style.children.length} ` +
                 `(eg: <style jsx>{\`hi\`}</style>)`)
