@@ -27,8 +27,6 @@
     "babel-preset-stage-3": "^6.16.0",
     "babel-register": "^6.18.0",
     "fs-promise": "^1.0.0",
-    "gulp": "^3.9.1",
-    "gulp-babel": "^6.1.2",
     "xo": "^0.17.1"
   },
   "babel": {
@@ -39,9 +37,16 @@
     ]
   },
   "scripts": {
-    "dev": "gulp",
-    "prepublish": "gulp transpile",
-    "test": "xo && ava test/styles.js"
+    "prebuild": "mkdir -p dist",
+    "build": "babel src -d dist",
+    "build:watch": "npm run build -- --watch",
+    "dev": "npm run build:watch",
+    "lint": "xo",
+    "prepublish": "npm run build",
+    "pretest": "npm run build",
+    "test": "npm run lint && npm run test:jsx && npm run test:styles",
+    "test:jsx": "ava test/index.js",
+    "test:styles": "ava test/styles.js"
   },
   "ava": {
     "require": [

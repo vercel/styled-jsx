@@ -31,14 +31,14 @@ var _class = function () {
         {
           "data-jsx": "1544381438"
         },
+        (0, _inject2.default)("1544381438", "p[data-jsx=\"1544381438\"]{color: red;}"),
         React.createElement(
           "p",
           {
             "data-jsx": "1544381438"
           },
           "test"
-        ),
-        (0, _inject2.default)("1544381438", "p[data-jsx=\"1544381438\"]{color: red;}")
+        )
       );
     }
   }]);
