@@ -48,3 +48,9 @@ test('ignores when attribute is absent', async t => {
   const out = await read('./fixtures/absent.out.js')
   t.is(code, out.trim())
 })
+
+test('works with global styles', async t => {
+  const {code} = await transform('./fixtures/global.js')
+  const out = await read('./fixtures/global.out.js')
+  t.is(code, out.trim())
+})

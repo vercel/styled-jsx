@@ -6,6 +6,7 @@ import murmurHash from '../lib/murmurhash2'
 import transform from '../lib/style-transform'
 
 const STYLE_ATTRIBUTE = 'jsx'
+const GLOBAL_ATTRIBUTE = 'global'
 const MARKUP_ATTRIBUTE = 'data-jsx'
 const INJECT_METHOD = '_jsxStyleInject'
 
@@ -126,13 +127,21 @@ export default function ({types: t}) {
               // we replace styles with the function call
               const [id, css] = state.styles.shift()
 
+              const skipTransform = el.attributes.some(attr => (
+                attr.name.name === GLOBAL_ATTRIBUTE
+              ))
+
               path.replaceWith(
                 t.JSXExpressionContainer(
                   t.callExpression(
                     t.identifier(INJECT_METHOD),
                     [
                       t.stringLiteral(id),
-                      t.stringLiteral(transform(id, css))
+                      t.stringLiteral(
+                        skipTransform
+                          ? css
+                          : transform(id, css)
+                      )
                     ]
                   )
                 )
@@ -143,6 +152,7 @@ export default function ({types: t}) {
         exit(path, state) {
           if (state.hasJSXStyle && !--state.ignoreClosing) {
             state.hasJSXStyle = null
+            state.skipTransform = false
           }
         }
       },

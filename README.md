@@ -96,6 +96,23 @@ export default () => (
 )
 ```
 
+### Global styles
+
+To skip scoping entirely, you can make the global-ness of your styles
+explicit by adding _global_:
+
+```js
+export default () => (
+  <div>
+    <style jsx global>{`
+      body {
+        background: red
+      }
+    `}</style>
+  </div>
+)
+```
+
 ## Server-Side Rendering
 
 In the server rendering pipeline, you can obtain the entire CSS of all components by invoking `flush`:
