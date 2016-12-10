@@ -41,7 +41,7 @@
   "scripts": {
     "dev": "gulp",
     "prepublish": "gulp transpile",
-    "test": "xo && ava test/styles.js"
+    "test": "xo && ava"
   },
   "ava": {
     "require": [
