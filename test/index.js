@@ -31,6 +31,12 @@ test('works with stateless', async t => {
   t.is(code, out.trim())
 })
 
+test('ignores whitespace around expression container', async t => {
+  const {code} = await transform('./fixtures/whitespace.js')
+  const out = await read('./fixtures/whitespace.out.js')
+  t.is(code, out.trim())
+})
+
 test('works with class', async t => {
   const {code} = await transform('./fixtures/class.js')
   const out = await read('./fixtures/class.out.js')
