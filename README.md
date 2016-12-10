@@ -61,7 +61,7 @@ The example above transpiles to the following:
 import _jsxStyleInject from 'styled-jsx/inject'
 
 export default () => (
-  <div>
+  <div data-jsx='cn2o3j'>
     <p data-jsx='cn2o3j'>only this paragraph will get the style :O</p>
     { _jsxStyleInject('cn2o3j', `p[data-jsx=cn2o3j] {color: red;}`) }
   </div>
@@ -75,6 +75,26 @@ Data attributes give us style encapsulation and `_jsxStyleInject` is heavily opt
 - Injecting styles upon render
 - Only injecting a certain component's style once (even if the component is included multiple times)
 - Keeping track of styles for server-side rendering (discussed in the next section)
+
+### Targetting The Root
+
+Notice that the parent `<div>` above also gets a `data-jsx` atribute. We do this so that
+you can target the "root" element, in the same manner that
+[`:host`](https://www.html5rocks.com/en/tutorials/webcomponents/shadowdom-201/#toc-style-host) works with Shadow DOM.
+
+If you want to target _only_ the host, we suggest you use a class:
+
+```js
+export default () => (
+  <div className="root">
+    <style jsx>{`
+      .root {
+        color: green;
+      }
+    `}</style>
+  </div>
+)
+```
 
 ## Server-Side Rendering
 

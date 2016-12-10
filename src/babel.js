@@ -33,15 +33,12 @@ export default function ({types: t}) {
       JSXOpeningElement(path, state) {
         if (state.hasJSXStyle) {
           if (state.ignoreClosing == null) {
-            // this flag has a two-fold purpose:
-            // - ignore the opening tag of the parent element
-            //   of the style tag, since we don't want to add
-            //   the attribute to that one
-            // - keep a counter of elements inside so that we
-            //   can keep track of when we exit the parent
-            //   to reset state
-            state.ignoreClosing = 1
-            return
+            // we keep a counter of elements inside so that we
+            // can keep track of when we exit the parent to reset state
+            // note: if we wished to add an option to turn off
+            // selectors to reach parent elements, it would suffice to
+            // set this to `1` and do an early return instead
+            state.ignoreClosing = 0
           }
 
           const el = path.node

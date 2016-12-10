@@ -28,7 +28,9 @@ var _class = function () {
     value: function render() {
       return React.createElement(
         "div",
-        null,
+        {
+          "data-jsx": "1544381438"
+        },
         React.createElement(
           "p",
           {
