@@ -137,11 +137,7 @@ export default function ({types: t}) {
                     t.identifier(INJECT_METHOD),
                     [
                       t.stringLiteral(id),
-                      t.stringLiteral(
-                        skipTransform
-                          ? css
-                          : transform(id, css)
-                      )
+                      t.stringLiteral(skipTransform ? css : transform(id, css))
                     ]
                   )
                 )
