@@ -76,10 +76,10 @@ export default function ({types: t}) {
 
               for (const style of styles) {
                 // compute children excluding whitespace
-                const children = style.children.filter((c) => (
+                const children = style.children.filter(c => (
                   t.isJSXExpressionContainer(c) ||
                   // ignore whitespace around the expression container
-                  (t.isJSXText(c) && '' !== c.value.trim())
+                  (t.isJSXText(c) && c.value.trim() !== '')
                 ))
 
                 if (children.length !== 1) {
