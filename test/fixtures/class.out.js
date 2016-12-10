@@ -28,7 +28,9 @@ var _class = function () {
     value: function render() {
       return React.createElement(
         "div",
-        null,
+        {
+          "data-jsx": "1544381438"
+        },
         (0, _inject2.default)("1544381438", "p[data-jsx=\"1544381438\"]{color: red;}"),
         React.createElement(
           "p",

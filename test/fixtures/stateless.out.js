@@ -13,7 +13,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.default = function () {
   return React.createElement(
     'div',
-    null,
+    {
+      'data-jsx': '4271158759'
+    },
     React.createElement(
       'p',
       {
