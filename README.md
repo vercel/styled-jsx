@@ -120,8 +120,8 @@ the global styles being inserted multiple times.
 
 ### Global selectors
 
-Sometimes it's useful to skip prefixing. We support `:global()`
-similarly to how [css-modules](https://github.com/css-modules/css-modules) work.
+Sometimes it's useful to skip prefixing. We support `:global()`, 
+inspired by [css-modules](https://github.com/css-modules/css-modules).
 
 This is very useful in order to, for example, generate an *unprefix class* that
 you can pass to 3rd-party components. For example, to style
