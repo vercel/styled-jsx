@@ -12,10 +12,8 @@ import read from './_read'
 const transform = file => (
   new Promise((resolve, reject) => {
     transformFile(path.resolve(__dirname, file), {
-      plugins: [
-        'transform-runtime',
-        plugin
-      ]
+      babelrc: false,
+      plugins: [plugin]
     }, (err, data) => {
       if (err) {
         return reject(err)
