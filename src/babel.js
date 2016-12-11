@@ -1,6 +1,9 @@
 // Packages
 import jsx from 'babel-plugin-syntax-jsx'
 import hash from 'string-hash'
+import { SourceMapGenerator } from 'source-map'
+import { relative } from 'path'
+import convert from 'convert-source-map'
 
 // Ours
 import transform from '../lib/style-transform'
@@ -110,7 +113,8 @@ export default function ({types: t}) {
 
                 state.styles.push([
                   styleId,
-                  styleText
+                  styleText,
+                  expression.loc
                 ])
               }
 
@@ -126,11 +130,41 @@ export default function ({types: t}) {
 
             if (el.name && el.name.name === 'style') {
               // we replace styles with the function call
-              const [id, css] = state.styles.shift()
+              const [id, css, loc] = state.styles.shift()
 
               const skipTransform = el.attributes.some(attr => (
                 attr.name.name === GLOBAL_ATTRIBUTE
               ))
+
+              // TODO: use plugin param option?
+              const useSourceMaps = process.env.NODE_ENV !== 'production'
+              let transformedCss = css
+
+              if (!skipTransform) {
+                if (useSourceMaps) {
+                  // TODO: better way to get reative path to use as sourcemap name?
+                  const filename = relative(process.cwd(), state.file.log.filename)
+                  // have it relative to babelrc?
+                  const generator = new SourceMapGenerator({
+                     file: filename
+                     // TODO: pass sourceRoot via plugin option?
+                     // sourceRoot: "/"
+                  });
+                  // TODO: better way to get current untransformed file source?
+                  // I think it's already set somewhere
+                  const input = require('fs').readFileSync(filename, 'utf-8')
+                  generator.setSourceContent(filename, input)
+                  transformedCss = [
+                    transform(id, css, generator, loc.start, filename),
+                    convert
+                      .fromObject(generator)
+                      .toComment({multiline: true}),
+                    `/*@ sourceURL=${filename} */`
+                  ].join('\n');
+                } else {
+                  transformedCss = transform(id, css)
+                }
+              }
 
               path.replaceWith(
                 t.JSXElement(
@@ -139,7 +173,7 @@ export default function ({types: t}) {
                     [
                       t.JSXAttribute(
                         t.JSXIdentifier(STYLE_COMPONENT_CSS),
-                        t.JSXExpressionContainer(t.stringLiteral(skipTransform ? css : transform(id, css)))
+                        t.JSXExpressionContainer(t.stringLiteral(transformedCss))
                       )
                     ],
                     true
