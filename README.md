@@ -118,14 +118,14 @@ to use `dangerouslySetInnerHTML` to avoid escaping issues with CSS
 and take advantage of `styled-jsx`'s de-duping system to avoid
 the global styles being inserted multiple times.
 
-### Global (piercing) selectors
+### Global selectors
 
 Sometimes it's useful to skip prefixing. We support `:global()`
 similarly to how [css-modules](https://github.com/css-modules/css-modules) work.
 
-This is very useful in order to generate a class that you can pass to
-3rd-party components. For example, to style `react-select` which
-supports passing a custom class via `optionClassName`:
+This is very useful in order to, for example, generate an *unprefix class* that
+you can pass to 3rd-party components. For example, to style
+`react-select` which supports passing a custom class via `optionClassName`:
 
 ```js
 import Select from 'react-select'
