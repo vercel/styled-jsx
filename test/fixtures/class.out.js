@@ -39,7 +39,7 @@ var _class = function () {
           "test"
         ),
         React.createElement(_style2.default, {
-          css: "p[data-jsx=\"1544381438\"]{color: red;}",
+          css: "p[data-jsx=\"1544381438\"] {color: red;}",
           "data-jsx": "1544381438"
         })
       );
