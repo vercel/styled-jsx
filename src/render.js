@@ -1,3 +1,4 @@
+import entries from 'object.entries'
 import memory from './memory'
 
 const {hasOwnProperty} = Object.prototype
@@ -24,8 +25,8 @@ function renderOnClient(components) {
 }
 
 function diff(a, b) {
-  const added = Object.entries(b).filter(([k]) => !hasOwnProperty.call(a, k))
-  const removed = Object.entries(a).filter(([k]) => !hasOwnProperty.call(b, k))
+  const added = entries(b).filter(([k]) => !hasOwnProperty.call(a, k))
+  const removed = entries(a).filter(([k]) => !hasOwnProperty.call(b, k))
   return [added, removed]
 }
 
