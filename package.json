@@ -14,7 +14,8 @@
     "memory.js"
   ],
   "dependencies": {
-    "babel-plugin-syntax-jsx": "^6.18.0"
+    "babel-plugin-syntax-jsx": "^6.18.0",
+    "object.entries": "^1.0.4"
   },
   "devDependencies": {
     "ava": "^0.17.0",
@@ -29,7 +30,11 @@
     "fs-promise": "^1.0.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
+    "react": "^15.4.1",
     "xo": "^0.17.1"
+  },
+  "peerDependencies": {
+    "react": "^15.0"
   },
   "babel": {
     "presets": [

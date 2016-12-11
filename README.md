@@ -58,22 +58,23 @@ export default () => (
 The example above transpiles to the following:
 
 ```js
-import _jsxStyleInject from 'styled-jsx/inject'
+import _JSXStyle from 'styled-jsx/style'
 
 export default () => (
   <div data-jsx='cn2o3j'>
     <p data-jsx='cn2o3j'>only this paragraph will get the style :O</p>
-    { _jsxStyleInject('cn2o3j', `p[data-jsx=cn2o3j] {color: red;}`) }
+    <_JSXStyle data-jsx='cn2o3j' css={`p[data-jsx=cn2o3j] {color: red;}`} />
   </div>
 )
 ```
 
 ### Why It Works Like This
 
-Data attributes give us style encapsulation and `_jsxStyleInject` is heavily optimized for:
+Data attributes give us style encapsulation and `_JSXStyle` is heavily optimized for:
 
 - Injecting styles upon render
 - Only injecting a certain component's style once (even if the component is included multiple times)
+- Removing unused styles
 - Keeping track of styles for server-side rendering (discussed in the next section)
 
 ### Targetting The Root
