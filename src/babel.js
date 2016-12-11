@@ -6,6 +6,7 @@ import murmurHash from '../lib/murmurhash2'
 import transform from '../lib/style-transform'
 
 const STYLE_ATTRIBUTE = 'jsx'
+const GLOBAL_ATTRIBUTE = 'global'
 const MARKUP_ATTRIBUTE = 'data-jsx'
 const STYLE_COMPONENT = '_JSXStyle'
 const STYLE_COMPONENT_CSS = 'css'
@@ -34,15 +35,12 @@ export default function ({types: t}) {
       JSXOpeningElement(path, state) {
         if (state.hasJSXStyle) {
           if (state.ignoreClosing == null) {
-            // this flag has a two-fold purpose:
-            // - ignore the opening tag of the parent element
-            //   of the style tag, since we don't want to add
-            //   the attribute to that one
-            // - keep a counter of elements inside so that we
-            //   can keep track of when we exit the parent
-            //   to reset state
-            state.ignoreClosing = 1
-            return
+            // we keep a counter of elements inside so that we
+            // can keep track of when we exit the parent to reset state
+            // note: if we wished to add an option to turn off
+            // selectors to reach parent elements, it would suffice to
+            // set this to `1` and do an early return instead
+            state.ignoreClosing = 0
           }
 
           const el = path.node
@@ -76,13 +74,20 @@ export default function ({types: t}) {
               state.styles = []
 
               for (const style of styles) {
-                if (style.children.length !== 1) {
-                  throw path.buildCodeFrameError(`Expected a child under ` +
+                // compute children excluding whitespace
+                const children = style.children.filter(c => (
+                  t.isJSXExpressionContainer(c) ||
+                  // ignore whitespace around the expression container
+                  (t.isJSXText(c) && c.value.trim() !== '')
+                ))
+
+                if (children.length !== 1) {
+                  throw path.buildCodeFrameError(`Expected one child under ` +
                     `JSX Style tag, but got ${style.children.length} ` +
                     `(eg: <style jsx>{\`hi\`}</style>)`)
                 }
 
-                const child = style.children[0]
+                const child = children[0]
 
                 if (!t.isJSXExpressionContainer(child)) {
                   throw path.buildCodeFrameError(`Expected a child of ` +
@@ -123,6 +128,10 @@ export default function ({types: t}) {
               // we replace styles with the function call
               const [id, css] = state.styles.shift()
 
+              const skipTransform = el.attributes.some(attr => (
+                attr.name.name === GLOBAL_ATTRIBUTE
+              ))
+
               path.replaceWith(
                 t.JSXElement(
                   t.JSXOpeningElement(
@@ -130,7 +139,7 @@ export default function ({types: t}) {
                     [
                       t.JSXAttribute(
                         t.JSXIdentifier(STYLE_COMPONENT_CSS),
-                        t.JSXExpressionContainer(t.stringLiteral(transform(id, css)))
+                        t.JSXExpressionContainer(t.stringLiteral(skipTransform ? css : transform(id, css)))
                       )
                     ],
                     true
@@ -145,6 +154,7 @@ export default function ({types: t}) {
         exit(path, state) {
           if (state.hasJSXStyle && !--state.ignoreClosing) {
             state.hasJSXStyle = null
+            state.skipTransform = false
           }
         }
       },

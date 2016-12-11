@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/zeit/styled-jsx.svg?branch=master)](https://travis-ci.org/zeit/styled-jsx)
 [![XO code style](https://img.shields.io/badge/code_style-XO-5ed9c7.svg)](https://github.com/sindresorhus/xo)
 [![Slack Channel](https://zeit-slackin.now.sh/badge.svg)](https://zeit.chat)
+[![npm](https://img.shields.io/npm/v/styled-jsx.svg)](https://www.npmjs.com/package/styled-jsx)
 
 Full, scoped and component-friendly CSS support for JSX (rendered on the server or the client).
 
@@ -60,7 +61,7 @@ The example above transpiles to the following:
 import _JSXStyle from 'styled-jsx/style'
 
 export default () => (
-  <div>
+  <div data-jsx='cn2o3j'>
     <p data-jsx='cn2o3j'>only this paragraph will get the style :O</p>
     <_JSXStyle data-jsx='cn2o3j' css={`p[data-jsx=cn2o3j] {color: red;}`} />
   </div>
@@ -75,6 +76,43 @@ Data attributes give us style encapsulation and `_JSXStyle` is heavily optimized
 - Only injecting a certain component's style once (even if the component is included multiple times)
 - Removing unused styles
 - Keeping track of styles for server-side rendering (discussed in the next section)
+
+### Targetting The Root
+
+Notice that the parent `<div>` above also gets a `data-jsx` atribute. We do this so that
+you can target the "root" element, in the same manner that
+[`:host`](https://www.html5rocks.com/en/tutorials/webcomponents/shadowdom-201/#toc-style-host) works with Shadow DOM.
+
+If you want to target _only_ the host, we suggest you use a class:
+
+```js
+export default () => (
+  <div className="root">
+    <style jsx>{`
+      .root {
+        color: green;
+      }
+    `}</style>
+  </div>
+)
+```
+
+### Global styles
+
+To skip scoping entirely, you can make the global-ness of your styles
+explicit by adding _global_:
+
+```js
+export default () => (
+  <div>
+    <style jsx global>{`
+      body {
+        background: red
+      }
+    `}</style>
+  </div>
+)
+```
 
 ## Server-Side Rendering
 
