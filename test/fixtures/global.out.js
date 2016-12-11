@@ -9,10 +9,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 React.createElement(
   "div",
   {
-    "data-jsx": "2938046615"
+    "data-jsx": "3367785191"
   },
   React.createElement(_style2.default, {
     css: "\n    body {\n      color: red\n    }\n  ",
-    "data-jsx": "2938046615"
+    "data-jsx": "3367785191"
   })
 );
