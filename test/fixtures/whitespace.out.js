@@ -4,9 +4,9 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _inject = require('styled-jsx/inject');
+var _style = require('styled-jsx/style');
 
-var _inject2 = _interopRequireDefault(_inject);
+var _style2 = _interopRequireDefault(_style);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -37,6 +37,9 @@ exports.default = function () {
       },
       'woot'
     ),
-    (0, _inject2.default)('4271158759', 'p[data-jsx="4271158759"]{color: red }')
+    React.createElement(_style2.default, {
+      css: 'p[data-jsx="4271158759"]{color: red }',
+      'data-jsx': '4271158759'
+    })
   );
 };

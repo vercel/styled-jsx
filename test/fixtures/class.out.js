@@ -12,9 +12,9 @@ var _createClass2 = require("babel-runtime/helpers/createClass");
 
 var _createClass3 = _interopRequireDefault(_createClass2);
 
-var _inject = require("styled-jsx/inject");
+var _style = require("styled-jsx/style");
 
-var _inject2 = _interopRequireDefault(_inject);
+var _style2 = _interopRequireDefault(_style);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -38,7 +38,10 @@ var _class = function () {
           },
           "test"
         ),
-        (0, _inject2.default)("1544381438", "p[data-jsx=\"1544381438\"]{color: red;}")
+        React.createElement(_style2.default, {
+          css: "p[data-jsx=\"1544381438\"]{color: red;}",
+          "data-jsx": "1544381438"
+        })
       );
     }
   }]);

@@ -1,8 +1,8 @@
 "use strict";
 
-var _inject = require("styled-jsx/inject");
+var _style = require("styled-jsx/style");
 
-var _inject2 = _interopRequireDefault(_inject);
+var _style2 = _interopRequireDefault(_style);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11,5 +11,8 @@ React.createElement(
   {
     "data-jsx": "2938046615"
   },
-  (0, _inject2.default)("2938046615", "\n    body {\n      color: red\n    }\n  ")
+  React.createElement(_style2.default, {
+    css: "\n    body {\n      color: red\n    }\n  ",
+    "data-jsx": "2938046615"
+  })
 );
