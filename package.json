@@ -27,9 +27,9 @@
     "babel-preset-react": "^6.16.0",
     "babel-preset-stage-3": "^6.16.0",
     "babel-register": "^6.18.0",
-    "fs-promise": "^1.0.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
+    "mz": "^2.6.0",
     "react": "^15.4.1",
     "xo": "^0.17.1"
   },
