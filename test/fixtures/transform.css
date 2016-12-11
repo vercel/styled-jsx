@@ -1,5 +1,13 @@
+:global(p) {
+  color: blue
+}
+
 p {
   color: red;
+}
+
+p{
+  color: red
 }
 
 * {
@@ -10,8 +18,26 @@ p {
   color: red;
 }
 
+p a span {
+  color: red;
+}
+
+p :global(span) {
+  background: blue
+}
+
+p a[title="'w ' '  t'"] {
+  margin: auto
+}
+
+p :global(span:not(.test)) {
+  color: green
+}
+
 p, h1 {
   color: blue;
+  animation-name: hahaha;
+  animation-delay: 100ms;
 }
 
 @keyframes hahaha {

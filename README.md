@@ -99,7 +99,7 @@ export default () => (
 ### Global styles
 
 To skip scoping entirely, you can make the global-ness of your styles
-explicit by adding _global_:
+explicit by adding _global_.
 
 ```js
 export default () => (
@@ -107,6 +107,36 @@ export default () => (
     <style jsx global>{`
       body {
         background: red
+      }
+    `}</style>
+  </div>
+)
+```
+
+The advantage of using this over `<style>` is twofold: no need
+to use `dangerouslySetInnerHTML` to avoid escaping issues with CSS
+and take advantage of `styled-jsx`'s de-duping system to avoid
+the global styles being inserted multiple times.
+
+### Global (piercing) selectors
+
+Sometimes it's useful to skip prefixing. We support `:global()`
+similarly to how [css-modules](https://github.com/css-modules/css-modules) work.
+
+This is very useful in order to generate a class that you can pass to
+3rd-party components. For example, to style `react-select` which
+supports passing a custom class via `optionClassName`:
+
+```js
+import Select from 'react-select'
+export default () => (
+  <div>
+    <Select optionClassName="react-select" />
+
+    <style jsx>{`
+      /* "div" will be prefixed, but ".react-select" won't */
+      div :global(.react-select) {
+        color: red
       }
     `}</style>
   </div>
