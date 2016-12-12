@@ -1,8 +1,8 @@
 // Packages
 import jsx from 'babel-plugin-syntax-jsx'
+import hash from 'string-hash'
 
 // Ours
-import murmurHash from '../lib/murmurhash2'
 import transform from '../lib/style-transform'
 
 const STYLE_ATTRIBUTE = 'jsx'
@@ -106,7 +106,7 @@ export default function ({types: t}) {
                 }
 
                 const styleText = getExpressionText(expression)
-                const styleId = String(murmurHash(styleText))
+                const styleId = String(hash(styleText))
 
                 state.styles.push([
                   styleId,
@@ -114,7 +114,7 @@ export default function ({types: t}) {
                 ])
               }
 
-              state.jsxId += murmurHash(state.styles.map(s => s[1]).join(''))
+              state.jsxId += hash(state.styles.map(s => s[1]).join(''))
               state.hasJSXStyle = true
               state.file.hasJSXStyle = true
               // next visit will be: JSXOpeningElement

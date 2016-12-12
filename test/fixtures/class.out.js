@@ -29,18 +29,18 @@ var _class = function () {
       return React.createElement(
         "div",
         {
-          "data-jsx": "1544381438"
+          "data-jsx": "1891769468"
         },
         React.createElement(
           "p",
           {
-            "data-jsx": "1544381438"
+            "data-jsx": "1891769468"
           },
           "test"
         ),
         React.createElement(_style2.default, {
-          css: "p[data-jsx=\"1544381438\"] {color: red;}",
-          "data-jsx": "1544381438"
+          css: "p[data-jsx=\"1891769468\"] {color: red;}",
+          "data-jsx": "1891769468"
         })
       );
     }
