@@ -150,10 +150,7 @@ export default function ({types: t}) {
                      // TODO: pass sourceRoot via plugin option?
                      // sourceRoot: "/"
                   });
-                  // TODO: better way to get current untransformed file source?
-                  // I think it's already set somewhere
-                  const input = require('fs').readFileSync(filename, 'utf-8')
-                  generator.setSourceContent(filename, input)
+                  generator.setSourceContent(filename, state.file.code)
                   transformedCss = [
                     transform(id, css, generator, loc.start, filename),
                     convert
