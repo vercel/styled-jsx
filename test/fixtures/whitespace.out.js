@@ -38,8 +38,8 @@ exports.default = function () {
       'woot'
     ),
     React.createElement(_style2.default, {
-      css: 'p[data-jsx="188072295"] {color: red }',
-      'data-jsx': '188072295'
+      css: 'p[data-jsx="4271158759"] {color: red }',
+      'data-jsx': '4271158759'
     })
   );
 };
