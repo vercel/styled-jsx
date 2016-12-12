@@ -29,8 +29,10 @@
     "babel-register": "^6.18.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
+    "human-size": "^1.1.0",
     "mz": "^2.6.0",
     "react": "^15.4.1",
+    "uglify-js": "^2.7.5",
     "xo": "^0.17.1"
   },
   "peerDependencies": {
