@@ -10,8 +10,8 @@
     "lib",
     "babel.js",
     "flush.js",
-    "inject.js",
-    "memory.js"
+    "memory.js",
+    "style.js"
   ],
   "dependencies": {
     "babel-plugin-syntax-jsx": "^6.18.0",
