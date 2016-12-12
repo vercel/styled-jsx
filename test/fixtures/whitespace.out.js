@@ -14,32 +14,32 @@ exports.default = function () {
   return React.createElement(
     'div',
     {
-      'data-jsx': '4271158759'
+      'data-jsx': '188072295'
     },
     React.createElement(
       'p',
       {
-        'data-jsx': '4271158759'
+        'data-jsx': '188072295'
       },
       'test'
     ),
     React.createElement(
       'p',
       {
-        'data-jsx': '4271158759'
+        'data-jsx': '188072295'
       },
       'woot'
     ),
     React.createElement(
       'p',
       {
-        'data-jsx': '4271158759'
+        'data-jsx': '188072295'
       },
       'woot'
     ),
     React.createElement(_style2.default, {
-      css: 'p[data-jsx="4271158759"] {color: red }',
-      'data-jsx': '4271158759'
+      css: 'p[data-jsx="188072295"] {color: red }',
+      'data-jsx': '188072295'
     })
   );
 };
