@@ -1,3 +1,5 @@
+import {relative} from 'path'
+
 // Packages
 import jsx from 'babel-plugin-syntax-jsx'
 import hash from 'string-hash'
@@ -146,10 +148,10 @@ export default function ({types: t}) {
                   const filename = relative(process.cwd(), state.file.log.filename)
                   // have it relative to babelrc?
                   const generator = new SourceMapGenerator({
-                     file: filename
-                     // TODO: pass sourceRoot via plugin option?
-                     // sourceRoot: "/"
-                  });
+                    file: filename
+                    // TODO: pass sourceRoot via plugin option?
+                    // sourceRoot: "/"
+                  })
                   generator.setSourceContent(filename, state.file.code)
                   transformedCss = [
                     transform(id, css, generator, loc.start, filename),
@@ -157,7 +159,7 @@ export default function ({types: t}) {
                       .fromObject(generator)
                       .toComment({multiline: true}),
                     `/*@ sourceURL=${filename} */`
-                  ].join('\n');
+                  ].join('\n')
                 } else {
                   transformedCss = transform(id, css)
                 }
