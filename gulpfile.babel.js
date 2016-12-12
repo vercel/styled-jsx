@@ -1,6 +1,6 @@
-import 'babel-polyfill'
 import {join} from 'path'
 import {gzipSync} from 'zlib'
+import _ from 'babel-polyfill'
 import gulp from 'gulp'
 import babel from 'gulp-babel'
 import {transformFile} from 'babel-core'
@@ -27,7 +27,7 @@ gulp.task('runtime-size', async () => {
   console.log('minified and gzipped:', size(gzipSync(code).length))
   console.log('-----------------------------------------------')
 
-  function transform (file) {
+  function transform(file) {
     return new Promise((resolve, reject) => {
       transformFile(file, {
         presets: ['babili']
