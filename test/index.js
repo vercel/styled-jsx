@@ -12,6 +12,7 @@ import read from './_read'
 const transform = file => (
   new Promise((resolve, reject) => {
     transformFile(path.resolve(__dirname, file), {
+      sourceMap: true,
       plugins: [
         'transform-runtime',
         plugin
