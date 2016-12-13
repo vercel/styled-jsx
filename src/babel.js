@@ -1,10 +1,7 @@
-import {relative} from 'path'
-
 // Packages
 import jsx from 'babel-plugin-syntax-jsx'
 import hash from 'string-hash'
-import { SourceMapGenerator } from 'source-map'
-import { relative } from 'path'
+import {SourceMapGenerator} from 'source-map'
 import convert from 'convert-source-map'
 
 // Ours
@@ -138,7 +135,7 @@ export default function ({types: t}) {
                 attr.name.name === GLOBAL_ATTRIBUTE
               ))
 
-              const useSourceMaps = !!state.file.opts.sourceMaps
+              const useSourceMaps = Boolean(state.file.opts.sourceMaps)
               let transformedCss = css
 
               if (!skipTransform) {
