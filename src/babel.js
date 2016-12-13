@@ -138,19 +138,15 @@ export default function ({types: t}) {
                 attr.name.name === GLOBAL_ATTRIBUTE
               ))
 
-              // TODO: use plugin param option?
-              const useSourceMaps = process.env.NODE_ENV !== 'production'
+              const useSourceMaps = !!state.file.opts.sourceMaps
               let transformedCss = css
 
               if (!skipTransform) {
                 if (useSourceMaps) {
-                  // TODO: better way to get reative path to use as sourcemap name?
-                  const filename = relative(process.cwd(), state.file.log.filename)
-                  // have it relative to babelrc?
+                  const filename = state.file.opts.sourceFileName
                   const generator = new SourceMapGenerator({
-                    file: filename
-                    // TODO: pass sourceRoot via plugin option?
-                    // sourceRoot: "/"
+                    file: filename,
+                    sourceRoot: state.file.opts.sourceRoot
                   })
                   generator.setSourceContent(filename, state.file.code)
                   transformedCss = [
