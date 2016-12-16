@@ -77,7 +77,7 @@ Data attributes give us style encapsulation and `_JSXStyle` is heavily optimized
 - Removing unused styles
 - Keeping track of styles for server-side rendering (discussed in the next section)
 
-### Targetting The Root
+### Targeting The Root
 
 Notice that the parent `<div>` above also gets a `data-jsx` atribute. We do this so that
 you can target the "root" element, in the same manner that
