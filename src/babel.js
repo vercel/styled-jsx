@@ -53,6 +53,7 @@ export default function ({types: t}) {
         if (!state.hasJSXStyle) {
           return
         }
+
         if (state.ignoreClosing === null) {
           // we keep a counter of elements inside so that we
           // can keep track of when we exit the parent to reset state
@@ -87,6 +88,7 @@ export default function ({types: t}) {
           if (state.hasJSXStyle !== null) {
             return
           }
+
           const styles = findStyles(path.node.children)
 
           if (styles.length === 0) {
@@ -167,27 +169,30 @@ export default function ({types: t}) {
             attr.name.name === GLOBAL_ATTRIBUTE
           ))
 
-          const useSourceMaps = Boolean(state.file.opts.sourceMaps)
-          let transformedCss = css
+          if (skipTransform) {
+            path.replaceWith(makeStyledJsxTag(css))
+            return
+          }
 
-          if (!skipTransform) {
-            if (useSourceMaps) {
-              const filename = state.file.opts.sourceFileName
-              const generator = new SourceMapGenerator({
-                file: filename,
-                sourceRoot: state.file.opts.sourceRoot
-              })
-              generator.setSourceContent(filename, state.file.code)
-              transformedCss = [
-                transform(id, css, generator, loc.start, filename),
-                convert
-                  .fromObject(generator)
-                  .toComment({multiline: true}),
-                `/*@ sourceURL=${filename} */`
-              ].join('\n')
-            } else {
-              transformedCss = transform(id, css)
-            }
+          const useSourceMaps = Boolean(state.file.opts.sourceMaps)
+          let transformedCss
+
+          if (useSourceMaps) {
+            const filename = state.file.opts.sourceFileName
+            const generator = new SourceMapGenerator({
+              file: filename,
+              sourceRoot: state.file.opts.sourceRoot
+            })
+            generator.setSourceContent(filename, state.file.code)
+            transformedCss = [
+              transform(id, css, generator, loc.start, filename),
+              convert
+                .fromObject(generator)
+                .toComment({multiline: true}),
+              `/*@ sourceURL=${filename} */`
+            ].join('\n')
+          } else {
+            transformedCss = transform(id, css)
           }
 
           path.replaceWith(makeStyledJsxTag(transformedCss))
