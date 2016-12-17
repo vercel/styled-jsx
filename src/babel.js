@@ -31,6 +31,21 @@ export default function ({types: t}) {
       expr.value
   )
 
+  const makeStyledJsxTag = transformedCss => (
+    t.JSXElement(
+      t.JSXOpeningElement(
+        t.JSXIdentifier(STYLE_COMPONENT),
+        [t.JSXAttribute(
+          t.JSXIdentifier(STYLE_COMPONENT_CSS),
+          t.JSXExpressionContainer(t.stringLiteral(transformedCss))
+        )],
+        true
+      ),
+      null,
+      []
+    )
+  )
+
   return {
     inherits: jsx,
     visitor: {
@@ -138,6 +153,7 @@ export default function ({types: t}) {
           if (!state.hasJSXStyle) {
             return
           }
+
           const el = path.node.openingElement
 
           if (!el.name || el.name.name !== 'style') {
@@ -174,22 +190,7 @@ export default function ({types: t}) {
             }
           }
 
-          path.replaceWith(
-            t.JSXElement(
-              t.JSXOpeningElement(
-                t.JSXIdentifier(STYLE_COMPONENT),
-                [
-                  t.JSXAttribute(
-                    t.JSXIdentifier(STYLE_COMPONENT_CSS),
-                    t.JSXExpressionContainer(t.stringLiteral(transformedCss))
-                  )
-                ],
-                true
-              ),
-              null,
-              []
-            )
-          )
+          path.replaceWith(makeStyledJsxTag(transformedCss))
         }
       },
       Program: {
