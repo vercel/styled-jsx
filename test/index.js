@@ -4,6 +4,7 @@ import path from 'path'
 // Packages
 import test from 'ava'
 import {transformFile} from 'babel-core'
+import {writeFile} from 'mz/fs'
 
 // Ours
 import plugin from '../src/babel'
@@ -13,7 +14,8 @@ const transform = file => (
   new Promise((resolve, reject) => {
     transformFile(path.resolve(__dirname, file), {
       babelrc: false,
-      plugins: [plugin]
+      plugins: [plugin],
+      sourceMaps: false
     }, (err, data) => {
       if (err) {
         return reject(err)

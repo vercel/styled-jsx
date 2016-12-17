@@ -1,8 +1,10 @@
 // Packages
 import jsx from 'babel-plugin-syntax-jsx'
+import hash from 'string-hash'
+import {SourceMapGenerator} from 'source-map'
+import convert from 'convert-source-map'
 
 // Ours
-import murmurHash from '../lib/murmurhash2'
 import transform from '../lib/style-transform'
 
 const STYLE_ATTRIBUTE = 'jsx'
@@ -106,15 +108,16 @@ export default function ({types: t}) {
                 }
 
                 const styleText = getExpressionText(expression)
-                const styleId = String(murmurHash(styleText))
+                const styleId = String(hash(styleText))
 
                 state.styles.push([
                   styleId,
-                  styleText
+                  styleText,
+                  expression.loc
                 ])
               }
 
-              state.jsxId += murmurHash(state.styles.map(s => s[1]).join(''))
+              state.jsxId += hash(state.styles.map(s => s[1]).join(''))
               state.hasJSXStyle = true
               state.file.hasJSXStyle = true
               // next visit will be: JSXOpeningElement
@@ -126,11 +129,34 @@ export default function ({types: t}) {
 
             if (el.name && el.name.name === 'style') {
               // we replace styles with the function call
-              const [id, css] = state.styles.shift()
+              const [id, css, loc] = state.styles.shift()
 
               const skipTransform = el.attributes.some(attr => (
                 attr.name.name === GLOBAL_ATTRIBUTE
               ))
+
+              const useSourceMaps = Boolean(state.file.opts.sourceMaps)
+              let transformedCss = css
+
+              if (!skipTransform) {
+                if (useSourceMaps) {
+                  const filename = state.file.opts.sourceFileName
+                  const generator = new SourceMapGenerator({
+                    file: filename,
+                    sourceRoot: state.file.opts.sourceRoot
+                  })
+                  generator.setSourceContent(filename, state.file.code)
+                  transformedCss = [
+                    transform(id, css, generator, loc.start, filename),
+                    convert
+                      .fromObject(generator)
+                      .toComment({multiline: true}),
+                    `/*@ sourceURL=${filename} */`
+                  ].join('\n')
+                } else {
+                  transformedCss = transform(id, css)
+                }
+              }
 
               path.replaceWith(
                 t.JSXElement(
@@ -139,7 +165,7 @@ export default function ({types: t}) {
                     [
                       t.JSXAttribute(
                         t.JSXIdentifier(STYLE_COMPONENT_CSS),
-                        t.JSXExpressionContainer(t.stringLiteral(skipTransform ? css : transform(id, css)))
+                        t.JSXExpressionContainer(t.stringLiteral(transformedCss))
                       )
                     ],
                     true
