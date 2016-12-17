@@ -9,12 +9,12 @@ import {transformFile} from 'babel-core'
 import plugin from '../src/babel'
 import read from './_read'
 
-const transform = file => (
+const transform = (file, opts = {}) => (
   new Promise((resolve, reject) => {
     transformFile(path.resolve(__dirname, file), {
       babelrc: false,
       plugins: [plugin],
-      sourceMaps: false
+      ...opts
     }, (err, data) => {
       if (err) {
         return reject(err)
@@ -51,5 +51,11 @@ test('ignores when attribute is absent', async t => {
 test('works with global styles', async t => {
   const {code} = await transform('./fixtures/global.js')
   const out = await read('./fixtures/global.out.js')
+  t.is(code, out.trim())
+})
+
+test('generates source maps', async t => {
+  const {code} = await transform('./fixtures/source-maps.js', {sourceMaps: true})
+  const out = await read('./fixtures/source-maps.out.js')
   t.is(code, out.trim())
 })
