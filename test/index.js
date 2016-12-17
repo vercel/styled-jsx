@@ -4,7 +4,6 @@ import path from 'path'
 // Packages
 import test from 'ava'
 import {transformFile} from 'babel-core'
-import {writeFile} from 'mz/fs'
 
 // Ours
 import plugin from '../src/babel'
