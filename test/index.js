@@ -59,3 +59,9 @@ test('generates source maps', async t => {
   const out = await read('./fixtures/source-maps.out.js')
   t.is(code, out.trim())
 })
+
+test('mixed global and scoped', async t => {
+  const {code} = await transform('./fixtures/mixed-global-scoped.js')
+  const out = await read('./fixtures/mixed-global-scoped.out.js')
+  t.is(code, out.trim())
+})

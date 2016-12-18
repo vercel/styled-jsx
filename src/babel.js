@@ -75,7 +75,7 @@ export default function ({types: t}) {
 
           const attr = t.jSXAttribute(
             t.JSXIdentifier(MARKUP_ATTRIBUTE),
-            t.JSXExpressionContainer(t.stringLiteral(state.jsxId))
+            t.JSXExpressionContainer(t.numericLiteral(state.jsxId))
           )
           el.attributes.push(attr)
         }
@@ -96,7 +96,6 @@ export default function ({types: t}) {
             return
           }
 
-          state.jsxId = ''
           state.styles = []
 
           for (const style of styles) {
@@ -132,16 +131,14 @@ export default function ({types: t}) {
             }
 
             const styleText = getExpressionText(expression)
-            const styleId = String(hash(styleText))
 
             state.styles.push([
-              styleId,
               styleText,
               expression.loc
             ])
           }
 
-          state.jsxId += hash(state.styles.map(s => s[1]).join(''))
+          state.jsxId = hash(state.styles.map((s) => s[0]).join(''))
           state.hasJSXStyle = true
           state.file.hasJSXStyle = true
           // next visit will be: JSXOpeningElement
@@ -149,7 +146,6 @@ export default function ({types: t}) {
         exit(path, state) {
           if (state.hasJSXStyle && !--state.ignoreClosing) {
             state.hasJSXStyle = null
-            state.skipTransform = false
           }
 
           if (!state.hasJSXStyle) {
@@ -163,13 +159,13 @@ export default function ({types: t}) {
           }
 
           // we replace styles with the function call
-          const [id, css, loc] = state.styles.shift()
+          const [css, loc] = state.styles.shift()
 
-          const skipTransform = el.attributes.some(attr => (
+          const isGlobal = el.attributes.some(attr => (
             attr.name.name === GLOBAL_ATTRIBUTE
           ))
 
-          if (skipTransform) {
+          if (isGlobal) {
             path.replaceWith(makeStyledJsxTag(css))
             return
           }
@@ -185,14 +181,14 @@ export default function ({types: t}) {
             })
             generator.setSourceContent(filename, state.file.code)
             transformedCss = [
-              transform(id, css, generator, loc.start, filename),
+              transform(state.jsxId, css, generator, loc.start, filename),
               convert
                 .fromObject(generator)
                 .toComment({multiline: true}),
               `/*@ sourceURL=${filename} */`
             ].join('\n')
           } else {
-            transformedCss = transform(id, css)
+            transformedCss = transform(state.jsxId, css)
           }
 
           path.replaceWith(makeStyledJsxTag(transformedCss))
