@@ -195,28 +195,12 @@ It's **paramount** that you use one of these two functions so that
 the generated styles can be diffed when the client loads and
 duplicate styles are avoided.
 
-### `styled-jsx/flush`
+### Advanced APIs
 
-In the server rendering pipeline, you can obtain the entire CSS of all components by invoking `flush`:
+Low level APIs are also available:
 
-```js
-import flush from 'styled-jsx/flush'
-
-// …
-// <render here>
-// …
-
-const styles = flush()
-
-for (let id in styles) {
-  const css = styles[id]
-  console.log(id, css)
-}
-```
-
-This API is also available on the client: Instead of returning the CSS text, it returns a reference to the automatically generated `<style>` tag.
-
-This is useful for performing diffs of elements between top-level `render()` calls, and ditching style elements that are no longer being used.
+- `styled-jsx/flush`: exports a method that returns the existing memory (see below) and resets it
+- `styled-jsx/memory`: exports the `Object` holding the references to used styles. DOM on the client, strings on server
 
 ## Credits
 
