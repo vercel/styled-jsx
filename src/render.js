@@ -30,9 +30,16 @@ function diff(a, b) {
   return [added, removed]
 }
 
+const fromServer = {}
+
 function patch([added, removed]) {
   for (const [id, c] of added) {
-    tags[id] = makeStyleTag(c.props.css)
+    // avoid duplicates from server-rendered markup
+    if (undefined === fromServer[id]) {
+      fromServer[id] = document.getElementById(`__jsx-style-${id}`)
+    }
+
+    tags[id] = fromServer[id] || makeStyleTag(c.props.css)
   }
 
   for (const [id] of removed) {
