@@ -45,8 +45,6 @@ function patch([added, removed]) {
 function makeStyleTag(str) {
   // based on implementation by glamor
   const tag = document.createElement('style')
-
-  tag.type = 'text/css'
   tag.appendChild(document.createTextNode(str))
 
   const head = document.head || document.getElementsByTagName('head')[0]
