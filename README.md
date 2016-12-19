@@ -179,7 +179,7 @@ import App from './app'
 
 export default (req, res) => {
   const app = ReactDOM.renderToString(<App />)
-  const styles = flushToString()
+  const styles = flushToHTML()
   const html = `<!doctype html>
     <html>
       <head>${styles}</head>
