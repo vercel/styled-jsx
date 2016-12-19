@@ -60,9 +60,14 @@ test('generates source maps', async t => {
   t.is(code, out.trim())
 })
 
+test('mixed global and scoped', async t => {
+  const {code} = await transform('./fixtures/mixed-global-scoped.js')
+  const out = await read('./fixtures/mixed-global-scoped.out.js')
+  t.is(code, out.trim())
+})
+
 test('works with partial jsx (expressions)', async t => {
   const {code} = await transform('./fixtures/partials.js')
   const out = await read('./fixtures/partials.out.js')
   t.is(code, out.trim())
 })
-
