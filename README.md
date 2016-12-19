@@ -150,12 +150,12 @@ export default () => (
 
 The main export flushes your styles to an array of `React.Element`:
 
-```
+```js
 import React from 'react'
 import ReactDOM from 'react-dom/server'
 import flush from 'styled-jsx/server'
 import App from './app'
-// …
+
 export default (req, res) => {
   const app = ReactDOM.renderToString(<App />)
   const styles = flush()
