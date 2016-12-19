@@ -65,3 +65,9 @@ test('mixed global and scoped', async t => {
   const out = await read('./fixtures/mixed-global-scoped.out.js')
   t.is(code, out.trim())
 })
+
+test('works with multiple jsx blocks', async t => {
+  const {code} = await transform('./fixtures/multiple-jsx.js')
+  const out = await read('./fixtures/multiple-jsx.out.js')
+  t.is(code, out.trim())
+})
