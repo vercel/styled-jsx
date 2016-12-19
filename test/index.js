@@ -59,3 +59,10 @@ test('generates source maps', async t => {
   const out = await read('./fixtures/source-maps.out.js')
   t.is(code, out.trim())
 })
+
+test('works with partial jsx (expressions)', async t => {
+  const {code} = await transform('./fixtures/partials.js')
+  const out = await read('./fixtures/partials.out.js')
+  t.is(code, out.trim())
+})
+
