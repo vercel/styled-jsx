@@ -9,14 +9,14 @@ export default typeof window === 'undefined' ? renderOnServer : renderOnClient
 
 function renderOnServer(components) {
   for (const {props} of components) {
-    memory[props['data-jsx']] = props.css
+    memory[props.styleId] = props.css
   }
 }
 
 function renderOnClient(components) {
   const styles = {}
   for (const c of components) {
-    styles[c.props['data-jsx']] = c
+    styles[c.props.styleId] = c
   }
 
   patch(diff(prevStyles, styles))
