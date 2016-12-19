@@ -11,6 +11,7 @@ const STYLE_ATTRIBUTE = 'jsx'
 const GLOBAL_ATTRIBUTE = 'global'
 const MARKUP_ATTRIBUTE = 'data-jsx'
 const STYLE_COMPONENT = '_JSXStyle'
+const STYLE_COMPONENT_ID = 'styleId'
 const STYLE_COMPONENT_CSS = 'css'
 
 export default function ({types: t}) {
@@ -31,14 +32,20 @@ export default function ({types: t}) {
       expr.value
   )
 
-  const makeStyledJsxTag = transformedCss => (
+  const makeStyledJsxTag = (id, transformedCss) => (
     t.JSXElement(
       t.JSXOpeningElement(
         t.JSXIdentifier(STYLE_COMPONENT),
-        [t.JSXAttribute(
-          t.JSXIdentifier(STYLE_COMPONENT_CSS),
-          t.JSXExpressionContainer(t.stringLiteral(transformedCss))
-        )],
+        [
+          t.JSXAttribute(
+            t.JSXIdentifier(STYLE_COMPONENT_ID),
+            t.JSXExpressionContainer(t.numericLiteral(id))
+          ),
+          t.JSXAttribute(
+            t.JSXIdentifier(STYLE_COMPONENT_CSS),
+            t.JSXExpressionContainer(t.stringLiteral(transformedCss))
+          )
+        ],
         true
       ),
       null,
@@ -65,7 +72,8 @@ export default function ({types: t}) {
 
         const el = path.node
 
-        if (el.name && el.name.name !== 'style') {
+        if (el.name &&
+          (el.name.name !== 'style' && el.name.name !== STYLE_COMPONENT)) {
           for (const attr of el.attributes) {
             if (attr.name === MARKUP_ATTRIBUTE) {
               // avoid double attributes
@@ -131,14 +139,16 @@ export default function ({types: t}) {
             }
 
             const styleText = getExpressionText(expression)
+            const styleId = hash(styleText)
 
             state.styles.push([
+              styleId,
               styleText,
               expression.loc
             ])
           }
 
-          state.jsxId = hash(state.styles.map(s => s[0]).join(''))
+          state.jsxId = hash(state.styles.map(s => s[1]).join(''))
           state.hasJSXStyle = true
           state.file.hasJSXStyle = true
           // next visit will be: JSXOpeningElement
@@ -159,14 +169,14 @@ export default function ({types: t}) {
           }
 
           // we replace styles with the function call
-          const [css, loc] = state.styles.shift()
+          const [id, css, loc] = state.styles.shift()
 
           const isGlobal = el.attributes.some(attr => (
             attr.name.name === GLOBAL_ATTRIBUTE
           ))
 
           if (isGlobal) {
-            path.replaceWith(makeStyledJsxTag(css))
+            path.replaceWith(makeStyledJsxTag(id, css))
             return
           }
 
@@ -191,7 +201,7 @@ export default function ({types: t}) {
             transformedCss = transform(state.jsxId, css)
           }
 
-          path.replaceWith(makeStyledJsxTag(transformedCss))
+          path.replaceWith(makeStyledJsxTag(id, transformedCss))
         }
       },
       Program: {
