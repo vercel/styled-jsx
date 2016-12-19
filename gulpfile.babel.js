@@ -13,7 +13,7 @@ gulp.task('transpile', () => {
 })
 
 gulp.task('runtime-size', async () => {
-  const files = ['flush.js', 'memory.js', 'render.js', 'style.js']
+  const files = ['flush.js', 'server.js', 'memory.js', 'render.js', 'style.js']
 
   const result = await Promise.all(files
   .map(f => join(__dirname, 'src', f))

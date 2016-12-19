@@ -146,6 +146,57 @@ export default () => (
 
 ## Server-Side Rendering
 
+### `styled-jsx/server`
+
+The main export flushes your styles to an array of `React.Element`:
+
+```js
+import React from 'react'
+import ReactDOM from 'react-dom/server'
+import flush from 'styled-jsx/server'
+import App from './app'
+
+export default (req, res) => {
+  const app = ReactDOM.renderToString(<App />)
+  const styles = flush()
+  const html = ReactDOM.renderToStaticMarkup(<html>
+    <head>{ styles }</head>
+    <body>
+      <div id="root" dangerouslySetInnerHTML={{__html: app}} />
+    </body>
+  </html>)
+  res.end('<!doctype html>' + html)
+}
+```
+
+We also expose `flushToHTML` to return generated HTML:
+
+```js
+import React from 'react'
+import ReactDOM from 'react-dom/server'
+import { flushToHTML } from 'styled-jsx/server'
+import App from './app'
+
+export default (req, res) => {
+  const app = ReactDOM.renderToString(<App />)
+  const styles = flushToString()
+  const html = `<!doctype html>
+    <html>
+      <head>${styles}</head>
+      <body>
+        <div id="root">${app}</div>
+      </body>
+    </html>`
+  res.end(html)
+}
+```
+
+It's **paramount** that you use one of these two functions so that
+the generated styles can be diffed when the client loads and
+duplicate styles are avoided.
+
+### `styled-jsx/flush`
+
 In the server rendering pipeline, you can obtain the entire CSS of all components by invoking `flush`:
 
 ```js

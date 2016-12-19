@@ -8,6 +8,7 @@
   "files": [
     "dist",
     "lib",
+    "server.js",
     "babel.js",
     "flush.js",
     "memory.js",
@@ -36,6 +37,7 @@
     "human-size": "^1.1.0",
     "mz": "^2.6.0",
     "react": "^15.4.1",
+    "react-dom": "^15.4.1",
     "xo": "^0.17.1"
   },
   "peerDependencies": {
