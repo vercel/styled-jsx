@@ -8,6 +8,7 @@
   "files": [
     "dist",
     "lib",
+    "server.js",
     "babel.js",
     "flush.js",
     "memory.js",
