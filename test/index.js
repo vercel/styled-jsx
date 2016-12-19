@@ -10,7 +10,7 @@ import ReactDOM from 'react-dom/server'
 // Ours
 import plugin from '../src/babel'
 import JSXStyle from '../src/style'
-import flush, { flushToHTML } from '../src/server'
+import flush, {flushToHTML} from '../src/server'
 import read from './_read'
 
 const transform = (file, opts = {}) => (
@@ -77,7 +77,7 @@ test('works with multiple jsx blocks', async t => {
 })
 
 test('server rendering', t => {
-  function App () {
+  function App() {
     return React.createElement('div', null,
       React.createElement(JSXStyle, {
         css: 'p { color: red }',
@@ -91,8 +91,8 @@ test('server rendering', t => {
   }
 
   // expected CSS
-  const expected = '<style id="__jsx-style-1">p { color: red }</style>'
-    + '<style id="__jsx-style-2">div { color: blue }</style>'
+  const expected = '<style id="__jsx-style-1">p { color: red }</style>' +
+    '<style id="__jsx-style-2">div { color: blue }</style>'
 
   // render using react
   ReactDOM.renderToString(React.createElement(App))
