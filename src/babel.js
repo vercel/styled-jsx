@@ -100,7 +100,9 @@ export default function ({types: t}) {
           const styles = findStyles(path.node.children)
 
           if (styles.length === 0) {
-            state.hasJSXStyle = false
+            if (state.file.hasJSXStyle) {
+              state.hasJSXStyle = false
+            }
             return
           }
 
