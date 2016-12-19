@@ -46,6 +46,8 @@ function patch([added, removed]) {
     const t = tags[id]
     delete tags[id]
     t.parentNode.removeChild(t)
+    // avoid checking the DOM later on
+    fromServer[id] = null
   }
 }
 
