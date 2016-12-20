@@ -144,6 +144,53 @@ export default () => (
 )
 ```
 
+### Dynamic styles
+
+#### Via `className` toggling
+
+To make a component's visual representation customizable from the outside world, there are two options. The first one is to pass properties that toggle class names. 
+
+```jsx
+const Button = (props) => (
+  <button className={ 'large' in props && 'large' }>
+     { props.children }
+     <style jsx>{`
+        button {
+          padding: 20px;
+          background: #eee;
+          color: #999
+        }
+        .large {
+          padding: 50px
+        }
+     `}</style>
+  </button>
+)
+```
+
+Then you would use this component as either `<Button>Hi</Button>` or `<Button large>Big</Button>`.
+
+#### Via inline `style`
+
+Imagine that you wanted to make the padding in the button above completely customizable. You can override the CSS you configure via inline-styles:
+
+```jsx
+const Button = ({ padding }) => (
+  <button style={{ padding }}>
+     { props.children }
+     <style jsx>{`
+        button {
+          padding: 20px;
+          background: #eee;
+          color: #999
+        }
+     `}</style>
+  </button>
+)
+```
+
+In this example, the padding defaults to the one set in `<style>` (`20`), but the user can pass a custom one via `<Button padding={30}>`.
+
 ## Server-Side Rendering
 
 ### `styled-jsx/server`
