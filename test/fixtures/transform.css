@@ -40,6 +40,26 @@ p, h1 {
   animation-delay: 100ms;
 }
 
+p:hover {
+  color: red;
+}
+
+p::before {
+  color: red;
+}
+
+:hover {
+  color: red;
+}
+
+::before {
+  color: red;
+}
+
+:hover p {
+  color: red;
+}
+
 @keyframes hahaha {
   from { top: 0 }
   to { top: 100 }
