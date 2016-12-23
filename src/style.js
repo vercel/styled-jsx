@@ -6,6 +6,10 @@ export default class extends Component {
     mount(this)
   }
 
+  componentWillUpdate() {
+    update()
+  }
+
   componentWillUnmount() {
     unmount(this)
   }
