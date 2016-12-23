@@ -60,6 +60,22 @@ p::before {
   color: red;
 }
 
+p + a {
+  color: red;
+}
+
+p ~ a {
+  color: red;
+}
+
+p > a {
+  color: red;
+}
+
+p >> a {
+  color: red;
+}
+
 @keyframes hahaha {
   from { top: 0 }
   to { top: 100 }
