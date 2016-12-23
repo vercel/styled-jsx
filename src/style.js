@@ -1,9 +1,17 @@
 import {Component} from 'react'
 import render from './render'
 
+const components = []
+const update = typeof window === 'undefined' ? doRender : updateOnClient
+let requestId
+
 export default class extends Component {
   componentWillMount() {
     mount(this)
+  }
+
+  componentWillUpdate() {
+    update()
   }
 
   componentWillUnmount() {
@@ -14,10 +22,6 @@ export default class extends Component {
     return null
   }
 }
-
-const components = []
-const update = typeof window === 'undefined' ? doRender : updateOnClient
-let requestId
 
 function mount(component) {
   components.push(component)
