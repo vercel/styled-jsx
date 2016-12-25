@@ -86,3 +86,12 @@ p >> a {
     color: red;
   }
 }
+
+.test {
+  /* test, test */
+  display: block;
+  /*
+
+test
+  */
+}
