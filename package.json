@@ -4,14 +4,11 @@
   "license": "MIT",
   "repository": "zeit/styled-jsx",
   "description": "Full CSS support for JSX without compromises",
-  "main": "./dist/flush.js",
   "files": [
     "dist",
     "lib",
     "server.js",
     "babel.js",
-    "flush.js",
-    "memory.js",
     "style.js"
   ],
   "dependencies": {
