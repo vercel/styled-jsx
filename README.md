@@ -242,13 +242,6 @@ It's **paramount** that you use one of these two functions so that
 the generated styles can be diffed when the client loads and
 duplicate styles are avoided.
 
-### Advanced APIs
-
-Low level APIs are also available:
-
-- `styled-jsx/flush`: exports a method that returns the existing memory (see below) and resets it
-- `styled-jsx/memory`: exports the `Object` holding the references to used styles. DOM on the client, strings on server
-
 ## Credits
 
 - **Pedram Emrouznejad** ([rijs](https://github.com/rijs/fullstack)) suggested attribute selectors over my initial class prefixing idea.

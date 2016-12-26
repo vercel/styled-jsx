@@ -1,5 +1,5 @@
 import React from 'react'
-import flush from './flush'
+import {flush} from './style'
 
 const {hasOwnProperty} = Object.prototype
 

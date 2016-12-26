@@ -1,8 +1,8 @@
 import {Component} from 'react'
 import render from './render'
 
-const components = []
 const update = typeof window === 'undefined' ? doRender : updateOnClient
+let components = []
 let requestId
 
 export default class extends Component {
@@ -21,6 +21,18 @@ export default class extends Component {
   render() {
     return null
   }
+}
+
+export function flush() {
+  const ret = {}
+
+  for (const {props} of components) {
+    ret[props.styleId] = props.css
+  }
+
+  components = []
+
+  return ret
 }
 
 function mount(component) {

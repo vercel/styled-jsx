@@ -1,5 +1,4 @@
 import entries from 'object.entries'
-import memory from './memory'
 
 const {hasOwnProperty} = Object.prototype
 const tags = {}
@@ -7,11 +6,7 @@ let prevStyles = {}
 
 export default typeof window === 'undefined' ? renderOnServer : renderOnClient
 
-function renderOnServer(components) {
-  for (const {props} of components) {
-    memory[props.styleId] = props.css
-  }
-}
+function renderOnServer() {}
 
 function renderOnClient(components) {
   const styles = {}
