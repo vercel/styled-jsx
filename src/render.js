@@ -6,7 +6,7 @@ let prevStyles = {}
 
 export default typeof window === 'undefined' ? renderOnServer : renderOnClient
 
-function renderOnServer(components) {}
+function renderOnServer() {}
 
 function renderOnClient(components) {
   const styles = {}

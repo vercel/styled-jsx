@@ -23,7 +23,7 @@ export default class extends Component {
   }
 }
 
-export function flush () {
+export function flush() {
   const ret = {}
 
   for (const {props} of components) {
