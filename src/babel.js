@@ -3,6 +3,7 @@ import jsx from 'babel-plugin-syntax-jsx'
 import hash from 'string-hash'
 import {SourceMapGenerator} from 'source-map'
 import convert from 'convert-source-map'
+import {transform as parse} from 'babel-core'
 
 // Ours
 import transform from '../lib/style-transform'
@@ -17,23 +18,56 @@ const STYLE_COMPONENT_CSS = 'css'
 export default function ({types: t}) {
   const findStyles = children => (
     children.filter(el => (
-      t.isJSXElement(el) &&
-      el.openingElement.name.name === 'style' &&
-      el.openingElement.attributes.some(attr => (
+      t.isJSXElement(el.node) &&
+      el.node.openingElement.name.name === 'style' &&
+      el.node.openingElement.attributes.some(attr => (
         attr.name.name === STYLE_ATTRIBUTE
       ))
     ))
   )
 
-  const getExpressionText = expr => (
-    t.isTemplateLiteral(expr) ?
-      expr.quasis[0].value.raw :
-      // assume string literal
-      expr.value
-  )
+  const getExpressionText = expr => {
+    const node = expr.node
 
-  const makeStyledJsxTag = (id, transformedCss) => (
-    t.JSXElement(
+    // assuming string literal
+    if (t.isStringLiteral(node)) {
+      return node.value
+    }
+
+    const expressions = node.expressions
+
+    // simple template literal without expressions
+    if (expressions.length === 0) {
+      return node.quasis[0].value.cooked
+    }
+
+    const errors = expressions.reduce((errors, expression) => {
+      if (
+        t.isArrowFunctionExpression(expression) ||
+        t.isFunctionExpression(expression)
+      ) {
+        errors.push(`styled-jsx cannot contain function expressions:\n${expr.getSource()}`)
+      }
+      return errors
+    }, [])
+
+    if (errors.length > 0) {
+      throw expr.buildCodeFrameError(`\n${errors.join('\n')}`)
+    }
+
+    // strip out ` and return the template literal source
+    return expr.getSource().slice(1, -1)
+  }
+
+  const makeStyledJsxTag = (id, transformedCss, isTemplateLiteral) => {
+    let css
+    if (isTemplateLiteral) {
+      // build the expression from transformedCss
+      css = parse(`\`${transformedCss}\``).ast.program.body[0].expression
+    } else {
+      css = t.stringLiteral(transformedCss)
+    }
+    return t.JSXElement(
       t.JSXOpeningElement(
         t.JSXIdentifier(STYLE_COMPONENT),
         [
@@ -43,7 +77,7 @@ export default function ({types: t}) {
           ),
           t.JSXAttribute(
             t.JSXIdentifier(STYLE_COMPONENT_CSS),
-            t.JSXExpressionContainer(t.stringLiteral(transformedCss))
+            t.JSXExpressionContainer(css)
           )
         ],
         true
@@ -51,7 +85,7 @@ export default function ({types: t}) {
       null,
       []
     )
-  )
+  }
 
   return {
     inherits: jsx,
@@ -97,7 +131,7 @@ export default function ({types: t}) {
             return
           }
 
-          const styles = findStyles(path.node.children)
+          const styles = findStyles(path.get('children'))
 
           if (styles.length === 0) {
             if (state.file.hasJSXStyle) {
@@ -110,10 +144,10 @@ export default function ({types: t}) {
 
           for (const style of styles) {
             // compute children excluding whitespace
-            const children = style.children.filter(c => (
-              t.isJSXExpressionContainer(c) ||
+            const children = style.get('children').filter(c => (
+              t.isJSXExpressionContainer(c.node) ||
               // ignore whitespace around the expression container
-              (t.isJSXText(c) && c.value.trim() !== '')
+              (t.isJSXText(c.node) && c.node.value.trim() !== '')
             ))
 
             if (children.length !== 1) {
@@ -130,23 +164,24 @@ export default function ({types: t}) {
                 `(eg: <style jsx>{\`hi\`}</style>), got ${child.type}`)
             }
 
-            const expression = child.expression
+            const expression = child.node.expression
 
-            if (!t.isTemplateLiteral(child.expression) &&
-                !t.isStringLiteral(child.expression)) {
+            if (!t.isTemplateLiteral(expression) &&
+                !t.isStringLiteral(expression)) {
               throw path.buildCodeFrameError(`Expected a template ` +
                 `literal or String literal as the child of the ` +
                 `JSX Style tag (eg: <style jsx>{\`some css\`}</style>),` +
                 ` but got ${expression.type}`)
             }
 
-            const styleText = getExpressionText(expression)
+            const styleText = getExpressionText(child.get('expression'))
             const styleId = hash(styleText)
 
             state.styles.push([
               styleId,
               styleText,
-              expression.loc
+              expression.loc,
+              t.isTemplateLiteral(expression) && expression.expressions.length > 0
             ])
           }
 
@@ -171,14 +206,14 @@ export default function ({types: t}) {
           }
 
           // we replace styles with the function call
-          const [id, css, loc] = state.styles.shift()
+          const [id, css, loc, isTemplateLiteral] = state.styles.shift()
 
           const isGlobal = el.attributes.some(attr => (
             attr.name.name === GLOBAL_ATTRIBUTE
           ))
 
           if (isGlobal) {
-            path.replaceWith(makeStyledJsxTag(id, css))
+            path.replaceWith(makeStyledJsxTag(id, css, isTemplateLiteral))
             return
           }
 
@@ -203,7 +238,9 @@ export default function ({types: t}) {
             transformedCss = transform(state.jsxId, css)
           }
 
-          path.replaceWith(makeStyledJsxTag(id, transformedCss))
+          path.replaceWith(
+            makeStyledJsxTag(id, transformedCss, isTemplateLiteral)
+          )
         }
       },
       Program: {

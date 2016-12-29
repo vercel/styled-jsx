@@ -76,8 +76,15 @@ test('works with multiple jsx blocks', async t => {
   t.is(code, out.trim())
 })
 
+test('works with expressions', async t => {
+  const {code} = await transform('./fixtures/expressions.js')
+  const out = await read('./fixtures/expressions.out.js')
+  t.is(code, out.trim())
+})
+
 test('server rendering', t => {
   function App() {
+    const color = 'green'
     return React.createElement('div', null,
       React.createElement(JSXStyle, {
         css: 'p { color: red }',
@@ -86,13 +93,18 @@ test('server rendering', t => {
       React.createElement(JSXStyle, {
         css: 'div { color: blue }',
         styleId: 2
+      }),
+      React.createElement(JSXStyle, {
+        css: `div { color: ${color} }`,
+        styleId: 3
       })
     )
   }
 
   // expected CSS
   const expected = '<style id="__jsx-style-1">p { color: red }</style>' +
-    '<style id="__jsx-style-2">div { color: blue }</style>'
+    '<style id="__jsx-style-2">div { color: blue }</style>' +
+    '<style id="__jsx-style-3">div { color: green }</style>'
 
   // render using react
   ReactDOM.renderToString(React.createElement(App))
