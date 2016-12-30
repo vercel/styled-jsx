@@ -72,7 +72,7 @@ export default function ({types: t}) {
     const replacements = expressions.map((e, id) => ({
       replacement: `___styledjsxexpression${id}___`,
       initial: `$\{${e.getSource()}}`
-    }))
+    })).sort((a, b) => a.initial.length < b.initial.length)
 
     const source = expr.getSource().slice(1, -1)
 
