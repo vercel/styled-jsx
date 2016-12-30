@@ -3,7 +3,7 @@ import jsx from 'babel-plugin-syntax-jsx'
 import hash from 'string-hash'
 import {SourceMapGenerator} from 'source-map'
 import convert from 'convert-source-map'
-import {transform as parse} from 'babel-core'
+import {transform as parse, traverse} from 'babel-core'
 
 // Ours
 import transform from '../lib/style-transform'
@@ -34,7 +34,7 @@ export default function ({types: t}) {
       return node.value
     }
 
-    const expressions = node.expressions
+    const expressions = expr.get('expressions')
 
     // simple template literal without expressions
     if (expressions.length === 0) {
@@ -55,18 +55,60 @@ export default function ({types: t}) {
       throw expr.buildCodeFrameError(`\n${errors.join('\n')}`)
     }
 
-    // strip out ` and return the template literal source
-    return expr.getSource().slice(1, -1)
+    // Special treatment for template literals that contain expressions:
+    //
+    // Expressions are replaced with a placeholder
+    // so that the CSS compiler can parse and
+    // transform the css source string
+    // without having to know about js literal expressions.
+    // Later expressions are restored
+    // by doing a replacement on the transformed css string.
+    //
+    // e.g.
+    // p { color: ${myConstant}; }
+    // becomes
+    // p { color: ___styledjsxexpression0___; }
+
+    const replacements = expressions.map((e, id) => ({
+      replacement: `___styledjsxexpression${id}___`,
+      initial: `$\{${e.getSource()}}`
+    }))
+
+    const source = expr.getSource().slice(1, -1)
+
+    const modified = replacements.reduce((source, currentReplacement) => {
+      source = source.replace(
+        currentReplacement.initial,
+        currentReplacement.replacement
+      )
+      return source
+    }, source)
+
+    return {
+      source,
+      modified,
+      replacements
+    }
   }
 
   const makeStyledJsxTag = (id, transformedCss, isTemplateLiteral) => {
     let css
     if (isTemplateLiteral) {
       // build the expression from transformedCss
-      css = parse(`\`${transformedCss}\``).ast.program.body[0].expression
+      traverse(
+        parse(`\`${transformedCss}\``).ast,
+        {
+          TemplateLiteral(path) {
+            if (!css) {
+              css = path.node
+            }
+          }
+        }
+      )
     } else {
       css = t.stringLiteral(transformedCss)
     }
+
     return t.JSXElement(
       t.JSXOpeningElement(
         t.JSXIdentifier(STYLE_COMPONENT),
@@ -175,13 +217,12 @@ export default function ({types: t}) {
             }
 
             const styleText = getExpressionText(child.get('expression'))
-            const styleId = hash(styleText)
+            const styleId = hash(styleText.source || styleText)
 
             state.styles.push([
               styleId,
               styleText,
-              expression.loc,
-              t.isTemplateLiteral(expression) && expression.expressions.length > 0
+              expression.loc
             ])
           }
 
@@ -206,14 +247,14 @@ export default function ({types: t}) {
           }
 
           // we replace styles with the function call
-          const [id, css, loc, isTemplateLiteral] = state.styles.shift()
+          const [id, css, loc] = state.styles.shift()
 
           const isGlobal = el.attributes.some(attr => (
             attr.name.name === GLOBAL_ATTRIBUTE
           ))
 
           if (isGlobal) {
-            path.replaceWith(makeStyledJsxTag(id, css, isTemplateLiteral))
+            path.replaceWith(makeStyledJsxTag(id, css.source || css, css.modified))
             return
           }
 
@@ -228,18 +269,31 @@ export default function ({types: t}) {
             })
             generator.setSourceContent(filename, state.file.code)
             transformedCss = [
-              transform(state.jsxId, css, generator, loc.start, filename),
+              transform(state.jsxId, css.modified || css, generator, loc.start, filename),
               convert
                 .fromObject(generator)
                 .toComment({multiline: true}),
               `/*@ sourceURL=${filename} */`
             ].join('\n')
           } else {
-            transformedCss = transform(state.jsxId, css)
+            transformedCss = transform(state.jsxId, css.modified || css)
+          }
+
+          if (css.modified) {
+            transformedCss = css.replacements.reduce(
+              (transformedCss, currentReplacement) => {
+                transformedCss = transformedCss.replace(
+                  currentReplacement.replacement,
+                  currentReplacement.initial
+                )
+                return transformedCss
+              },
+              transformedCss
+            )
           }
 
           path.replaceWith(
-            makeStyledJsxTag(id, transformedCss, isTemplateLiteral)
+            makeStyledJsxTag(id, transformedCss, css.modified)
           )
         }
       },
