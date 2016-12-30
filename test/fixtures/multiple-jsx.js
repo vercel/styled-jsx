@@ -1,6 +1,18 @@
-const Test = () => <span>test</span>
+const Test1 = () => (
+  <div>
+    <span>test</span>
+    <Component />
+    <style jsx>{`
+      span {
+        color: red;
+      }
+    `}</style>
+  </div>
+)
 
-const Test2 = () => (
+const Test2 = () => <span>test</span>
+
+const Test3 = () => (
   <div>
     <span>test</span>
     <style jsx>{`
