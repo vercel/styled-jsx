@@ -17,10 +17,10 @@ const STYLE_COMPONENT_CSS = 'css'
 
 export default function ({types: t}) {
   const findStyles = children => (
-    children.filter(el => (
-      t.isJSXElement(el.node) &&
-      el.node.openingElement.name.name === 'style' &&
-      el.node.openingElement.attributes.some(attr => (
+    children.filter(({node}) => (
+      t.isJSXElement(node) &&
+      node.openingElement.name.name === 'style' &&
+      node.openingElement.attributes.some(attr => (
         attr.name.name === STYLE_ATTRIBUTE
       ))
     ))
