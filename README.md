@@ -252,6 +252,8 @@ duplicate styles are avoided.
 - **Evan You** ([vuejs](https://github.com/vuejs)) discussed his Vue.js CSS transformation with me.
 - **Henry Zhu** ([babel](https://github.com/babel)) helpfully pointed me to some important areas of the babel plugin API.
 
-## Author
+## Authors
 
-Guillermo Rauch ([@rauchg](https://twitter.com/rauchg)) - [▲ZEIT](https://zeit.co)
+- Guillermo Rauch ([@rauchg](https://twitter.com/rauchg)) - [▲ZEIT](https://zeit.co)
+- Naoyuki Kanezawa ([@nkzawa](https://twitter.com/nkzawa)) - [▲ZEIT](https://zeit.co)
+- Giuseppe Gurgone ([@giuseppegurgone](https://twitter.com/giuseppegurgone))
