@@ -76,10 +76,20 @@ test('works with multiple jsx blocks', async t => {
   t.is(code, out.trim())
 })
 
-test('works with expressions', async t => {
+test('works with expressions in template literals', async t => {
   const {code} = await transform('./fixtures/expressions.js')
   const out = await read('./fixtures/expressions.out.js')
   t.is(code, out.trim())
+})
+
+test('throws when using `props` or constants ' +
+  'defined in the closest scope', async t => {
+  [1, 2, 3, 4].forEach(i => {
+    t.throws(
+      transform(`./fixtures/invalid-expressions/${i}.js`),
+      SyntaxError
+    )
+  })
 })
 
 test('server rendering', t => {

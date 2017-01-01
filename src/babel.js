@@ -26,10 +26,45 @@ export default function ({types: t}) {
     ))
   )
 
+  // We only allow constants to be used in template literals.
+  // The following visitor ensures that MemberExpressions and Identifiers
+  // are not in the scope of the current Method (render) or function (Component).
+  const validateExpressionVisitor = {
+    MemberExpression(path) {
+      const {node} = path
+      if (
+        t.isThisExpression(node.object) &&
+        t.isIdentifier(node.property) &&
+        (
+          node.property.name === 'props' ||
+          node.property.name === 'state'
+        )
+      ) {
+        throw path.buildCodeFrameError(
+          `Expected a constant ` +
+          `as part of the template literal expression ` +
+          `(eg: <style jsx>{\`p { color: $\{myColor}\`}</style>), ` +
+          `but got a MemberExpression: this.${node.property.name}`)
+      }
+    },
+    Identifier(path, scope) {
+      const {name} = path.node
+      if (scope.hasOwnBinding(name)) {
+        throw path.buildCodeFrameError(
+          `Expected \`${name}\` ` +
+          `to not come from the closest scope.\n` +
+          `Styled JSX encourages the use of constants ` +
+          `instead of \`props\` or dynamic values ` +
+          `which are better set via inline styles or \`className\` toggling. ` +
+          `See https://github.com/zeit/styled-jsx#dynamic-styles`)
+      }
+    }
+  }
+
   const getExpressionText = expr => {
     const node = expr.node
 
-    // assuming string literal
+    // assume string literal
     if (t.isStringLiteral(node)) {
       return node.value
     }
@@ -39,20 +74,6 @@ export default function ({types: t}) {
     // simple template literal without expressions
     if (expressions.length === 0) {
       return node.quasis[0].value.cooked
-    }
-
-    const errors = expressions.reduce((errors, expression) => {
-      if (
-        t.isArrowFunctionExpression(expression) ||
-        t.isFunctionExpression(expression)
-      ) {
-        errors.push(`styled-jsx cannot contain function expressions:\n${expr.getSource()}`)
-      }
-      return errors
-    }, [])
-
-    if (errors.length > 0) {
-      throw expr.buildCodeFrameError(`\n${errors.join('\n')}`)
     }
 
     // Special treatment for template literals that contain expressions:
@@ -184,6 +205,12 @@ export default function ({types: t}) {
 
           state.styles = []
 
+          const scope = (path.findParent(path => (
+            path.isFunctionDeclaration() ||
+            path.isArrowFunctionExpression() ||
+            path.isClassMethod()
+          )) || path).scope
+
           for (const style of styles) {
             // compute children excluding whitespace
             const children = style.get('children').filter(c => (
@@ -206,7 +233,7 @@ export default function ({types: t}) {
                 `(eg: <style jsx>{\`hi\`}</style>), got ${child.type}`)
             }
 
-            const expression = child.node.expression
+            const expression = child.get('expression')
 
             if (!t.isTemplateLiteral(expression) &&
                 !t.isStringLiteral(expression)) {
@@ -216,13 +243,17 @@ export default function ({types: t}) {
                 ` but got ${expression.type}`)
             }
 
-            const styleText = getExpressionText(child.get('expression'))
+            // Validate MemberExpressions and Identifiers
+            // to ensure that are constants not defined in the closest scope
+            child.get('expression').traverse(validateExpressionVisitor, scope)
+
+            const styleText = getExpressionText(expression)
             const styleId = hash(styleText.source || styleText)
 
             state.styles.push([
               styleId,
               styleText,
-              expression.loc
+              expression.node.loc
             ])
           }
 
