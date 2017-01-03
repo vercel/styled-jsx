@@ -62,7 +62,7 @@ import _JSXStyle from 'styled-jsx/style'
 
 export default () => (
   <div data-jsx='cn2o3j'>
-    <p data-jsx='cn2o3j'>only this paragraph will get the style :O</p>
+    <p data-jsx='cn2o3j'>only this paragraph will get the style :)</p>
     <_JSXStyle data-jsx='cn2o3j' css={`p[data-jsx=cn2o3j] {color: red;}`} />
   </div>
 )
