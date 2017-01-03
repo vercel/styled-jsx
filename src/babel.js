@@ -3,7 +3,8 @@ import jsx from 'babel-plugin-syntax-jsx'
 import hash from 'string-hash'
 import {SourceMapGenerator} from 'source-map'
 import convert from 'convert-source-map'
-import {transform as parse, traverse} from 'babel-core'
+import traverse from 'babel-traverse'
+import {parse} from 'babylon'
 
 // Ours
 import transform from '../lib/style-transform'
@@ -117,7 +118,7 @@ export default function ({types: t}) {
     if (isTemplateLiteral) {
       // build the expression from transformedCss
       traverse(
-        parse(`\`${transformedCss}\``).ast,
+        parse(`\`${transformedCss}\``),
         {
           TemplateLiteral(path) {
             if (!css) {
