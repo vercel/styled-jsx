@@ -30,7 +30,7 @@ Now add `<style jsx>` to your code and fill it with CSS:
 ```js
 export default () => (
   <div>
-    <p>only this paragraph will get the style :O</p>
+    <p>only this paragraph will get the style :)</p>
     { /* you can include <Component />s here that include
          other <p>s that don't get unexpected styles! */ }
     <style jsx>{`
