@@ -76,6 +76,12 @@ test('works with multiple jsx blocks', async t => {
   t.is(code, out.trim())
 })
 
+test('should not add the data-jsx attribute to components instances', async t => {
+  const {code} = await transform('./fixtures/component-attribute.js')
+  const out = await read('./fixtures/component-attribute.out.js')
+  t.is(code, out.trim())
+})
+
 test('server rendering', t => {
   function App() {
     return React.createElement('div', null,

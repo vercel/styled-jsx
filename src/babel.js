@@ -71,9 +71,14 @@ export default function ({types: t}) {
         }
 
         const el = path.node
+        const {name} = el.name || {}
 
-        if (el.name &&
-          (el.name.name !== 'style' && el.name.name !== STYLE_COMPONENT)) {
+        if (
+          name &&
+          name !== 'style' &&
+          name !== STYLE_COMPONENT &&
+          name.charAt(0) !== name.charAt(0).toUpperCase()
+        ) {
           for (const attr of el.attributes) {
             if (attr.name === MARKUP_ATTRIBUTE) {
               // avoid double attributes
