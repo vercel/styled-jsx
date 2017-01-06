@@ -152,7 +152,7 @@ export default function ({types: t}) {
             ])
           }
 
-          state.jsxId = hash(state.styles.map(s => s[1]).join(''))
+          state.jsxId = '' + hash(state.styles.map(s => s[1]).join(''))
           state.hasJSXStyle = true
           state.file.hasJSXStyle = true
           // next visit will be: JSXOpeningElement
