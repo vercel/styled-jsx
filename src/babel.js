@@ -152,7 +152,7 @@ export default function ({types: t}) {
             ])
           }
 
-          state.jsxId = String(hash(state.styles.map(s => s[1]).join('')))
+          state.jsxId = hash(state.styles.map(s => s[1]).join(''))
           state.hasJSXStyle = true
           state.file.hasJSXStyle = true
           // next visit will be: JSXOpeningElement
@@ -195,14 +195,14 @@ export default function ({types: t}) {
             })
             generator.setSourceContent(filename, state.file.code)
             transformedCss = [
-              transform(state.jsxId, css, generator, loc.start, filename),
+              transform(String(state.jsxId), css, generator, loc.start, filename),
               convert
                 .fromObject(generator)
                 .toComment({multiline: true}),
               `/*@ sourceURL=${filename} */`
             ].join('\n')
           } else {
-            transformedCss = transform(state.jsxId, css)
+            transformedCss = transform(String(state.jsxId), css)
           }
 
           path.replaceWith(makeStyledJsxTag(id, transformedCss))
