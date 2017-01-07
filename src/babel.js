@@ -169,9 +169,14 @@ export default function ({types: t}) {
         }
 
         const el = path.node
+        const {name} = el.name || {}
 
-        if (el.name &&
-          (el.name.name !== 'style' && el.name.name !== STYLE_COMPONENT)) {
+        if (
+          name &&
+          name !== 'style' &&
+          name !== STYLE_COMPONENT &&
+          name.charAt(0) !== name.charAt(0).toUpperCase()
+        ) {
           for (const attr of el.attributes) {
             if (attr.name === MARKUP_ATTRIBUTE) {
               // avoid double attributes
@@ -298,14 +303,23 @@ export default function ({types: t}) {
             })
             generator.setSourceContent(filename, state.file.code)
             transformedCss = [
-              transform(state.jsxId, css.modified || css, generator, loc.start, filename),
+              transform(
+                String(state.jsxId),
+                css.modified || css,
+                generator,
+                loc.start,
+                filename
+              ),
               convert
                 .fromObject(generator)
                 .toComment({multiline: true}),
               `/*@ sourceURL=${filename} */`
             ].join('\n')
           } else {
-            transformedCss = transform(state.jsxId, css.modified || css)
+            transformedCss = transform(
+              String(state.jsxId),
+              css.modified || css
+            )
           }
 
           if (css.modified) {

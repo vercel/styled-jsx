@@ -9,5 +9,8 @@ test('transpile styles with attributes', async t => {
   const src = await read('./fixtures/transform.css')
   const out = await read('./fixtures/transform.out.css')
 
-  t.is(transform('woot', src), out.trim())
+  // use an id that's a number (inside a string) so
+  // that we can test that animations get correctly prefixed
+  // (since CSS forbids them from starting with a number)
+  t.is(transform('123', src), out.trim())
 })
