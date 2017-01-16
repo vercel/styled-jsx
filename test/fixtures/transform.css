@@ -36,6 +36,7 @@ p :global(span:not(.test)) {
 
 p, h1 {
   color: blue;
+  animation: hahaha 3s ease forwards infinite;
   animation-name: hahaha;
   animation-delay: 100ms;
 }
