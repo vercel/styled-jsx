@@ -3,6 +3,8 @@ import jsx from 'babel-plugin-syntax-jsx'
 import hash from 'string-hash'
 import {SourceMapGenerator} from 'source-map'
 import convert from 'convert-source-map'
+import traverse from 'babel-traverse'
+import {parse} from 'babylon'
 
 // Ours
 import transform from '../lib/style-transform'
@@ -16,24 +18,120 @@ const STYLE_COMPONENT_CSS = 'css'
 
 export default function ({types: t}) {
   const findStyles = children => (
-    children.filter(el => (
-      t.isJSXElement(el) &&
-      el.openingElement.name.name === 'style' &&
-      el.openingElement.attributes.some(attr => (
+    children.filter(({node}) => (
+      t.isJSXElement(node) &&
+      node.openingElement.name.name === 'style' &&
+      node.openingElement.attributes.some(attr => (
         attr.name.name === STYLE_ATTRIBUTE
       ))
     ))
   )
 
-  const getExpressionText = expr => (
-    t.isTemplateLiteral(expr) ?
-      expr.quasis[0].value.raw :
-      // assume string literal
-      expr.value
-  )
+  // We only allow constants to be used in template literals.
+  // The following visitor ensures that MemberExpressions and Identifiers
+  // are not in the scope of the current Method (render) or function (Component).
+  const validateExpressionVisitor = {
+    MemberExpression(path) {
+      const {node} = path
+      if (
+        t.isThisExpression(node.object) &&
+        t.isIdentifier(node.property) &&
+        (
+          node.property.name === 'props' ||
+          node.property.name === 'state'
+        )
+      ) {
+        throw path.buildCodeFrameError(
+          `Expected a constant ` +
+          `as part of the template literal expression ` +
+          `(eg: <style jsx>{\`p { color: $\{myColor}\`}</style>), ` +
+          `but got a MemberExpression: this.${node.property.name}`)
+      }
+    },
+    Identifier(path, scope) {
+      const {name} = path.node
+      if (scope.hasOwnBinding(name)) {
+        throw path.buildCodeFrameError(
+          `Expected \`${name}\` ` +
+          `to not come from the closest scope.\n` +
+          `Styled JSX encourages the use of constants ` +
+          `instead of \`props\` or dynamic values ` +
+          `which are better set via inline styles or \`className\` toggling. ` +
+          `See https://github.com/zeit/styled-jsx#dynamic-styles`)
+      }
+    }
+  }
 
-  const makeStyledJsxTag = (id, transformedCss) => (
-    t.JSXElement(
+  const getExpressionText = expr => {
+    const node = expr.node
+
+    // assume string literal
+    if (t.isStringLiteral(node)) {
+      return node.value
+    }
+
+    const expressions = expr.get('expressions')
+
+    // simple template literal without expressions
+    if (expressions.length === 0) {
+      return node.quasis[0].value.cooked
+    }
+
+    // Special treatment for template literals that contain expressions:
+    //
+    // Expressions are replaced with a placeholder
+    // so that the CSS compiler can parse and
+    // transform the css source string
+    // without having to know about js literal expressions.
+    // Later expressions are restored
+    // by doing a replacement on the transformed css string.
+    //
+    // e.g.
+    // p { color: ${myConstant}; }
+    // becomes
+    // p { color: ___styledjsxexpression0___; }
+
+    const replacements = expressions.map((e, id) => ({
+      replacement: `___styledjsxexpression${id}___`,
+      initial: `$\{${e.getSource()}}`
+    })).sort((a, b) => a.initial.length < b.initial.length)
+
+    const source = expr.getSource().slice(1, -1)
+
+    const modified = replacements.reduce((source, currentReplacement) => {
+      source = source.replace(
+        currentReplacement.initial,
+        currentReplacement.replacement
+      )
+      return source
+    }, source)
+
+    return {
+      source,
+      modified,
+      replacements
+    }
+  }
+
+  const makeStyledJsxTag = (id, transformedCss, isTemplateLiteral) => {
+    let css
+    if (isTemplateLiteral) {
+      // build the expression from transformedCss
+      traverse(
+        parse(`\`${transformedCss}\``),
+        {
+          TemplateLiteral(path) {
+            if (!css) {
+              css = path.node
+            }
+          }
+        }
+      )
+    } else {
+      css = t.stringLiteral(transformedCss)
+    }
+
+    return t.JSXElement(
       t.JSXOpeningElement(
         t.JSXIdentifier(STYLE_COMPONENT),
         [
@@ -43,7 +141,7 @@ export default function ({types: t}) {
           ),
           t.JSXAttribute(
             t.JSXIdentifier(STYLE_COMPONENT_CSS),
-            t.JSXExpressionContainer(t.stringLiteral(transformedCss))
+            t.JSXExpressionContainer(css)
           )
         ],
         true
@@ -51,7 +149,7 @@ export default function ({types: t}) {
       null,
       []
     )
-  )
+  }
 
   return {
     inherits: jsx,
@@ -102,7 +200,7 @@ export default function ({types: t}) {
             return
           }
 
-          const styles = findStyles(path.node.children)
+          const styles = findStyles(path.get('children'))
 
           if (styles.length === 0) {
             return
@@ -110,12 +208,18 @@ export default function ({types: t}) {
 
           state.styles = []
 
+          const scope = (path.findParent(path => (
+            path.isFunctionDeclaration() ||
+            path.isArrowFunctionExpression() ||
+            path.isClassMethod()
+          )) || path).scope
+
           for (const style of styles) {
             // compute children excluding whitespace
-            const children = style.children.filter(c => (
-              t.isJSXExpressionContainer(c) ||
+            const children = style.get('children').filter(c => (
+              t.isJSXExpressionContainer(c.node) ||
               // ignore whitespace around the expression container
-              (t.isJSXText(c) && c.value.trim() !== '')
+              (t.isJSXText(c.node) && c.node.value.trim() !== '')
             ))
 
             if (children.length !== 1) {
@@ -132,23 +236,27 @@ export default function ({types: t}) {
                 `(eg: <style jsx>{\`hi\`}</style>), got ${child.type}`)
             }
 
-            const expression = child.expression
+            const expression = child.get('expression')
 
-            if (!t.isTemplateLiteral(child.expression) &&
-                !t.isStringLiteral(child.expression)) {
+            if (!t.isTemplateLiteral(expression) &&
+                !t.isStringLiteral(expression)) {
               throw path.buildCodeFrameError(`Expected a template ` +
                 `literal or String literal as the child of the ` +
                 `JSX Style tag (eg: <style jsx>{\`some css\`}</style>),` +
                 ` but got ${expression.type}`)
             }
 
+            // Validate MemberExpressions and Identifiers
+            // to ensure that are constants not defined in the closest scope
+            child.get('expression').traverse(validateExpressionVisitor, scope)
+
             const styleText = getExpressionText(expression)
-            const styleId = hash(styleText)
+            const styleId = hash(styleText.source || styleText)
 
             state.styles.push([
               styleId,
               styleText,
-              expression.loc
+              expression.node.loc
             ])
           }
 
@@ -180,7 +288,7 @@ export default function ({types: t}) {
           ))
 
           if (isGlobal) {
-            path.replaceWith(makeStyledJsxTag(id, css))
+            path.replaceWith(makeStyledJsxTag(id, css.source || css, css.modified))
             return
           }
 
@@ -195,17 +303,41 @@ export default function ({types: t}) {
             })
             generator.setSourceContent(filename, state.file.code)
             transformedCss = [
-              transform(String(state.jsxId), css, generator, loc.start, filename),
+              transform(
+                String(state.jsxId),
+                css.modified || css,
+                generator,
+                loc.start,
+                filename
+              ),
               convert
                 .fromObject(generator)
                 .toComment({multiline: true}),
               `/*@ sourceURL=${filename} */`
             ].join('\n')
           } else {
-            transformedCss = transform(String(state.jsxId), css)
+            transformedCss = transform(
+              String(state.jsxId),
+              css.modified || css
+            )
           }
 
-          path.replaceWith(makeStyledJsxTag(id, transformedCss))
+          if (css.modified) {
+            transformedCss = css.replacements.reduce(
+              (transformedCss, currentReplacement) => {
+                transformedCss = transformedCss.replace(
+                  currentReplacement.replacement,
+                  currentReplacement.initial
+                )
+                return transformedCss
+              },
+              transformedCss
+            )
+          }
+
+          path.replaceWith(
+            makeStyledJsxTag(id, transformedCss, css.modified)
+          )
         }
       },
       Program: {
