@@ -27,16 +27,16 @@ export default function ({types: t}) {
     ))
   )
 
-  const findStyles = children => {
-    const firstChild = children[0]
-    if (children.length === 1 && !isStyledJsx(firstChild)) {
-      const parent = firstChild.parentPath
-      return (
-        isStyledJsx(parent) && isGlobalEl(parent.node.openingElement) ?
-        [parent.node] : []
-      )
+  const findStyles = path => {
+    if (isStyledJsx(path)) {
+      const {node} = path
+      return isGlobalEl(node.openingElement) ?
+        [node] : []
     }
-    return children.filter(isStyledJsx).map(({node}) => node)
+
+    return path.get('children')
+      .filter(isStyledJsx)
+      .map(({node}) => node)
   }
 
   const getExpressionText = expr => (
@@ -116,7 +116,7 @@ export default function ({types: t}) {
             return
           }
 
-          const styles = findStyles(path.get('children'))
+          const styles = findStyles(path)
 
           if (styles.length === 0) {
             return
