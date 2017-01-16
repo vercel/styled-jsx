@@ -80,7 +80,7 @@ export default function ({types: t}) {
           name.charAt(0) !== name.charAt(0).toUpperCase()
         ) {
           for (const attr of el.attributes) {
-            if (attr.name === MARKUP_ATTRIBUTE) {
+            if (attr.name === MARKUP_ATTRIBUTE || attr.name.name === MARKUP_ATTRIBUTE) {
               // avoid double attributes
               return
             }
