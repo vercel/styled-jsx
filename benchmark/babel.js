@@ -1,30 +1,20 @@
-import path from 'path'
+import {resolve} from 'path'
 import Benchmark from 'benchmark'
-import {transformFile} from 'babel-core'
+import {transform as babel} from 'babel-core'
+import fs from 'fs'
 
 import plugin from '../src/babel'
 
-const transform = (file, opts = {}) => (
-  new Promise((resolve, reject) => {
-    transformFile(path.resolve(__dirname, file), {
-      babelrc: false,
-      plugins: [plugin],
-      ...opts
-    }, (err, data) => {
-      if (err) {
-        return reject(err)
-      }
-      resolve(data)
-    })
-  })
-)
+const read = path => fs.readFileSync(resolve(__dirname, path), 'utf8')
+const fixture = read('./fixtures/babel.js')
 
 module.exports = new Benchmark({
   name: 'Babel transform',
   minSamples: 500,
-  defer: true,
-  fn: async p => {
-    await transform('./fixtures/babel.js')
-    p.resolve()
+  fn: () => {
+    babel(fixture, {
+      babelrc: false,
+      plugins: [plugin]
+    })
   }
 })
