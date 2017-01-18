@@ -5,6 +5,7 @@ import gulp from 'gulp'
 import babel from 'gulp-babel'
 import {transformFile} from 'babel-core'
 import size from 'human-size'
+import benchmark from 'gulp-benchmark'
 
 gulp.task('transpile', () => {
   gulp.src('src/**/*.js')
@@ -41,5 +42,13 @@ gulp.task('runtime-size', async () => {
   }
 })
 
-gulp.task('watch', () => gulp.watch('src/*', ['transpile']))
+gulp.task('benchmark', () => {
+  gulp.src('*.js', {read: false, cwd: './benchmark'})
+  .pipe(babel())
+  .pipe(benchmark())
+})
+gulp.task('watch', () => {
+  gulp.watch('src/*', ['transpile'])
+  gulp.watch('benchmark/*.js', ['benchmark'])
+})
 gulp.task('default', ['transpile', 'watch'])
