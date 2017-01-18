@@ -1,3 +1,5 @@
+const Test = () => <style global jsx>{'p { color: red }'}</style>
+
 export default () => (
   <div>
     <p>test</p>

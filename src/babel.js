@@ -15,15 +15,29 @@ const STYLE_COMPONENT_ID = 'styleId'
 const STYLE_COMPONENT_CSS = 'css'
 
 export default function ({types: t}) {
-  const findStyles = children => (
-    children.filter(el => (
-      t.isJSXElement(el) &&
-      el.openingElement.name.name === 'style' &&
-      el.openingElement.attributes.some(attr => (
-        attr.name.name === STYLE_ATTRIBUTE
-      ))
+  const isGlobalEl = el => el.attributes.some(attr => (
+    attr.name.name === GLOBAL_ATTRIBUTE
+  ))
+
+  const isStyledJsx = ({node: el}) => (
+    t.isJSXElement(el) &&
+    el.openingElement.name.name === 'style' &&
+    el.openingElement.attributes.some(attr => (
+      attr.name.name === STYLE_ATTRIBUTE
     ))
   )
+
+  const findStyles = path => {
+    if (isStyledJsx(path)) {
+      const {node} = path
+      return isGlobalEl(node.openingElement) ?
+        [node] : []
+    }
+
+    return path.get('children')
+      .filter(isStyledJsx)
+      .map(({node}) => node)
+  }
 
   const getExpressionText = expr => (
     t.isTemplateLiteral(expr) ?
@@ -57,6 +71,9 @@ export default function ({types: t}) {
     inherits: jsx,
     visitor: {
       JSXOpeningElement(path, state) {
+        const el = path.node
+        const {name} = el.name || {}
+
         if (!state.hasJSXStyle) {
           return
         }
@@ -69,9 +86,6 @@ export default function ({types: t}) {
           // set this to `1` and do an early return instead
           state.ignoreClosing = 0
         }
-
-        const el = path.node
-        const {name} = el.name || {}
 
         if (
           name &&
@@ -102,7 +116,7 @@ export default function ({types: t}) {
             return
           }
 
-          const styles = findStyles(path.node.children)
+          const styles = findStyles(path)
 
           if (styles.length === 0) {
             return
@@ -158,26 +172,19 @@ export default function ({types: t}) {
           // next visit will be: JSXOpeningElement
         },
         exit(path, state) {
-          if (state.hasJSXStyle && !--state.ignoreClosing) {
+          const el = path.node.openingElement
+          const isGlobal = isGlobalEl(el)
+
+          if (state.hasJSXStyle && (!--state.ignoreClosing && !isGlobal)) {
             state.hasJSXStyle = null
           }
 
-          if (!state.hasJSXStyle) {
-            return
-          }
-
-          const el = path.node.openingElement
-
-          if (!el.name || el.name.name !== 'style') {
+          if (!state.hasJSXStyle || !el.name || el.name.name !== 'style') {
             return
           }
 
           // we replace styles with the function call
           const [id, css, loc] = state.styles.shift()
-
-          const isGlobal = el.attributes.some(attr => (
-            attr.name.name === GLOBAL_ATTRIBUTE
-          ))
 
           if (isGlobal) {
             path.replaceWith(makeStyledJsxTag(id, css))
