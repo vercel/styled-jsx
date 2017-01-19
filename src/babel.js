@@ -17,15 +17,29 @@ const STYLE_COMPONENT_ID = 'styleId'
 const STYLE_COMPONENT_CSS = 'css'
 
 export default function ({types: t}) {
-  const findStyles = children => (
-    children.filter(({node}) => (
-      t.isJSXElement(node) &&
-      node.openingElement.name.name === 'style' &&
-      node.openingElement.attributes.some(attr => (
-        attr.name.name === STYLE_ATTRIBUTE
-      ))
+  const isGlobalEl = el => el.attributes.some(attr => (
+    attr.name.name === GLOBAL_ATTRIBUTE
+  ))
+
+  const isStyledJsx = ({node: el}) => (
+    t.isJSXElement(el) &&
+    el.openingElement.name.name === 'style' &&
+    el.openingElement.attributes.some(attr => (
+      attr.name.name === STYLE_ATTRIBUTE
     ))
   )
+
+  const findStyles = path => {
+    if (isStyledJsx(path)) {
+      const {node} = path
+      return isGlobalEl(node.openingElement) ?
+        [node] : []
+    }
+
+    return path.get('children')
+      .filter(isStyledJsx)
+      .map(({node}) => node)
+  }
 
   // We only allow constants to be used in template literals.
   // The following visitor ensures that MemberExpressions and Identifiers
@@ -92,7 +106,7 @@ export default function ({types: t}) {
     // p { color: ___styledjsxexpression0___; }
 
     const replacements = expressions.map((e, id) => ({
-      replacement: `___styledjsxexpression${id}___`,
+      replacement: `___styledjsxexpression_${id}___`,
       initial: `$\{${e.getSource()}}`
     })).sort((a, b) => a.initial.length < b.initial.length)
 
@@ -155,6 +169,9 @@ export default function ({types: t}) {
     inherits: jsx,
     visitor: {
       JSXOpeningElement(path, state) {
+        const el = path.node
+        const {name} = el.name || {}
+
         if (!state.hasJSXStyle) {
           return
         }
@@ -168,9 +185,6 @@ export default function ({types: t}) {
           state.ignoreClosing = 0
         }
 
-        const el = path.node
-        const {name} = el.name || {}
-
         if (
           name &&
           name !== 'style' &&
@@ -178,7 +192,7 @@ export default function ({types: t}) {
           name.charAt(0) !== name.charAt(0).toUpperCase()
         ) {
           for (const attr of el.attributes) {
-            if (attr.name === MARKUP_ATTRIBUTE) {
+            if (attr.name === MARKUP_ATTRIBUTE || attr.name.name === MARKUP_ATTRIBUTE) {
               // avoid double attributes
               return
             }
@@ -200,7 +214,7 @@ export default function ({types: t}) {
             return
           }
 
-          const styles = findStyles(path.get('children'))
+          const styles = findStyles(path)
 
           if (styles.length === 0) {
             return
@@ -266,26 +280,19 @@ export default function ({types: t}) {
           // next visit will be: JSXOpeningElement
         },
         exit(path, state) {
-          if (state.hasJSXStyle && !--state.ignoreClosing) {
+          const el = path.node.openingElement
+          const isGlobal = isGlobalEl(el)
+
+          if (state.hasJSXStyle && (!--state.ignoreClosing && !isGlobal)) {
             state.hasJSXStyle = null
           }
 
-          if (!state.hasJSXStyle) {
-            return
-          }
-
-          const el = path.node.openingElement
-
-          if (!el.name || el.name.name !== 'style') {
+          if (!state.hasJSXStyle || !el.name || el.name.name !== 'style') {
             return
           }
 
           // we replace styles with the function call
           const [id, css, loc] = state.styles.shift()
-
-          const isGlobal = el.attributes.some(attr => (
-            attr.name.name === GLOBAL_ATTRIBUTE
-          ))
 
           if (isGlobal) {
             path.replaceWith(makeStyledJsxTag(id, css.source || css, css.modified))
