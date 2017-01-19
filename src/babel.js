@@ -33,12 +33,10 @@ export default function ({types: t}) {
     if (isStyledJsx(path)) {
       const {node} = path
       return isGlobalEl(node.openingElement) ?
-        [node] : []
+        [path] : []
     }
 
-    return path.get('children')
-      .filter(isStyledJsx)
-      .map(({node}) => node)
+    return path.get('children').filter(isStyledJsx)
   }
 
   // We only allow constants to be used in template literals.
