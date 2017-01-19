@@ -22,7 +22,7 @@ const benchs = {
   withExpressions: makeTransform('./fixtures/with-expressions.js')
 }
 
-const suite = new Suite('style-jsx Babel transform')
+const suite = new Suite('styled-jsx Babel transform')
 
 module.exports =
   suite
