@@ -1,6 +1,10 @@
+const attrs = {
+  id: 'test'
+}
+
 const Test1 = () => (
   <div>
-    <span>test</span>
+    <span {...attrs} data-test="test">test</span>
     <Component />
     <style jsx>{`
       span {

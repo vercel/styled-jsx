@@ -15,8 +15,8 @@ const STYLE_COMPONENT_ID = 'styleId'
 const STYLE_COMPONENT_CSS = 'css'
 
 export default function ({types: t}) {
-  const isGlobalEl = el => el.attributes.some(attr => (
-    attr.name.name === GLOBAL_ATTRIBUTE
+  const isGlobalEl = el => el.attributes.some(({name}) => (
+    name && name.name === GLOBAL_ATTRIBUTE
   ))
 
   const isStyledJsx = ({node: el}) => (
@@ -93,8 +93,11 @@ export default function ({types: t}) {
           name !== STYLE_COMPONENT &&
           name.charAt(0) !== name.charAt(0).toUpperCase()
         ) {
-          for (const attr of el.attributes) {
-            if (attr.name === MARKUP_ATTRIBUTE || attr.name.name === MARKUP_ATTRIBUTE) {
+          for (const {name} of el.attributes) {
+            if (!name) {
+              continue
+            }
+            if (name === MARKUP_ATTRIBUTE || name.name === MARKUP_ATTRIBUTE) {
               // avoid double attributes
               return
             }
