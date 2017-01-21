@@ -1,20 +1,30 @@
 import {readFileSync} from 'fs'
 import {resolve} from 'path'
-import Benchmark from 'benchmark'
+import {Suite} from 'benchmark'
 import {transform as babel} from 'babel-core'
 
 import plugin from '../src/babel'
 
-const read = path => readFileSync(resolve(__dirname, path), 'utf8')
-const fixture = read('./fixtures/babel.js')
+const makeTransform = fixturePath => {
+  const fixture = readFileSync(
+    resolve(__dirname, fixturePath),
+    'utf8'
+  )
 
-module.exports = new Benchmark({
-  name: 'Babel transform',
-  minSamples: 500,
-  fn: () => {
-    babel(fixture, {
-      babelrc: false,
-      plugins: [plugin]
-    })
-  }
-})
+  return () => babel(fixture, {
+    babelrc: false,
+    plugins: [plugin]
+  })
+}
+
+const benchs = {
+  basic: makeTransform('./fixtures/basic.js'),
+  withExpressions: makeTransform('./fixtures/with-expressions.js')
+}
+
+const suite = new Suite('styled-jsx Babel transform')
+
+module.exports =
+  suite
+    .add('basic', benchs.basic)
+    .add('with expressions', benchs.withExpressions)

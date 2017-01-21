@@ -82,8 +82,25 @@ test('should not add the data-jsx attribute to components instances', async t =>
   t.is(code, out.trim())
 })
 
+test('works with expressions in template literals', async t => {
+  const {code} = await transform('./fixtures/expressions.js')
+  const out = await read('./fixtures/expressions.out.js')
+  t.is(code, out.trim())
+})
+
+test('throws when using `props` or constants ' +
+  'defined in the closest scope', async t => {
+  [1, 2, 3, 4].forEach(i => {
+    t.throws(
+      transform(`./fixtures/invalid-expressions/${i}.js`),
+      SyntaxError
+    )
+  })
+})
+
 test('server rendering', t => {
   function App() {
+    const color = 'green'
     return React.createElement('div', null,
       React.createElement(JSXStyle, {
         css: 'p { color: red }',
@@ -92,13 +109,18 @@ test('server rendering', t => {
       React.createElement(JSXStyle, {
         css: 'div { color: blue }',
         styleId: 2
+      }),
+      React.createElement(JSXStyle, {
+        css: `div { color: ${color} }`,
+        styleId: 3
       })
     )
   }
 
   // expected CSS
   const expected = '<style id="__jsx-style-1">p { color: red }</style>' +
-    '<style id="__jsx-style-2">div { color: blue }</style>'
+    '<style id="__jsx-style-2">div { color: blue }</style>' +
+    '<style id="__jsx-style-3">div { color: green }</style>'
 
   // render using react
   ReactDOM.renderToString(React.createElement(App))
