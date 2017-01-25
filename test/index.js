@@ -88,6 +88,12 @@ test('works with expressions in template literals', async t => {
   t.is(code, out.trim())
 })
 
+test('works with non styled-jsx styles', async t => {
+  const {code} = await transform('./fixtures/non-styled-jsx-style.js')
+  const out = await read('./fixtures/non-styled-jsx-style.out.js')
+  t.is(code, out.trim())
+})
+
 test('throws when using `props` or constants ' +
   'defined in the closest scope', async t => {
   [1, 2, 3, 4].forEach(i => {

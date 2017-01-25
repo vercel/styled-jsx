@@ -281,14 +281,13 @@ export default function ({types: t}) {
           // next visit will be: JSXOpeningElement
         },
         exit(path, state) {
-          const el = path.node.openingElement
-          const isGlobal = isGlobalEl(el)
+          const isGlobal = isGlobalEl(path.node.openingElement)
 
           if (state.hasJSXStyle && (!--state.ignoreClosing && !isGlobal)) {
             state.hasJSXStyle = null
           }
 
-          if (!state.hasJSXStyle || !el.name || el.name.name !== 'style') {
+          if (!state.hasJSXStyle || !isStyledJsx(path)) {
             return
           }
 
