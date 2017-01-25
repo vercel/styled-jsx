@@ -121,7 +121,7 @@ the global styles being inserted multiple times.
 
 ### Global selectors
 
-Sometimes it's useful to skip prefixing. We support `:global()`, 
+Sometimes it's useful to skip prefixing. We support `:global()`,
 inspired by [css-modules](https://github.com/css-modules/css-modules).
 
 This is very useful in order to, for example, generate an *unprefixed class* that
@@ -148,7 +148,7 @@ export default () => (
 
 #### Via `className` toggling
 
-To make a component's visual representation customizable from the outside world, there are two options. The first one is to pass properties that toggle class names. 
+To make a component's visual representation customizable from the outside world, there are two options. The first one is to pass properties that toggle class names.
 
 ```jsx
 const Button = (props) => (
@@ -175,9 +175,9 @@ Then you would use this component as either `<Button>Hi</Button>` or `<Button la
 Imagine that you wanted to make the padding in the button above completely customizable. You can override the CSS you configure via inline-styles:
 
 ```jsx
-const Button = ({ padding }) => (
+const Button = ({ padding, children }) => (
   <button style={{ padding }}>
-     { props.children }
+     { children }
      <style jsx>{`
         button {
           padding: 20px;
@@ -190,6 +190,31 @@ const Button = ({ padding }) => (
 ```
 
 In this example, the padding defaults to the one set in `<style>` (`20`), but the user can pass a custom one via `<Button padding={30}>`.
+
+### Constants and Config
+
+It is possible to use constants like so:
+
+```jsx
+import { colors, spacing } from '../theme'
+import { invertColor } from '../theme/utils'
+
+const Button = ({ children }) => (
+  <button>
+     { children }
+     <style jsx>{`
+        button {
+          padding: ${ spacing.medium };
+          background: ${ colors.primary };
+          color: ${ invertColor(colors.primary) };
+        }
+     `}</style>
+  </button>
+)
+```
+
+N.B. Only constants defined outside of the component scope are allowed here.
+If you want to use or toggle dynamic values depending on the component `state` or `props` then we recommend to use one of the techniques from the [Dynamic styles section](#Dynamic-styles)
 
 ## Server-Side Rendering
 
