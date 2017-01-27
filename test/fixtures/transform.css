@@ -2,6 +2,14 @@
   color: blue
 }
 
+:global(p){
+  color: blue;
+}
+
+:global(p), a {
+  color: blue;
+}
+
 p {
   color: red;
 }
