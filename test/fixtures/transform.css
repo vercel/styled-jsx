@@ -49,6 +49,10 @@ p, h1 {
   animation-delay: 100ms;
 }
 
+p {
+  animation: hahaha 1s, hehehe 2s;
+}
+
 p:hover {
   color: red;
 }
@@ -88,6 +92,11 @@ p >> a {
 @keyframes hahaha {
   from { top: 0 }
   to { top: 100 }
+}
+
+@keyframes hehehe {
+  from { left: 0 }
+  to { left: 100 }
 }
 
 @media (min-width: 500px) {
