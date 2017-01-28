@@ -113,3 +113,12 @@ p >> a {
 test
   */
 }
+
+
+:root {
+  --color: red;
+}
+
+:host {
+  background-color: red
+}
