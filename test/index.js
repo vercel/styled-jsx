@@ -94,6 +94,18 @@ test('works with non styled-jsx styles', async t => {
   t.is(code, out.trim())
 })
 
+test('works on external styles', async t => {
+  const {code} = await transform('./fixtures/external-styles.js')
+  const out = await read('./fixtures/external-styles.out.js')
+  t.is(code, out.trim())
+})
+
+test('can use external styles', async t => {
+  const {code} = await transform('./fixtures/with-external-styles.js')
+  const out = await read('./fixtures/with-external-styles.out.js')
+  t.is(code, out.trim())
+})
+
 test('throws when using `props` or constants ' +
   'defined in the closest scope', async t => {
   [1, 2, 3, 4].forEach(i => {

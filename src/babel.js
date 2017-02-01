@@ -21,6 +21,21 @@ export default function ({types: t}) {
     name && name.name === GLOBAL_ATTRIBUTE
   ))
 
+  const isExternalFile = ({parentPath}) => {
+    if (t.isExportDefaultDeclaration(parentPath.node)) {
+      return true
+    }
+
+    let path = parentPath.parentPath
+    if (t.isExpressionStatement(path.node)) {
+      path = path.get('expression')
+    }
+    return (
+      t.isAssignmentExpression(path.node) &&
+      path.get('left').getSource() == 'module.exports'
+    )
+  }
+
   const isStyledJsx = ({node: el}) => (
     t.isJSXElement(el) &&
     el.openingElement.name.name === 'style' &&
@@ -32,8 +47,15 @@ export default function ({types: t}) {
   const findStyles = path => {
     if (isStyledJsx(path)) {
       const {node} = path
-      return isGlobalEl(node.openingElement) ?
-        [path] : []
+      if (isGlobalEl(node.openingElement)) {
+        return [path]
+      } else if (isExternalFile(path)) {
+        const ret = [path]
+        ret.__isExternal = true
+        return ret
+      } else {
+        return []
+      }
     }
 
     return path.get('children').filter(isStyledJsx)
@@ -125,7 +147,7 @@ export default function ({types: t}) {
     }
   }
 
-  const makeStyledJsxTag = (id, transformedCss, isTemplateLiteral) => {
+  const getInjectableCss = (transformedCss, isTemplateLiteral) => {
     let css
     if (isTemplateLiteral) {
       // build the expression from transformedCss
@@ -143,7 +165,11 @@ export default function ({types: t}) {
       css = t.stringLiteral(transformedCss)
     }
 
-    return t.JSXElement(
+    return css
+  }
+
+  const makeStyledJsxTag = (id, css) => (
+    t.JSXElement(
       t.JSXOpeningElement(
         t.JSXIdentifier(STYLE_COMPONENT),
         [
@@ -161,7 +187,7 @@ export default function ({types: t}) {
       null,
       []
     )
-  }
+  )
 
   return {
     inherits: jsx,
@@ -216,13 +242,13 @@ export default function ({types: t}) {
           }
 
           const styles = findStyles(path)
+          const isExternal = styles.__isExternal
 
           if (styles.length === 0) {
             return
           }
 
           state.styles = []
-
           const scope = (path.findParent(path => (
             path.isFunctionDeclaration() ||
             path.isArrowFunctionExpression() ||
@@ -261,9 +287,11 @@ export default function ({types: t}) {
                 ` but got ${expression.type}`)
             }
 
-            // Validate MemberExpressions and Identifiers
-            // to ensure that are constants not defined in the closest scope
-            child.get('expression').traverse(validateExpressionVisitor, scope)
+            if (!isExternal) {
+              // Validate MemberExpressions and Identifiers
+              // to ensure that are constants not defined in the closest scope
+              child.get('expression').traverse(validateExpressionVisitor, scope)
+            }
 
             const styleText = getExpressionText(expression)
             const styleId = hash(styleText.source || styleText)
@@ -282,12 +310,13 @@ export default function ({types: t}) {
         },
         exit(path, state) {
           const isGlobal = isGlobalEl(path.node.openingElement)
+          const isExternal = isExternalFile(path)
 
           if (state.hasJSXStyle && (!--state.ignoreClosing && !isGlobal)) {
             state.hasJSXStyle = null
           }
 
-          if (!state.hasJSXStyle || !isStyledJsx(path)) {
+          if (!isExternal && (!state.hasJSXStyle || !isStyledJsx(path))) {
             return
           }
 
@@ -295,7 +324,7 @@ export default function ({types: t}) {
           const [id, css, loc] = state.styles.shift()
 
           if (isGlobal) {
-            path.replaceWith(makeStyledJsxTag(id, css.source || css, css.modified))
+            path.replaceWith(makeStyledJsxTag(id, getInjectableCss(css.source || css, css.modified)))
             return
           }
 
@@ -342,8 +371,21 @@ export default function ({types: t}) {
             )
           }
 
+          transformedCss = getInjectableCss(transformedCss, css.modified)
+
+          if (isExternal) {
+            path.replaceWith(
+              t.objectExpression([
+                t.objectProperty(t.stringLiteral('css'), transformedCss),
+                t.objectProperty(t.stringLiteral('id'), t.stringLiteral(String(id))),
+              ])
+            )
+            state.file.hasJSXStyle = false
+            return
+          }
+
           path.replaceWith(
-            makeStyledJsxTag(id, transformedCss, css.modified)
+            makeStyledJsxTag(id, transformedCss)
           )
         }
       },
