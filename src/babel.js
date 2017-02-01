@@ -41,7 +41,7 @@ export default function ({types: t}) {
       .get('openingElement')
       .get('attributes')
       .filter(
-        (path) => path.get('name').node.name === 'href'
+        (path) => path.get('name').node.name === 'src'
       )[0]
 
     return attr && attr.get('value').node.value
