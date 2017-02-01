@@ -32,16 +32,16 @@ export default function ({types: t}) {
     }
     return (
       t.isAssignmentExpression(path.node) &&
-      path.get('left').getSource() == 'module.exports'
+      path.get('left').getSource() === 'module.exports'
     )
   }
 
-  const getImportPath = (path) => {
+  const getImportPath = path => {
     const attr = path
       .get('openingElement')
       .get('attributes')
       .filter(
-        (path) => path.get('name').node.name === 'src'
+        path => path.get('name').node.name === 'src'
       )[0]
 
     return attr && attr.get('value').node.value
@@ -80,9 +80,9 @@ export default function ({types: t}) {
         const ret = [path]
         ret.__isExternal = true
         return ret
-      } else {
-        return []
       }
+
+      return []
     }
 
     return path.get('children').filter(isStyledJsx)
@@ -206,17 +206,17 @@ export default function ({types: t}) {
             t.JSXAttribute(
               t.JSXIdentifier(STYLE_COMPONENT_ID),
               t.JSXExpressionContainer(
-                isImported
-                ? t.identifier(id)
-                : t.numericLiteral(id)
+                isImported ?
+                t.identifier(id) :
+                t.numericLiteral(id)
               )
             ),
             t.JSXAttribute(
               t.JSXIdentifier(STYLE_COMPONENT_CSS),
               t.JSXExpressionContainer(
-                isImported
-                ? t.identifier(css)
-                : css
+                isImported ?
+                t.identifier(css) :
+                css
               )
             )
           ],
@@ -464,7 +464,7 @@ export default function ({types: t}) {
                 t.objectProperty(
                   t.stringLiteral('id'),
                   t.stringLiteral(String(id))
-                ),
+                )
               ])
             )
             state.file.hasJSXStyle = false
