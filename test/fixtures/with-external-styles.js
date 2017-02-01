@@ -1,6 +1,7 @@
 export default () => (
   <div>
     <p>test</p>
-    <link jsx href="./external-styles.js" />
+    <style jsx>{`p {color: red }`}</style>
+    <style jsx href="./external-styles.js" />
   </div>
 )
