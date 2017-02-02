@@ -113,3 +113,11 @@ p >> a {
 test
   */
 }
+
+.inline-flex {
+  display: inline-flex;
+}
+
+.flex {
+  display: flex;
+}
