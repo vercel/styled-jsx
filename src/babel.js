@@ -333,7 +333,7 @@ export default function ({types: t}) {
             transformedCss = css.replacements.reduce(
               (transformedCss, currentReplacement) => {
                 transformedCss = transformedCss.replace(
-                  currentReplacement.replacement,
+                  new RegExp(currentReplacement.replacement, 'g'),
                   currentReplacement.initial
                 )
                 return transformedCss

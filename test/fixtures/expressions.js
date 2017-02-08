@@ -1,6 +1,7 @@
 const color = 'red'
 const otherColor = 'green'
 const mediumScreen = '680px'
+const animationDuration = '200ms'
 
 export default () => (
   <div>
@@ -18,5 +19,6 @@ export default () => (
       }
       p { color: red }`
     }</style>
+    <style jsx>{`p { animation-duration: ${animationDuration} }`}</style>
   </div>
 )
