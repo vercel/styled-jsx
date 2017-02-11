@@ -214,7 +214,7 @@ const Button = ({ children }) => (
 ```
 
 N.B. Only constants defined outside of the component scope are allowed here.
-If you want to use or toggle dynamic values depending on the component `state` or `props` then we recommend to use one of the techniques from the [Dynamic styles section](#Dynamic-styles)
+If you want to use or toggle dynamic values depending on the component `state` or `props` then we recommend to use one of the techniques from the [Dynamic styles section](#dynamic-styles)
 
 ## Server-Side Rendering
 
