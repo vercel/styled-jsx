@@ -297,7 +297,8 @@ export default function ({types: t}) {
           const [id, css, loc] = state.styles.shift()
 
           if (isGlobal) {
-            path.replaceWith(makeStyledJsxTag(id, css.source || css, css.modified))
+            let transformedCss = transform(null, (css.source || css))
+            path.replaceWith(makeStyledJsxTag(id, transformedCss, css.modified))
             return
           }
 
