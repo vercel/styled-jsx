@@ -1,5 +1,8 @@
+// Native
 import {join} from 'path'
 import {gzipSync} from 'zlib'
+
+// Packages
 import _ from 'babel-polyfill'
 import gulp from 'gulp'
 import babel from 'gulp-babel'
@@ -14,7 +17,13 @@ gulp.task('transpile', () => {
 })
 
 gulp.task('runtime-size', async () => {
-  const files = ['flush.js', 'server.js', 'memory.js', 'render.js', 'style.js']
+  const files = [
+    'flush.js',
+    'server.js',
+    'memory.js',
+    'render.js',
+    'style.js'
+  ]
 
   const result = await Promise.all(files
   .map(f => join(__dirname, 'src', f))
@@ -43,12 +52,17 @@ gulp.task('runtime-size', async () => {
 })
 
 gulp.task('benchmark', () => {
-  gulp.src('*.js', {read: false, cwd: './benchmark'})
+  gulp.src('*.js', {
+    read: false,
+    cwd: './benchmark'
+  })
   .pipe(babel())
   .pipe(benchmark())
 })
+
 gulp.task('watch', () => {
   gulp.watch('src/*', ['transpile'])
   gulp.watch('benchmark/*.js', ['benchmark'])
 })
+
 gulp.task('default', ['transpile', 'watch'])
