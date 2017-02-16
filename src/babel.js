@@ -5,6 +5,7 @@ import {SourceMapGenerator} from 'source-map'
 import convert from 'convert-source-map'
 import traverse from 'babel-traverse'
 import {parse} from 'babylon'
+import escapeStringRegExp from 'escape-string-regexp'
 
 // Ours
 import transform from '../lib/style-transform'
@@ -104,6 +105,7 @@ export default function ({types: t}) {
     // p { color: ___styledjsxexpression0___; }
 
     const replacements = expressions.map((e, id) => ({
+      pattern: new RegExp(`\\$\\{\\s*${escapeStringRegExp(e.getSource())}\\s*\\}`),
       replacement: `___styledjsxexpression_${id}___`,
       initial: `$\{${e.getSource()}}`
     })).sort((a, b) => a.initial.length < b.initial.length)
@@ -112,7 +114,7 @@ export default function ({types: t}) {
 
     const modified = replacements.reduce((source, currentReplacement) => {
       source = source.replace(
-        currentReplacement.initial,
+        currentReplacement.pattern,
         currentReplacement.replacement
       )
       return source
