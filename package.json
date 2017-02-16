@@ -11,40 +11,6 @@
     "babel.js",
     "style.js"
   ],
-  "dependencies": {
-    "babel-plugin-syntax-jsx": "6.18.0",
-    "babel-traverse": "6.21.0",
-    "babylon": "6.14.1",
-    "convert-source-map": "1.3.0",
-    "escape-string-regexp": "1.0.5",
-    "object.entries": "1.0.4",
-    "source-map": "0.5.6",
-    "string-hash": "1.1.1"
-  },
-  "devDependencies": {
-    "ava": "0.17.0",
-    "babel-cli": "6.18.0",
-    "babel-core": "6.18.2",
-    "babel-plugin-transform-runtime": "6.15.0",
-    "babel-polyfill": "6.16.0",
-    "babel-preset-babili": "0.0.10",
-    "babel-preset-es2015": "6.16.0",
-    "babel-preset-react": "6.16.0",
-    "babel-preset-stage-3": "6.16.0",
-    "babel-register": "6.18.0",
-    "benchmark": "2.1.3",
-    "gulp": "3.9.1",
-    "gulp-babel": "6.1.2",
-    "gulp-benchmark": "1.1.1",
-    "human-size": "1.1.0",
-    "mz": "2.6.0",
-    "react": "15.4.1",
-    "react-dom": "15.4.1",
-    "xo": "0.17.1"
-  },
-  "peerDependencies": {
-    "react": "15.0"
-  },
   "babel": {
     "presets": [
       "es2015",
@@ -87,5 +53,39 @@
       "import/no-unresolved": 0,
       "new-cap": 0
     }
+  },
+  "dependencies": {
+    "babel-plugin-syntax-jsx": "6.18.0",
+    "babel-traverse": "6.21.0",
+    "babylon": "6.14.1",
+    "convert-source-map": "1.3.0",
+    "escape-string-regexp": "1.0.5",
+    "object.entries": "1.0.4",
+    "source-map": "0.5.6",
+    "string-hash": "1.1.1"
+  },
+  "devDependencies": {
+    "ava": "0.17.0",
+    "babel-cli": "6.18.0",
+    "babel-core": "6.18.2",
+    "babel-plugin-transform-runtime": "6.15.0",
+    "babel-polyfill": "6.16.0",
+    "babel-preset-babili": "0.0.10",
+    "babel-preset-es2015": "6.16.0",
+    "babel-preset-react": "6.16.0",
+    "babel-preset-stage-3": "6.16.0",
+    "babel-register": "6.18.0",
+    "benchmark": "2.1.3",
+    "gulp": "3.9.1",
+    "gulp-babel": "6.1.2",
+    "gulp-benchmark": "1.1.1",
+    "human-size": "1.1.0",
+    "mz": "2.6.0",
+    "react": "15.4.1",
+    "react-dom": "15.4.1",
+    "xo": "0.17.1"
+  },
+  "peerDependencies": {
+    "react": "15.0"
   }
 }
