@@ -1,6 +1,6 @@
 {
   "name": "styled-jsx",
-  "version": "0.5.6",
+  "version": "0.5.7",
   "license": "MIT",
   "repository": "zeit/styled-jsx",
   "description": "Full CSS support for JSX without compromises",
@@ -62,7 +62,8 @@
     "escape-string-regexp": "1.0.5",
     "object.entries": "1.0.4",
     "source-map": "0.5.6",
-    "string-hash": "1.1.1"
+    "string-hash": "1.1.1",
+    "stylis": "1.1.11"
   },
   "devDependencies": {
     "ava": "0.17.0",
@@ -86,6 +87,6 @@
     "xo": "0.17.1"
   },
   "peerDependencies": {
-    "react": "^15.0"
+    "react": "15.x.x"
   }
 }

@@ -15,5 +15,5 @@ export default (() => <div data-jsx={3422891701}>
     <_JSXStyle styleId={3469794077} css={`p[data-jsx="3422891701"] {color: ${darken(color)} }`} />
     <_JSXStyle styleId={945380644} css={`p[data-jsx="3422891701"] {color: ${darken(color) + 2} }`} />
     <_JSXStyle styleId={4106311606} css={`@media (min-width: ${mediumScreen}) {p[data-jsx="3422891701"] {color: green }p[data-jsx="3422891701"] {color ${`red`}}}p[data-jsx="3422891701"] {color: red }`} />
-    <_JSXStyle styleId={2369334310} css={`p[data-jsx="3422891701"] {-webkit-animation-duration:${animationDuration};-moz-animation-duration:${animationDuration};animation-duration:${animationDuration};`} />
+    <_JSXStyle styleId={2369334310} css={`p[data-jsx="3422891701"] {-webkit-animation-duration:${animationDuration};animation-duration:${animationDuration};`} />
   </div>);

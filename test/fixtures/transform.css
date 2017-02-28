@@ -10,6 +10,14 @@
   color: blue;
 }
 
+:global(.foo + a) { 
+  color: red;
+}
+
+:global(body) {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+
 p {
   color: red;
 }
@@ -121,3 +129,12 @@ test
 .flex {
   display: flex;
 }
+
+.test {
+  box-shadow: 0 0 10px black, inset 0 0 5px black
+}
+
+.test[title=","] {
+  display: inline-block;
+}
+
