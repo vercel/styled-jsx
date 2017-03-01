@@ -295,25 +295,24 @@ export default function ({types: t}) {
 
           // we replace styles with the function call
           const [id, css, loc] = state.styles.shift()
-          let transformedCss
+          const styles = css.modified || css
+          const jsxId = isGlobal ? null : String(state.jsxId)
           const useSourceMaps = Boolean(state.file.opts.sourceMaps)
+          let transformedCss
 
-          if (isGlobal) {
-            transformedCss = transform(
-              null,
-              (css.modified || css)
-            )
-          } else if (useSourceMaps) {
+          if (useSourceMaps) {
             const filename = state.file.opts.sourceFileName
             const generator = new SourceMapGenerator({
               file: filename,
               sourceRoot: state.file.opts.sourceRoot
             })
+
             generator.setSourceContent(filename, state.file.code)
+
             transformedCss = [
               transform(
-                String(state.jsxId),
-                css.modified || css,
+                jsxId,
+                styles,
                 generator,
                 loc.start,
                 filename
@@ -325,8 +324,8 @@ export default function ({types: t}) {
             ].join('\n')
           } else {
             transformedCss = transform(
-              String(state.jsxId),
-              css.modified || css
+              jsxId,
+              styles
             )
           }
 
