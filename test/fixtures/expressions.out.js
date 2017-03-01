@@ -11,7 +11,6 @@ export default (() => <div data-jsx={3422891701}>
     <_JSXStyle styleId={806016056} css={` body {background: ${color} }`} />
     <_JSXStyle styleId={2278229016} css={` body {background: ${color} }`} />
     <_JSXStyle styleId={924167211} css={`p[data-jsx="3422891701"] {color: ${color} }`} />
-
     <_JSXStyle styleId={1586014475} css={`p[data-jsx="3422891701"] {color: ${color} }`} />
     <_JSXStyle styleId={3469794077} css={`p[data-jsx="3422891701"] {color: ${darken(color)} }`} />
     <_JSXStyle styleId={945380644} css={`p[data-jsx="3422891701"] {color: ${darken(color) + 2} }`} />
