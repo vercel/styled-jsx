@@ -8,7 +8,7 @@ let updatePromise
 // includes desktop and iOS, based on
 // https://github.com/DamonOehlman/detect-browser/blob/master/lib/detectBrowser.js
 const isSafari = typeof window === 'undefined' ?
-  false : /Version\/[0-9._]+.*Safari/.test(window.navigator.userAgent)
+  false : /(Version\/[0-9._]+.*Safari|(iPhone|iPod|iPad).*AppleWebKit)/.test(window.navigator.userAgent)
 
 export default class extends Component {
   componentWillMount() {
