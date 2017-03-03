@@ -285,6 +285,12 @@ After [installing the package](https://github.com/gandm/language-babel#installat
 
 ![babel-language settings entry](https://cloud.githubusercontent.com/assets/2313237/22627258/6c97cb68-ebb7-11e6-82e1-60205f8b31e7.png)
 
+### Webstorm/Idea
+
+The IDE let you inject any language in place with _Inject language or reference_ in an _Intention Actions_ (default _alt+enter_).
+Simply perform the action in the string template and select CSS.
+You get full CSS highlighting and autocompletion and it will last until you close the IDE.
+
 ## Credits
 
 - **Pedram Emrouznejad** ([rijs](https://github.com/rijs/fullstack)) suggested attribute selectors over my initial class prefixing idea.
