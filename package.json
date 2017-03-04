@@ -23,8 +23,8 @@
     "prepublish": "gulp transpile",
     "test": "npm run lint && ava",
     "lint": "eslint *.js src/**/*.js",
-    "prettier": "prettier --write --single-quote \"*.js\" \"src/**/*.js\""
-    "prettier-standard": "prettier-standard-formatter --write --single-quote \"*.js\" \"src/**/*.js\"",
+    "prettier": "prettier --write --single-quote \"*.js\" \"src/**/*.js\"",
+    "prettier-standard": "prettier-standard-formatter --write --single-quote \"*.js\" \"src/**/*.js\""
   },
   "ava": {
     "require": [
