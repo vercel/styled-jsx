@@ -4,7 +4,9 @@ const {hasOwnProperty} = Object.prototype
 const tags = {}
 let prevStyles = {}
 
-export default typeof window === 'undefined' ? renderOnServer : renderOnClient
+export default (typeof window === 'undefined'
+  ? renderOnServer
+  : renderOnClient)
 
 function renderOnServer() {}
 
