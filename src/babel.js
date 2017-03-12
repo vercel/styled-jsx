@@ -6,12 +6,14 @@ import convert from 'convert-source-map'
 
 // Ours
 import transform from '../lib/style-transform'
+import {exportDefaultDeclarationVisitor} from './babel-external'
 
 import {
   isGlobalEl,
   isStyledJsx,
   findStyles,
   getExpressionText,
+  restoreExpressions,
   makeStyledJsxTag,
   validateExpression,
   getExternalReference,
@@ -24,6 +26,8 @@ import {
   STYLE_COMPONENT,
   MARKUP_ATTRIBUTE_EXTERNAL
 } from './_constants'
+
+const isExternalStyleSheetTranspiled = {}
 
 export default function ({types: t}) {
   return {
@@ -137,6 +141,7 @@ export default function ({types: t}) {
                   expression,
                   isGlobalEl(style.get('openingElement').node)
                 ])
+                isExternalStyleSheetTranspiled[externalSourcePath] = false
                 continue
               }
 
@@ -200,13 +205,21 @@ export default function ({types: t}) {
             const [
               id,
               externalSourcePath,
-              externalStylesReference
+              externalStylesReference,
+              isGlobal
             ] = state.externalStyles.shift()
 
             path.replaceWith(
               makeStyledJsxTag(
                 id,
-                externalStylesReference
+                t.memberExpression(
+                  t.identifier(
+                    externalStylesReference.getSource()
+                  ),
+                  t.identifier(
+                    isGlobal ? 'global' : 'local'
+                  )
+                )
               )
             )
             return
@@ -231,35 +244,29 @@ export default function ({types: t}) {
             })
             generator.setSourceContent(filename, state.file.code)
             transformedCss = [
-              transform(
-                String(state.jsxId),
-                css.modified || css,
-                generator,
-                loc.start,
-                filename
-              ),
+              transform({
+                id: String(state.jsxId),
+                styles: css.modified || css,
+                gen: generator,
+                start: loc.start,
+                file: filename
+              }),
               convert
                 .fromObject(generator)
                 .toComment({multiline: true}),
               `/*@ sourceURL=${filename} */`
             ].join('\n')
           } else {
-            transformedCss = transform(
-              String(state.jsxId),
-              css.modified || css
-            )
+            transformedCss = transform({
+              id: String(state.jsxId),
+              styles: css.modified || css
+            })
           }
 
-          if (css.modified) {
-            transformedCss = css.replacements.reduce(
-              (transformedCss, currentReplacement) => {
-                transformedCss = transformedCss.replace(
-                  new RegExp(currentReplacement.replacement, 'g'),
-                  currentReplacement.initial
-                )
-                return transformedCss
-              },
-              transformedCss
+          if (css.replacements) {
+            transformedCss = restoreExpressions(
+              transformedCss,
+              css.replacements
             )
           }
 
@@ -267,6 +274,19 @@ export default function ({types: t}) {
             makeStyledJsxTag(id, transformedCss, css.modified)
           )
         }
+      },
+      ExportDefaultDeclaration(path, state) {
+        const filename = require.resolve(state.file.opts.filename)
+        const entry = isExternalStyleSheetTranspiled[filename]
+        if (entry || typeof entry === 'undefined') {
+          return
+        }
+        isExternalStyleSheetTranspiled[filename] = true
+        exportDefaultDeclarationVisitor({
+          path,
+          styleId: hash(filename),
+          types: t
+        })
       },
       Program: {
         enter(path, state) {

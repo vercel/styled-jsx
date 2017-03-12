@@ -86,28 +86,46 @@ const getExpressionText = expr => {
   }
 }
 
+const restoreExpressions = (css, replacements) => replacements.reduce(
+  (css, currentReplacement) => {
+    css = css.replace(
+      new RegExp(currentReplacement.replacement, 'g'),
+      currentReplacement.initial
+    )
+    return css
+  },
+  css
+)
+
+const makeStyledJsxCss = (transformedCss, isTemplateLiteral) => {
+  if (!isTemplateLiteral) {
+    return t.stringLiteral(transformedCss)
+  }
+  // build the expression from transformedCss
+  let css
+  traverse(
+    parse(`\`${transformedCss}\``),
+    {
+      TemplateLiteral(path) {
+        if (!css) {
+          css = path.node
+        }
+      }
+    }
+  )
+  return css
+}
+
 const makeStyledJsxTag = (id, transformedCss, isTemplateLiteral) => {
   let css
 
   if (
     typeof transformedCss === 'object' &&
-    transformedCss.isIdentifier()
+    t.isMemberExpression(transformedCss)
   ) {
-    css = t.identifier(transformedCss.getSource())
-  } else if (isTemplateLiteral) {
-    // build the expression from transformedCss
-    traverse(
-      parse(`\`${transformedCss}\``),
-      {
-        TemplateLiteral(path) {
-          if (!css) {
-            css = path.node
-          }
-        }
-      }
-    )
+    css = transformedCss
   } else {
-    css = t.stringLiteral(transformedCss)
+    css = makeStyledJsxCss(transformedCss, isTemplateLiteral)
   }
 
   return t.JSXElement(
@@ -214,6 +232,8 @@ export {
   isStyledJsx,
   findStyles,
   getExpressionText,
+  restoreExpressions,
+  makeStyledJsxCss,
   makeStyledJsxTag,
   validateExpression,
   getExternalReference,

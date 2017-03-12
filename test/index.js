@@ -1,9 +1,5 @@
-// Native
-import path from 'path'
-
 // Packages
 import test from 'ava'
-import {transformFile} from 'babel-core'
 import React from 'react'
 import ReactDOM from 'react-dom/server'
 
@@ -12,19 +8,12 @@ import plugin from '../src/babel'
 import JSXStyle from '../src/style'
 import flush, {flushToHTML} from '../src/server'
 import read from './_read'
+import _transform from './_transform'
 
 const transform = (file, opts = {}) => (
-  new Promise((resolve, reject) => {
-    transformFile(path.resolve(__dirname, file), {
-      babelrc: false,
-      plugins: [plugin],
-      ...opts
-    }, (err, data) => {
-      if (err) {
-        return reject(err)
-      }
-      resolve(data)
-    })
+  _transform(file, {
+    plugins: [plugin],
+    ...opts
   })
 )
 
