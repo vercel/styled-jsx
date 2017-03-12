@@ -1,6 +1,7 @@
 import hash from 'string-hash'
 
 import transform from '../lib/style-transform'
+import {MARKUP_ATTRIBUTE_EXTERNAL} from './_constants'
 import {
   getExpressionText,
   restoreExpressions,
@@ -20,11 +21,10 @@ export const exportDefaultDeclarationVisitor = ({
   const isTemplateLiteral = css.modified
   let globalCss = css.modified || css
 
-  let localCss = transform({
-    id: String(styleId),
-    styles: css.modified || css,
-    isExternal: true
-  })
+  let localCss = transform(
+    `[${MARKUP_ATTRIBUTE_EXTERNAL}~="${styleId}"]`,
+    css.modified || css
+  )
 
   if (css.replacements) {
     globalCss = restoreExpressions(

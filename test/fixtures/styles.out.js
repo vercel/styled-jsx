@@ -5,5 +5,5 @@ export default {
   div { font-size: 3em }
   p { color: ${color}}
 `,
-  local: `div[data-jsx~="626947301"] {font-size: 3em}p[data-jsx~="626947301"] {color: ${color}}`
+  local: `div[data-jsx-ext~="626947301"] {font-size: 3em}p[data-jsx-ext~="626947301"] {color: ${color}}`
 };

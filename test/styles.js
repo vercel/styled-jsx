@@ -12,5 +12,5 @@ test('transpile styles with attributes', async t => {
   // use an id that's a number (inside a string) so
   // that we can test that animations get correctly prefixed
   // (since CSS forbids them from starting with a number)
-  t.is(transform({id: '123', styles: src}), out.trim())
+  t.is(transform('[data-jsx="123"]', src), out.trim())
 })

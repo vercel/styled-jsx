@@ -18,7 +18,7 @@ import {
   validateExpression,
   getExternalReference,
   resolvePath,
-  generateAttribute
+  generateAttribute,
 } from './_utils'
 
 import {
@@ -28,6 +28,7 @@ import {
 } from './_constants'
 
 const isExternalStyleSheetTranspiled = {}
+const getPrefix = (id) => `[${MARKUP_ATTRIBUTE}="${id}"]`
 
 export default function ({types: t}) {
   return {
@@ -244,23 +245,25 @@ export default function ({types: t}) {
             })
             generator.setSourceContent(filename, state.file.code)
             transformedCss = [
-              transform({
-                id: String(state.jsxId),
-                styles: css.modified || css,
-                gen: generator,
-                start: loc.start,
-                file: filename
-              }),
+              transform(
+                getPrefix(state.jsxId),
+                css.modified || css,
+                {
+                  generator,
+                  offset: loc.start,
+                  filename
+                }
+              ),
               convert
                 .fromObject(generator)
                 .toComment({multiline: true}),
               `/*@ sourceURL=${filename} */`
             ].join('\n')
           } else {
-            transformedCss = transform({
-              id: String(state.jsxId),
-              styles: css.modified || css
-            })
+            transformedCss = transform(
+              getPrefix(state.jsxId),
+              css.modified || css
+            )
           }
 
           if (css.replacements) {
