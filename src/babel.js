@@ -18,7 +18,7 @@ import {
   validateExpression,
   getExternalReference,
   resolvePath,
-  generateAttribute,
+  generateAttribute
 } from './_utils'
 
 import {
@@ -28,7 +28,7 @@ import {
 } from './_constants'
 
 const isExternalStyleSheetTranspiled = {}
-const getPrefix = (id) => `[${MARKUP_ATTRIBUTE}="${id}"]`
+const getPrefix = id => `[${MARKUP_ATTRIBUTE}="${id}"]`
 
 export default function ({types: t}) {
   return {
