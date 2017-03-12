@@ -275,19 +275,6 @@ export default function ({types: t}) {
           )
         }
       },
-      ExportDefaultDeclaration(path, state) {
-        const filename = require.resolve(state.file.opts.filename)
-        const entry = isExternalStyleSheetTranspiled[filename]
-        if (entry || typeof entry === 'undefined') {
-          return
-        }
-        isExternalStyleSheetTranspiled[filename] = true
-        exportDefaultDeclarationVisitor({
-          path,
-          styleId: hash(filename),
-          types: t
-        })
-      },
       Program: {
         enter(path, state) {
           state.hasJSXStyle = null
@@ -306,6 +293,20 @@ export default function ({types: t}) {
 
           node.body.unshift(importDeclaration)
         }
+      },
+      // Transpile external StyleSheets
+      ExportDefaultDeclaration(path, state) {
+        const filename = state.file.opts.filename
+        const entry = isExternalStyleSheetTranspiled[filename]
+        if (entry || typeof entry === 'undefined') {
+          return
+        }
+        isExternalStyleSheetTranspiled[filename] = true
+        exportDefaultDeclarationVisitor({
+          path,
+          styleId: hash(filename),
+          types: t
+        })
       }
     }
   }
