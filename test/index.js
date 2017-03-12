@@ -110,6 +110,12 @@ test('throws when using `props` or constants ' +
   })
 })
 
+test('works with external stylesheets', async t => {
+  const {code} = await transform('./fixtures/external-stylesheet.js')
+  const out = await read('./fixtures/external-stylesheet.out.js')
+  t.is(code, out.trim())
+})
+
 test('server rendering', t => {
   function App() {
     const color = 'green'

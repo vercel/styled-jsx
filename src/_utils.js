@@ -1,3 +1,4 @@
+import {dirname, normalize} from 'path'
 import * as t from 'babel-types'
 import escapeStringRegExp from 'escape-string-regexp'
 import traverse from 'babel-traverse'
@@ -87,7 +88,13 @@ const getExpressionText = expr => {
 
 const makeStyledJsxTag = (id, transformedCss, isTemplateLiteral) => {
   let css
-  if (isTemplateLiteral) {
+
+  if (
+    typeof transformedCss === 'object' &&
+    transformedCss.isIdentifier()
+  ) {
+    css = t.identifier(transformedCss.getSource())
+  } else if (isTemplateLiteral) {
     // build the expression from transformedCss
     traverse(
       parse(`\`${transformedCss}\``),
@@ -162,11 +169,54 @@ const validateExpression = (expr, scope) => (
   expr.traverse(validateExpressionVisitor, scope)
 )
 
+const getExternalReference = (path, imports) => {
+  const {node} = path
+  if (!t.isIdentifier(node)) {
+    return null
+  }
+
+  const importExpr = imports.filter(path => {
+    const specifiers = path.get('specifiers')
+    if (specifiers.length !== 1) {
+      return false
+    }
+    return (
+      specifiers[0].isImportDefaultSpecifier() &&
+      specifiers[0].get('local').node.name === node.name
+    )
+  })[0]
+
+  if (!importExpr) {
+    return null
+  }
+
+  return importExpr.get('source').node.value
+}
+
+const resolvePath = (path, modulePath) => {
+  if (path.charAt(0) !== '.') {
+    return require.resolve(path)
+  }
+  return require.resolve(
+    normalize(`${dirname(modulePath)}/${path}`)
+  )
+}
+
+const generateAttribute = (name, value) => (
+  t.jSXAttribute(
+    t.JSXIdentifier(name),
+    t.JSXExpressionContainer(value)
+  )
+)
+
 export {
   isGlobalEl,
   isStyledJsx,
   findStyles,
   getExpressionText,
   makeStyledJsxTag,
-  validateExpression
+  validateExpression,
+  getExternalReference,
+  resolvePath,
+  generateAttribute
 }

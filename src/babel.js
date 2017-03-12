@@ -13,18 +13,25 @@ import {
   findStyles,
   getExpressionText,
   makeStyledJsxTag,
-  validateExpression
+  validateExpression,
+  getExternalReference,
+  resolvePath,
+  generateAttribute
 } from './_utils'
 
 import {
   MARKUP_ATTRIBUTE,
-  STYLE_COMPONENT
+  STYLE_COMPONENT,
+  MARKUP_ATTRIBUTE_EXTERNAL
 } from './_constants'
 
 export default function ({types: t}) {
   return {
     inherits: jsx,
     visitor: {
+      ImportDeclaration(path, state) {
+        state.imports = (state.imports || []).concat(path)
+      },
       JSXOpeningElement(path, state) {
         const el = path.node
         const {name} = el.name || {}
@@ -52,17 +59,24 @@ export default function ({types: t}) {
             if (!name) {
               continue
             }
-            if (name === MARKUP_ATTRIBUTE || name.name === MARKUP_ATTRIBUTE) {
+            if (
+              name === MARKUP_ATTRIBUTE || name.name === MARKUP_ATTRIBUTE ||
+              name === MARKUP_ATTRIBUTE_EXTERNAL || name.name === MARKUP_ATTRIBUTE_EXTERNAL
+            ) {
               // avoid double attributes
               return
             }
           }
 
-          const attr = t.jSXAttribute(
-            t.JSXIdentifier(MARKUP_ATTRIBUTE),
-            t.JSXExpressionContainer(t.numericLiteral(state.jsxId))
+          el.attributes.push(
+            generateAttribute(MARKUP_ATTRIBUTE, t.numericLiteral(state.jsxId))
           )
-          el.attributes.push(attr)
+
+          if (state.externalJsxId) {
+            el.attributes.push(
+              generateAttribute(MARKUP_ATTRIBUTE_EXTERNAL, t.stringLiteral(state.externalJsxId))
+            )
+          }
         }
 
         state.ignoreClosing++
@@ -81,6 +95,7 @@ export default function ({types: t}) {
           }
 
           state.styles = []
+          state.externalStyles = []
 
           const scope = (path.findParent(path => (
             path.isFunctionDeclaration() ||
@@ -111,6 +126,25 @@ export default function ({types: t}) {
             }
 
             const expression = child.get('expression')
+            let externalSourcePath = getExternalReference(expression, state.imports)
+
+            if (t.isIdentifier(expression)) {
+              if (externalSourcePath) {
+                externalSourcePath = resolvePath(externalSourcePath, state.file.opts.filename)
+                state.externalStyles.push([
+                  hash(externalSourcePath),
+                  externalSourcePath,
+                  expression,
+                  isGlobalEl(style.get('openingElement').node)
+                ])
+                continue
+              }
+
+              throw path.buildCodeFrameError(`The Identifier ` +
+                `\`${expression.getSource()}\` is either \`undefined\` or ` +
+                `it is not an external StyleSheet reference i.e. ` +
+                `it doesn't come from an \`import\` or \`require\` statement`)
+            }
 
             if (!t.isTemplateLiteral(expression) &&
                 !t.isStringLiteral(expression)) {
@@ -134,6 +168,15 @@ export default function ({types: t}) {
             ])
           }
 
+          if (state.externalStyles.length > 0) {
+            state.externalJsxId = state.externalStyles
+              // remove globals
+              .filter(s => !s[3])
+              // create array of hashes
+              .map(s => s[0])
+              .join(' ')
+          }
+
           state.jsxId = hash(state.styles.map(s => s[1].source || s[1]).join(''))
           state.hasJSXStyle = true
           state.file.hasJSXStyle = true
@@ -147,6 +190,25 @@ export default function ({types: t}) {
           }
 
           if (!state.hasJSXStyle || !isStyledJsx(path)) {
+            return
+          }
+
+          if (
+            state.externalJsxId &&
+            path.get('children')[0].get('expression').isIdentifier()
+          ) {
+            const [
+              id,
+              externalSourcePath,
+              externalStylesReference
+            ] = state.externalStyles.shift()
+
+            path.replaceWith(
+              makeStyledJsxTag(
+                id,
+                externalStylesReference
+              )
+            )
             return
           }
 
