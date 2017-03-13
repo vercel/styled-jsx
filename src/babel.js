@@ -131,9 +131,9 @@ export default function ({types: t}) {
             }
 
             const expression = child.get('expression')
-            let externalSourcePath = getExternalReference(expression, state.imports)
 
             if (t.isIdentifier(expression)) {
+              let externalSourcePath = getExternalReference(expression, state.imports)
               if (externalSourcePath) {
                 externalSourcePath = resolvePath(externalSourcePath, state.file.opts.filename)
                 state.externalStyles.push([
@@ -205,7 +205,7 @@ export default function ({types: t}) {
           ) {
             const [
               id,
-              externalSourcePath,
+              ,
               externalStylesReference,
               isGlobal
             ] = state.externalStyles.shift()
