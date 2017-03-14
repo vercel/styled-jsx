@@ -1,4 +1,4 @@
-import {dirname, normalize} from 'path'
+import {dirname, resolve} from 'path'
 import * as t from 'babel-types'
 import escapeStringRegExp from 'escape-string-regexp'
 import traverse from 'babel-traverse'
@@ -216,7 +216,7 @@ const resolvePath = (path, modulePath) => {
     return require.resolve(path)
   }
   return require.resolve(
-    normalize(`${dirname(modulePath)}/${path}`)
+    resolve(`${dirname(modulePath)}/${path}`)
   )
 }
 

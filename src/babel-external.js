@@ -59,7 +59,7 @@ export default function ({types}) {
       ExportDefaultDeclaration(path, state) {
         exportDefaultDeclarationVisitor({
           path,
-          styleId: hash(require.resolve(state.file.opts.filename)),
+          styleId: hash(state.file.opts.filename),
           types
         })
       }
