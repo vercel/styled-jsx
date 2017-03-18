@@ -291,6 +291,20 @@ The IDE let you inject any language in place with _Inject language or reference_
 Simply perform the action in the string template and select CSS.
 You get full CSS highlighting and autocompletion and it will last until you close the IDE.
 
+### Emmet
+
+ If you're using Emmet you can add the following snippet to `~/emmet/snippets-styledjsx.json` This will allow you to expand `style-jsx` to a styled-jsx block.
+ 
+ ```json
+ {
+  "html": {
+    "snippets": {
+      "style-jsx": "<style jsx>{`\n\t$1\n`}</style>"
+    }
+  }
+}
+```
+
 ## Credits
 
 - **Pedram Emrouznejad** ([rijs](https://github.com/rijs/fullstack)) suggested attribute selectors over my initial class prefixing idea.
