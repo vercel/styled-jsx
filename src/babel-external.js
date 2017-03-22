@@ -7,31 +7,58 @@ import {
   restoreExpressions,
   makeStyledJsxCss,
   globalCss,
-  isValidCss
+  isValidCss,
+  makeSourceMapGenerator,
+  addSourceMaps
 } from './_utils'
 
 export const exportDefaultDeclarationVisitor = ({
   path: entryPath,
   styleId,
   types: t,
-  validate = false
+  validate = false,
+  state
 }) => {
   const path = entryPath.get('declaration')
   if (!path.isTemplateLiteral() || path.isStringLiteral()) {
     return
   }
   const css = getExpressionText(path)
+  const prefix = `[${MARKUP_ATTRIBUTE_EXTERNAL}~="${styleId}"]`
   const isTemplateLiteral = css.modified
+  const useSourceMaps = Boolean(state.file.opts.sourceMaps)
+
   let globalCss = css.modified || css
 
   if (validate && !isValidCss(globalCss)) {
     return
   }
 
-  let localCss = transform(
-    `[${MARKUP_ATTRIBUTE_EXTERNAL}~="${styleId}"]`,
-    css.modified || css
-  )
+  let localCss
+
+  if (useSourceMaps) {
+    const generator = makeSourceMapGenerator(state.file)
+    const filename = state.file.opts.sourceFileName
+    const offset = path.get('loc').node.start
+    localCss = addSourceMaps(
+      transform(
+        prefix,
+        css.modified || css,
+        {
+          generator,
+          offset,
+          filename
+        }
+      ),
+      generator,
+      filename
+    )
+  } else {
+    localCss = localCss = transform(
+      prefix,
+      css.modified || css
+    )
+  }
 
   if (css.replacements) {
     globalCss = restoreExpressions(
@@ -43,8 +70,6 @@ export const exportDefaultDeclarationVisitor = ({
       css.replacements
     )
   }
-
-  // TODO add source maps support
 
   path.replaceWith(
     t.objectExpression([
@@ -67,7 +92,8 @@ export default function ({types}) {
         exportDefaultDeclarationVisitor({
           path,
           styleId: hash(state.file.opts.filename),
-          types
+          types,
+          state
         })
       }
     }

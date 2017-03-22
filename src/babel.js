@@ -1,8 +1,6 @@
 // Packages
 import jsx from 'babel-plugin-syntax-jsx'
 import hash from 'string-hash'
-import {SourceMapGenerator} from 'source-map'
-import convert from 'convert-source-map'
 
 // Ours
 import transform from '../lib/style-transform'
@@ -18,7 +16,9 @@ import {
   validateExpression,
   getExternalReference,
   resolvePath,
-  generateAttribute
+  generateAttribute,
+  makeSourceMapGenerator,
+  addSourceMaps
 } from './_utils'
 
 import {
@@ -236,13 +236,9 @@ export default function ({types: t}) {
           let transformedCss
 
           if (useSourceMaps) {
+            const generator = makeSourceMapGenerator(state.file)
             const filename = state.file.opts.sourceFileName
-            const generator = new SourceMapGenerator({
-              file: filename,
-              sourceRoot: state.file.opts.sourceRoot
-            })
-            generator.setSourceContent(filename, state.file.code)
-            transformedCss = [
+            transformedCss = addSourceMaps(
               transform(
                 getPrefix(state.jsxId),
                 css.modified || css,
@@ -252,11 +248,9 @@ export default function ({types: t}) {
                   filename
                 }
               ),
-              convert
-                .fromObject(generator)
-                .toComment({multiline: true}),
-              `/*@ sourceURL=${filename} */`
-            ].join('\n')
+              generator,
+              filename
+            )
           } else {
             transformedCss = transform(
               getPrefix(state.jsxId),
@@ -302,7 +296,8 @@ export default function ({types: t}) {
           path,
           styleId: hash(filename),
           types: t,
-          validate: true
+          validate: true,
+          state
         })
       }
     }

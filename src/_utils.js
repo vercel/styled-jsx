@@ -4,6 +4,8 @@ import escapeStringRegExp from 'escape-string-regexp'
 import traverse from 'babel-traverse'
 import {parse} from 'babylon'
 import {parse as parseCss} from 'css-tree'
+import {SourceMapGenerator} from 'source-map'
+import convert from 'convert-source-map'
 
 import {
   STYLE_ATTRIBUTE,
@@ -13,11 +15,11 @@ import {
   STYLE_COMPONENT_CSS
 } from './_constants'
 
-const isGlobalEl = el => el.attributes.some(({name}) => (
+export const isGlobalEl = el => el.attributes.some(({name}) => (
   name && name.name === GLOBAL_ATTRIBUTE
 ))
 
-const isStyledJsx = ({node: el}) => (
+export const isStyledJsx = ({node: el}) => (
   t.isJSXElement(el) &&
   el.openingElement.name.name === 'style' &&
   el.openingElement.attributes.some(attr => (
@@ -25,7 +27,7 @@ const isStyledJsx = ({node: el}) => (
   ))
 )
 
-const findStyles = path => {
+export const findStyles = path => {
   if (isStyledJsx(path)) {
     const {node} = path
     return isGlobalEl(node.openingElement) ?
@@ -35,7 +37,7 @@ const findStyles = path => {
   return path.get('children').filter(isStyledJsx)
 }
 
-const getExpressionText = expr => {
+export const getExpressionText = expr => {
   const node = expr.node
 
   // assume string literal
@@ -87,7 +89,7 @@ const getExpressionText = expr => {
   }
 }
 
-const restoreExpressions = (css, replacements) => replacements.reduce(
+export const restoreExpressions = (css, replacements) => replacements.reduce(
   (css, currentReplacement) => {
     css = css.replace(
       new RegExp(currentReplacement.replacement, 'g'),
@@ -98,7 +100,7 @@ const restoreExpressions = (css, replacements) => replacements.reduce(
   css
 )
 
-const makeStyledJsxCss = (transformedCss, isTemplateLiteral) => {
+export const makeStyledJsxCss = (transformedCss, isTemplateLiteral) => {
   if (!isTemplateLiteral) {
     return t.stringLiteral(transformedCss)
   }
@@ -117,7 +119,7 @@ const makeStyledJsxCss = (transformedCss, isTemplateLiteral) => {
   return css
 }
 
-const makeStyledJsxTag = (id, transformedCss, isTemplateLiteral) => {
+export const makeStyledJsxTag = (id, transformedCss, isTemplateLiteral) => {
   let css
 
   if (
@@ -152,7 +154,7 @@ const makeStyledJsxTag = (id, transformedCss, isTemplateLiteral) => {
 // We only allow constants to be used in template literals.
 // The following visitor ensures that MemberExpressions and Identifiers
 // are not in the scope of the current Method (render) or function (Component).
-const validateExpressionVisitor = {
+export const validateExpressionVisitor = {
   MemberExpression(path) {
     const {node} = path
     if (
@@ -184,11 +186,11 @@ const validateExpressionVisitor = {
   }
 }
 
-const validateExpression = (expr, scope) => (
+export const validateExpression = (expr, scope) => (
   expr.traverse(validateExpressionVisitor, scope)
 )
 
-const getExternalReference = (path, imports) => {
+export const getExternalReference = (path, imports) => {
   const {node} = path
   if (!t.isIdentifier(node)) {
     return null
@@ -212,7 +214,7 @@ const getExternalReference = (path, imports) => {
   return importExpr.get('source').node.value
 }
 
-const resolvePath = (path, modulePath) => {
+export const resolvePath = (path, modulePath) => {
   if (path.charAt(0) !== '.') {
     return require.resolve(path)
   }
@@ -221,14 +223,14 @@ const resolvePath = (path, modulePath) => {
   )
 }
 
-const generateAttribute = (name, value) => (
+export const generateAttribute = (name, value) => (
   t.jSXAttribute(
     t.JSXIdentifier(name),
     t.JSXExpressionContainer(value)
   )
 )
 
-const isValidCss = (str) => {
+export const isValidCss = (str) => {
   try {
     parseCss(str)
     return true
@@ -236,17 +238,23 @@ const isValidCss = (str) => {
   return false
 }
 
-export {
-  isGlobalEl,
-  isStyledJsx,
-  findStyles,
-  getExpressionText,
-  restoreExpressions,
-  makeStyledJsxCss,
-  makeStyledJsxTag,
-  validateExpression,
-  getExternalReference,
-  resolvePath,
-  generateAttribute,
-  isValidCss
+export const makeSourceMapGenerator = (file) => {
+  const filename = file.opts.sourceFileName
+  const generator = new SourceMapGenerator({
+    file: filename,
+    sourceRoot: file.opts.sourceRoot
+  })
+
+  generator.setSourceContent(filename, file.code)
+  return generator
 }
+
+export const addSourceMaps = (code, generator, filename) => (
+  [
+    code,
+    convert
+      .fromObject(generator)
+      .toComment({multiline: true}),
+    `/*@ sourceURL=${filename} */`
+  ].join('\n')
+)
