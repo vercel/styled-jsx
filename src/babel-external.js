@@ -5,13 +5,16 @@ import {MARKUP_ATTRIBUTE_EXTERNAL} from './_constants'
 import {
   getExpressionText,
   restoreExpressions,
-  makeStyledJsxCss
+  makeStyledJsxCss,
+  globalCss,
+  isValidCss
 } from './_utils'
 
 export const exportDefaultDeclarationVisitor = ({
   path: entryPath,
   styleId,
-  types: t
+  types: t,
+  validate = false
 }) => {
   const path = entryPath.get('declaration')
   if (!path.isTemplateLiteral() || path.isStringLiteral()) {
@@ -20,6 +23,10 @@ export const exportDefaultDeclarationVisitor = ({
   const css = getExpressionText(path)
   const isTemplateLiteral = css.modified
   let globalCss = css.modified || css
+
+  if (validate && !isValidCss(globalCss)) {
+    return
+  }
 
   let localCss = transform(
     `[${MARKUP_ATTRIBUTE_EXTERNAL}~="${styleId}"]`,

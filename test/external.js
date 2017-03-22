@@ -13,7 +13,7 @@ const transform = (file, opts = {}) => (
   })
 )
 
-test('just works', async t => {
+test('transpiles external stylesheets', async t => {
   const {code} = await transform('./fixtures/styles.js')
   const out = await read('./fixtures/styles.out.js')
   t.is(code, out.trim())

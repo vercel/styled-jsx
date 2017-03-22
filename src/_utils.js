@@ -3,6 +3,7 @@ import * as t from 'babel-types'
 import escapeStringRegExp from 'escape-string-regexp'
 import traverse from 'babel-traverse'
 import {parse} from 'babylon'
+import {parse as parseCss} from 'css-tree'
 
 import {
   STYLE_ATTRIBUTE,
@@ -61,7 +62,7 @@ const getExpressionText = expr => {
   // e.g.
   // p { color: ${myConstant}; }
   // becomes
-  // p { color: ___styledjsxexpression0___; }
+  // p { color: ___styledjsxexpression_0___; }
 
   const replacements = expressions.map((e, id) => ({
     pattern: new RegExp(`\\$\\{\\s*${escapeStringRegExp(e.getSource())}\\s*\\}`),
@@ -227,6 +228,14 @@ const generateAttribute = (name, value) => (
   )
 )
 
+const isValidCss = (str) => {
+  try {
+    parseCss(str)
+    return true
+  } catch (e) {}
+  return false
+}
+
 export {
   isGlobalEl,
   isStyledJsx,
@@ -238,5 +247,6 @@ export {
   validateExpression,
   getExternalReference,
   resolvePath,
-  generateAttribute
+  generateAttribute,
+  isValidCss
 }

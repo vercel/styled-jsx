@@ -27,7 +27,6 @@ import {
   MARKUP_ATTRIBUTE_EXTERNAL
 } from './_constants'
 
-const isExternalStyleSheetTranspiled = {}
 const getPrefix = id => `[${MARKUP_ATTRIBUTE}="${id}"]`
 
 export default function ({types: t}) {
@@ -142,7 +141,6 @@ export default function ({types: t}) {
                   expression,
                   isGlobalEl(style.get('openingElement').node)
                 ])
-                isExternalStyleSheetTranspiled[externalSourcePath] = false
                 continue
               }
 
@@ -300,15 +298,11 @@ export default function ({types: t}) {
       // Transpile external StyleSheets
       ExportDefaultDeclaration(path, state) {
         const filename = state.file.opts.filename
-        const entry = isExternalStyleSheetTranspiled[filename]
-        if (entry || typeof entry === 'undefined') {
-          return
-        }
-        isExternalStyleSheetTranspiled[filename] = true
         exportDefaultDeclarationVisitor({
           path,
           styleId: hash(filename),
-          types: t
+          types: t,
+          validate: true
         })
       }
     }
