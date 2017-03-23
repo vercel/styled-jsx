@@ -102,11 +102,11 @@ export default function ({types: t}) {
     // e.g.
     // p { color: ${myConstant}; }
     // becomes
-    // p { color: ___styledjsxexpression0___; }
+    // p { color: 0__styledjsxexpression_0__0; }
 
     const replacements = expressions.map((e, id) => ({
       pattern: new RegExp(`\\$\\{\\s*${escapeStringRegExp(e.getSource())}\\s*\\}`),
-      replacement: `___styledjsxexpression_${id}___`,
+      replacement: `0__styledjsxexpression_${id}__0`,
       initial: `$\{${e.getSource()}}`
     })).sort((a, b) => a.initial.length < b.initial.length)
 
