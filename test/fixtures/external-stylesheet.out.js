@@ -1,6 +1,6 @@
 import _JSXStyle from 'styled-jsx/style';
 import styles from './styles';
-import styles2 from './styles2';
+const styles2 = require('./styles2');
 
 export default (() => <div data-jsx={1144769207} data-jsx-ext={"626947301"}>
     <p data-jsx={1144769207} data-jsx-ext={"626947301"}>test</p>

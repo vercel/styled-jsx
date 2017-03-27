@@ -1,5 +1,5 @@
 import styles from './styles'
-import styles2 from './styles2'
+const styles2 = require('./styles2')
 
 export default () => (
   <div>

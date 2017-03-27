@@ -5,7 +5,10 @@ export default (file, opts = {}) => (
   new Promise((resolve, reject) => {
     transformFile(
       path.resolve(__dirname, file),
-      Object.assign({babelrc: false}, opts),
+      {
+        babelrc: false,
+        ...opts
+      },
       (err, data) => {
         if (err) {
           return reject(err)

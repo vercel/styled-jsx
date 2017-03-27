@@ -16,8 +16,14 @@ const transform = (file, opts = {}) => (
 test('transpiles external stylesheets', async t => {
   const {code} = await transform(
     './fixtures/styles.js',
-    { sourceMaps: true }
+    {sourceMaps: true}
   )
   const out = await read('./fixtures/styles.out.js')
+  t.is(code, out.trim())
+})
+
+test('transpiles external stylesheets (CommonJS modules)', async t => {
+  const {code} = await transform('./fixtures/styles2.js')
+  const out = await read('./fixtures/styles2.out.js')
   t.is(code, out.trim())
 })

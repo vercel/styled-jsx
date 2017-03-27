@@ -190,10 +190,18 @@ export const validateExpression = (expr, scope) => (
   expr.traverse(validateExpressionVisitor, scope)
 )
 
-export const getExternalReference = (path, imports) => {
+export const getExternalReference = (path, {imports, requires}) => {
   const {node} = path
   if (!t.isIdentifier(node)) {
     return null
+  }
+
+  const requireExpr = requires.filter(path => (
+    path.get('id').node.name === node.name
+  ))[0]
+
+  if (requireExpr) {
+    return requireExpr.get('init').get('arguments')[0].node.value
   }
 
   const importExpr = imports.filter(path => {
@@ -230,15 +238,15 @@ export const generateAttribute = (name, value) => (
   )
 )
 
-export const isValidCss = (str) => {
+export const isValidCss = str => {
   try {
     parseCss(str)
     return true
-  } catch (e) {}
+  } catch (err) {}
   return false
 }
 
-export const makeSourceMapGenerator = (file) => {
+export const makeSourceMapGenerator = file => {
   const filename = file.opts.sourceFileName
   const generator = new SourceMapGenerator({
     file: filename,

@@ -6,26 +6,24 @@ import {
   getExpressionText,
   restoreExpressions,
   makeStyledJsxCss,
-  globalCss,
   isValidCss,
   makeSourceMapGenerator,
   addSourceMaps
 } from './_utils'
 
-export const exportDefaultDeclarationVisitor = ({
-  path: entryPath,
+const visitor = ({
+  path,
   styleId,
   types: t,
   validate = false,
   state
 }) => {
-  const path = entryPath.get('declaration')
   if (!path.isTemplateLiteral() || path.isStringLiteral()) {
     return
   }
   const css = getExpressionText(path)
   const prefix = `[${MARKUP_ATTRIBUTE_EXTERNAL}~="${styleId}"]`
-  const isTemplateLiteral = css.modified
+  const isTemplateLiteral = Boolean(css.modified)
   const useSourceMaps = Boolean(state.file.opts.sourceMaps)
 
   let globalCss = css.modified || css
@@ -54,7 +52,7 @@ export const exportDefaultDeclarationVisitor = ({
       filename
     )
   } else {
-    localCss = localCss = transform(
+    localCss = transform(
       prefix,
       css.modified || css
     )
@@ -85,11 +83,36 @@ export const exportDefaultDeclarationVisitor = ({
   )
 }
 
+export const exportDefaultDeclarationVisitor = ({path, ...rest}) => (
+  visitor({
+    path: path.get('declaration'),
+    ...rest
+  })
+)
+
+export const moduleExportsVisitor = ({path, ...rest}) => (
+  visitor({
+    path: path.get('right'),
+    ...rest
+  })
+)
+
 export default function ({types}) {
   return {
     visitor: {
       ExportDefaultDeclaration(path, state) {
         exportDefaultDeclarationVisitor({
+          path,
+          styleId: hash(state.file.opts.filename),
+          types,
+          state
+        })
+      },
+      AssignmentExpression(path, state) {
+        if (path.get('left').getSource() !== 'module.exports') {
+          return
+        }
+        moduleExportsVisitor({
           path,
           styleId: hash(state.file.opts.filename),
           types,

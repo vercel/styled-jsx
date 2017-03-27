@@ -4,7 +4,10 @@ import hash from 'string-hash'
 
 // Ours
 import transform from '../lib/style-transform'
-import {exportDefaultDeclarationVisitor} from './babel-external'
+import {
+  exportDefaultDeclarationVisitor,
+  moduleExportsVisitor
+} from './babel-external'
 
 import {
   isGlobalEl,
@@ -34,7 +37,17 @@ export default function ({types: t}) {
     inherits: jsx,
     visitor: {
       ImportDeclaration(path, state) {
-        state.imports = (state.imports || []).concat(path)
+        state.imports = (state.imports || []).concat([path])
+      },
+      VariableDeclarator(path, state) {
+        const subpath = path.get('init')
+        if (
+          !subpath.isCallExpression() ||
+          subpath.get('callee').node.name !== 'require'
+        ) {
+          return
+        }
+        state.requires = (state.requires || []).concat([path])
       },
       JSXOpeningElement(path, state) {
         const el = path.node
@@ -132,7 +145,10 @@ export default function ({types: t}) {
             const expression = child.get('expression')
 
             if (t.isIdentifier(expression)) {
-              let externalSourcePath = getExternalReference(expression, state.imports)
+              let externalSourcePath = getExternalReference(expression, {
+                imports: state.imports,
+                requires: state.requires
+              })
               if (externalSourcePath) {
                 externalSourcePath = resolvePath(externalSourcePath, state.file.opts.filename)
                 state.externalStyles.push([
@@ -293,6 +309,19 @@ export default function ({types: t}) {
       ExportDefaultDeclaration(path, state) {
         const filename = state.file.opts.filename
         exportDefaultDeclarationVisitor({
+          path,
+          styleId: hash(filename),
+          types: t,
+          validate: true,
+          state
+        })
+      },
+      AssignmentExpression(path, state) {
+        if (path.get('left').getSource() !== 'module.exports') {
+          return
+        }
+        const filename = state.file.opts.filename
+        moduleExportsVisitor({
           path,
           styleId: hash(filename),
           types: t,
