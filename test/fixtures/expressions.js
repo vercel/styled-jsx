@@ -24,7 +24,7 @@ export default () => (
     }</style>
     <style jsx>{`p { animation-duration: ${animationDuration} }`}</style>
     <style jsx>{`
-      p { animation: ${animationDuration} forwards ${animationName } }`
+      p { animation: ${animationDuration} forwards ${animationName} }`
     }</style>
   </div>
 )
