@@ -27,7 +27,7 @@ Next, add `styled-jsx/babel` to `plugins` in your babel configuration:
 
 Now add `<style jsx>` to your code and fill it with CSS:
 
-```js
+```jsx
 export default () => (
   <div>
     <p>only this paragraph will get the style :)</p>
@@ -57,7 +57,7 @@ export default () => (
 
 The example above transpiles to the following:
 
-```js
+```jsx
 import _JSXStyle from 'styled-jsx/style'
 
 export default () => (
@@ -85,7 +85,7 @@ you can target the "root" element, in the same manner that
 
 If you want to target _only_ the host, we suggest you use a class:
 
-```js
+```jsx
 export default () => (
   <div className="root">
     <style jsx>{`
@@ -102,7 +102,7 @@ export default () => (
 To skip scoping entirely, you can make the global-ness of your styles
 explicit by adding _global_.
 
-```js
+```jsx
 export default () => (
   <div>
     <style jsx global>{`
@@ -128,7 +128,7 @@ This is very useful in order to, for example, generate an *unprefixed class* tha
 you can pass to 3rd-party components. For example, to style
 `react-select` which supports passing a custom class via `optionClassName`:
 
-```js
+```jsx
 import Select from 'react-select'
 export default () => (
   <div>
@@ -222,7 +222,7 @@ If you want to use or toggle dynamic values depending on the component `state` o
 
 The main export flushes your styles to an array of `React.Element`:
 
-```js
+```jsx
 import React from 'react'
 import ReactDOM from 'react-dom/server'
 import flush from 'styled-jsx/server'
@@ -243,7 +243,7 @@ export default (req, res) => {
 
 We also expose `flushToHTML` to return generated HTML:
 
-```js
+```jsx
 import React from 'react'
 import ReactDOM from 'react-dom/server'
 import { flushToHTML } from 'styled-jsx/server'
