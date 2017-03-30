@@ -2,11 +2,11 @@ import _JSXStyle from 'styled-jsx/style';
 import styles from './styles';
 const styles2 = require('./styles2');
 
-export default (() => <div data-jsx={1144769207} data-jsx-ext={"626947301"}>
-    <p data-jsx={1144769207} data-jsx-ext={"626947301"}>test</p>
-    <p data-jsx={1144769207} data-jsx-ext={"626947301"}>woot</p>
-    <_JSXStyle styleId={1767977751} css={styles2.global} />
-    <div data-jsx={1144769207} data-jsx-ext={"626947301"}>woot</div>
-    <_JSXStyle styleId={1144769207} css={"p[data-jsx=\"1144769207\"] {color: red}div[data-jsx=\"1144769207\"] {color: green;}"} />
-    <_JSXStyle styleId={626947301} css={styles.local} />
+export default (() => <div data-jsx={"__styleJsxId_mock__"} data-jsx-ext={"__styleJsxId_mock__"}>
+    <p data-jsx={"__styleJsxId_mock__"} data-jsx-ext={"__styleJsxId_mock__"}>test</p>
+    <p data-jsx={"__styleJsxId_mock__"} data-jsx-ext={"__styleJsxId_mock__"}>woot</p>
+    <_JSXStyle styleId={"__styleJsxId_mock__"} css={styles2.global} />
+    <div data-jsx={"__styleJsxId_mock__"} data-jsx-ext={"__styleJsxId_mock__"}>woot</div>
+    <_JSXStyle styleId={"__styleJsxId_mock__"} css={"p[data-jsx=\"__styleJsxId_mock__\"] {color: red}div[data-jsx=\"__styleJsxId_mock__\"] {color: green;}"} />
+    <_JSXStyle styleId={"__styleJsxId_mock__"} css={styles.local} />
   </div>);
