@@ -85,9 +85,11 @@ export default function ({types: t}) {
             }
           }
 
-          el.attributes.push(
-            generateAttribute(MARKUP_ATTRIBUTE, t.numericLiteral(state.jsxId))
-          )
+          if (state.jsxId) {
+            el.attributes.push(
+              generateAttribute(MARKUP_ATTRIBUTE, t.numericLiteral(state.jsxId))
+            )
+          }
 
           if (state.externalJsxId) {
             el.attributes.push(
@@ -197,7 +199,10 @@ export default function ({types: t}) {
               .join(' ')
           }
 
-          state.jsxId = hash(state.styles.map(s => s[1].source || s[1]).join(''))
+          if (state.styles.length > 0) {
+            state.jsxId = hash(state.styles.map(s => s[1].source || s[1]).join(''))
+          }
+
           state.hasJSXStyle = true
           state.file.hasJSXStyle = true
           // next visit will be: JSXOpeningElement
