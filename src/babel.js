@@ -37,7 +37,7 @@ export default function ({types: t}) {
     inherits: jsx,
     visitor: {
       ImportDeclaration(path, state) {
-        state.imports = (state.imports || []).concat([path])
+        state.imports = state.imports.concat([path])
       },
       VariableDeclarator(path, state) {
         const subpath = path.get('init')
@@ -47,7 +47,7 @@ export default function ({types: t}) {
         ) {
           return
         }
-        state.requires = (state.requires || []).concat([path])
+        state.requires = state.requires.concat([path])
       },
       JSXOpeningElement(path, state) {
         const el = path.node
@@ -296,6 +296,8 @@ export default function ({types: t}) {
           state.hasJSXStyle = null
           state.ignoreClosing = null
           state.file.hasJSXStyle = false
+          state.imports = []
+          state.requires = []
         },
         exit({node, scope}, state) {
           if (!(state.file.hasJSXStyle && !scope.hasBinding(STYLE_COMPONENT))) {
