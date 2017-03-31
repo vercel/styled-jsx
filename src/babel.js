@@ -219,7 +219,7 @@ export default function ({types: t}) {
           }
 
           if (
-            state.externalJsxId &&
+            state.externalStyles.length > 0 &&
             path.get('children')[0].get('expression').isIdentifier()
           ) {
             const [
