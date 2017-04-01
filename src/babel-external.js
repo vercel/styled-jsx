@@ -18,7 +18,7 @@ const visitor = ({
   validate = false,
   state
 }) => {
-  if (!path.isTemplateLiteral() || path.isStringLiteral()) {
+  if (!path.isTemplateLiteral() && !path.isStringLiteral()) {
     return
   }
   const css = getExpressionText(path)
