@@ -13,20 +13,22 @@ import JSXStyle from '../src/style'
 import flush, {flushToHTML} from '../src/server'
 import read from './_read'
 
-const transform = (file, opts = {}) => (
-  new Promise((resolve, reject) => {
-    transformFile(path.resolve(__dirname, file), {
+const transform = (file, opts = {}) => new Promise((resolve, reject) => {
+  transformFile(
+    path.resolve(__dirname, file),
+    {
       babelrc: false,
       plugins: [plugin],
       ...opts
-    }, (err, data) => {
+    },
+    (err, data) => {
       if (err) {
         return reject(err)
       }
       resolve(data)
-    })
-  })
-)
+    }
+  )
+})
 
 test('works with stateless', async t => {
   const {code} = await transform('./fixtures/stateless.js')
@@ -59,7 +61,9 @@ test('works with global styles', async t => {
 })
 
 test('generates source maps', async t => {
-  const {code} = await transform('./fixtures/source-maps.js', {sourceMaps: true})
+  const {code} = await transform('./fixtures/source-maps.js', {
+    sourceMaps: true
+  })
   const out = await read('./fixtures/source-maps.out.js')
   t.is(code, out.trim())
 })
@@ -76,11 +80,14 @@ test('works with multiple jsx blocks', async t => {
   t.is(code, out.trim())
 })
 
-test('should not add the data-jsx attribute to components instances', async t => {
-  const {code} = await transform('./fixtures/component-attribute.js')
-  const out = await read('./fixtures/component-attribute.out.js')
-  t.is(code, out.trim())
-})
+test(
+  'should not add the data-jsx attribute to components instances',
+  async t => {
+    const {code} = await transform('./fixtures/component-attribute.js')
+    const out = await read('./fixtures/component-attribute.out.js')
+    t.is(code, out.trim())
+  }
+)
 
 test('works with expressions in template literals', async t => {
   const {code} = await transform('./fixtures/expressions.js')
@@ -100,20 +107,24 @@ test('works with non styled-jsx styles', async t => {
   t.is(code, out.trim())
 })
 
-test('throws when using `props` or constants ' +
-  'defined in the closest scope', async t => {
-  [1, 2, 3, 4].forEach(i => {
-    t.throws(
-      transform(`./fixtures/invalid-expressions/${i}.js`),
-      SyntaxError
-    )
-  })
-})
+test(
+  'throws when using `props` or constants ' + 'defined in the closest scope',
+  async t => {
+    [1, 2, 3, 4].forEach(i => {
+      t.throws(
+        transform(`./fixtures/invalid-expressions/${i}.js`),
+        SyntaxError
+      )
+    })
+  }
+)
 
 test('server rendering', t => {
   function App() {
     const color = 'green'
-    return React.createElement('div', null,
+    return React.createElement(
+      'div',
+      null,
       React.createElement(JSXStyle, {
         css: 'p { color: red }',
         styleId: 1
