@@ -139,6 +139,11 @@ export default () => (
       div :global(.react-select) {
         color: red
       }
+
+      /* if you want to select multiple children elements use :global() multiple times */
+      div :global(.react-select) :global(.some-child-of-react-select) {
+        color: blue
+      }
     `}</style>
   </div>
 )
@@ -294,7 +299,7 @@ You get full CSS highlighting and autocompletion and it will last until you clos
 ### Emmet
 
  If you're using Emmet you can add the following snippet to `~/emmet/snippets-styledjsx.json` This will allow you to expand `style-jsx` to a styled-jsx block.
- 
+
  ```json
  {
   "html": {
