@@ -132,7 +132,7 @@ export default function ({types: t}) {
 
             if (children.length !== 1) {
               throw path.buildCodeFrameError(`Expected one child under ` +
-                `JSX Style tag, but got ${style.children.length} ` +
+                `JSX Style tag, but got ${children.length} ` +
                 `(eg: <style jsx>{\`hi\`}</style>)`)
             }
 
