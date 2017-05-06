@@ -6,6 +6,7 @@ import hash from 'string-hash'
 import transform from '../lib/style-transform'
 import {
   exportDefaultDeclarationVisitor,
+  namedExportDeclarationVisitor,
   moduleExportsVisitor
 } from './babel-external'
 
@@ -31,6 +32,16 @@ import {
 } from './_constants'
 
 const getPrefix = id => `[${MARKUP_ATTRIBUTE}="${id}"]`
+const callExternalVisitor = (visitor, path, state) => {
+  const {file} = state
+  const {opts} = file
+  visitor(path, {
+    validate: true,
+    sourceMaps: opts.sourceMaps,
+    sourceFileName: opts.sourceFileName,
+    file,
+  })
+}
 
 export default function ({types: t}) {
   return {
@@ -316,27 +327,13 @@ export default function ({types: t}) {
       },
       // Transpile external StyleSheets
       ExportDefaultDeclaration(path, state) {
-        const filename = state.file.opts.filename
-        exportDefaultDeclarationVisitor({
-          path,
-          styleId: hash(filename),
-          types: t,
-          validate: true,
-          state
-        })
+        callExternalVisitor(exportDefaultDeclarationVisitor, path, state)
       },
       AssignmentExpression(path, state) {
-        if (path.get('left').getSource() !== 'module.exports') {
-          return
-        }
-        const filename = state.file.opts.filename
-        moduleExportsVisitor({
-          path,
-          styleId: hash(filename),
-          types: t,
-          validate: true,
-          state
-        })
+        callExternalVisitor(moduleExportsVisitor, path, state)
+      },
+      ExportNamedDeclaration(path, state) {
+        callExternalVisitor(namedExportDeclarationVisitor, path, state)
       }
     }
   }
