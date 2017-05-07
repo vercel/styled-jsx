@@ -1,4 +1,3 @@
-import {dirname, resolve} from 'path'
 import * as t from 'babel-types'
 import escapeStringRegExp from 'escape-string-regexp'
 import traverse from 'babel-traverse'
@@ -124,8 +123,10 @@ export const makeStyledJsxTag = (id, transformedCss, isTemplateLiteral) => {
 
   if (
     typeof transformedCss === 'object' &&
-    t.isIdentifier(transformedCss) ||
-    t.isMemberExpression(transformedCss)
+    (
+      t.isIdentifier(transformedCss) ||
+      t.isMemberExpression(transformedCss)
+    )
   ) {
     css = transformedCss
   } else {
@@ -138,7 +139,7 @@ export const makeStyledJsxTag = (id, transformedCss, isTemplateLiteral) => {
       [
         t.jSXAttribute(
           t.jSXIdentifier(STYLE_COMPONENT_ID),
-          t.jSXExpressionContainer(typeof id !== 'number' ? id : t.numericLiteral(id))
+          t.jSXExpressionContainer(typeof id === 'number' ? t.numericLiteral(id) : id)
         ),
         t.jSXAttribute(
           t.jSXIdentifier(STYLE_COMPONENT_CSS),

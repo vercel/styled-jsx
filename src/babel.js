@@ -18,8 +18,6 @@ import {
   restoreExpressions,
   makeStyledJsxTag,
   validateExpression,
-  isExpressionImported,
-  resolvePath,
   generateAttribute,
   makeSourceMapGenerator,
   addSourceMaps
@@ -39,7 +37,7 @@ const callExternalVisitor = (visitor, path, state) => {
     validate: true,
     sourceMaps: opts.sourceMaps,
     sourceFileName: opts.sourceFileName,
-    file,
+    file
   })
 }
 
@@ -212,15 +210,17 @@ export default function ({types: t}) {
 
             // construct a template literal of this form:
             // `${styles.__scopedHash} ${otherStyles.__scopedHash}`
-            state.externalJsxId = expressions.length === 1
-              ? expressions[0]
-              : t.templateLiteral(
-                  [t.templateElement({raw: '', coocked: ''})]
-                    .concat([...new Array(expressions.length - 1)].map(e => t.templateElement({raw: ' ', coocked: ' '})))
-                    .concat([t.templateElement({raw: '', coocked: ''}, true)])
-                  ,
-                  expressions
-                )
+            state.externalJsxId = (
+              expressions.length === 1 ?
+                expressions[0] :
+                t.templateLiteral(
+                    [t.templateElement({raw: '', coocked: ''})]
+                      .concat([...new Array(expressions.length - 1)].map(() => t.templateElement({raw: ' ', coocked: ' '})))
+                      .concat([t.templateElement({raw: '', coocked: ''}, true)])
+                    ,
+                    expressions
+                  )
+            )
           }
 
           if (state.styles.length > 0) {
@@ -257,12 +257,14 @@ export default function ({types: t}) {
             path.replaceWith(
               makeStyledJsxTag(
                 id,
-                isGlobal
-                  ? externalStylesReference
-                  : t.memberExpression(
+                (
+                  isGlobal ?
+                    externalStylesReference :
+                    t.memberExpression(
                       t.identifier(externalStylesReference.name),
                       t.identifier('__scoped')
                     )
+                )
               )
             )
             return

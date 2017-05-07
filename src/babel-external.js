@@ -23,7 +23,7 @@ const getCss = (path, validate = false) => {
   return css
 }
 
-const getStyledJsx = (css, opts) => {
+const getStyledJsx = (css, opts, path) => {
   const useSourceMaps = Boolean(opts.sourceMaps)
   let globalCss = css.modified || css
   const commonHash = hash(globalCss)
@@ -78,11 +78,11 @@ const getStyledJsx = (css, opts) => {
 
 const makeHashesAndScopedCssPaths = (identifierName, data) => {
   return Object.keys(data).map(
-    (key) => {
+    key => {
       const value = (
-        typeof data[key] === 'object'
-        ? data[key]
-        : t.stringLiteral(data[key])
+        typeof data[key] === 'object' ?
+        data[key] :
+        t.stringLiteral(data[key])
       )
 
       return t.expressionStatement(
@@ -102,13 +102,15 @@ const makeHashesAndScopedCssPaths = (identifierName, data) => {
 const defaultExports = (path, decl, opts) => {
   const identifierName = '__styledJsxDefaultExport'
   const css = getCss(decl, opts.validate)
-  if (!css) { return }
+  if (!css) {
+    return
+  }
   const {
     initial,
     hash,
     scoped,
     scopedHash
-  } = getStyledJsx(css, opts)
+  } = getStyledJsx(css, opts, path)
 
   path.insertBefore(
     t.variableDeclaration(
@@ -145,7 +147,9 @@ export const namedExportDeclarationVisitor = (path, opts) => {
     decl => {
       const src = decl.get('init')
       const css = getCss(src, opts.validate)
-      if (!css) { return }
+      if (!css) {
+        return
+      }
       const {
         initial,
         hash,
@@ -185,11 +189,11 @@ const callVisitor = (visitor, path, state) => {
     validate: opts.validate,
     sourceMaps: opts.sourceMaps,
     sourceFileName: opts.sourceFileName,
-    file,
+    file
   })
 }
 
-export default function ({types}) {
+export default function () {
   return {
     visitor: {
       ExportDefaultDeclaration(path, state) {
