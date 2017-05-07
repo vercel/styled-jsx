@@ -47,8 +47,11 @@ export default function ({types: t}) {
   return {
     inherits: jsx,
     visitor: {
-      ImportDeclaration(path, state) {
-        state.imports = state.imports.concat([path])
+      ImportDefaultSpecifier(path, state) {
+        state.imports.push(path.get('local').node.name)
+      },
+      ImportSpecifier(path, state) {
+        state.imports.push((path.get('local') || path.get('imported')).node.name)
       },
       VariableDeclarator(path, state) {
         const subpath = path.get('init')
@@ -58,7 +61,7 @@ export default function ({types: t}) {
         ) {
           return
         }
-        state.requires = state.requires.concat([path])
+        state.imports.push(path.get('id').node.name)
       },
       JSXOpeningElement(path, state) {
         const el = path.node
@@ -158,14 +161,10 @@ export default function ({types: t}) {
             const expression = child.get('expression')
 
             if (t.isIdentifier(expression)) {
-              if (
-                isExpressionImported(expression, {
-                  imports: state.imports,
-                  requires: state.requires
-                })
-              ) {
+              const idName = expression.node.name
+              if (state.imports.indexOf(idName) !== -1) {
+                const id = t.identifier(idName)
                 const isGlobal = isGlobalEl(style.get('openingElement').node)
-                const id = t.identifier(expression.node.name)
                 state.externalStyles.push([
                   t.memberExpression(
                     id,
@@ -321,7 +320,6 @@ export default function ({types: t}) {
           state.ignoreClosing = null
           state.file.hasJSXStyle = false
           state.imports = []
-          state.requires = []
         },
         exit({node, scope}, state) {
           if (!(state.file.hasJSXStyle && !scope.hasBinding(STYLE_COMPONENT))) {

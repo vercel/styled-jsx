@@ -191,38 +191,6 @@ export const validateExpression = (expr, scope) => (
   expr.traverse(validateExpressionVisitor, scope)
 )
 
-export const isExpressionImported = (path, {imports, requires}) => {
-  const {node} = path
-  if (!t.isIdentifier(node)) {
-    return null
-  }
-
-  const requireExpr = requires.filter(path => (
-    path.get('id').node.name === node.name
-  ))[0]
-
-  if (requireExpr) {
-    return true
-  }
-
-  const importExpr = imports.filter(path => {
-    const specifiers = path.get('specifiers')
-    if (specifiers.length !== 1) {
-      return false
-    }
-    return (
-      specifiers[0].isImportDefaultSpecifier() &&
-      specifiers[0].get('local').node.name === node.name
-    )
-  })[0]
-
-  if (importExpr) {
-    return true
-  }
-
-  return false
-}
-
 export const generateAttribute = (name, value) => (
   t.jSXAttribute(
     t.JSXIdentifier(name),
