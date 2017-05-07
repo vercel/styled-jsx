@@ -6,6 +6,7 @@ export default () => (
     <p>test</p>
     <p>woot</p>
     <style jsx global>{styles2}</style>
+    <style jsx>{styles2}</style>
     <div>woot</div>
     <style jsx>{`
       p { color: red }

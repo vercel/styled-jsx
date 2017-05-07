@@ -124,6 +124,7 @@ export const makeStyledJsxTag = (id, transformedCss, isTemplateLiteral) => {
 
   if (
     typeof transformedCss === 'object' &&
+    t.isIdentifier(transformedCss) ||
     t.isMemberExpression(transformedCss)
   ) {
     css = transformedCss
@@ -132,22 +133,22 @@ export const makeStyledJsxTag = (id, transformedCss, isTemplateLiteral) => {
   }
 
   return t.JSXElement(
-    t.JSXOpeningElement(
-      t.JSXIdentifier(STYLE_COMPONENT),
+    t.jSXOpeningElement(
+      t.jSXIdentifier(STYLE_COMPONENT),
       [
-        t.JSXAttribute(
-          t.JSXIdentifier(STYLE_COMPONENT_ID),
-          t.JSXExpressionContainer(t.numericLiteral(id))
+        t.jSXAttribute(
+          t.jSXIdentifier(STYLE_COMPONENT_ID),
+          t.jSXExpressionContainer(typeof id !== 'number' ? id : t.numericLiteral(id))
         ),
-        t.JSXAttribute(
-          t.JSXIdentifier(STYLE_COMPONENT_CSS),
-          t.JSXExpressionContainer(css)
+        t.jSXAttribute(
+          t.jSXIdentifier(STYLE_COMPONENT_CSS),
+          t.jSXExpressionContainer(css)
         )
       ],
       true
     ),
     null,
-    []
+    [],
   )
 }
 
@@ -190,7 +191,7 @@ export const validateExpression = (expr, scope) => (
   expr.traverse(validateExpressionVisitor, scope)
 )
 
-export const getExternalReference = (path, {imports, requires}) => {
+export const isExpressionImported = (path, {imports, requires}) => {
   const {node} = path
   if (!t.isIdentifier(node)) {
     return null
@@ -201,7 +202,7 @@ export const getExternalReference = (path, {imports, requires}) => {
   ))[0]
 
   if (requireExpr) {
-    return requireExpr.get('init').get('arguments')[0].node.value
+    return true
   }
 
   const importExpr = imports.filter(path => {
@@ -215,20 +216,11 @@ export const getExternalReference = (path, {imports, requires}) => {
     )
   })[0]
 
-  if (!importExpr) {
-    return null
+  if (importExpr) {
+    return true
   }
 
-  return importExpr.get('source').node.value
-}
-
-export const resolvePath = (path, modulePath) => {
-  if (path.charAt(0) !== '.') {
-    return require.resolve(path)
-  }
-  return require.resolve(
-    resolve(`${dirname(modulePath)}/${path}`)
-  )
+  return false
 }
 
 export const generateAttribute = (name, value) => (

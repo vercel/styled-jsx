@@ -18,7 +18,7 @@ import {
   restoreExpressions,
   makeStyledJsxTag,
   validateExpression,
-  getExternalReference,
+  isExpressionImported,
   resolvePath,
   generateAttribute,
   makeSourceMapGenerator,
@@ -104,7 +104,7 @@ export default function ({types: t}) {
 
           if (state.externalJsxId) {
             el.attributes.push(
-              generateAttribute(MARKUP_ATTRIBUTE_EXTERNAL, t.stringLiteral(state.externalJsxId))
+              generateAttribute(MARKUP_ATTRIBUTE_EXTERNAL, state.externalJsxId)
             )
           }
         }
@@ -158,17 +158,21 @@ export default function ({types: t}) {
             const expression = child.get('expression')
 
             if (t.isIdentifier(expression)) {
-              let externalSourcePath = getExternalReference(expression, {
-                imports: state.imports,
-                requires: state.requires
-              })
-              if (externalSourcePath) {
-                externalSourcePath = resolvePath(externalSourcePath, state.file.opts.filename)
+              if (
+                isExpressionImported(expression, {
+                  imports: state.imports,
+                  requires: state.requires
+                })
+              ) {
+                const isGlobal = isGlobalEl(style.get('openingElement').node)
+                const id = t.identifier(expression.node.name)
                 state.externalStyles.push([
-                  hash(externalSourcePath),
-                  externalSourcePath,
-                  expression,
-                  isGlobalEl(style.get('openingElement').node)
+                  t.memberExpression(
+                    id,
+                    t.identifier(isGlobal ? '__hash' : '__scopedHash')
+                  ),
+                  id,
+                  isGlobal
                 ])
                 continue
               }
@@ -202,12 +206,22 @@ export default function ({types: t}) {
           }
 
           if (state.externalStyles.length > 0) {
-            state.externalJsxId = state.externalStyles
+            const expressions = state.externalStyles
               // remove globals
-              .filter(s => !s[3])
-              // create array of hashes
+              .filter(s => !s[2])
               .map(s => s[0])
-              .join(' ')
+
+            // construct a template literal of this form:
+            // `${styles.__scopedHash} ${otherStyles.__scopedHash}`
+            state.externalJsxId = expressions.length === 1
+              ? expressions[0]
+              : t.templateLiteral(
+                  [t.templateElement({raw: '', coocked: ''})]
+                    .concat([...new Array(expressions.length - 1)].map(e => t.templateElement({raw: ' ', coocked: ' '})))
+                    .concat([t.templateElement({raw: '', coocked: ''}, true)])
+                  ,
+                  expressions
+                )
           }
 
           if (state.styles.length > 0) {
@@ -237,7 +251,6 @@ export default function ({types: t}) {
           ) {
             const [
               id,
-              ,
               externalStylesReference,
               isGlobal
             ] = state.externalStyles.shift()
@@ -245,14 +258,12 @@ export default function ({types: t}) {
             path.replaceWith(
               makeStyledJsxTag(
                 id,
-                t.memberExpression(
-                  t.identifier(
-                    externalStylesReference.getSource()
-                  ),
-                  t.identifier(
-                    isGlobal ? 'global' : 'local'
-                  )
-                )
+                isGlobal
+                  ? externalStylesReference
+                  : t.memberExpression(
+                      t.identifier(externalStylesReference.name),
+                      t.identifier('__scoped')
+                    )
               )
             )
             return
