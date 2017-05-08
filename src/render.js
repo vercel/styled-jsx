@@ -1,48 +1,40 @@
-import entries from 'object.entries'
-
-const {hasOwnProperty} = Object.prototype
-const tags = {}
-let prevStyles = {}
+const tags = new Map()
+let prevStyles = new Map()
 
 export default typeof window === 'undefined' ? renderOnServer : renderOnClient
 
 function renderOnServer() {}
 
-function renderOnClient(components) {
-  const styles = {}
-  for (const c of components) {
-    styles[c.props.styleId] = c
-  }
-
+function renderOnClient(styles) {
   patch(diff(prevStyles, styles))
-
   prevStyles = styles
 }
 
 function diff(a, b) {
-  const added = entries(b).filter(([k]) => !hasOwnProperty.call(a, k))
-  const removed = entries(a).filter(([k]) => !hasOwnProperty.call(b, k))
+  const added = Array.from(b.entries()).filter(([k]) => !a.has(k))
+  const removed = Array.from(a.entries()).filter(([k]) => !b.has(k))
   return [added, removed]
 }
 
-const fromServer = {}
+const fromServer = new Map()
 
 function patch([added, removed]) {
   for (const [id, c] of added) {
     // avoid duplicates from server-rendered markup
-    if (undefined === fromServer[id]) {
-      fromServer[id] = document.getElementById(`__jsx-style-${id}`)
+    if (!fromServer.has(id)) {
+      fromServer.set(id, document.getElementById(`__jsx-style-${id}`))
     }
 
-    tags[id] = fromServer[id] || makeStyleTag(c.props.css)
+    const tag = fromServer.get(id) || makeStyleTag(c.props.css)
+    tags.set(id, tag)
   }
 
   for (const [id] of removed) {
-    const t = tags[id]
-    delete tags[id]
+    const t = tags.get(id)
+    tags.delete(id)
     t.parentNode.removeChild(t)
     // avoid checking the DOM later on
-    fromServer[id] = null
+    fromServer.delete(id)
   }
 }
 

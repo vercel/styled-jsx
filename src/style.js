@@ -21,15 +21,17 @@ export default class extends Component {
   }
 }
 
-export function flush() {
-  const ret = {}
-
-  for (const {props} of components) {
-    ret[props.styleId] = props.css
+function componentMap() {
+  const ret = new Map()
+  for (const c of components) {
+    ret.set(c.props.styleId, c)
   }
+  return ret
+}
 
+export function flush() {
+  const ret = componentMap()
   components = []
-
   return ret
 }
 
@@ -49,5 +51,5 @@ function unmount(component) {
 }
 
 function update() {
-  render(components)
+  render(componentMap())
 }
