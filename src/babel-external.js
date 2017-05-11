@@ -155,7 +155,7 @@ export const namedExportDeclarationVisitor = (path, opts) => {
         hash,
         scoped,
         scopedHash
-      } = getStyledJsx(css, opts)
+      } = getStyledJsx(css, opts, path)
 
       const identifierName = decl.get('id').node.name
       path.insertAfter(
