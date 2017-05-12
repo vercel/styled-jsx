@@ -2,6 +2,7 @@ const color = 'red'
 const otherColor = 'green'
 const mediumScreen = '680px'
 const animationDuration = '200ms'
+const animationName = 'my-cool-animation'
 
 export default () => (
   <div>
@@ -22,5 +23,8 @@ export default () => (
       p { color: red }`
     }</style>
     <style jsx>{`p { animation-duration: ${animationDuration} }`}</style>
+    <style jsx>{`
+      p { animation: ${animationDuration} forwards ${animationName} }`
+    }</style>
   </div>
 )
