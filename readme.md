@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/zeit/styled-jsx.svg?branch=master)](https://travis-ci.org/zeit/styled-jsx)
 [![XO code style](https://img.shields.io/badge/code_style-XO-5ed9c7.svg)](https://github.com/sindresorhus/xo)
-[![Slack Channel](https://zeit-slackin.now.sh/badge.svg)](https://zeit.chat)
+[![Slack Channel](http://zeit-slackin.now.sh/badge.svg)](https://zeit.chat)
 [![npm](https://img.shields.io/npm/v/styled-jsx.svg)](https://www.npmjs.com/package/styled-jsx)
 
 Full, scoped and component-friendly CSS support for JSX (rendered on the server or the client).
@@ -294,7 +294,7 @@ You get full CSS highlighting and autocompletion and it will last until you clos
 ### Emmet
 
  If you're using Emmet you can add the following snippet to `~/emmet/snippets-styledjsx.json` This will allow you to expand `style-jsx` to a styled-jsx block.
- 
+
  ```json
  {
   "html": {
