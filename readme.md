@@ -48,6 +48,7 @@ export default () => (
 - Runtime size of just **2kb** (gzipped, from 6kb)
 - Complete isolation: Selectors, animations, keyframes
 - Built-in CSS vendor prefixing
+- CSS Preprocessing via Plugins
 - Very fast, minimal and efficient transpilation (see below)
 - High-performance runtime-CSS-injection when not server-rendering
 - Future-proof: Equivalent to server-renderable "Shadow CSS"
@@ -112,6 +113,39 @@ module.exports = `div { color: green; }`
 // the following won't work
 // module.exports = { styles: `div { color: green; }` }
 ```
+
+### CSS Preprocessing via Plugins
+
+Styles can be preprocessed via plugins.
+
+Plugins are regular JavaScript modules that export a simple function with the following signature:
+
+```js
+(css: string) => string
+```
+
+Basically they accept a CSS string in input, optionally modify it and finally return it.
+
+Plugins make it possible to use popular preprocessors like SASS, Less, Stylus, PostCSS or apply custom transformations to the styles.
+
+To register a plugin add an option `plugins` for `styled-jsx/babel` to your `.babelrc`. `plugins` must be an array of module names or *full* paths for local plugins.
+
+```json
+{
+  "plugins": [
+    [
+      "styled-jsx/babel",
+      { "plugins": ["my-styled-jsx-plugin-package", "/full/path/to/local/plugin"] }
+    ]
+  ]
+}
+```
+
+In order to resolve local plugins paths you can use NodeJS' [require.resolve](https://nodejs.org/api/globals.html#globals_require_resolve).
+
+Plugins are applied in definition order left to right before styles are scoped.
+
+N.B. when applying the plugins styled-jsx replaces template literals expressions with placeholders e.g. `%%styledjsxexpression_ExprNumber%%` because otherwise CSS parsers would get invalid CSS.
 
 ### Targeting The Root
 

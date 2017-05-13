@@ -258,3 +258,29 @@ export const addSourceMaps = (code, generator, filename) =>
     convert.fromObject(generator).toComment({ multiline: true }),
     `/*@ sourceURL=${filename} */`
   ].join('\n')
+)
+
+export const combinePlugins = plugins => {
+  if (!plugins) {
+    return css => css
+  }
+
+  if (!Array.isArray(plugins) || plugins.some(p => typeof p !== 'string')) {
+    throw new Error('`plugins` must be an array of plugins names')
+  }
+
+  const loadedPlugins = plugins.map(plugin => {
+    // eslint-disable-next-line import/no-dynamic-require
+    const p = require(plugin)
+    return (p && p.default) || p
+  })
+
+  loadedPlugins.forEach((plugin, i) => {
+    const type = typeof plugin
+    if (type !== 'function') {
+      throw new Error(`Expected plugin ${plugins[i]} to be a function but instead got ${type}`)
+    }
+  })
+
+  return loadedPlugins.reduce((plugin, nextPlugin) => css => nextPlugin(plugin(css)))
+}

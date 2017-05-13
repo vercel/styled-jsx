@@ -20,7 +20,8 @@ import {
   validateExpression,
   generateAttribute,
   makeSourceMapGenerator,
-  addSourceMaps
+  addSourceMaps,
+  combinePlugins
 } from './_utils'
 
 import {
@@ -29,6 +30,7 @@ import {
   MARKUP_ATTRIBUTE_EXTERNAL
 } from './_constants'
 
+let plugins
 const getPrefix = id => `[${MARKUP_ATTRIBUTE}="${id}"]`
 const callExternalVisitor = (visitor, path, state) => {
   const { file } = state
@@ -37,7 +39,8 @@ const callExternalVisitor = (visitor, path, state) => {
     validate: true,
     sourceMaps: opts.sourceMaps,
     sourceFileName: opts.sourceFileName,
-    file
+    file,
+    plugins
   })
 }
 
@@ -301,7 +304,7 @@ export default function({ types: t }) {
             transformedCss = addSourceMaps(
               transform(
                 isGlobal ? '' : getPrefix(state.jsxId),
-                css.modified || css,
+                plugins(css.modified || css),
                 {
                   generator,
                   offset: loc.start,
@@ -314,7 +317,7 @@ export default function({ types: t }) {
           } else {
             transformedCss = transform(
               isGlobal ? '' : getPrefix(state.jsxId),
-              css.modified || css
+              plugins(css.modified || css)
             )
           }
 
@@ -334,6 +337,9 @@ export default function({ types: t }) {
           state.ignoreClosing = null
           state.file.hasJSXStyle = false
           state.imports = []
+          if (!plugins) {
+            plugins = combinePlugins(state.opts.plugins)
+          }
         },
         exit({ node, scope }, state) {
           if (!(state.file.hasJSXStyle && !scope.hasBinding(STYLE_COMPONENT))) {

@@ -9,9 +9,11 @@ import {
   makeStyledJsxCss,
   isValidCss,
   makeSourceMapGenerator,
-  addSourceMaps
+  addSourceMaps,
+  combinePlugins
 } from './_utils'
 
+let plugins
 const getCss = (path, validate = false) => {
   if (!path.isTemplateLiteral() && !path.isStringLiteral()) {
     return
@@ -40,7 +42,7 @@ const getStyledJsx = (css, opts, path) => {
     const offset = path.get('loc').node.start
     compiledCss = [/* global */ '', prefix].map(prefix =>
       addSourceMaps(
-        transform(prefix, css.modified || css, {
+        transform(prefix, opts.plugins(css.modified || css), {
           generator,
           offset,
           filename
@@ -51,7 +53,7 @@ const getStyledJsx = (css, opts, path) => {
     )
   } else {
     compiledCss = ['', prefix].map(prefix =>
-      transform(prefix, css.modified || css)
+      transform(prefix, opts.plugins(css.modified || css))
     )
   }
   globalCss = compiledCss[0]
@@ -158,13 +160,19 @@ const callVisitor = (visitor, path, state) => {
     validate: state.opts.validate || opts.validate,
     sourceMaps: opts.sourceMaps,
     sourceFileName: opts.sourceFileName,
-    file
+    file,
+    plugins
   })
 }
 
 export default function() {
   return {
     visitor: {
+      Program(path, state) {
+        if (!plugins) {
+          plugins = combinePlugins(state.opts.plugins)
+        }
+      },
       ExportDefaultDeclaration(path, state) {
         callVisitor(exportDefaultDeclarationVisitor, path, state)
       },
