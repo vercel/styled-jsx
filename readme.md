@@ -76,9 +76,45 @@ Data attributes give us style encapsulation and `_JSXStyle` is heavily optimized
 - Removing unused styles
 - Keeping track of styles for server-side rendering (discussed in the next section)
 
+### Keeping CSS in separate files
+
+Styles can be defined in separate JavaScript modules e.g.
+
+```js
+/* styles.js */
+
+export const button = `button { color: hotpink; }`
+export default `div { color: green; }`
+```
+
+and imported as regular strings
+
+```jsx
+import styles, { button } from './styles'
+
+export default () => (
+  <div>
+    <button>styled-jsx</button>
+    <style jsx>{styles}</style>
+    <style jsx>{button}</style>
+  </div>
+)
+```
+
+Styles are automatically scoped but if you want you can also consume them as [globals](#global-styles).
+
+N.B. We support CommonJS exports but you can only export one string per module:
+
+```js
+module.exports = `div { color: green; }`
+
+// the following won't work
+// module.exports = { styles: `div { color: green; }` }
+```
+
 ### Targeting The Root
 
-Notice that the parent `<div>` above also gets a `data-jsx` atribute. We do this so that
+Notice that the parent `<div>` above also gets a `data-jsx` attribute. We do this so that
 you can target the "root" element, in the same manner that
 [`:host`](https://www.html5rocks.com/en/tutorials/webcomponents/shadowdom-201/#toc-style-host) works with Shadow DOM.
 

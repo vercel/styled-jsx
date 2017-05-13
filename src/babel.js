@@ -1,173 +1,66 @@
 // Packages
 import jsx from 'babel-plugin-syntax-jsx'
 import hash from 'string-hash'
-import {SourceMapGenerator} from 'source-map'
-import convert from 'convert-source-map'
-import traverse from 'babel-traverse'
-import {parse} from 'babylon'
-import escapeStringRegExp from 'escape-string-regexp'
 
 // Ours
 import transform from '../lib/style-transform'
+import {
+  exportDefaultDeclarationVisitor,
+  namedExportDeclarationVisitor,
+  moduleExportsVisitor
+} from './babel-external'
 
-const STYLE_ATTRIBUTE = 'jsx'
-const GLOBAL_ATTRIBUTE = 'global'
-const MARKUP_ATTRIBUTE = 'data-jsx'
-const STYLE_COMPONENT = '_JSXStyle'
-const STYLE_COMPONENT_ID = 'styleId'
-const STYLE_COMPONENT_CSS = 'css'
+import {
+  isGlobalEl,
+  isStyledJsx,
+  findStyles,
+  getExpressionText,
+  restoreExpressions,
+  makeStyledJsxTag,
+  validateExpression,
+  generateAttribute,
+  makeSourceMapGenerator,
+  addSourceMaps
+} from './_utils'
+
+import {
+  MARKUP_ATTRIBUTE,
+  STYLE_COMPONENT,
+  MARKUP_ATTRIBUTE_EXTERNAL
+} from './_constants'
+
+const getPrefix = id => `[${MARKUP_ATTRIBUTE}="${id}"]`
+const callExternalVisitor = (visitor, path, state) => {
+  const {file} = state
+  const {opts} = file
+  visitor(path, {
+    validate: true,
+    sourceMaps: opts.sourceMaps,
+    sourceFileName: opts.sourceFileName,
+    file
+  })
+}
 
 export default function ({types: t}) {
-  const isGlobalEl = el => el.attributes.some(({name}) => (
-    name && name.name === GLOBAL_ATTRIBUTE
-  ))
-
-  const isStyledJsx = ({node: el}) => (
-    t.isJSXElement(el) &&
-    el.openingElement.name.name === 'style' &&
-    el.openingElement.attributes.some(attr => (
-      attr.name.name === STYLE_ATTRIBUTE
-    ))
-  )
-
-  const findStyles = path => {
-    if (isStyledJsx(path)) {
-      const {node} = path
-      return isGlobalEl(node.openingElement) ?
-        [path] : []
-    }
-
-    return path.get('children').filter(isStyledJsx)
-  }
-
-  // We only allow constants to be used in template literals.
-  // The following visitor ensures that MemberExpressions and Identifiers
-  // are not in the scope of the current Method (render) or function (Component).
-  const validateExpressionVisitor = {
-    MemberExpression(path) {
-      const {node} = path
-      if (
-        t.isThisExpression(node.object) &&
-        t.isIdentifier(node.property) &&
-        (
-          node.property.name === 'props' ||
-          node.property.name === 'state'
-        )
-      ) {
-        throw path.buildCodeFrameError(
-          `Expected a constant ` +
-          `as part of the template literal expression ` +
-          `(eg: <style jsx>{\`p { color: $\{myColor}\`}</style>), ` +
-          `but got a MemberExpression: this.${node.property.name}`)
-      }
-    },
-    Identifier(path, scope) {
-      const {name} = path.node
-      if (scope.hasOwnBinding(name)) {
-        throw path.buildCodeFrameError(
-          `Expected \`${name}\` ` +
-          `to not come from the closest scope.\n` +
-          `Styled JSX encourages the use of constants ` +
-          `instead of \`props\` or dynamic values ` +
-          `which are better set via inline styles or \`className\` toggling. ` +
-          `See https://github.com/zeit/styled-jsx#dynamic-styles`)
-      }
-    }
-  }
-
-  const getExpressionText = expr => {
-    const node = expr.node
-
-    // assume string literal
-    if (t.isStringLiteral(node)) {
-      return node.value
-    }
-
-    const expressions = expr.get('expressions')
-
-    // simple template literal without expressions
-    if (expressions.length === 0) {
-      return node.quasis[0].value.cooked
-    }
-
-    // Special treatment for template literals that contain expressions:
-    //
-    // Expressions are replaced with a placeholder
-    // so that the CSS compiler can parse and
-    // transform the css source string
-    // without having to know about js literal expressions.
-    // Later expressions are restored
-    // by doing a replacement on the transformed css string.
-    //
-    // e.g.
-    // p { color: ${myConstant}; }
-    // becomes
-    // p { color: ___styledjsxexpression0___; }
-
-    const replacements = expressions.map((e, id) => ({
-      pattern: new RegExp(`\\$\\{\\s*${escapeStringRegExp(e.getSource())}\\s*\\}`),
-      replacement: `___styledjsxexpression_${id}___`,
-      initial: `$\{${e.getSource()}}`
-    })).sort((a, b) => a.initial.length < b.initial.length)
-
-    const source = expr.getSource().slice(1, -1)
-
-    const modified = replacements.reduce((source, currentReplacement) => {
-      source = source.replace(
-        currentReplacement.pattern,
-        currentReplacement.replacement
-      )
-      return source
-    }, source)
-
-    return {
-      source,
-      modified,
-      replacements
-    }
-  }
-
-  const makeStyledJsxTag = (id, transformedCss, isTemplateLiteral) => {
-    let css
-    if (isTemplateLiteral) {
-      // build the expression from transformedCss
-      traverse(
-        parse(`\`${transformedCss}\``),
-        {
-          TemplateLiteral(path) {
-            if (!css) {
-              css = path.node
-            }
-          }
-        }
-      )
-    } else {
-      css = t.stringLiteral(transformedCss)
-    }
-
-    return t.JSXElement(
-      t.JSXOpeningElement(
-        t.JSXIdentifier(STYLE_COMPONENT),
-        [
-          t.JSXAttribute(
-            t.JSXIdentifier(STYLE_COMPONENT_ID),
-            t.JSXExpressionContainer(t.numericLiteral(id))
-          ),
-          t.JSXAttribute(
-            t.JSXIdentifier(STYLE_COMPONENT_CSS),
-            t.JSXExpressionContainer(css)
-          )
-        ],
-        true
-      ),
-      null,
-      []
-    )
-  }
-
   return {
     inherits: jsx,
     visitor: {
+      ImportDefaultSpecifier(path, state) {
+        state.imports.push(path.get('local').node.name)
+      },
+      ImportSpecifier(path, state) {
+        state.imports.push((path.get('local') || path.get('imported')).node.name)
+      },
+      VariableDeclarator(path, state) {
+        const subpath = path.get('init')
+        if (
+          !subpath.isCallExpression() ||
+          subpath.get('callee').node.name !== 'require'
+        ) {
+          return
+        }
+        state.imports.push(path.get('id').node.name)
+      },
       JSXOpeningElement(path, state) {
         const el = path.node
         const {name} = el.name || {}
@@ -195,17 +88,26 @@ export default function ({types: t}) {
             if (!name) {
               continue
             }
-            if (name === MARKUP_ATTRIBUTE || name.name === MARKUP_ATTRIBUTE) {
+            if (
+              name === MARKUP_ATTRIBUTE || name.name === MARKUP_ATTRIBUTE ||
+              name === MARKUP_ATTRIBUTE_EXTERNAL || name.name === MARKUP_ATTRIBUTE_EXTERNAL
+            ) {
               // avoid double attributes
               return
             }
           }
 
-          const attr = t.jSXAttribute(
-            t.JSXIdentifier(MARKUP_ATTRIBUTE),
-            t.JSXExpressionContainer(t.numericLiteral(state.jsxId))
-          )
-          el.attributes.push(attr)
+          if (state.jsxId) {
+            el.attributes.push(
+              generateAttribute(MARKUP_ATTRIBUTE, t.numericLiteral(state.jsxId))
+            )
+          }
+
+          if (state.externalJsxId) {
+            el.attributes.push(
+              generateAttribute(MARKUP_ATTRIBUTE_EXTERNAL, state.externalJsxId)
+            )
+          }
         }
 
         state.ignoreClosing++
@@ -224,6 +126,7 @@ export default function ({types: t}) {
           }
 
           state.styles = []
+          state.externalStyles = []
 
           const scope = (path.findParent(path => (
             path.isFunctionDeclaration() ||
@@ -241,7 +144,7 @@ export default function ({types: t}) {
 
             if (children.length !== 1) {
               throw path.buildCodeFrameError(`Expected one child under ` +
-                `JSX Style tag, but got ${style.children.length} ` +
+                `JSX Style tag, but got ${children.length} ` +
                 `(eg: <style jsx>{\`hi\`}</style>)`)
             }
 
@@ -255,6 +158,28 @@ export default function ({types: t}) {
 
             const expression = child.get('expression')
 
+            if (t.isIdentifier(expression)) {
+              const idName = expression.node.name
+              if (state.imports.indexOf(idName) !== -1) {
+                const id = t.identifier(idName)
+                const isGlobal = isGlobalEl(style.get('openingElement').node)
+                state.externalStyles.push([
+                  t.memberExpression(
+                    id,
+                    t.identifier(isGlobal ? '__hash' : '__scopedHash')
+                  ),
+                  id,
+                  isGlobal
+                ])
+                continue
+              }
+
+              throw path.buildCodeFrameError(`The Identifier ` +
+                `\`${expression.getSource()}\` is either \`undefined\` or ` +
+                `it is not an external StyleSheet reference i.e. ` +
+                `it doesn't come from an \`import\` or \`require\` statement`)
+            }
+
             if (!t.isTemplateLiteral(expression) &&
                 !t.isStringLiteral(expression)) {
               throw path.buildCodeFrameError(`Expected a template ` +
@@ -265,7 +190,7 @@ export default function ({types: t}) {
 
             // Validate MemberExpressions and Identifiers
             // to ensure that are constants not defined in the closest scope
-            child.get('expression').traverse(validateExpressionVisitor, scope)
+            validateExpression(expression, scope)
 
             const styleText = getExpressionText(expression)
             const styleId = hash(styleText.source || styleText)
@@ -277,7 +202,36 @@ export default function ({types: t}) {
             ])
           }
 
-          state.jsxId = hash(state.styles.map(s => s[1].source || s[1]).join(''))
+          if (state.externalStyles.length > 0) {
+            const expressions = state.externalStyles
+              // remove globals
+              .filter(s => !s[2])
+              .map(s => s[0])
+
+            state.externalJsxId = (
+              expressions.length === 1 ?
+                expressions[0] :
+                // construct a template literal of this form:
+                // `${styles.__scopedHash} ${otherStyles.__scopedHash}`
+                t.templateLiteral(
+                  [
+                    t.templateElement({raw: '', cooked: ''}),
+                    ...(
+                      [...new Array(expressions.length - 1)].map(
+                        () => t.templateElement({raw: ' ', cooked: ' '})
+                      )
+                    ),
+                    t.templateElement({raw: '', cooked: ''}, true)
+                  ],
+                  expressions
+                )
+            )
+          }
+
+          if (state.styles.length > 0) {
+            state.jsxId = hash(state.styles.map(s => s[1].source || s[1]).join(''))
+          }
+
           state.hasJSXStyle = true
           state.file.hasJSXStyle = true
           // next visit will be: JSXOpeningElement
@@ -285,11 +239,39 @@ export default function ({types: t}) {
         exit(path, state) {
           const isGlobal = isGlobalEl(path.node.openingElement)
 
-          if (state.hasJSXStyle && (!--state.ignoreClosing && !isGlobal)) {
+          if (state.hasJSXStyle && !--state.ignoreClosing && !isGlobal) {
             state.hasJSXStyle = null
+            state.jsxId = null
+            state.externalJsxId = null
           }
 
           if (!state.hasJSXStyle || !isStyledJsx(path)) {
+            return
+          }
+
+          if (
+            state.externalStyles.length > 0 &&
+            path.get('children')[0].get('expression').isIdentifier()
+          ) {
+            const [
+              id,
+              externalStylesReference,
+              isGlobal
+            ] = state.externalStyles.shift()
+
+            path.replaceWith(
+              makeStyledJsxTag(
+                id,
+                (
+                  isGlobal ?
+                    externalStylesReference :
+                    t.memberExpression(
+                      t.identifier(externalStylesReference.name),
+                      t.identifier('__scoped')
+                    )
+                )
+              )
+            )
             return
           }
 
@@ -305,42 +287,32 @@ export default function ({types: t}) {
           let transformedCss
 
           if (useSourceMaps) {
+            const generator = makeSourceMapGenerator(state.file)
             const filename = state.file.opts.sourceFileName
-            const generator = new SourceMapGenerator({
-              file: filename,
-              sourceRoot: state.file.opts.sourceRoot
-            })
-            generator.setSourceContent(filename, state.file.code)
-            transformedCss = [
+            transformedCss = addSourceMaps(
               transform(
-                String(state.jsxId),
+                getPrefix(state.jsxId),
                 css.modified || css,
-                generator,
-                loc.start,
-                filename
+                {
+                  generator,
+                  offset: loc.start,
+                  filename
+                }
               ),
-              convert
-                .fromObject(generator)
-                .toComment({multiline: true}),
-              `/*@ sourceURL=${filename} */`
-            ].join('\n')
+              generator,
+              filename
+            )
           } else {
             transformedCss = transform(
-              String(state.jsxId),
+              getPrefix(state.jsxId),
               css.modified || css
             )
           }
 
-          if (css.modified) {
-            transformedCss = css.replacements.reduce(
-              (transformedCss, currentReplacement) => {
-                transformedCss = transformedCss.replace(
-                  new RegExp(currentReplacement.replacement, 'g'),
-                  currentReplacement.initial
-                )
-                return transformedCss
-              },
-              transformedCss
+          if (css.replacements) {
+            transformedCss = restoreExpressions(
+              transformedCss,
+              css.replacements
             )
           }
 
@@ -354,6 +326,7 @@ export default function ({types: t}) {
           state.hasJSXStyle = null
           state.ignoreClosing = null
           state.file.hasJSXStyle = false
+          state.imports = []
         },
         exit({node, scope}, state) {
           if (!(state.file.hasJSXStyle && !scope.hasBinding(STYLE_COMPONENT))) {
@@ -367,6 +340,16 @@ export default function ({types: t}) {
 
           node.body.unshift(importDeclaration)
         }
+      },
+      // Transpile external StyleSheets
+      ExportDefaultDeclaration(path, state) {
+        callExternalVisitor(exportDefaultDeclarationVisitor, path, state)
+      },
+      AssignmentExpression(path, state) {
+        callExternalVisitor(moduleExportsVisitor, path, state)
+      },
+      ExportNamedDeclaration(path, state) {
+        callExternalVisitor(namedExportDeclarationVisitor, path, state)
       }
     }
   }
