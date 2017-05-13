@@ -269,18 +269,19 @@ export const combinePlugins = plugins => {
     throw new Error('`plugins` must be an array of plugins names')
   }
 
-  const loadedPlugins = plugins.map(plugin => {
-    // eslint-disable-next-line import/no-dynamic-require
-    const p = require(plugin)
-    return (p && p.default) || p
-  })
+  return plugins
+    .map((plugin, i) => {
+      // eslint-disable-next-line import/no-dynamic-require
+      let p = require(plugin)
+      if (p.default) {
+        p = p.default
+      }
 
-  loadedPlugins.forEach((plugin, i) => {
-    const type = typeof plugin
-    if (type !== 'function') {
-      throw new Error(`Expected plugin ${plugins[i]} to be a function but instead got ${type}`)
-    }
-  })
-
-  return loadedPlugins.reduce((plugin, nextPlugin) => css => nextPlugin(plugin(css)))
+      const type = typeof p
+      if (type !== 'function') {
+        throw new Error(`Expected plugin ${plugins[i]} to be a function but instead got ${type}`)
+      }
+      return p
+    })
+    .reduce((plugin, nextPlugin) => css => nextPlugin(plugin(css)))
 }
