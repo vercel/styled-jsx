@@ -1,1 +1,1 @@
-export default css => css.replace(/[\{\}]/g, '@')
+export default css => css.replace(/div/g, 'span')

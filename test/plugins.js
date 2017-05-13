@@ -2,9 +2,24 @@
 import test from 'ava'
 
 // Ours
+import babelPlugin from '../src/babel'
 import {combinePlugins} from '../src/_utils'
+import _transform from './_transform'
+import read from './_read'
 import testPlugin1 from './fixtures/plugins/plugin'
 import testPlugin2 from './fixtures/plugins/another-plugin'
+
+const transform = (file, opts = {}) => (
+  _transform(file, {
+    plugins: [
+      [
+        babelPlugin,
+        {plugins: [require.resolve('./fixtures/plugins/another-plugin')]}
+      ]
+    ],
+    ...opts
+  })
+)
 
 test('combinePlugins returns an identity function when plugins is undefined', t => {
   const test = 'test'
@@ -48,4 +63,10 @@ test('combinePlugins applies plugins left to right', t => {
   ])
 
   t.is(testPlugin2(testPlugin1('test')), plugins('test'))
+})
+
+test('applies plugins', async t => {
+  const {code} = await transform('./fixtures/with-plugins.js')
+  const out = await read('./fixtures/with-plugins.out.js')
+  t.is(code, out.trim())
 })
