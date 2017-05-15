@@ -208,24 +208,28 @@ export default function ({types: t}) {
               .filter(s => !s[2])
               .map(s => s[0])
 
-            state.externalJsxId = (
-              expressions.length === 1 ?
-                expressions[0] :
-                // construct a template literal of this form:
-                // `${styles.__scopedHash} ${otherStyles.__scopedHash}`
-                t.templateLiteral(
-                  [
-                    t.templateElement({raw: '', cooked: ''}),
-                    ...(
-                      [...new Array(expressions.length - 1)].map(
-                        () => t.templateElement({raw: ' ', cooked: ' '})
-                      )
-                    ),
-                    t.templateElement({raw: '', cooked: ''}, true)
-                  ],
-                  expressions
-                )
-            )
+            const expressionsLength = expressions.length
+
+            if (expressionsLength === 0) {
+              state.externalJsxId = null
+            } else if (expressionsLength === 1) {
+              state.externalJsxId = expressions[0]
+            } else {
+              // construct a template literal of this form:
+              // `${styles.__scopedHash} ${otherStyles.__scopedHash}`
+              state.externalJsxId = t.templateLiteral(
+                [
+                  t.templateElement({raw: '', cooked: ''}),
+                  ...(
+                    [...new Array(expressionsLength - 1)].map(
+                      () => t.templateElement({raw: ' ', cooked: ' '})
+                    )
+                  ),
+                  t.templateElement({raw: '', cooked: ''}, true)
+                ],
+                expressions
+              )
+            }
           }
 
           if (state.styles.length > 0) {
