@@ -9,8 +9,8 @@ export default (() => <div data-jsx={2422200148}>
     <p data-jsx={2422200148}>test</p>
     <_JSXStyle styleId={414042974} css={`p.${color}[data-jsx="2422200148"] {color: ${otherColor}}`} />
     <_JSXStyle styleId={188072295} css={"p[data-jsx=\"2422200148\"] {color: red}"} />
-    <_JSXStyle styleId={806016056} css={`body { background: ${color} }`} />
-    <_JSXStyle styleId={2278229016} css={`body { background: ${color} }`} />
+    <_JSXStyle styleId={806016056} css={`body {background: ${color}}`} />
+    <_JSXStyle styleId={2278229016} css={`body {background: ${color}}`} />
     <_JSXStyle styleId={924167211} css={`p[data-jsx="2422200148"] {color: ${color}}`} />
     <_JSXStyle styleId={1586014475} css={`p[data-jsx="2422200148"] {color: ${color}}`} />
     <_JSXStyle styleId={3469794077} css={`p[data-jsx="2422200148"] {color: ${darken(color)}}`} />

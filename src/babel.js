@@ -282,11 +282,6 @@ export default function ({types: t}) {
           // we replace styles with the function call
           const [id, css, loc] = state.styles.shift()
 
-          if (isGlobal) {
-            path.replaceWith(makeStyledJsxTag(id, css.source || css, css.modified))
-            return
-          }
-
           const useSourceMaps = Boolean(state.file.opts.sourceMaps)
           let transformedCss
 
@@ -295,7 +290,7 @@ export default function ({types: t}) {
             const filename = state.file.opts.sourceFileName
             transformedCss = addSourceMaps(
               transform(
-                getPrefix(state.jsxId),
+                isGlobal ? '' : getPrefix(state.jsxId),
                 css.modified || css,
                 {
                   generator,
@@ -308,7 +303,7 @@ export default function ({types: t}) {
             )
           } else {
             transformedCss = transform(
-              getPrefix(state.jsxId),
+              isGlobal ? '' : getPrefix(state.jsxId),
               css.modified || css
             )
           }
