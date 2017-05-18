@@ -82,6 +82,7 @@
     "gulp-babel": "6.1.2",
     "gulp-benchmark": "1.1.1",
     "human-size": "1.1.0",
+    "jest": "^20.0.3",
     "mz": "2.6.0",
     "react": "15.4.1",
     "react-dom": "15.4.1",
@@ -89,5 +90,12 @@
   },
   "peerDependencies": {
     "react": "15.x.x"
+  },
+  "jest": {
+    "testPathIgnorePatterns": [
+      "fixtures",
+      "helpers"
+    ]
   }
 }
+    
