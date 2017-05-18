@@ -25,10 +25,11 @@ const getCss = (path, validate = false) => {
 
 const getStyledJsx = (css, opts, path) => {
   const useSourceMaps = Boolean(opts.sourceMaps)
-  let globalCss = css.modified || css
-  const commonHash = hash(globalCss)
+  const commonHash = hash(css.modified || css)
   const globalHash = `1${commonHash}`
   const scopedHash = `2${commonHash}`
+  let compiledCss
+  let globalCss
   let scopedCss
   const prefix = `[${MARKUP_ATTRIBUTE_EXTERNAL}~="${scopedHash}"]`
   const isTemplateLiteral = Boolean(css.modified)
@@ -37,7 +38,7 @@ const getStyledJsx = (css, opts, path) => {
     const generator = makeSourceMapGenerator(opts.file)
     const filename = opts.sourceFileName
     const offset = path.get('loc').node.start
-    scopedCss = addSourceMaps(
+    compiledCss = [/* global */'', prefix].map(prefix => addSourceMaps(
       transform(
         prefix,
         css.modified || css,
@@ -49,13 +50,15 @@ const getStyledJsx = (css, opts, path) => {
       ),
       generator,
       filename
-    )
+    ))
   } else {
-    scopedCss = transform(
+    compiledCss = ['', prefix].map(prefix => transform(
       prefix,
       css.modified || css
-    )
+    ))
   }
+  globalCss = compiledCss[0]
+  scopedCss = compiledCss[1]
 
   if (css.replacements) {
     globalCss = restoreExpressions(
