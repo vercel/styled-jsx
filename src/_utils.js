@@ -39,14 +39,14 @@ export const findStyles = path => {
 export const getExpressionText = expr => {
   const node = expr.node
 
-  // assume string literal
+  // Assume string literal
   if (t.isStringLiteral(node)) {
     return node.value
   }
 
   const expressions = expr.get('expressions')
 
-  // simple template literal without expressions
+  // Simple template literal without expressions
   if (expressions.length === 0) {
     return node.quasis[0].value.cooked
   }
@@ -103,7 +103,7 @@ export const makeStyledJsxCss = (transformedCss, isTemplateLiteral) => {
   if (!isTemplateLiteral) {
     return t.stringLiteral(transformedCss)
   }
-  // build the expression from transformedCss
+  // Build the expression from transformedCss
   let css
   traverse(
     parse(`\`${transformedCss}\``),

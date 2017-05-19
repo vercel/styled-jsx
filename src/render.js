@@ -20,7 +20,7 @@ const fromServer = new Map()
 
 function patch([added, removed]) {
   for (const [id, c] of added) {
-    // avoid duplicates from server-rendered markup
+    // Avoid duplicates from server-rendered markup
     if (!fromServer.has(id)) {
       fromServer.set(id, document.getElementById(`__jsx-style-${id}`))
     }
@@ -33,13 +33,13 @@ function patch([added, removed]) {
     const t = tags.get(id)
     tags.delete(id)
     t.parentNode.removeChild(t)
-    // avoid checking the DOM later on
+    // Avoid checking the DOM later on
     fromServer.delete(id)
   }
 }
 
 function makeStyleTag(str) {
-  // based on implementation by glamor
+  // Based on implementation by glamor
   const tag = document.createElement('style')
   tag.appendChild(document.createTextNode(str))
 

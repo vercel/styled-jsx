@@ -70,7 +70,7 @@ export default function ({types: t}) {
         }
 
         if (state.ignoreClosing === null) {
-          // we keep a counter of elements inside so that we
+          // We keep a counter of elements inside so that we
           // can keep track of when we exit the parent to reset state
           // note: if we wished to add an option to turn off
           // selectors to reach parent elements, it would suffice to
@@ -92,7 +92,7 @@ export default function ({types: t}) {
               name === MARKUP_ATTRIBUTE || name.name === MARKUP_ATTRIBUTE ||
               name === MARKUP_ATTRIBUTE_EXTERNAL || name.name === MARKUP_ATTRIBUTE_EXTERNAL
             ) {
-              // avoid double attributes
+              // Avoid double attributes
               return
             }
           }
@@ -111,7 +111,7 @@ export default function ({types: t}) {
         }
 
         state.ignoreClosing++
-        // next visit will be: JSXElement exit()
+        // Next visit will be: JSXElement exit()
       },
       JSXElement: {
         enter(path, state) {
@@ -135,10 +135,10 @@ export default function ({types: t}) {
           )) || path).scope
 
           for (const style of styles) {
-            // compute children excluding whitespace
+            // Compute children excluding whitespace
             const children = style.get('children').filter(c => (
               t.isJSXExpressionContainer(c.node) ||
-              // ignore whitespace around the expression container
+              // Ignore whitespace around the expression container
               (t.isJSXText(c.node) && c.node.value.trim() !== '')
             ))
 
@@ -204,7 +204,7 @@ export default function ({types: t}) {
 
           if (state.externalStyles.length > 0) {
             const expressions = state.externalStyles
-              // remove globals
+              // Remove globals
               .filter(s => !s[2])
               .map(s => s[0])
 
@@ -215,7 +215,7 @@ export default function ({types: t}) {
             } else if (expressionsLength === 1) {
               state.externalJsxId = expressions[0]
             } else {
-              // construct a template literal of this form:
+              // Construct a template literal of this form:
               // `${styles.__scopedHash} ${otherStyles.__scopedHash}`
               state.externalJsxId = t.templateLiteral(
                 [
@@ -238,7 +238,7 @@ export default function ({types: t}) {
 
           state.hasJSXStyle = true
           state.file.hasJSXStyle = true
-          // next visit will be: JSXOpeningElement
+          // Next visit will be: JSXOpeningElement
         },
         exit(path, state) {
           const isGlobal = isGlobalEl(path.node.openingElement)
@@ -279,7 +279,7 @@ export default function ({types: t}) {
             return
           }
 
-          // we replace styles with the function call
+          // We replace styles with the function call
           const [id, css, loc] = state.styles.shift()
 
           const useSourceMaps = Boolean(state.file.opts.sourceMaps)

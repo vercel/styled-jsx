@@ -27,7 +27,14 @@
     "require": [
       "babel-register",
       "babel-polyfill"
-    ]
+    ],
+    "babel": {
+      "presets": [
+        "es2015",
+        "stage-3",
+        "react"
+      ]
+    }
   },
   "xo": {
     "esnext": true,
@@ -67,7 +74,7 @@
     "stylis": "1.2.7"
   },
   "devDependencies": {
-    "ava": "0.17.0",
+    "ava": "^0.19.1",
     "babel-cli": "6.18.0",
     "babel-core": "6.18.2",
     "babel-plugin-transform-runtime": "6.15.0",
@@ -82,20 +89,12 @@
     "gulp-babel": "6.1.2",
     "gulp-benchmark": "1.1.1",
     "human-size": "1.1.0",
-    "jest": "^20.0.3",
     "mz": "2.6.0",
     "react": "15.4.1",
     "react-dom": "15.4.1",
-    "xo": "0.17.1"
+    "xo": "^0.18.2"
   },
   "peerDependencies": {
     "react": "15.x.x"
-  },
-  "jest": {
-    "testPathIgnorePatterns": [
-      "fixtures",
-      "helpers"
-    ]
   }
 }
-    

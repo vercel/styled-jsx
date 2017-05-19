@@ -3,7 +3,6 @@ import {join} from 'path'
 import {gzipSync} from 'zlib'
 
 // Packages
-import _ from 'babel-polyfill'
 import gulp from 'gulp'
 import babel from 'gulp-babel'
 import {transformFile} from 'babel-core'
