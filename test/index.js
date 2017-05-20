@@ -78,42 +78,14 @@ test('works with non styled-jsx styles', async t => {
 
 test('throws when using `props` or constants ' +
   'defined in the closest scope', async t => {
-  await t.throws(
-    transform(`./fixtures/invalid-expressions/1.js`),
-    SyntaxError
-  )
-})
+  const promises = [1, 2, 3, 4].map(i => {
+    return t.throws(
+      transform(`./fixtures/invalid-expressions/${i}.js`),
+      SyntaxError
+    )
+  })
 
-test('throws when using `props` or constants ' +
-  'defined in the closest scope (1)', async t => {
-  await t.throws(
-    transform(`./fixtures/invalid-expressions/1.js`),
-    SyntaxError
-  )
-})
-
-test('throws when using `props` or constants ' +
-  'defined in the closest scope (2)', async t => {
-  await t.throws(
-    transform(`./fixtures/invalid-expressions/2.js`),
-    SyntaxError
-  )
-})
-
-test('throws when using `props` or constants ' +
-  'defined in the closest scope (3)', async t => {
-  await t.throws(
-    transform(`./fixtures/invalid-expressions/3.js`),
-    SyntaxError
-  )
-})
-
-test('throws when using `props` or constants ' +
-  'defined in the closest scope (4)', async t => {
-  await t.throws(
-    transform(`./fixtures/invalid-expressions/4.js`),
-    SyntaxError
-  )
+  await Promise.all(promises)
 })
 
 test('works with external stylesheets', async t => {
