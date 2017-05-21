@@ -1,7 +1,7 @@
 const tags = new Map()
 let prevStyles = new Map()
 
-export default typeof window === 'undefined' ? renderOnServer : renderOnClient
+export default (typeof window === 'undefined' ? renderOnServer : renderOnClient)
 
 function renderOnServer() {}
 

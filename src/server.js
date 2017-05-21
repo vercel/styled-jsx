@@ -1,18 +1,20 @@
 import React from 'react'
-import {flush} from './style'
+import { flush } from './style'
 
 export default function flushToReact() {
   const mem = flush()
   const arr = []
   for (const [id, c] of mem) {
-    arr.push(React.createElement('style', {
-      id: `__jsx-style-${id}`,
-      // Avoid warnings upon render with a key
-      key: `__jsx-style-${id}`,
-      dangerouslySetInnerHTML: {
-        __html: c.props.css
-      }
-    }))
+    arr.push(
+      React.createElement('style', {
+        id: `__jsx-style-${id}`,
+        // Avoid warnings upon render with a key
+        key: `__jsx-style-${id}`,
+        dangerouslySetInnerHTML: {
+          __html: c.props.css
+        }
+      })
+    )
   }
   return arr
 }

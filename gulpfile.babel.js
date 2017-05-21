@@ -1,34 +1,26 @@
 // Native
-import {join} from 'path'
-import {gzipSync} from 'zlib'
+import { join } from 'path'
+import { gzipSync } from 'zlib'
 
 // Packages
 import gulp from 'gulp'
 import babel from 'gulp-babel'
-import {transformFile} from 'babel-core'
+import { transformFile } from 'babel-core'
 import size from 'human-size'
 import benchmark from 'gulp-benchmark'
 
 gulp.task('transpile', () => {
-  gulp.src('src/**/*.js')
-  .pipe(babel())
-  .pipe(gulp.dest('dist'))
+  gulp.src('src/**/*.js').pipe(babel()).pipe(gulp.dest('dist'))
 })
 
 gulp.task('runtime-size', async () => {
-  const files = [
-    'flush.js',
-    'server.js',
-    'memory.js',
-    'render.js',
-    'style.js'
-  ]
+  const files = ['flush.js', 'server.js', 'memory.js', 'render.js', 'style.js']
 
-  const result = await Promise.all(files
-  .map(f => join(__dirname, 'src', f))
-  .map(transform))
+  const result = await Promise.all(
+    files.map(f => join(__dirname, 'src', f)).map(transform)
+  )
 
-  const code = result.map(({code}) => code).join('')
+  const code = result.map(({ code }) => code).join('')
 
   console.log('-----------------------------------------------')
   console.log('files:', files.join(', '))
@@ -38,25 +30,30 @@ gulp.task('runtime-size', async () => {
 
   function transform(file) {
     return new Promise((resolve, reject) => {
-      transformFile(file, {
-        presets: ['babili']
-      }, (err, data) => {
-        if (err) {
-          return reject(err)
+      transformFile(
+        file,
+        {
+          presets: ['babili']
+        },
+        (err, data) => {
+          if (err) {
+            return reject(err)
+          }
+          resolve(data)
         }
-        resolve(data)
-      })
+      )
     })
   }
 })
 
 gulp.task('benchmark', () => {
-  gulp.src('*.js', {
-    read: false,
-    cwd: './benchmark'
-  })
-  .pipe(babel())
-  .pipe(benchmark())
+  gulp
+    .src('*.js', {
+      read: false,
+      cwd: './benchmark'
+    })
+    .pipe(babel())
+    .pipe(benchmark())
 })
 
 gulp.task('watch', () => {

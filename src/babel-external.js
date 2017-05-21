@@ -2,7 +2,7 @@ import hash from 'string-hash'
 import * as t from 'babel-types'
 
 import transform from '../lib/style-transform'
-import {MARKUP_ATTRIBUTE_EXTERNAL} from './_constants'
+import { MARKUP_ATTRIBUTE_EXTERNAL } from './_constants'
 import {
   getExpressionText,
   restoreExpressions,
@@ -38,37 +38,28 @@ const getStyledJsx = (css, opts, path) => {
     const generator = makeSourceMapGenerator(opts.file)
     const filename = opts.sourceFileName
     const offset = path.get('loc').node.start
-    compiledCss = [/* global */'', prefix].map(prefix => addSourceMaps(
-      transform(
-        prefix,
-        css.modified || css,
-        {
+    compiledCss = [/* global */ '', prefix].map(prefix =>
+      addSourceMaps(
+        transform(prefix, css.modified || css, {
           generator,
           offset,
           filename
-        }
-      ),
-      generator,
-      filename
-    ))
+        }),
+        generator,
+        filename
+      )
+    )
   } else {
-    compiledCss = ['', prefix].map(prefix => transform(
-      prefix,
-      css.modified || css
-    ))
+    compiledCss = ['', prefix].map(prefix =>
+      transform(prefix, css.modified || css)
+    )
   }
   globalCss = compiledCss[0]
   scopedCss = compiledCss[1]
 
   if (css.replacements) {
-    globalCss = restoreExpressions(
-      globalCss,
-      css.replacements
-    )
-    scopedCss = restoreExpressions(
-      scopedCss,
-      css.replacements
-    )
+    globalCss = restoreExpressions(globalCss, css.replacements)
+    scopedCss = restoreExpressions(scopedCss, css.replacements)
   }
 
   return {
@@ -80,26 +71,22 @@ const getStyledJsx = (css, opts, path) => {
 }
 
 const makeHashesAndScopedCssPaths = (identifierName, data) => {
-  return Object.keys(data).map(
-    key => {
-      const value = (
-        typeof data[key] === 'object' ?
-        data[key] :
-        t.stringLiteral(data[key])
-      )
+  return Object.keys(data).map(key => {
+    const value = typeof data[key] === 'object'
+      ? data[key]
+      : t.stringLiteral(data[key])
 
-      return t.expressionStatement(
-        t.assignmentExpression(
-          '=',
-          t.memberExpression(
-            t.identifier(identifierName),
-            t.identifier(`__${key}`)
-          ),
-          value
-        )
+    return t.expressionStatement(
+      t.assignmentExpression(
+        '=',
+        t.memberExpression(
+          t.identifier(identifierName),
+          t.identifier(`__${key}`)
+        ),
+        value
       )
-    }
-  )
+    )
+  })
 }
 
 const defaultExports = (path, decl, opts) => {
@@ -108,24 +95,15 @@ const defaultExports = (path, decl, opts) => {
   if (!css) {
     return
   }
-  const {
-    initial,
-    hash,
-    scoped,
-    scopedHash
-  } = getStyledJsx(css, opts, path)
+  const { initial, hash, scoped, scopedHash } = getStyledJsx(css, opts, path)
 
   path.insertBefore(
-    t.variableDeclaration(
-      'var',
-      [t.variableDeclarator(
+    t.variableDeclaration('var', [
+      t.variableDeclarator(
         t.identifier(identifierName),
-        t.newExpression(
-          t.identifier('String'),
-          [initial]
-        )
-      )]
-    )
+        t.newExpression(t.identifier('String'), [initial])
+      )
+    ])
   )
   path.insertBefore(
     makeHashesAndScopedCssPaths(identifierName, {
@@ -146,36 +124,24 @@ export const namedExportDeclarationVisitor = (path, opts) => {
   if (!t.isVariableDeclaration(decl)) {
     return
   }
-  decl.get('declarations').forEach(
-    decl => {
-      const src = decl.get('init')
-      const css = getCss(src, opts.validate)
-      if (!css) {
-        return
-      }
-      const {
-        initial,
+  decl.get('declarations').forEach(decl => {
+    const src = decl.get('init')
+    const css = getCss(src, opts.validate)
+    if (!css) {
+      return
+    }
+    const { initial, hash, scoped, scopedHash } = getStyledJsx(css, opts, path)
+
+    const identifierName = decl.get('id').node.name
+    path.insertAfter(
+      makeHashesAndScopedCssPaths(identifierName, {
         hash,
         scoped,
         scopedHash
-      } = getStyledJsx(css, opts, path)
-
-      const identifierName = decl.get('id').node.name
-      path.insertAfter(
-        makeHashesAndScopedCssPaths(identifierName, {
-          hash,
-          scoped,
-          scopedHash
-        })
-      )
-      src.replaceWith(
-        t.newExpression(
-          t.identifier('String'),
-          [initial]
-        )
-      )
-    }
-  )
+      })
+    )
+    src.replaceWith(t.newExpression(t.identifier('String'), [initial]))
+  })
 }
 
 export const moduleExportsVisitor = (path, opts) => {
@@ -186,8 +152,8 @@ export const moduleExportsVisitor = (path, opts) => {
 }
 
 const callVisitor = (visitor, path, state) => {
-  const {file} = state
-  const {opts} = file
+  const { file } = state
+  const { opts } = file
   visitor(path, {
     validate: opts.validate,
     sourceMaps: opts.sourceMaps,
@@ -196,7 +162,7 @@ const callVisitor = (visitor, path, state) => {
   })
 }
 
-export default function () {
+export default function() {
   return {
     visitor: {
       ExportDefaultDeclaration(path, state) {
