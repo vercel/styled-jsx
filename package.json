@@ -28,13 +28,7 @@
       "babel-register",
       "babel-polyfill"
     ],
-    "babel": {
-      "presets": [
-        "es2015",
-        "stage-3",
-        "react"
-      ]
-    }
+    "babel": "inherit"
   },
   "xo": {
     "esnext": true,
