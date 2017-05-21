@@ -162,7 +162,7 @@ you can target the "root" element, in the same manner that
   ```
 </details>
 
-The advantage of using this over `<style>` is twofold: no need
+<br/>The advantage of using this over `<style>` is twofold: no need
 to use `dangerouslySetInnerHTML` to avoid escaping issues with CSS
 and take advantage of `styled-jsx`'s de-duping system to avoid
 the global styles being inserted multiple times.
@@ -222,7 +222,8 @@ the global styles being inserted multiple times.
   ```
 </details>
 
-Then you would use this component as either `<Button>Hi</Button>` or `<Button large>Big</Button>`.
+
+<br>Then you would use this component as either `<Button>Hi</Button>` or `<Button large>Big</Button>`.
 
 #### Via inline `style`
 
@@ -245,7 +246,8 @@ Then you would use this component as either `<Button>Hi</Button>` or `<Button la
   ```
 </details>
 
-In this example, the padding defaults to the one set in `<style>` (`20`), but the user can pass a custom one via `<Button padding={30}>`.
+
+<br>In this example, the padding defaults to the one set in `<style>` (`20`), but the user can pass a custom one via `<Button padding={30}>`.
 
 ### Constants and Config
 
@@ -271,7 +273,8 @@ In this example, the padding defaults to the one set in `<style>` (`20`), but th
   ```
 </details>
 
-N.B. Only constants defined outside of the component scope are allowed here.
+
+<br>N.B. Only constants defined outside of the component scope are allowed here.
 If you want to use or toggle dynamic values depending on the component `state` or `props` then we recommend to use one of the techniques from the [Dynamic styles section](#dynamic-styles)
 
 ## Server-Side Rendering
@@ -301,6 +304,8 @@ If you want to use or toggle dynamic values depending on the component `state` o
   ```
 </details>
 
+<br>
+
 <details>
  <summary> We also expose <code>flushToHTML</code> to return generated HTML:</summary>
   
@@ -325,7 +330,8 @@ If you want to use or toggle dynamic values depending on the component `state` o
   ```
 </details>
 
-It's **paramount** that you use one of these two functions so that
+
+<br>It's **paramount** that you use one of these two functions so that
 the generated styles can be diffed when the client loads and
 duplicate styles are avoided.
 
@@ -354,8 +360,7 @@ Simply perform the action in the string template and select CSS.
 You get full CSS highlighting and autocompletion and it will last until you close the IDE.
 
 ### Emmet
-<details>
- <summary>If you're using Emmet you can add the following snippet to `~/emmet/snippets-styledjsx.json` This will allow you to expand `style-jsx` to a styled-jsx block.</summary>
+If you're using Emmet you can add the following snippet to `~/emmet/snippets-styledjsx.json` This will allow you to expand `style-jsx` to a styled-jsx block.
 
  ```json
  {
@@ -366,8 +371,6 @@ You get full CSS highlighting and autocompletion and it will last until you clos
   }
 }
 ```
-</details>
-
 ### [Visual Studio Code Extension](https://marketplace.visualstudio.com/items?itemName=blanu.vscode-styled-jsx)
 Launch VS Code Quick Open (⌘+P), paste the following command, and press enter.
 ```
