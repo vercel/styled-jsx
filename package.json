@@ -24,7 +24,10 @@
   "scripts": {
     "dev": "gulp",
     "prepublish": "gulp transpile",
-    "test": "xo && ava"
+    "test": "npm run lint && ava",
+    "lint": "xo",
+    "format": "prettier --single-quote --no-semi --write *.js {src,test}/*.js",
+    "precommit": "xo --quiet && lint-staged"
   },
   "ava": {
     "require": [
@@ -33,29 +36,21 @@
     "babel": "inherit"
   },
   "xo": {
-    "esnext": true,
-    "space": true,
-    "semicolon": false,
-    "ignores": [
-      "lib/**",
-      "test/fixtures/**"
-    ],
     "envs": [
       "node",
       "browser"
     ],
-    "rules": {
-      "eqeqeq": [
-        "error",
-        "always",
-        {
-          "null": "ignore"
-        }
-      ],
-      "no-eq-null": 0,
-      "import/no-unresolved": 0,
-      "new-cap": 0
-    }
+    "extends": "prettier",
+    "ignores": [
+      "lib/style-transform.js"
+    ]
+  },
+  "lint-staged": {
+    "*.js": [
+      "npm run lint",
+      "prettier --single-quote --no-semi --write",
+      "git add"
+    ]
   },
   "dependencies": {
     "babel-plugin-syntax-jsx": "6.18.0",
@@ -80,11 +75,15 @@
     "babel-preset-stage-3": "6.22.0",
     "babel-register": "6.18.0",
     "benchmark": "2.1.3",
+    "eslint-config-prettier": "^2.1.0",
     "gulp": "3.9.1",
     "gulp-babel": "6.1.2",
     "gulp-benchmark": "1.1.1",
     "human-size": "1.1.0",
+    "husky": "^0.13.3",
+    "lint-staged": "^3.4.2",
     "mz": "2.6.0",
+    "prettier": "^1.3.1",
     "react": "15.4.1",
     "react-dom": "15.4.1",
     "xo": "0.18.2"
