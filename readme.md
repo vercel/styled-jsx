@@ -46,7 +46,7 @@ export default () => (
 - Full CSS support, no tradeoffs in power
 - Runtime size of just **2kb** (gzipped, from 6kb)
 - Complete isolation: Selectors, animations, keyframes
-- Built-in CSS-prefixing
+- Built-in CSS vendor prefixing
 - Very fast, minimal and efficient transpilation (see below)
 - High-performance runtime-CSS-injection when not server-rendering
 - Future-proof: Equivalent to server-renderable "Shadow CSS"
