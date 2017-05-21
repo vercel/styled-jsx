@@ -7,7 +7,7 @@ export default function flushToReact() {
   for (const [id, c] of mem) {
     arr.push(React.createElement('style', {
       id: `__jsx-style-${id}`,
-      // avoid warnings upon render with a key
+      // Avoid warnings upon render with a key
       key: `__jsx-style-${id}`,
       dangerouslySetInnerHTML: {
         __html: c.props.css

@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`transpiles external stylesheets (CommonJS modules) 1`] = `
+"var __styledJsxDefaultExport = new String(\\"div {font-size: 3em}\\");
+
+__styledJsxDefaultExport.__hash = \\"1706034274\\";
+__styledJsxDefaultExport.__scoped = \\"div[data-jsx-ext~=\\\\\\"2706034274\\\\\\"] {font-size: 3em}\\";
+__styledJsxDefaultExport.__scopedHash = \\"2706034274\\";
+module.exports = __styledJsxDefaultExport;"
+`;
+
+exports[`transpiles external stylesheets 1`] = `
+"const color = 'red';
+
+export const foo = new String(\`div {color: \${color}}\`);
+
+foo.__hash = '12372219376';
+foo.__scoped = \`div[data-jsx-ext~=\\"22372219376\\"] {color: \${color}}\`;
+foo.__scopedHash = '22372219376';
+
+var __styledJsxDefaultExport = new String(\`div {font-size: 3em} p {color: \${color}}\`);
+
+__styledJsxDefaultExport.__hash = '11196972566';
+__styledJsxDefaultExport.__scoped = \`div[data-jsx-ext~=\\"21196972566\\"] {font-size: 3em}p[data-jsx-ext~=\\"21196972566\\"] {color: \${color}}\`;
+__styledJsxDefaultExport.__scopedHash = '21196972566';
+export default __styledJsxDefaultExport;"
+`;

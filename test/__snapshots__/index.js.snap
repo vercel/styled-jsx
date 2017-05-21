@@ -1,0 +1,197 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`generates source maps 1`] = `
+"import _JSXStyle from 'styled-jsx/style';
+export default (() => <div data-jsx={188072295}>
+    <p data-jsx={188072295}>test</p>
+    <p data-jsx={188072295}>woot</p>
+    <_JSXStyle styleId={188072295} css={\\"p[data-jsx=\\\\\\"188072295\\\\\\"] {color: red}\\\\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNvdXJjZS1tYXBzLmpzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUlnQixBQUNFIiwiZmlsZSI6InNvdXJjZS1tYXBzLmpzIiwic291cmNlc0NvbnRlbnQiOlsiZXhwb3J0IGRlZmF1bHQgKCkgPT4gKFxuICA8ZGl2PlxuICAgIDxwPnRlc3Q8L3A+XG4gICAgPHA+d29vdDwvcD5cbiAgICA8c3R5bGUganN4PnsncCB7IGNvbG9yOiByZWQgfSd9PC9zdHlsZT5cbiAgPC9kaXY+XG4pXG4iXX0= */\\\\n/*@ sourceURL=source-maps.js */\\"} />
+  </div>);"
+`;
+
+exports[`ignores when attribute is absent 1`] = `
+"const a = () => <div>
+    <p>hi</p>
+    <style>{'woot'}</style>
+  </div>;"
+`;
+
+exports[`ignores whitespace around expression container 1`] = `
+"import _JSXStyle from 'styled-jsx/style';
+export default (() => <div data-jsx={188072295}>
+    <p data-jsx={188072295}>test</p>
+    <p data-jsx={188072295}>woot</p>
+    <p data-jsx={188072295}>woot</p>
+    <_JSXStyle styleId={188072295} css={\\"p[data-jsx=\\\\\\"188072295\\\\\\"] {color: red}\\"} />
+  </div>);"
+`;
+
+exports[`mixed global and scoped 1`] = `
+"import _JSXStyle from 'styled-jsx/style';
+const Test = () => <_JSXStyle styleId={188072295} css={\\"p {color: red}\\"} />;
+
+export default (() => <div data-jsx={793889750}>
+    <p data-jsx={793889750}>test</p>
+    <_JSXStyle styleId={3149549172} css={\\"body {background: red}\\"} />
+    <_JSXStyle styleId={188072295} css={\\"p[data-jsx=\\\\\\"793889750\\\\\\"] {color: red}\\"} />
+  </div>);"
+`;
+
+exports[`should have different jsx ids 1`] = `
+"import _JSXStyle from 'styled-jsx/style';
+const color = 'red';
+const otherColor = 'green';
+
+const A = () => <div data-jsx={924167211}>
+    <p data-jsx={924167211}>test</p>
+    <_JSXStyle styleId={924167211} css={\`p[data-jsx=\\"924167211\\"] {color: \${color}}\`} />
+  </div>;
+
+const B = () => <div data-jsx={45234319}>
+    <p data-jsx={45234319}>test</p>
+    <_JSXStyle styleId={45234319} css={\`p[data-jsx=\\"45234319\\"] {color: \${otherColor}}\`} />
+  </div>;
+
+export default (() => <div>
+    <A />
+    <B />
+  </div>);"
+`;
+
+exports[`should not add the data-jsx attribute to components instances 1`] = `
+"import _JSXStyle from \\"styled-jsx/style\\";
+const Test = () => <div data-jsx={1535297024}>
+    <span data-jsx={1535297024}>test</span>
+    <Component />
+    <_JSXStyle styleId={1535297024} css={\\"span[data-jsx=\\\\\\"1535297024\\\\\\"] {color: red;}\\"} />
+  </div>;"
+`;
+
+exports[`works with class 1`] = `
+"import _JSXStyle from \\"styled-jsx/style\\";
+export default class {
+
+  render() {
+    return <div data-jsx={1891769468}>
+        <p data-jsx={1891769468}>test</p>
+        <_JSXStyle styleId={1891769468} css={\\"p[data-jsx=\\\\\\"1891769468\\\\\\"] {color: red;}\\"} />
+      </div>;
+  }
+
+}"
+`;
+
+exports[`works with expressions in template literals 1`] = `
+"import _JSXStyle from 'styled-jsx/style';
+const color = 'red';
+const otherColor = 'green';
+const mediumScreen = '680px';
+const animationDuration = '200ms';
+const animationName = 'my-cool-animation';
+
+export default (() => <div data-jsx={2422200148}>
+    <p data-jsx={2422200148}>test</p>
+    <_JSXStyle styleId={414042974} css={\`p.\${color}[data-jsx=\\"2422200148\\"] {color: \${otherColor}}\`} />
+    <_JSXStyle styleId={188072295} css={\\"p[data-jsx=\\\\\\"2422200148\\\\\\"] {color: red}\\"} />
+    <_JSXStyle styleId={806016056} css={\`body {background: \${color}}\`} />
+    <_JSXStyle styleId={2278229016} css={\`body {background: \${color}}\`} />
+    <_JSXStyle styleId={924167211} css={\`p[data-jsx=\\"2422200148\\"] {color: \${color}}\`} />
+    <_JSXStyle styleId={1586014475} css={\`p[data-jsx=\\"2422200148\\"] {color: \${color}}\`} />
+    <_JSXStyle styleId={3469794077} css={\`p[data-jsx=\\"2422200148\\"] {color: \${darken(color)}}\`} />
+    <_JSXStyle styleId={945380644} css={\`p[data-jsx=\\"2422200148\\"] {color: \${darken(color) + 2}}\`} />
+    <_JSXStyle styleId={4106311606} css={\`@media (min-width: \${mediumScreen}) {p[data-jsx=\\"2422200148\\"] {color: green}p[data-jsx=\\"2422200148\\"] {color \${\`red\`}}}p[data-jsx=\\"2422200148\\"] {color: red}\`} />
+    <_JSXStyle styleId={2369334310} css={\`p[data-jsx=\\"2422200148\\"] {-webkit-animation-duration:\${animationDuration};animation-duration:\${animationDuration};}\`} />
+    <_JSXStyle styleId={3168033860} css={\`p[data-jsx=\\"2422200148\\"] {-webkit-animation:\${animationDuration} forwards \${animationName};animation:\${animationDuration} forwards \${animationName};}\`} />
+  </div>);"
+`;
+
+exports[`works with external stylesheets (global only) 1`] = `
+"import _JSXStyle from 'styled-jsx/style';
+import styles from './styles';
+const styles2 = require('./styles2');
+import { foo as styles3 } from './styles';
+
+export default (() => <div data-jsx={1144769207}>
+    <p data-jsx={1144769207}>test</p>
+    <p data-jsx={1144769207}>woot</p>
+    <_JSXStyle styleId={styles2.__hash} css={styles2} />
+    <_JSXStyle styleId={styles3.__hash} css={styles3} />
+    <div data-jsx={1144769207}>woot</div>
+    <_JSXStyle styleId={1144769207} css={\\"p[data-jsx=\\\\\\"1144769207\\\\\\"] {color: red}div[data-jsx=\\\\\\"1144769207\\\\\\"] {color: green;}\\"} />
+    <_JSXStyle styleId={styles.__hash} css={styles} />
+  </div>);"
+`;
+
+exports[`works with external stylesheets 1`] = `
+"import _JSXStyle from 'styled-jsx/style';
+import styles from './styles';
+const styles2 = require('./styles2');
+import { foo as styles3 } from './styles';
+
+export default (() => <div data-jsx={1144769207} data-jsx-ext={\`\${styles3.__scopedHash} \${styles.__scopedHash}\`}>
+    <p data-jsx={1144769207} data-jsx-ext={\`\${styles3.__scopedHash} \${styles.__scopedHash}\`}>test</p>
+    <p data-jsx={1144769207} data-jsx-ext={\`\${styles3.__scopedHash} \${styles.__scopedHash}\`}>woot</p>
+    <_JSXStyle styleId={styles2.__hash} css={styles2} />
+    <_JSXStyle styleId={styles3.__scopedHash} css={styles3.__scoped} />
+    <div data-jsx={1144769207} data-jsx-ext={\`\${styles3.__scopedHash} \${styles.__scopedHash}\`}>woot</div>
+    <_JSXStyle styleId={1144769207} css={\\"p[data-jsx=\\\\\\"1144769207\\\\\\"] {color: red}div[data-jsx=\\\\\\"1144769207\\\\\\"] {color: green;}\\"} />
+    <_JSXStyle styleId={styles.__scopedHash} css={styles.__scoped} />
+  </div>);"
+`;
+
+exports[`works with global styles 1`] = `
+"import _JSXStyle from 'styled-jsx/style';
+const Test = () => <div data-jsx={3477488769}>
+    <_JSXStyle styleId={3477488769} css={\\"body {color: red}:hover {color: red;display: -webkit-box;display: -webkit-flex;display: -ms-flexbox;display: flex;-webkit-animation:foo 1s ease-out;animation:foo 1s ease-out;} div a {display: none;} [data-test] > div {color: red;}\\"} />
+  </div>;
+
+const Test2 = () => <_JSXStyle styleId={188072295} css={\\"p {color: red}\\"} />;"
+`;
+
+exports[`works with multiple jsx blocks 1`] = `
+"import _JSXStyle from \\"styled-jsx/style\\";
+const attrs = {
+  id: 'test'
+};
+
+const Test1 = () => <div data-jsx={1535297024}>
+    <span {...attrs} data-test=\\"test\\" data-jsx={1535297024}>test</span>
+    <Component />
+    <_JSXStyle styleId={1535297024} css={\\"span[data-jsx=\\\\\\"1535297024\\\\\\"] {color: red;}\\"} />
+  </div>;
+
+const Test2 = () => <span>test</span>;
+
+const Test3 = () => <div data-jsx={1535297024}>
+    <span data-jsx={1535297024}>test</span>
+    <_JSXStyle styleId={1535297024} css={\\"span[data-jsx=\\\\\\"1535297024\\\\\\"] {color: red;}\\"} />
+  </div>;
+
+export default class {
+  render() {
+    return <div data-jsx={1891769468}>
+        <p data-jsx={1891769468}>test</p>
+        <_JSXStyle styleId={1891769468} css={\\"p[data-jsx=\\\\\\"1891769468\\\\\\"] {color: red;}\\"} />
+      </div>;
+  }
+}"
+`;
+
+exports[`works with non styled-jsx styles 1`] = `
+"import _JSXStyle from 'styled-jsx/style';
+export default (() => <div data-jsx={188072295}>
+    <p data-jsx={188072295}>woot</p>
+    <style dangerouslySetInnerHTML={{ __html: \`body { margin: 0; }\` }}></style>
+    <_JSXStyle styleId={188072295} css={\\"p[data-jsx=\\\\\\"188072295\\\\\\"] {color: red}\\"} />
+  </div>);"
+`;
+
+exports[`works with stateless 1`] = `
+"import _JSXStyle from 'styled-jsx/style';
+export default (() => <div data-jsx={188072295}>
+    <p data-jsx={188072295}>test</p>
+    <p data-jsx={188072295}>woot</p>
+    <p data-jsx={188072295}>woot</p>
+    <_JSXStyle styleId={188072295} css={\\"p[data-jsx=\\\\\\"188072295\\\\\\"] {color: red}\\"} />
+  </div>);"
+`;
