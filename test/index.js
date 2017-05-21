@@ -6,78 +6,78 @@ import ReactDOM from 'react-dom/server'
 // Ours
 import plugin from '../src/babel'
 import JSXStyle from '../src/style'
-import flush, {flushToHTML} from '../src/server'
+import flush, { flushToHTML } from '../src/server'
 import _transform from './_transform'
 
-const transform = (file, opts = {}) => (
+const transform = (file, opts = {}) =>
   _transform(file, {
     plugins: [plugin],
     ...opts
   })
-)
 
 test('works with stateless', async t => {
-  const {code} = await transform('./fixtures/stateless.js')
+  const { code } = await transform('./fixtures/stateless.js')
   t.snapshot(code)
 })
 
 test('ignores whitespace around expression container', async t => {
-  const {code} = await transform('./fixtures/whitespace.js')
+  const { code } = await transform('./fixtures/whitespace.js')
   t.snapshot(code)
 })
 
 test('works with class', async t => {
-  const {code} = await transform('./fixtures/class.js')
+  const { code } = await transform('./fixtures/class.js')
   t.snapshot(code)
 })
 
 test('ignores when attribute is absent', async t => {
-  const {code} = await transform('./fixtures/absent.js')
+  const { code } = await transform('./fixtures/absent.js')
   t.snapshot(code)
 })
 
 test('works with global styles', async t => {
-  const {code} = await transform('./fixtures/global.js')
+  const { code } = await transform('./fixtures/global.js')
   t.snapshot(code)
 })
 
 test('generates source maps', async t => {
-  const {code} = await transform('./fixtures/source-maps.js', {sourceMaps: true})
+  const { code } = await transform('./fixtures/source-maps.js', {
+    sourceMaps: true
+  })
   t.snapshot(code)
 })
 
 test('mixed global and scoped', async t => {
-  const {code} = await transform('./fixtures/mixed-global-scoped.js')
+  const { code } = await transform('./fixtures/mixed-global-scoped.js')
   t.snapshot(code)
 })
 
 test('works with multiple jsx blocks', async t => {
-  const {code} = await transform('./fixtures/multiple-jsx.js')
+  const { code } = await transform('./fixtures/multiple-jsx.js')
   t.snapshot(code)
 })
 
 test('should not add the data-jsx attribute to components instances', async t => {
-  const {code} = await transform('./fixtures/component-attribute.js')
+  const { code } = await transform('./fixtures/component-attribute.js')
   t.snapshot(code)
 })
 
 test('works with expressions in template literals', async t => {
-  const {code} = await transform('./fixtures/expressions.js')
+  const { code } = await transform('./fixtures/expressions.js')
   t.snapshot(code)
 })
 
 test('should have different jsx ids', async t => {
-  const {code} = await transform('./fixtures/different-jsx-ids.js')
+  const { code } = await transform('./fixtures/different-jsx-ids.js')
   t.snapshot(code)
 })
 
 test('works with non styled-jsx styles', async t => {
-  const {code} = await transform('./fixtures/non-styled-jsx-style.js')
+  const { code } = await transform('./fixtures/non-styled-jsx-style.js')
   t.snapshot(code)
 })
 
-test('throws when using `props` or constants ' +
-  'defined in the closest scope', async t => {
+test('throws when using `props` or constants defined in the closest scope', async t => {
   const promises = [1, 2, 3, 4].map(i => {
     return t.throws(
       transform(`./fixtures/invalid-expressions/${i}.js`),
@@ -89,19 +89,21 @@ test('throws when using `props` or constants ' +
 })
 
 test('works with external stylesheets', async t => {
-  const {code} = await transform('./fixtures/external-stylesheet.js')
+  const { code } = await transform('./fixtures/external-stylesheet.js')
   t.snapshot(code)
 })
 
 test('works with external stylesheets (global only)', async t => {
-  const {code} = await transform('./fixtures/external-stylesheet-global.js')
+  const { code } = await transform('./fixtures/external-stylesheet-global.js')
   t.snapshot(code)
 })
 
 test('server rendering', t => {
   function App() {
     const color = 'green'
-    return React.createElement('div', null,
+    return React.createElement(
+      'div',
+      null,
       React.createElement(JSXStyle, {
         css: 'p { color: red }',
         styleId: 1
@@ -118,7 +120,8 @@ test('server rendering', t => {
   }
 
   // Expected CSS
-  const expected = '<style id="__jsx-style-1">p { color: red }</style>' +
+  const expected =
+    '<style id="__jsx-style-1">p { color: red }</style>' +
     '<style id="__jsx-style-2">div { color: blue }</style>' +
     '<style id="__jsx-style-3">div { color: green }</style>'
 

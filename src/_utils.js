@@ -1,9 +1,9 @@
 import * as t from 'babel-types'
 import escapeStringRegExp from 'escape-string-regexp'
 import traverse from 'babel-traverse'
-import {parse} from 'babylon'
-import {parse as parseCss} from 'css-tree'
-import {SourceMapGenerator} from 'source-map'
+import { parse } from 'babylon'
+import { parse as parseCss } from 'css-tree'
+import { SourceMapGenerator } from 'source-map'
 import convert from 'convert-source-map'
 
 import {
@@ -14,23 +14,18 @@ import {
   STYLE_COMPONENT_CSS
 } from './_constants'
 
-export const isGlobalEl = el => el.attributes.some(({name}) => (
-  name && name.name === GLOBAL_ATTRIBUTE
-))
+export const isGlobalEl = el =>
+  el.attributes.some(({ name }) => name && name.name === GLOBAL_ATTRIBUTE)
 
-export const isStyledJsx = ({node: el}) => (
+export const isStyledJsx = ({ node: el }) =>
   t.isJSXElement(el) &&
   el.openingElement.name.name === 'style' &&
-  el.openingElement.attributes.some(attr => (
-    attr.name.name === STYLE_ATTRIBUTE
-  ))
-)
+  el.openingElement.attributes.some(attr => attr.name.name === STYLE_ATTRIBUTE)
 
 export const findStyles = path => {
   if (isStyledJsx(path)) {
-    const {node} = path
-    return isGlobalEl(node.openingElement) ?
-      [path] : []
+    const { node } = path
+    return isGlobalEl(node.openingElement) ? [path] : []
   }
 
   return path.get('children').filter(isStyledJsx)
@@ -65,11 +60,15 @@ export const getExpressionText = expr => {
   // becomes
   // p { color: %%styledjsxexpression_0%%; }
 
-  const replacements = expressions.map((e, id) => ({
-    pattern: new RegExp(`\\$\\{\\s*${escapeStringRegExp(e.getSource())}\\s*\\}`),
-    replacement: `%%styledjsxexpression_${id}%%`,
-    initial: `$\{${e.getSource()}}`
-  })).sort((a, b) => a.initial.length < b.initial.length)
+  const replacements = expressions
+    .map((e, id) => ({
+      pattern: new RegExp(
+        `\\$\\{\\s*${escapeStringRegExp(e.getSource())}\\s*\\}`
+      ),
+      replacement: `%%styledjsxexpression_${id}%%`,
+      initial: `$\{${e.getSource()}}`
+    }))
+    .sort((a, b) => a.initial.length < b.initial.length)
 
   const source = expr.getSource().slice(1, -1)
 
@@ -88,16 +87,14 @@ export const getExpressionText = expr => {
   }
 }
 
-export const restoreExpressions = (css, replacements) => replacements.reduce(
-  (css, currentReplacement) => {
+export const restoreExpressions = (css, replacements) =>
+  replacements.reduce((css, currentReplacement) => {
     css = css.replace(
       new RegExp(currentReplacement.replacement, 'g'),
       currentReplacement.initial
     )
     return css
-  },
-  css
-)
+  }, css)
 
 export const makeStyledJsxCss = (transformedCss, isTemplateLiteral) => {
   if (!isTemplateLiteral) {
@@ -105,16 +102,13 @@ export const makeStyledJsxCss = (transformedCss, isTemplateLiteral) => {
   }
   // Build the expression from transformedCss
   let css
-  traverse(
-    parse(`\`${transformedCss}\``),
-    {
-      TemplateLiteral(path) {
-        if (!css) {
-          css = path.node
-        }
+  traverse(parse(`\`${transformedCss}\``), {
+    TemplateLiteral(path) {
+      if (!css) {
+        css = path.node
       }
     }
-  )
+  })
   return css
 }
 
@@ -123,23 +117,22 @@ export const makeStyledJsxTag = (id, transformedCss, isTemplateLiteral) => {
 
   if (
     typeof transformedCss === 'object' &&
-    (
-      t.isIdentifier(transformedCss) ||
-      t.isMemberExpression(transformedCss)
-    )
+    (t.isIdentifier(transformedCss) || t.isMemberExpression(transformedCss))
   ) {
     css = transformedCss
   } else {
     css = makeStyledJsxCss(transformedCss, isTemplateLiteral)
   }
 
-  return t.JSXElement(
+  return t.jSXElement(
     t.jSXOpeningElement(
       t.jSXIdentifier(STYLE_COMPONENT),
       [
         t.jSXAttribute(
           t.jSXIdentifier(STYLE_COMPONENT_ID),
-          t.jSXExpressionContainer(typeof id === 'number' ? t.numericLiteral(id) : id)
+          t.jSXExpressionContainer(
+            typeof id === 'number' ? t.numericLiteral(id) : id
+          )
         ),
         t.jSXAttribute(
           t.jSXIdentifier(STYLE_COMPONENT_CSS),
@@ -149,7 +142,7 @@ export const makeStyledJsxTag = (id, transformedCss, isTemplateLiteral) => {
       true
     ),
     null,
-    [],
+    []
   )
 }
 
@@ -158,46 +151,40 @@ export const makeStyledJsxTag = (id, transformedCss, isTemplateLiteral) => {
 // are not in the scope of the current Method (render) or function (Component).
 export const validateExpressionVisitor = {
   MemberExpression(path) {
-    const {node} = path
+    const { node } = path
     if (
       t.isThisExpression(node.object) &&
       t.isIdentifier(node.property) &&
-      (
-        node.property.name === 'props' ||
-        node.property.name === 'state'
-      )
+      (node.property.name === 'props' || node.property.name === 'state')
     ) {
       throw path.buildCodeFrameError(
         `Expected a constant ` +
-        `as part of the template literal expression ` +
-        `(eg: <style jsx>{\`p { color: $\{myColor}\`}</style>), ` +
-        `but got a MemberExpression: this.${node.property.name}`)
+          `as part of the template literal expression ` +
+          `(eg: <style jsx>{\`p { color: $\{myColor}\`}</style>), ` +
+          `but got a MemberExpression: this.${node.property.name}`
+      )
     }
   },
   Identifier(path, scope) {
-    const {name} = path.node
+    const { name } = path.node
     if (scope.hasOwnBinding(name)) {
       throw path.buildCodeFrameError(
         `Expected \`${name}\` ` +
-        `to not come from the closest scope.\n` +
-        `Styled JSX encourages the use of constants ` +
-        `instead of \`props\` or dynamic values ` +
-        `which are better set via inline styles or \`className\` toggling. ` +
-        `See https://github.com/zeit/styled-jsx#dynamic-styles`)
+          `to not come from the closest scope.\n` +
+          `Styled JSX encourages the use of constants ` +
+          `instead of \`props\` or dynamic values ` +
+          `which are better set via inline styles or \`className\` toggling. ` +
+          `See https://github.com/zeit/styled-jsx#dynamic-styles`
+      )
     }
   }
 }
 
-export const validateExpression = (expr, scope) => (
+export const validateExpression = (expr, scope) =>
   expr.traverse(validateExpressionVisitor, scope)
-)
 
-export const generateAttribute = (name, value) => (
-  t.jSXAttribute(
-    t.JSXIdentifier(name),
-    t.JSXExpressionContainer(value)
-  )
-)
+export const generateAttribute = (name, value) =>
+  t.jSXAttribute(t.jSXIdentifier(name), t.jSXExpressionContainer(value))
 
 export const isValidCss = str => {
   try {
@@ -218,12 +205,9 @@ export const makeSourceMapGenerator = file => {
   return generator
 }
 
-export const addSourceMaps = (code, generator, filename) => (
+export const addSourceMaps = (code, generator, filename) =>
   [
     code,
-    convert
-      .fromObject(generator)
-      .toComment({multiline: true}),
+    convert.fromObject(generator).toComment({ multiline: true }),
     `/*@ sourceURL=${filename} */`
   ].join('\n')
-)
