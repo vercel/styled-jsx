@@ -150,12 +150,14 @@ export const makeStyledJsxTag = (id, transformedCss, isTemplateLiteral) => {
 // The following visitor ensures that MemberExpressions and Identifiers
 // are not in the scope of the current Method (render) or function (Component).
 export const validateExpressionVisitor = {
-  MemberExpression(path) {
+  MemberExpression(path, scope) {
     const { node } = path
     if (
-      t.isThisExpression(node.object) &&
-      t.isIdentifier(node.property) &&
-      (node.property.name === 'props' || node.property.name === 'state')
+      (t.isIdentifier(node.property) &&
+        (t.isThisExpression(node.object) &&
+          (node.property.name === 'props' ||
+            node.property.name === 'state'))) ||
+      (t.isIdentifier(node.object) && scope.hasOwnBinding(node.object.name))
     ) {
       throw path.buildCodeFrameError(
         `Expected a constant ` +
@@ -166,6 +168,9 @@ export const validateExpressionVisitor = {
     }
   },
   Identifier(path, scope) {
+    if (t.isMemberExpression(path.parentPath)) {
+      return
+    }
     const { name } = path.node
     if (scope.hasOwnBinding(name)) {
       throw path.buildCodeFrameError(
