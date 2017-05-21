@@ -54,7 +54,8 @@ export default () => (
 
 ## How It Works
 
-The example above transpiles to the following:
+<details>
+<summary> The example above transpiles to the following:</summary>
 
 ```jsx
 import _JSXStyle from 'styled-jsx/style'
@@ -66,6 +67,7 @@ export default () => (
   </div>
 )
 ```
+</details>
 
 ### Why It Works Like This
 
@@ -78,16 +80,18 @@ Data attributes give us style encapsulation and `_JSXStyle` is heavily optimized
 
 ### Keeping CSS in separate files
 
-Styles can be defined in separate JavaScript modules e.g.
-
-```js
-/* styles.js */
-
-export const button = `button { color: hotpink; }`
-export default `div { color: green; }`
-```
-
-and imported as regular strings
+<details>
+ <summary> Styles can be defined in separate JavaScript modules e.g.</summary>
+  
+  ```js
+  /* styles.js */
+  
+  export const button = `button { color: hotpink; }`
+  export default `div { color: green; }`
+  ```
+</details>
+<details>
+<summary> and imported as regular strings</summary>
 
 ```jsx
 import styles, { button } from './styles'
@@ -100,6 +104,7 @@ export default () => (
   </div>
 )
 ```
+</details>
 
 Styles are automatically scoped but if you want you can also consume them as [globals](#global-styles).
 
@@ -118,187 +123,215 @@ Notice that the parent `<div>` above also gets a `data-jsx` attribute. We do thi
 you can target the "root" element, in the same manner that
 [`:host`](https://www.html5rocks.com/en/tutorials/webcomponents/shadowdom-201/#toc-style-host) works with Shadow DOM.
 
-If you want to target _only_ the host, we suggest you use a class:
+<details>
 
-```jsx
-export default () => (
-  <div className="root">
-    <style jsx>{`
-      .root {
-        color: green;
-      }
-    `}</style>
-  </div>
-)
-```
+ <summary> If you want to target <i>only</i> the host, we suggest you use a class:</summary>
+  
+  ```jsx
+  export default () => (
+    <div className="root">
+      <style jsx>{`
+        .root {
+          color: green;
+        }
+      `}</style>
+    </div>
+  )
+  ```
+</details>
+
 
 ### Global styles
 
-To skip scoping entirely, you can make the global-ness of your styles
-explicit by adding _global_.
+<details>
+<summary>
+    To skip scoping entirely, you can make the global-ness of your styles
+    explicit by adding <i>global</i>.
+</summary>
+  
+  ```jsx
+  export default () => (
+    <div>
+      <style jsx global>{`
+        body {
+          background: red
+        }
+      `}</style>
+    </div>
+  )
+  ```
+</details>
 
-```jsx
-export default () => (
-  <div>
-    <style jsx global>{`
-      body {
-        background: red
-      }
-    `}</style>
-  </div>
-)
-```
-
-The advantage of using this over `<style>` is twofold: no need
+<br/>The advantage of using this over `<style>` is twofold: no need
 to use `dangerouslySetInnerHTML` to avoid escaping issues with CSS
 and take advantage of `styled-jsx`'s de-duping system to avoid
 the global styles being inserted multiple times.
 
 ### Global selectors
 
-Sometimes it's useful to skip prefixing. We support `:global()`,
-inspired by [css-modules](https://github.com/css-modules/css-modules).
-
-This is very useful in order to, for example, generate an *unprefixed class* that
-you can pass to 3rd-party components. For example, to style
-`react-select` which supports passing a custom class via `optionClassName`:
-
-```jsx
-import Select from 'react-select'
-export default () => (
-  <div>
-    <Select optionClassName="react-select" />
-
-    <style jsx>{`
-      /* "div" will be prefixed, but ".react-select" won't */
-      div :global(.react-select) {
-        color: red
-      }
-    `}</style>
-  </div>
-)
-```
+  Sometimes it's useful to skip prefixing. We support `:global()`,
+  inspired by [css-modules](https://github.com/css-modules/css-modules).
+  
+<details>
+ <summary>
+    This is very useful in order to, for example, generate an <i>unprefixed class</i> that
+    you can pass to 3rd-party components. For example, to style
+    <code>react-select</code> which supports passing a custom class via <code>optionClassName</code>:
+ </summary>
+  
+  ```jsx
+  import Select from 'react-select'
+  export default () => (
+    <div>
+      <Select optionClassName="react-select" />
+  
+      <style jsx>{`
+        /* "div" will be prefixed, but ".react-select" won't */
+        div :global(.react-select) {
+          color: red
+        }
+      `}</style>
+    </div>
+  )
+  ```
+</details>
 
 ### Dynamic styles
 
 #### Via `className` toggling
 
-To make a component's visual representation customizable from the outside world, there are two options. The first one is to pass properties that toggle class names.
+<details>
+  <summary> To make a component's visual representation customizable from the outside world, there are two options. The first one is to pass properties that toggle class names.</summary> 
+  
+  ```jsx
+  const Button = (props) => (
+    <button className={ 'large' in props && 'large' }>
+       { props.children }
+       <style jsx>{`
+          button {
+            padding: 20px;
+            background: #eee;
+            color: #999
+          }
+          .large {
+            padding: 50px
+          }
+       `}</style>
+    </button>
+  )
+  ```
+</details>
 
-```jsx
-const Button = (props) => (
-  <button className={ 'large' in props && 'large' }>
-     { props.children }
-     <style jsx>{`
-        button {
-          padding: 20px;
-          background: #eee;
-          color: #999
-        }
-        .large {
-          padding: 50px
-        }
-     `}</style>
-  </button>
-)
-```
 
-Then you would use this component as either `<Button>Hi</Button>` or `<Button large>Big</Button>`.
+<br>Then you would use this component as either `<Button>Hi</Button>` or `<Button large>Big</Button>`.
 
 #### Via inline `style`
 
-Imagine that you wanted to make the padding in the button above completely customizable. You can override the CSS you configure via inline-styles:
+<details>
+  <summary> Imagine that you wanted to make the padding in the button above completely customizable. You can override the CSS you configure via inline-styles:</summary>
+  
+  ```jsx
+  const Button = ({ padding, children }) => (
+    <button style={{ padding }}>
+       { children }
+       <style jsx>{`
+          button {
+            padding: 20px;
+            background: #eee;
+            color: #999
+          }
+       `}</style>
+    </button>
+  )
+  ```
+</details>
 
-```jsx
-const Button = ({ padding, children }) => (
-  <button style={{ padding }}>
-     { children }
-     <style jsx>{`
-        button {
-          padding: 20px;
-          background: #eee;
-          color: #999
-        }
-     `}</style>
-  </button>
-)
-```
 
-In this example, the padding defaults to the one set in `<style>` (`20`), but the user can pass a custom one via `<Button padding={30}>`.
+<br>In this example, the padding defaults to the one set in `<style>` (`20`), but the user can pass a custom one via `<Button padding={30}>`.
 
 ### Constants and Config
 
-It is possible to use constants like so:
+<details>
+  <summary> It is possible to use constants like so:</summary>
+  
+  ```jsx
+  import { colors, spacing } from '../theme'
+  import { invertColor } from '../theme/utils'
+  
+  const Button = ({ children }) => (
+    <button>
+       { children }
+       <style jsx>{`
+          button {
+            padding: ${ spacing.medium };
+            background: ${ colors.primary };
+            color: ${ invertColor(colors.primary) };
+          }
+       `}</style>
+    </button>
+  )
+  ```
+</details>
 
-```jsx
-import { colors, spacing } from '../theme'
-import { invertColor } from '../theme/utils'
 
-const Button = ({ children }) => (
-  <button>
-     { children }
-     <style jsx>{`
-        button {
-          padding: ${ spacing.medium };
-          background: ${ colors.primary };
-          color: ${ invertColor(colors.primary) };
-        }
-     `}</style>
-  </button>
-)
-```
-
-N.B. Only constants defined outside of the component scope are allowed here.
+<br>N.B. Only constants defined outside of the component scope are allowed here.
 If you want to use or toggle dynamic values depending on the component `state` or `props` then we recommend to use one of the techniques from the [Dynamic styles section](#dynamic-styles)
 
 ## Server-Side Rendering
 
 ### `styled-jsx/server`
 
-The main export flushes your styles to an array of `React.Element`:
-
-```jsx
-import React from 'react'
-import ReactDOM from 'react-dom/server'
-import flush from 'styled-jsx/server'
-import App from './app'
-
-export default (req, res) => {
-  const app = ReactDOM.renderToString(<App />)
-  const styles = flush()
-  const html = ReactDOM.renderToStaticMarkup(<html>
-    <head>{ styles }</head>
-    <body>
-      <div id="root" dangerouslySetInnerHTML={{__html: app}} />
-    </body>
-  </html>)
-  res.end('<!doctype html>' + html)
-}
-```
-
-We also expose `flushToHTML` to return generated HTML:
-
-```jsx
-import React from 'react'
-import ReactDOM from 'react-dom/server'
-import { flushToHTML } from 'styled-jsx/server'
-import App from './app'
-
-export default (req, res) => {
-  const app = ReactDOM.renderToString(<App />)
-  const styles = flushToHTML()
-  const html = `<!doctype html>
-    <html>
-      <head>${styles}</head>
+<details>
+ <summary> The main export flushes your styles to an array of <code>React.Element</code>:</summary>
+  
+  ```jsx
+  import React from 'react'
+  import ReactDOM from 'react-dom/server'
+  import flush from 'styled-jsx/server'
+  import App from './app'
+  
+  export default (req, res) => {
+    const app = ReactDOM.renderToString(<App />)
+    const styles = flush()
+    const html = ReactDOM.renderToStaticMarkup(<html>
+      <head>{ styles }</head>
       <body>
-        <div id="root">${app}</div>
+        <div id="root" dangerouslySetInnerHTML={{__html: app}} />
       </body>
-    </html>`
-  res.end(html)
-}
-```
+    </html>)
+    res.end('<!doctype html>' + html)
+  }
+  ```
+</details>
 
-It's **paramount** that you use one of these two functions so that
+<br>
+
+<details>
+ <summary> We also expose <code>flushToHTML</code> to return generated HTML:</summary>
+  
+  ```jsx
+  import React from 'react'
+  import ReactDOM from 'react-dom/server'
+  import { flushToHTML } from 'styled-jsx/server'
+  import App from './app'
+  
+  export default (req, res) => {
+    const app = ReactDOM.renderToString(<App />)
+    const styles = flushToHTML()
+    const html = `<!doctype html>
+      <html>
+        <head>${styles}</head>
+        <body>
+          <div id="root">${app}</div>
+        </body>
+      </html>`
+    res.end(html)
+  }
+  ```
+</details>
+
+
+<br>It's **paramount** that you use one of these two functions so that
 the generated styles can be diffed when the client loads and
 duplicate styles are avoided.
 
@@ -327,8 +360,7 @@ Simply perform the action in the string template and select CSS.
 You get full CSS highlighting and autocompletion and it will last until you close the IDE.
 
 ### Emmet
-
- If you're using Emmet you can add the following snippet to `~/emmet/snippets-styledjsx.json` This will allow you to expand `style-jsx` to a styled-jsx block.
+If you're using Emmet you can add the following snippet to `~/emmet/snippets-styledjsx.json` This will allow you to expand `style-jsx` to a styled-jsx block.
 
  ```json
  {
@@ -339,7 +371,6 @@ You get full CSS highlighting and autocompletion and it will last until you clos
   }
 }
 ```
-
 ### [Visual Studio Code Extension](https://marketplace.visualstudio.com/items?itemName=blanu.vscode-styled-jsx)
 Launch VS Code Quick Open (⌘+P), paste the following command, and press enter.
 ```
