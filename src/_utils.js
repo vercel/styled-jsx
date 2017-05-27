@@ -264,12 +264,25 @@ export const combinePlugins = plugins => {
     return css => css
   }
 
-  if (!Array.isArray(plugins) || plugins.some(p => typeof p !== 'string')) {
-    throw new Error('`plugins` must be an array of plugins names')
+  if (
+    !Array.isArray(plugins) ||
+    plugins.some(p => !Array.isArray(p) && typeof p !== 'string')
+  ) {
+    throw new Error(
+      '`plugins` must be an array of plugins names (string) or an array `[plugin-name, {options}]`'
+    )
   }
+
+  const env = typeof window === 'undefined' ? 'compile' : 'runtime'
 
   return plugins
     .map((plugin, i) => {
+      let options = {}
+      if (Array.isArray(plugin)) {
+        plugin = plugin[0]
+        options = plugin[1] || {}
+      }
+
       // eslint-disable-next-line import/no-dynamic-require
       let p = require(plugin)
       if (p.default) {
@@ -282,7 +295,17 @@ export const combinePlugins = plugins => {
           `Expected plugin ${plugins[i]} to be a function but instead got ${type}`
         )
       }
-      return p
+      return {
+        plugin: p,
+        settings: {
+          env,
+          options
+        }
+      }
     })
-    .reduce((plugin, nextPlugin) => css => nextPlugin(plugin(css)))
+    .reduce(
+      (current, next) => css =>
+        next.plugin(current ? current(css) : css, next.settings),
+      null
+    )
 }
