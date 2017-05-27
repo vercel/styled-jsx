@@ -62,7 +62,7 @@
     "escape-string-regexp": "1.0.5",
     "source-map": "0.5.6",
     "string-hash": "1.1.1",
-    "stylis": "1.2.7"
+    "stylis": "3.0.4"
   },
   "devDependencies": {
     "ava": "0.19.1",

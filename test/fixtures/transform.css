@@ -10,7 +10,7 @@
   color: blue;
 }
 
-:global(.foo + a) { 
+:global(.foo + a) {
   color: red;
 }
 
