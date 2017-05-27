@@ -12,3 +12,13 @@ test('transpile styles with attributes', async t => {
   // (since CSS forbids them from starting with a number)
   t.snapshot(transform('[data-jsx="123"]', src))
 })
+
+test('throws when using nesting', t => {
+  t.throws(() => transform('', `div { &:hover { color: red } }`))
+})
+
+test("doesn't throw when using media queries", t => {
+  t.notThrows(() =>
+    transform('', '@media (min-width: 480px) { div { color: red } }')
+  )
+})
