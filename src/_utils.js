@@ -302,8 +302,8 @@ export const combinePlugins = (plugins, opts) => {
       }
     })
     .reduce(
-      (current, next) => css =>
-        next.plugin(current ? current(css) : css, next.settings),
+      (previous, { plugin, settings }) => css =>
+        plugin(previous ? previous(css) : css, settings),
       null
     )
 }
