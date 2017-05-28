@@ -345,9 +345,12 @@ export default function({ types: t }) {
           state.file.hasJSXStyle = false
           state.imports = []
           if (!plugins) {
+            const { sourceMaps, vendorPrefix } = state.opts
             plugins = combinePlugins(state.opts.plugins, {
-              sourceMaps: state.opts.sourceMaps || state.file.opts.sourceMaps,
-              vendorPrefix: state.opts.vendorPrefix || true
+              sourceMaps: sourceMaps || state.file.opts.sourceMaps,
+              vendorPrefix: typeof vendorPrefix === 'boolean'
+                ? vendorPrefix
+                : true
             })
           }
         },
