@@ -26,7 +26,6 @@ const getCss = (path, validate = false) => {
 }
 
 const getStyledJsx = (css, opts, path) => {
-  const useSourceMaps = Boolean(opts.sourceMaps)
   const commonHash = hash(css.modified || css)
   const globalHash = `1${commonHash}`
   const scopedHash = `2${commonHash}`
@@ -36,7 +35,7 @@ const getStyledJsx = (css, opts, path) => {
   const prefix = `[${MARKUP_ATTRIBUTE_EXTERNAL}~="${scopedHash}"]`
   const isTemplateLiteral = Boolean(css.modified)
 
-  if (useSourceMaps) {
+  if (opts.sourceMaps) {
     const generator = makeSourceMapGenerator(opts.file)
     const filename = opts.sourceFileName
     const offset = path.get('loc').node.start
@@ -45,7 +44,8 @@ const getStyledJsx = (css, opts, path) => {
         transform(prefix, opts.plugins(css.modified || css), {
           generator,
           offset,
-          filename
+          filename,
+          vendorPrefix: opts.vendorPrefix
         }),
         generator,
         filename
@@ -53,7 +53,9 @@ const getStyledJsx = (css, opts, path) => {
     )
   } else {
     compiledCss = ['', prefix].map(prefix =>
-      transform(prefix, opts.plugins(css.modified || css))
+      transform(prefix, opts.plugins(css.modified || css), {
+        vendorPrefix: opts.vendorPrefix
+      })
     )
   }
   globalCss = compiledCss[0]
@@ -161,7 +163,8 @@ const callVisitor = (visitor, path, state) => {
     sourceMaps: state.opts.sourceMaps || opts.sourceMaps,
     sourceFileName: opts.sourceFileName,
     file,
-    plugins
+    plugins,
+    vendorPrefix: state.opts.vendorPrefix
   })
 }
 
@@ -170,7 +173,10 @@ export default function() {
     visitor: {
       Program(path, state) {
         if (!plugins) {
-          plugins = combinePlugins(state.opts.plugins)
+          plugins = combinePlugins(state.opts.plugins, {
+            sourceMaps: state.opts.sourceMaps || state.file.opts.sourceMaps,
+            vendorPrefix: state.opts.vendorPrefix || true
+          })
         }
       },
       ExportDefaultDeclaration(path, state) {

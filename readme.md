@@ -42,6 +42,11 @@ export default () => (
 )
 ```
 
+### Options
+
+* `sourceMaps` generates source maps (default: `false`)
+* `vendorPrefix` turn on/off automatic vendor prefixing (default: `true`)
+
 ## Features
 
 - Full CSS support, no tradeoffs in power
@@ -172,14 +177,16 @@ Each plugin receives a `settings` object as second argument which contains
 the babel and user options:
 
 ```js
-export default (css, settings) => { /* ... */ }
+(css, settings) => { /* ... */ }
 ```
 
 The `settings` object has the following shape:
 
 ```js
 {
+  // babel options
   sourceMaps: true,
+  vendorPrefix: true,
 
   // user options
   options: {

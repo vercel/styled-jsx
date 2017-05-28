@@ -40,7 +40,8 @@ const callExternalVisitor = (visitor, path, state) => {
     sourceMaps: state.opts.sourceMaps || opts.sourceMaps,
     sourceFileName: opts.sourceFileName,
     file,
-    plugins
+    plugins,
+    vendorPrefix: state.opts.vendorPrefix
   })
 }
 
@@ -310,7 +311,8 @@ export default function({ types: t }) {
                 {
                   generator,
                   offset: loc.start,
-                  filename
+                  filename,
+                  vendorPrefix: state.opts.vendorPrefix
                 }
               ),
               generator,
@@ -319,7 +321,10 @@ export default function({ types: t }) {
           } else {
             transformedCss = transform(
               isGlobal ? '' : getPrefix(state.jsxId),
-              plugins(css.modified || css)
+              plugins(css.modified || css),
+              {
+                vendorPrefix: state.opts.vendorPrefix
+              }
             )
           }
 
@@ -341,7 +346,8 @@ export default function({ types: t }) {
           state.imports = []
           if (!plugins) {
             plugins = combinePlugins(state.opts.plugins, {
-              sourceMaps: state.opts.sourceMaps || state.file.opts.sourceMaps
+              sourceMaps: state.opts.sourceMaps || state.file.opts.sourceMaps,
+              vendorPrefix: state.opts.vendorPrefix || true
             })
           }
         },

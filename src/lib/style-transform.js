@@ -82,6 +82,9 @@ function transform(prefix, styles, settings = {}) {
   generator = settings.generator
   offset = settings.offset
   filename = settings.filename
+  stylis.set({
+    prefix: typeof settings.vendorPrefix === 'boolean' ? settings.vendorPrefix : true
+  })
 
   return stylis(prefix, styles)
 }
