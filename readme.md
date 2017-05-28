@@ -175,11 +175,6 @@ export default () => (
       div :global(.react-select) {
         color: red
       }
-
-      /* if you want to select multiple children elements use :global() multiple times */
-      div :global(.react-select) :global(.some-child-of-react-select) {
-        color: blue
-      }
     `}</style>
   </div>
 )
