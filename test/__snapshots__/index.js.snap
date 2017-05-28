@@ -94,7 +94,7 @@ const obj = { display: 'block' };
 // eslint-disable-next-line no-unused-vars
 export default (({ display }) => <div data-jsx={290536030}>
     <p data-jsx={290536030}>test</p>
-    <_JSXStyle styleId={2129566164} css={\`p[data-jsx=\\"290536030\\"].\${color}[data-jsx=\\"290536030\\"]{color:\${otherColor};display:\${obj.display}}\`} />
+    <_JSXStyle styleId={2129566164} css={\`p.\${color}[data-jsx=\\"290536030\\"]{color:\${otherColor};display:\${obj.display}}\`} />
     <_JSXStyle styleId={188072295} css={\\"p[data-jsx=\\\\\\"290536030\\\\\\"]{color:red}\\"} />
     <_JSXStyle styleId={806016056} css={\`body{background:\${color}}\`} />
     <_JSXStyle styleId={806016056} css={\`body{background:\${color}}\`} />

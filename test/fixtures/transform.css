@@ -138,3 +138,6 @@ test
   display: inline-block;
 }
 
+.test.is-status .test {
+  color: red;
+}
