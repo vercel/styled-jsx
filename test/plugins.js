@@ -3,23 +3,21 @@ import test from 'ava'
 
 // Ours
 import babelPlugin from '../src/babel'
-import {combinePlugins} from '../src/_utils'
+import { combinePlugins } from '../src/_utils'
 import _transform from './_transform'
-import read from './_read'
 import testPlugin1 from './fixtures/plugins/plugin'
 import testPlugin2 from './fixtures/plugins/another-plugin'
 
-const transform = (file, opts = {}) => (
+const transform = (file, opts = {}) =>
   _transform(file, {
     plugins: [
       [
         babelPlugin,
-        {plugins: [require.resolve('./fixtures/plugins/another-plugin')]}
+        { plugins: [require.resolve('./fixtures/plugins/another-plugin')] }
       ]
     ],
     ...opts
   })
-)
 
 test('combinePlugins returns an identity function when plugins is undefined', t => {
   const test = 'test'
@@ -49,11 +47,22 @@ test('combinePlugins throws if loaded plugins are not functions', t => {
 })
 
 test('combinePlugins works with a single plugin', t => {
-  const plugins = combinePlugins([
-    require.resolve('./fixtures/plugins/plugin')
-  ])
+  const plugins = combinePlugins([require.resolve('./fixtures/plugins/plugin')])
 
   t.is(testPlugin1('test'), plugins('test'))
+})
+
+test('combinePlugins works with options', t => {
+  const expectedOption = 'my-test'
+  const plugins = combinePlugins([
+    [
+      require.resolve('./fixtures/plugins/options'),
+      {
+        test: expectedOption
+      }
+    ]
+  ])
+  t.is(plugins(''), expectedOption)
 })
 
 test('combinePlugins applies plugins left to right', t => {
@@ -66,7 +75,6 @@ test('combinePlugins applies plugins left to right', t => {
 })
 
 test('applies plugins', async t => {
-  const {code} = await transform('./fixtures/with-plugins.js')
-  const out = await read('./fixtures/with-plugins.out.js')
-  t.is(code, out.trim())
+  const { code } = await transform('./fixtures/with-plugins.js')
+  t.snapshot(code)
 })

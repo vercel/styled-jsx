@@ -259,7 +259,7 @@ export const addSourceMaps = (code, generator, filename) =>
     `/*@ sourceURL=${filename} */`
   ].join('\n')
 
-export const combinePlugins = plugins => {
+export const combinePlugins = (plugins, opts) => {
   if (!plugins) {
     return css => css
   }
@@ -273,14 +273,12 @@ export const combinePlugins = plugins => {
     )
   }
 
-  const env = typeof window === 'undefined' ? 'compile' : 'runtime'
-
   return plugins
     .map((plugin, i) => {
       let options = {}
       if (Array.isArray(plugin)) {
-        plugin = plugin[0]
         options = plugin[1] || {}
+        plugin = plugin[0]
       }
 
       // eslint-disable-next-line import/no-dynamic-require
@@ -298,7 +296,7 @@ export const combinePlugins = plugins => {
       return {
         plugin: p,
         settings: {
-          env,
+          ...opts,
           options
         }
       }

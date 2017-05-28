@@ -158,7 +158,7 @@ const callVisitor = (visitor, path, state) => {
   const { opts } = file
   visitor(path, {
     validate: state.opts.validate || opts.validate,
-    sourceMaps: opts.sourceMaps,
+    sourceMaps: state.opts.sourceMaps || opts.sourceMaps,
     sourceFileName: opts.sourceFileName,
     file,
     plugins

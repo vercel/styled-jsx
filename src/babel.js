@@ -37,7 +37,7 @@ const callExternalVisitor = (visitor, path, state) => {
   const { opts } = file
   visitor(path, {
     validate: true,
-    sourceMaps: opts.sourceMaps,
+    sourceMaps: state.opts.sourceMaps || opts.sourceMaps,
     sourceFileName: opts.sourceFileName,
     file,
     plugins
@@ -295,7 +295,9 @@ export default function({ types: t }) {
           // We replace styles with the function call
           const [id, css, loc] = state.styles.shift()
 
-          const useSourceMaps = Boolean(state.file.opts.sourceMaps)
+          const useSourceMaps = Boolean(
+            state.opts.sourceMaps || state.file.opts.sourceMaps
+          )
           let transformedCss
 
           if (useSourceMaps) {
@@ -338,7 +340,9 @@ export default function({ types: t }) {
           state.file.hasJSXStyle = false
           state.imports = []
           if (!plugins) {
-            plugins = combinePlugins(state.opts.plugins)
+            plugins = combinePlugins(state.opts.plugins, {
+              sourceMaps: state.opts.sourceMaps || state.file.opts.sourceMaps
+            })
           }
         },
         exit({ node, scope }, state) {

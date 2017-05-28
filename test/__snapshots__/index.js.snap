@@ -1,5 +1,23 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`generates source maps (babel options) 1`] = `
+"import _JSXStyle from 'styled-jsx/style';
+export default (() => <div data-jsx={188072295}>
+    <p data-jsx={188072295}>test</p>
+    <p data-jsx={188072295}>woot</p>
+    <_JSXStyle styleId={188072295} css={\\"p[data-jsx=\\\\\\"188072295\\\\\\"]{color:red}\\\\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzb3VyY2UtbWFwcy5qcyIsInNvdXJjZXNDb250ZW50IjpbXX0= */\\\\n/*@ sourceURL=source-maps.js */\\"} />
+  </div>);"
+`;
+
+exports[`generates source maps (plugin options) 1`] = `
+"import _JSXStyle from 'styled-jsx/style';
+export default (() => <div data-jsx={188072295}>
+    <p data-jsx={188072295}>test</p>
+    <p data-jsx={188072295}>woot</p>
+    <_JSXStyle styleId={188072295} css={\\"p[data-jsx=\\\\\\"188072295\\\\\\"]{color:red}\\\\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzb3VyY2UtbWFwcy5qcyIsInNvdXJjZXNDb250ZW50IjpbXX0= */\\\\n/*@ sourceURL=source-maps.js */\\"} />
+  </div>);"
+`;
+
 exports[`generates source maps 1`] = `
 "import _JSXStyle from 'styled-jsx/style';
 export default (() => <div data-jsx={188072295}>
