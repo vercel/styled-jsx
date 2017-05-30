@@ -46,11 +46,11 @@ test('throws when using nesting', t => {
 
   fixtures.forEach(fixture => {
     t.throws(() => transform('', fixture))
-    t.throws(() => transform('[prefix]', fixture))
+    t.throws(() => transform('[data-jsx="123"]', fixture))
   })
 })
 
-test("doesn't throw when using media queries", t => {
+test("doesn't throw when using at-rules", t => {
   const fixtures = [
     '@media (min-width: 480px) { div { color: red } }',
 
@@ -68,11 +68,15 @@ test("doesn't throw when using media queries", t => {
 
     `@media (min-width: 480px) { div {} }`,
 
-    `@media all { div { color: red } }`
+    `@keyframes foo {
+      0% { opacity: 0 }
+      100% { opacity: 1}
+    }
+    `
   ]
 
   fixtures.forEach(fixture => {
     t.notThrows(() => transform('', fixture))
-    t.notThrows(() => transform('[prefix]', fixture))
+    t.notThrows(() => transform('[data-jsx="123"]', fixture))
   })
 })
