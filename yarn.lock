@@ -4625,9 +4625,9 @@ strip-json-comments@~2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/strip-json-comments/-/strip-json-comments-2.0.1.tgz#3c531942e908c2697c0ec344858c286c7ca0a60a"
 
-stylis@3.0.5:
-  version "3.0.5"
-  resolved "https://registry.yarnpkg.com/stylis/-/stylis-3.0.5.tgz#debb41e029cc9ee14880cf435fbe0a0933e25d2c"
+stylis@3.0.10:
+  version "3.0.10"
+  resolved "https://registry.yarnpkg.com/stylis/-/stylis-3.0.10.tgz#9f561e8a9799c2c317c596583bcaaa52a0d27663"
 
 supports-color@^2.0.0:
   version "2.0.0"
