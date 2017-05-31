@@ -3,7 +3,7 @@ import jsx from 'babel-plugin-syntax-jsx'
 import hash from 'string-hash'
 
 // Ours
-import transform from '../lib/style-transform'
+import transform from './lib/style-transform'
 import {
   exportDefaultDeclarationVisitor,
   namedExportDeclarationVisitor,
