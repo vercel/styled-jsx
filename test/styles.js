@@ -2,7 +2,7 @@
 import test from 'ava'
 
 // Ours
-import transform from '../lib/style-transform'
+import transform from '../src/lib/style-transform'
 import read from './_read'
 
 test('transpile styles with attributes', async t => {
