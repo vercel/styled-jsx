@@ -1,7 +1,7 @@
 import hash from 'string-hash'
 import * as t from 'babel-types'
 
-import transform from '../lib/style-transform'
+import transform from './lib/style-transform'
 import { MARKUP_ATTRIBUTE_EXTERNAL } from './_constants'
 import {
   getExpressionText,
