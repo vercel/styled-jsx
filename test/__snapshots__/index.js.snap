@@ -5,7 +5,7 @@ exports[`generates source maps (babel options) 1`] = `
 export default (() => <div data-jsx={188072295}>
     <p data-jsx={188072295}>test</p>
     <p data-jsx={188072295}>woot</p>
-    <_JSXStyle styleId={188072295} css={\\"p[data-jsx=\\\\\\"188072295\\\\\\"]{color:red}\\\\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzb3VyY2UtbWFwcy5qcyIsInNvdXJjZXNDb250ZW50IjpbXX0= */\\\\n/*@ sourceURL=source-maps.js */\\"} />
+    <_JSXStyle styleId={188072295} css={\\"p[data-jsx=\\\\\\"188072295\\\\\\"]{color:red}\\\\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNvdXJjZS1tYXBzLmpzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUlnQixBQUNjLFdBQUMiLCJmaWxlIjoic291cmNlLW1hcHMuanMiLCJzb3VyY2VzQ29udGVudCI6WyJleHBvcnQgZGVmYXVsdCAoKSA9PiAoXG4gIDxkaXY+XG4gICAgPHA+dGVzdDwvcD5cbiAgICA8cD53b290PC9wPlxuICAgIDxzdHlsZSBqc3g+eydwIHsgY29sb3I6IHJlZCB9J308L3N0eWxlPlxuICA8L2Rpdj5cbilcbiJdfQ== */\\\\n/*@ sourceURL=source-maps.js */\\"} />
   </div>);"
 `;
 
@@ -14,7 +14,7 @@ exports[`generates source maps (plugin options) 1`] = `
 export default (() => <div data-jsx={188072295}>
     <p data-jsx={188072295}>test</p>
     <p data-jsx={188072295}>woot</p>
-    <_JSXStyle styleId={188072295} css={\\"p[data-jsx=\\\\\\"188072295\\\\\\"]{color:red}\\\\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzb3VyY2UtbWFwcy5qcyIsInNvdXJjZXNDb250ZW50IjpbXX0= */\\\\n/*@ sourceURL=source-maps.js */\\"} />
+    <_JSXStyle styleId={188072295} css={\\"p[data-jsx=\\\\\\"188072295\\\\\\"]{color:red}\\\\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNvdXJjZS1tYXBzLmpzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUlnQixBQUNjLFdBQUMiLCJmaWxlIjoic291cmNlLW1hcHMuanMiLCJzb3VyY2VzQ29udGVudCI6WyJleHBvcnQgZGVmYXVsdCAoKSA9PiAoXG4gIDxkaXY+XG4gICAgPHA+dGVzdDwvcD5cbiAgICA8cD53b290PC9wPlxuICAgIDxzdHlsZSBqc3g+eydwIHsgY29sb3I6IHJlZCB9J308L3N0eWxlPlxuICA8L2Rpdj5cbilcbiJdfQ== */\\\\n/*@ sourceURL=source-maps.js */\\"} />
   </div>);"
 `;
 
