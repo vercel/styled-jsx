@@ -58,14 +58,18 @@ export const getExpressionText = expr => {
   // e.g.
   // p { color: ${myConstant}; }
   // becomes
-  // p { color: %%styledjsxexpression_0%%; }
+  // p { color: var(--styled-jsx-expression-${id}--); }
+  //
+  // We use a dummy custom property so that the resulting css
+  // passes the css validation which is needed to detect
+  // external styles.
 
   const replacements = expressions
     .map((e, id) => ({
       pattern: new RegExp(
         `\\$\\{\\s*${escapeStringRegExp(e.getSource())}\\s*\\}`
       ),
-      replacement: `%%styledjsxexpression_${id}%%`,
+      replacement: `var(--styled-jsx-expression-${id}--)`,
       initial: `$\{${e.getSource()}}`
     }))
     .sort((a, b) => a.initial.length < b.initial.length)
@@ -90,7 +94,7 @@ export const getExpressionText = expr => {
 export const restoreExpressions = (css, replacements) =>
   replacements.reduce((css, currentReplacement) => {
     css = css.replace(
-      new RegExp(currentReplacement.replacement, 'g'),
+      new RegExp(escapeStringRegExp(currentReplacement.replacement), 'g'),
       currentReplacement.initial
     )
     return css
