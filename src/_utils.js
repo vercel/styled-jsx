@@ -58,18 +58,14 @@ export const getExpressionText = expr => {
   // e.g.
   // p { color: ${myConstant}; }
   // becomes
-  // p { color: var(--styled-jsx-expression-${id}--); }
-  //
-  // We use a dummy custom property so that the resulting css
-  // passes the css validation which is needed to detect
-  // external styles.
+  // p { color: %%styled-jsx-placeholder-${id}%%; }
 
   const replacements = expressions
     .map((e, id) => ({
       pattern: new RegExp(
         `\\$\\{\\s*${escapeStringRegExp(e.getSource())}\\s*\\}`
       ),
-      replacement: `var(--styled-jsx-expression-${id}--)`,
+      replacement: `%%styled-jsx-placeholder-${id}%%`,
       initial: `$\{${e.getSource()}}`
     }))
     .sort((a, b) => a.initial.length < b.initial.length)
@@ -197,7 +193,14 @@ export const generateAttribute = (name, value) =>
 
 export const isValidCss = str => {
   try {
-    parseCss(str)
+    parseCss(
+      // Replace the placeholder with some valid css
+      str.replace(
+        /(\S\s*)%%styled-jsx-placeholder-[^%]+%%/gi,
+        (match, delimiter) =>
+          `${delimiter}all${['{', ';'].includes(delimiter.trim()) ? ':' : ''}${['{', ';'].includes(delimiter.trim()) ? ';' : ''}`
+      )
+    )
     return true
   } catch (err) {}
   return false

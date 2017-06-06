@@ -23,7 +23,7 @@ export default ({ display }) => (
     <style jsx>{`
       @media (min-width: ${mediumScreen}) {
         p { color: green }
-        p { color ${`red`}}
+        p { color: ${`red`}}
       }
       p { color: red }`}</style>
     <style jsx>{`p { animation-duration: ${animationDuration} }`}</style>
