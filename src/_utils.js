@@ -194,12 +194,47 @@ export const generateAttribute = (name, value) =>
 export const isValidCss = str => {
   try {
     parseCss(
-      // Replace the placeholder with some valid css
-      str.replace(
-        /(\S\s*)%%styled-jsx-placeholder-[^%]+%%/gi,
-        (match, delimiter) =>
-          `${delimiter}all${['{', ';'].includes(delimiter.trim()) ? ':' : ''}${['{', ';'].includes(delimiter.trim()) ? ';' : ''}`
-      )
+      // Replace the placeholders with some valid CSS
+      // so that parsing doesn't fail for otherwise valid CSS.
+      str
+        // Replace all the placeholders with `all`
+        .replace(
+          // `\S` (the `delimiter`) is to match
+          // the beginning of a block `{`
+          // a property `:`
+          // or the end of a property `;`
+          /(\S)?\s*%%styled-jsx-placeholder-[^%]+%%(?:\s*(\}))?/gi,
+          (match, delimiter, isBlockEnd) => {
+            // The `end` of the replacement would be
+            let end
+
+            if (delimiter === ':' && isBlockEnd) {
+              // ';}' single property block without semicolon
+              // E.g. { color: all;}
+              end = `;${isBlockEnd}`
+            } else if (delimiter === '{' || isBlockEnd) {
+              // ':;' when we are at the beginning or the end of a block
+              // E.g. { all:; ...otherstuff
+              // E.g. all:; }
+              end = `:;${isBlockEnd || ''}`
+            } else if (delimiter === ';') {
+              // ':' when we are inside of a block
+              // E.g. color: red; all:; display: block;
+              end = ':'
+            } else {
+              // Otherwise empty
+              end = ''
+            }
+
+            return `${delimiter || ''}all${end}`
+          }
+        )
+        // Replace block placeholders before media queries
+        // E.g. all @media (all) {}
+        .replace(/all\s*([@])/g, (match, delimiter) => `all {} ${delimiter}`)
+        // Replace block placeholders at the beginning of a media query block
+        // E.g. @media (all) { all:; div { ... }}
+        .replace(/@media[^{]+{\s*all:;/g, () => `@media (all) { `)
     )
     return true
   } catch (err) {}

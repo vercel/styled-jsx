@@ -29,3 +29,11 @@ test('transpiles external stylesheets with validation', async t => {
   t.regex(code, new RegExp(escapeStringRegExp(MARKUP_ATTRIBUTE_EXTERNAL), 'g'))
   t.snapshot(code)
 })
+
+test('transpiles external stylesheets with validation (expressions)', async t => {
+  const { code } = await transform('./fixtures/styles-expressions.js', {
+    validate: true
+  })
+  t.regex(code, new RegExp(escapeStringRegExp(MARKUP_ATTRIBUTE_EXTERNAL), 'g'))
+  t.snapshot(code)
+})
