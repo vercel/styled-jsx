@@ -211,7 +211,7 @@ export const isValidCss = str => {
             if (delimiter === ':' && isBlockEnd) {
               // ';}' single property block without semicolon
               // E.g. { color: all;}
-              end = `;${isBlockEnd}`
+              end = `;}`
             } else if (delimiter === '{' || isBlockEnd) {
               // ':;' when we are at the beginning or the end of a block
               // E.g. { all:; ...otherstuff
@@ -234,7 +234,7 @@ export const isValidCss = str => {
         .replace(/all\s*([@])/g, (match, delimiter) => `all {} ${delimiter}`)
         // Replace block placeholders at the beginning of a media query block
         // E.g. @media (all) { all:; div { ... }}
-        .replace(/@media[^{]+{\s*all:;/g, () => `@media (all) { `)
+        .replace(/@media[^{]+{\s*all:;/g, '@media (all) { ')
     )
     return true
   } catch (err) {}
