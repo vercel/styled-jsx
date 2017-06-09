@@ -90,7 +90,7 @@ export const getExpressionText = expr => {
 export const restoreExpressions = (css, replacements) =>
   replacements.reduce((css, currentReplacement) => {
     css = css.replace(
-      new RegExp(escapeStringRegExp(currentReplacement.replacement), 'g'),
+      new RegExp(currentReplacement.replacement, 'g'),
       currentReplacement.initial
     )
     return css
