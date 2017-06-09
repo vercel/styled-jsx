@@ -8,7 +8,7 @@ export default class extends Component {
     mount(this)
   }
 
-  componentWillUpdate() {
+  componentDidUpdate() {
     update()
   }
 
