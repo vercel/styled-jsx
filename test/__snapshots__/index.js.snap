@@ -5,7 +5,7 @@ exports[`generates source maps 1`] = `
 export default (() => <div data-jsx={188072295}>
     <p data-jsx={188072295}>test</p>
     <p data-jsx={188072295}>woot</p>
-    <_JSXStyle styleId={188072295} css={\\"p[data-jsx=\\\\\\"188072295\\\\\\"]{color:red}\\\\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzb3VyY2UtbWFwcy5qcyIsInNvdXJjZXNDb250ZW50IjpbXX0= */\\\\n/*@ sourceURL=source-maps.js */\\"} />
+    <_JSXStyle styleId={188072295} css={\\"p[data-jsx=\\\\\\"188072295\\\\\\"]{color:red}\\\\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNvdXJjZS1tYXBzLmpzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUlnQixBQUNjLFdBQUMiLCJmaWxlIjoic291cmNlLW1hcHMuanMiLCJzb3VyY2VzQ29udGVudCI6WyJleHBvcnQgZGVmYXVsdCAoKSA9PiAoXG4gIDxkaXY+XG4gICAgPHA+dGVzdDwvcD5cbiAgICA8cD53b290PC9wPlxuICAgIDxzdHlsZSBqc3g+eydwIHsgY29sb3I6IHJlZCB9J308L3N0eWxlPlxuICA8L2Rpdj5cbilcbiJdfQ== */\\\\n/*@ sourceURL=source-maps.js */\\"} />
   </div>);"
 `;
 
@@ -92,19 +92,19 @@ const animationName = 'my-cool-animation';
 const obj = { display: 'block' };
 
 // eslint-disable-next-line no-unused-vars
-export default (({ display }) => <div data-jsx={290536030}>
-    <p data-jsx={290536030}>test</p>
-    <_JSXStyle styleId={2129566164} css={\`p.\${color}[data-jsx=\\"290536030\\"]{color:\${otherColor};display:\${obj.display}}\`} />
-    <_JSXStyle styleId={188072295} css={\\"p[data-jsx=\\\\\\"290536030\\\\\\"]{color:red}\\"} />
+export default (({ display }) => <div data-jsx={4091813028}>
+    <p data-jsx={4091813028}>test</p>
+    <_JSXStyle styleId={2129566164} css={\`p.\${color}[data-jsx=\\"4091813028\\"]{color:\${otherColor};display:\${obj.display}}\`} />
+    <_JSXStyle styleId={188072295} css={\\"p[data-jsx=\\\\\\"4091813028\\\\\\"]{color:red}\\"} />
     <_JSXStyle styleId={806016056} css={\`body{background:\${color}}\`} />
     <_JSXStyle styleId={806016056} css={\`body{background:\${color}}\`} />
-    <_JSXStyle styleId={924167211} css={\`p[data-jsx=\\"290536030\\"]{color:\${color}}\`} />
-    <_JSXStyle styleId={924167211} css={\`p[data-jsx=\\"290536030\\"]{color:\${color}}\`} />
-    <_JSXStyle styleId={3469794077} css={\`p[data-jsx=\\"290536030\\"]{color:\${darken(color)}}\`} />
-    <_JSXStyle styleId={945380644} css={\`p[data-jsx=\\"290536030\\"]{color:\${darken(color) + 2}}\`} />
-    <_JSXStyle styleId={4106311606} css={\`@media (min-width:\${mediumScreen}){p[data-jsx=\\"290536030\\"]{color:green}p[data-jsx=\\"290536030\\"]{color \${\`red\`}}}p[data-jsx=\\"290536030\\"]{color:red}\`} />
-    <_JSXStyle styleId={2369334310} css={\`p[data-jsx=\\"290536030\\"]{-webkit-animation-duration:\${animationDuration};animation-duration:\${animationDuration}}\`} />
-    <_JSXStyle styleId={3168033860} css={\`p[data-jsx=\\"290536030\\"]{-webkit-animation:\${animationDuration} forwards \${animationName};animation:\${animationDuration} forwards \${animationName}}\`} />
+    <_JSXStyle styleId={924167211} css={\`p[data-jsx=\\"4091813028\\"]{color:\${color}}\`} />
+    <_JSXStyle styleId={924167211} css={\`p[data-jsx=\\"4091813028\\"]{color:\${color}}\`} />
+    <_JSXStyle styleId={3469794077} css={\`p[data-jsx=\\"4091813028\\"]{color:\${darken(color)}}\`} />
+    <_JSXStyle styleId={945380644} css={\`p[data-jsx=\\"4091813028\\"]{color:\${darken(color) + 2}}\`} />
+    <_JSXStyle styleId={3617592140} css={\`@media (min-width:\${mediumScreen}){p[data-jsx=\\"4091813028\\"]{color:green}p[data-jsx=\\"4091813028\\"]{color:\${\`red\`}}}p[data-jsx=\\"4091813028\\"]{color:red}\`} />
+    <_JSXStyle styleId={2369334310} css={\`p[data-jsx=\\"4091813028\\"]{-webkit-animation-duration:\${animationDuration};animation-duration:\${animationDuration}}\`} />
+    <_JSXStyle styleId={3168033860} css={\`p[data-jsx=\\"4091813028\\"]{-webkit-animation:\${animationDuration} forwards \${animationName};animation:\${animationDuration} forwards \${animationName}}\`} />
   </div>);"
 `;
 
