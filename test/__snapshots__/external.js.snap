@@ -14,15 +14,26 @@ exports[`transpiles external stylesheets 1`] = `
 
 export const foo = new String(\`div{color:\${color}}\`);
 
-foo.__hash = '1882068550';
-foo.__scoped = \`div[data-jsx-ext~=\\"2882068550\\"]{color:\${color}}\`;
-foo.__scopedHash = '2882068550';
+foo.__hash = '166851635';
+foo.__scoped = \`div[data-jsx-ext~=\\"266851635\\"]{color:\${color}}\`;
+foo.__scopedHash = '266851635';
 
 var __styledJsxDefaultExport = new String(\`div{font-size:3em}p{color:\${color}}\`);
 
-__styledJsxDefaultExport.__hash = '12515736096';
-__styledJsxDefaultExport.__scoped = \`div[data-jsx-ext~=\\"22515736096\\"]{font-size:3em}p[data-jsx-ext~=\\"22515736096\\"]{color:\${color}}\`;
-__styledJsxDefaultExport.__scopedHash = '22515736096';
+__styledJsxDefaultExport.__hash = '12602670606';
+__styledJsxDefaultExport.__scoped = \`div[data-jsx-ext~=\\"22602670606\\"]{font-size:3em}p[data-jsx-ext~=\\"22602670606\\"]{color:\${color}}\`;
+__styledJsxDefaultExport.__scopedHash = '22602670606';
+export default __styledJsxDefaultExport;"
+`;
+
+exports[`transpiles external stylesheets with validation (expressions) 1`] = `
+"const expr = 'test';
+
+var __styledJsxDefaultExport = new String(\`\${expr} \${expr} \${expr},div{display:\${expr};color:\${expr};\${expr};\${expr} \${expr};background:red;-webkit-animation:\${expr} 10s ease-out;animation:\${expr} 10s ease-out}div{color:red;\${expr}}div{color:red;\${expr}}@media (\${expr}){\${expr} span.\${expr}{color:red}\${expr} \${expr}{color:red}\${expr},\${expr}{color:red}\${expr} div,\${expr}{color:red}}@media (min-width:\${expr}){div.\${expr}{color:red}all\${expr}{\${expr} color:red}}@font-face{\${expr}}\`);
+
+__styledJsxDefaultExport.__hash = '12538838655';
+__styledJsxDefaultExport.__scoped = \`\${expr}[data-jsx-ext~=\\"22538838655\\"] \${expr}[data-jsx-ext~=\\"22538838655\\"] \${expr}[data-jsx-ext~=\\"22538838655\\"],div[data-jsx-ext~=\\"22538838655\\"]{display:\${expr};color:\${expr};\${expr};\${expr} \${expr};background:red;-webkit-animation:\${expr} 10s ease-out;animation:\${expr} 10s ease-out}div[data-jsx-ext~=\\"22538838655\\"]{color:red;\${expr}}div[data-jsx-ext~=\\"22538838655\\"]{color:red;\${expr}}@media (\${expr}){\${expr} span.\${expr}[data-jsx-ext~=\\"22538838655\\"]{color:red}\${expr} \${expr}[data-jsx-ext~=\\"22538838655\\"]{color:red}\${expr}[data-jsx-ext~=\\"22538838655\\"],\${expr}[data-jsx-ext~=\\"22538838655\\"]{color:red}\${expr} div[data-jsx-ext~=\\"22538838655\\"],\${expr}[data-jsx-ext~=\\"22538838655\\"]{color:red}}@media (min-width:\${expr}){div.\${expr}[data-jsx-ext~=\\"22538838655\\"]{color:red}all\${expr}[data-jsx-ext~=\\"22538838655\\"]{\${expr} color:red}}@font-face{\${expr}}\`;
+__styledJsxDefaultExport.__scopedHash = '22538838655';
 export default __styledJsxDefaultExport;"
 `;
 
@@ -31,14 +42,53 @@ exports[`transpiles external stylesheets with validation 1`] = `
 
 export const foo = new String(\`div{color:\${color}}\`);
 
-foo.__hash = '1882068550';
-foo.__scoped = \`div[data-jsx-ext~=\\"2882068550\\"]{color:\${color}}\`;
-foo.__scopedHash = '2882068550';
+foo.__hash = '166851635';
+foo.__scoped = \`div[data-jsx-ext~=\\"266851635\\"]{color:\${color}}\`;
+foo.__scopedHash = '266851635';
 
 var __styledJsxDefaultExport = new String(\`div{font-size:3em}p{color:\${color}}\`);
 
-__styledJsxDefaultExport.__hash = '12515736096';
-__styledJsxDefaultExport.__scoped = \`div[data-jsx-ext~=\\"22515736096\\"]{font-size:3em}p[data-jsx-ext~=\\"22515736096\\"]{color:\${color}}\`;
-__styledJsxDefaultExport.__scopedHash = '22515736096';
+__styledJsxDefaultExport.__hash = '12602670606';
+__styledJsxDefaultExport.__scoped = \`div[data-jsx-ext~=\\"22602670606\\"]{font-size:3em}p[data-jsx-ext~=\\"22602670606\\"]{color:\${color}}\`;
+__styledJsxDefaultExport.__scopedHash = '22602670606';
 export default __styledJsxDefaultExport;"
+`;
+
+exports[`transpiles external stylesheets with validation 2`] = `
+"const expr = 'test';
+
+export const expressionsTest = \`
+  div {
+  display: \${expr};
+    color: \${expr};
+    \${expr};
+    \${expr}
+    \${expr};
+    background: red;
+  animation: \${expr} 10s ease-out;
+  }
+
+  @media (\${expr}) {
+   div.\${expr} {
+    color: red;
+   }
+   \${expr}
+  \${expr} {
+    color: red;
+  }
+  }
+
+  @media (min-width: \${expr}) {
+   div.\${expr} {
+    color: red;
+   }
+  all\${expr} {
+    color: red;
+  }
+  }
+
+  @font-face {
+    \${expr}
+  }
+\`;"
 `;

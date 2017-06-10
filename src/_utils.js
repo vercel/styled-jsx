@@ -58,18 +58,14 @@ export const getExpressionText = expr => {
   // e.g.
   // p { color: ${myConstant}; }
   // becomes
-  // p { color: var(--styled-jsx-expression-${id}--); }
-  //
-  // We use a dummy custom property so that the resulting css
-  // passes the css validation which is needed to detect
-  // external styles.
+  // p { color: %%styled-jsx-placeholder-${id}%%; }
 
   const replacements = expressions
     .map((e, id) => ({
       pattern: new RegExp(
         `\\$\\{\\s*${escapeStringRegExp(e.getSource())}\\s*\\}`
       ),
-      replacement: `var(--styled-jsx-expression-${id}--)`,
+      replacement: `%%styled-jsx-placeholder-${id}%%`,
       initial: `$\{${e.getSource()}}`
     }))
     .sort((a, b) => a.initial.length < b.initial.length)
@@ -94,7 +90,7 @@ export const getExpressionText = expr => {
 export const restoreExpressions = (css, replacements) =>
   replacements.reduce((css, currentReplacement) => {
     css = css.replace(
-      new RegExp(escapeStringRegExp(currentReplacement.replacement), 'g'),
+      new RegExp(currentReplacement.replacement, 'g'),
       currentReplacement.initial
     )
     return css
@@ -197,7 +193,49 @@ export const generateAttribute = (name, value) =>
 
 export const isValidCss = str => {
   try {
-    parseCss(str)
+    parseCss(
+      // Replace the placeholders with some valid CSS
+      // so that parsing doesn't fail for otherwise valid CSS.
+      str
+        // Replace all the placeholders with `all`
+        .replace(
+          // `\S` (the `delimiter`) is to match
+          // the beginning of a block `{`
+          // a property `:`
+          // or the end of a property `;`
+          /(\S)?\s*%%styled-jsx-placeholder-[^%]+%%(?:\s*(\}))?/gi,
+          (match, delimiter, isBlockEnd) => {
+            // The `end` of the replacement would be
+            let end
+
+            if (delimiter === ':' && isBlockEnd) {
+              // ';}' single property block without semicolon
+              // E.g. { color: all;}
+              end = `;}`
+            } else if (delimiter === '{' || isBlockEnd) {
+              // ':;' when we are at the beginning or the end of a block
+              // E.g. { all:; ...otherstuff
+              // E.g. all:; }
+              end = `:;${isBlockEnd || ''}`
+            } else if (delimiter === ';') {
+              // ':' when we are inside of a block
+              // E.g. color: red; all:; display: block;
+              end = ':'
+            } else {
+              // Otherwise empty
+              end = ''
+            }
+
+            return `${delimiter || ''}all${end}`
+          }
+        )
+        // Replace block placeholders before media queries
+        // E.g. all @media (all) {}
+        .replace(/all\s*([@])/g, (match, delimiter) => `all {} ${delimiter}`)
+        // Replace block placeholders at the beginning of a media query block
+        // E.g. @media (all) { all:; div { ... }}
+        .replace(/@media[^{]+{\s*all:;/g, '@media (all) { ')
+    )
     return true
   } catch (err) {}
   return false
