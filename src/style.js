@@ -11,7 +11,7 @@ export default class extends Component {
   componentWillUpdate(nextProps) {
     update({
       instance: this,
-      id: nextProps.styleId,
+      styleId: nextProps.styleId,
       css: nextProps.css
     })
   }
