@@ -349,6 +349,10 @@ ext install vscode-styled-jsx
 #### Autocomplete
 By now, this extension doesn't support autocomplete. However, you can install [ES6 Template Literal Editor](https://marketplace.visualstudio.com/items?itemName=plievone.vscode-template-literal-editor) extension to edit styles in another pane, and you will get full feature of css language service provided by VS Code.
 
+### Vim
+
+Install [vim-styled-jsx](https://github.com/alampros/vim-styled-jsx) with your plugin manager of choice.
+
 ## Credits
 
 - **Pedram Emrouznejad** ([rijs](https://github.com/rijs/fullstack)) suggested attribute selectors over my initial class prefixing idea.
