@@ -327,6 +327,28 @@ The IDE let you inject any language in place with _Inject language or reference_
 Simply perform the action in the string template and select CSS.
 You get full CSS highlighting and autocompletion and it will last until you close the IDE.
 
+Additionally you can use language injection comments to enable all the IDE language features indefinitely using the language comment style:
+
+```jsx
+import { colors, spacing } from '../theme'
+import { invertColor } from '../theme/utils'
+
+const Button = ({ children }) => (
+  <button>
+     { children }
+
+     { /*language=CSS*/ }
+     <style jsx>{`
+        button {
+          padding: ${ spacing.medium };
+          background: ${ colors.primary };
+          color: ${ invertColor(colors.primary) };
+        }
+     `}</style>
+  </button>
+)
+```
+
 ### Emmet
 
  If you're using Emmet you can add the following snippet to `~/emmet/snippets-styledjsx.json` This will allow you to expand `style-jsx` to a styled-jsx block.
