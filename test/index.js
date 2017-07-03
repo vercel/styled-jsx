@@ -93,6 +93,11 @@ test('works with external stylesheets', async t => {
   t.snapshot(code)
 })
 
+test('works with external stylesheets (prettier)', async t => {
+  const { code } = await transform('./fixtures/external-stylesheet-prettier.js')
+  t.snapshot(code)
+})
+
 test('works with external stylesheets (global only)', async t => {
   const { code } = await transform('./fixtures/external-stylesheet-global.js')
   t.snapshot(code)

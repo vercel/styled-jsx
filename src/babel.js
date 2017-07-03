@@ -267,7 +267,13 @@ export default function({ types: t }) {
 
           if (
             state.externalStyles.length > 0 &&
-            path.get('children')[0].get('expression').isIdentifier()
+            path.get('children').filter(child => {
+              if (!t.isJSXExpressionContainer(child)) {
+                return false
+              }
+              const expression = child.get('expression')
+              return expression && expression.isIdentifier()
+            }).length === 1
           ) {
             const [
               id,
