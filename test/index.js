@@ -93,8 +93,10 @@ test('works with external stylesheets', async t => {
   t.snapshot(code)
 })
 
-test('works with external stylesheets (prettier)', async t => {
-  const { code } = await transform('./fixtures/external-stylesheet-prettier.js')
+test('works with external stylesheets (multi-line)', async t => {
+  const { code } = await transform(
+    './fixtures/external-stylesheet-multi-line.js'
+  )
   t.snapshot(code)
 })
 
