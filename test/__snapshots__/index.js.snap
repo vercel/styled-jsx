@@ -125,6 +125,16 @@ export default (() => <div data-jsx={1144769207}>
   </div>);"
 `;
 
+exports[`works with external stylesheets (multi-line) 1`] = `
+"import _JSXStyle from 'styled-jsx/style';
+import styles from './styles';
+
+export default (() => <div data-jsx-ext={styles.__scopedHash}>
+    <p data-jsx-ext={styles.__scopedHash}>test</p>
+    <_JSXStyle styleId={styles.__scopedHash} css={styles.__scoped} />
+  </div>);"
+`;
+
 exports[`works with external stylesheets 1`] = `
 "import _JSXStyle from 'styled-jsx/style';
 import styles from './styles';

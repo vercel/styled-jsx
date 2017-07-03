@@ -72,9 +72,8 @@ const getStyledJsx = (css, opts, path) => {
 
 const makeHashesAndScopedCssPaths = (identifierName, data) => {
   return Object.keys(data).map(key => {
-    const value = typeof data[key] === 'object'
-      ? data[key]
-      : t.stringLiteral(data[key])
+    const value =
+      typeof data[key] === 'object' ? data[key] : t.stringLiteral(data[key])
 
     return t.expressionStatement(
       t.assignmentExpression(
