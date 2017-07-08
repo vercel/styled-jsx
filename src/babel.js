@@ -181,14 +181,17 @@ export default function({ types: t }) {
         },
         exit(path, state) {
           const isGlobal = isGlobalEl(path.node.openingElement)
-
           if (state.hasJSXStyle && !--state.ignoreClosing && !isGlobal) {
             state.hasJSXStyle = null
             state.className = null
             state.externalJsxId = null
           }
 
-          if (!state.hasJSXStyle || !isStyledJsx(path)) {
+          if (
+            !state.hasJSXStyle ||
+            !isStyledJsx(path) ||
+            state.ignoreClosing > 1
+          ) {
             return
           }
 

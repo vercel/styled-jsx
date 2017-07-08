@@ -1,5 +1,31 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`does not transpile nested style tags 1`] = `
+"import _JSXStyle from \\"styled-jsx/style\\";
+export default (() => <div data-jsx={1535297024}>
+    <span data-jsx={1535297024}>test
+      <style jsx>
+        {\`div { color: red }\`} {/* this should not be transpiled */}
+      </style>
+    </span>
+    <_JSXStyle styleId={1535297024} css={\\"span[data-jsx=\\\\\\"1535297024\\\\\\"]{color:red}\\"} />
+  </div>);
+
+const Test = () => <div data-jsx={1535297024}>
+    <span data-jsx={1535297024}>test
+      <style jsx>
+        {\`div { color: red }\`} {/* this should not be transpiled */}
+      </style>
+      <Component>
+        <style jsx>
+          {\`div { color: red }\`} {/* this should not be transpiled */}
+        </style>
+      </Component>
+    </span>
+    <_JSXStyle styleId={1535297024} css={\\"span[data-jsx=\\\\\\"1535297024\\\\\\"]{color:red}\\"} />
+  </div>;"
+`;
+
 exports[`generates source maps 1`] = `
 "import _JSXStyle from 'styled-jsx/style';
 export default (() => <div className={\\"jsx-2743241663\\"}>
