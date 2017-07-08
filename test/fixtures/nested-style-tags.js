@@ -9,8 +9,7 @@ export default () =>
           div {
             color: red;
           }
-        `}{' '}
-        {/* this should not be transpiled */}
+        ` /* this should not be transpiled */}
       </style>
     </span>
     <style jsx>{`
@@ -29,8 +28,7 @@ export const Test = () =>
           div {
             color: red;
           }
-        `}{' '}
-        {/* this should not be transpiled */}
+        ` /* this should not be transpiled */}
       </style>
       <Component>
         <style jsx>
@@ -38,8 +36,7 @@ export const Test = () =>
             div {
               color: red;
             }
-          `}{' '}
-          {/* this should not be transpiled */}
+          ` /* this should not be transpiled */}
         </style>
         <style jsx>{styles}</style> {/* this should not be transpiled */}
       </Component>
