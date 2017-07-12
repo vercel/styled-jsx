@@ -144,7 +144,8 @@ export const namedExportDeclarationVisitor = (path, opts) => {
 }
 
 export const moduleExportsVisitor = (path, opts) => {
-  if (path.get('left').getSource() !== 'module.exports') {
+  const left = path.get('left')
+  if (!left.hub || left.getSource() !== 'module.exports') {
     return
   }
   defaultExports(path, path.get('right'), opts)
