@@ -149,6 +149,10 @@ export const moduleExportsVisitor = (path, opts) => {
     return
   }
   const parentPath = path.parentPath
+  // Avoid module.exports.foo
+  if (parentPath.isMemberExpression()) {
+    return
+  }
   defaultExports(parentPath, parentPath.get('right'), opts)
 }
 
