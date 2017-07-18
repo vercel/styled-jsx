@@ -143,11 +143,13 @@ export const namedExportDeclarationVisitor = (path, opts) => {
   })
 }
 
+const isModuleExports = t.buildMatchMemberExpression('module.exports')
 export const moduleExportsVisitor = (path, opts) => {
-  if (path.get('left').getSource() !== 'module.exports') {
+  if (!isModuleExports(path.node)) {
     return
   }
-  defaultExports(path, path.get('right'), opts)
+  const parentPath = path.parentPath
+  defaultExports(parentPath, parentPath.get('right'), opts)
 }
 
 const callVisitor = (visitor, path, state) => {
@@ -167,7 +169,7 @@ export default function() {
       ExportDefaultDeclaration(path, state) {
         callVisitor(exportDefaultDeclarationVisitor, path, state)
       },
-      AssignmentExpression(path, state) {
+      MemberExpression(path, state) {
         callVisitor(moduleExportsVisitor, path, state)
       },
       ExportNamedDeclaration(path, state) {
