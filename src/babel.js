@@ -358,7 +358,7 @@ export default function({ types: t }) {
       ExportDefaultDeclaration(path, state) {
         callExternalVisitor(exportDefaultDeclarationVisitor, path, state)
       },
-      AssignmentExpression(path, state) {
+      MemberExpression(path, state) {
         callExternalVisitor(moduleExportsVisitor, path, state)
       },
       ExportNamedDeclaration(path, state) {
