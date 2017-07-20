@@ -147,3 +147,9 @@ test
 .test.is-status .test {
   color: red;
 }
+
+.a-selector:hover,
+.a-selector:focus
+{
+  outline: none;
+}
