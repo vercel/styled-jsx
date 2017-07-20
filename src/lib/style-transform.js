@@ -1,4 +1,6 @@
-const stylis = require('stylis')
+const Stylis = require('stylis')
+
+const stylis = new Stylis()
 
 function disableNestingPlugin(...args) {
   let [context, , , parent = [], line, column] = args
