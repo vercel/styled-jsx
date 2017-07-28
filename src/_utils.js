@@ -1,7 +1,5 @@
 import * as t from 'babel-types'
-import escapeStringRegExp from 'escape-string-regexp'
-import traverse from 'babel-traverse'
-import { parse } from 'babylon'
+import hashString from 'string-hash'
 import { parse as parseCss } from 'css-tree'
 import { SourceMapGenerator } from 'source-map'
 import convert from 'convert-source-map'
@@ -11,7 +9,8 @@ import {
   GLOBAL_ATTRIBUTE,
   STYLE_COMPONENT_ID,
   STYLE_COMPONENT,
-  STYLE_COMPONENT_CSS
+  STYLE_COMPONENT_CSS,
+  STYLE_COMPONENT_DYNAMIC
 } from './_constants'
 
 export const isGlobalEl = el =>
@@ -29,121 +28,6 @@ export const findStyles = path => {
   }
 
   return path.get('children').filter(isStyledJsx)
-}
-
-export const getExpressionText = expr => {
-  const node = expr.node
-
-  // Assume string literal
-  if (t.isStringLiteral(node)) {
-    return node.value
-  }
-
-  const expressions = expr.get('expressions')
-
-  // Simple template literal without expressions
-  if (expressions.length === 0) {
-    return node.quasis[0].value.cooked
-  }
-
-  // Special treatment for template literals that contain expressions:
-  //
-  // Expressions are replaced with a placeholder
-  // so that the CSS compiler can parse and
-  // transform the css source string
-  // without having to know about js literal expressions.
-  // Later expressions are restored
-  // by doing a replacement on the transformed css string.
-  //
-  // e.g.
-  // p { color: ${myConstant}; }
-  // becomes
-  // p { color: %%styled-jsx-placeholder-${id}%%; }
-
-  const replacements = expressions
-    .map((e, id) => ({
-      pattern: new RegExp(
-        `\\$\\{\\s*${escapeStringRegExp(e.getSource())}\\s*\\}`
-      ),
-      replacement: `%%styled-jsx-placeholder-${id}%%`,
-      initial: `$\{${e.getSource()}}`
-    }))
-    .sort((a, b) => a.initial.length < b.initial.length)
-
-  const source = expr.getSource().slice(1, -1)
-
-  const modified = replacements.reduce((source, currentReplacement) => {
-    source = source.replace(
-      currentReplacement.pattern,
-      currentReplacement.replacement
-    )
-    return source
-  }, source)
-
-  return {
-    source,
-    modified,
-    replacements
-  }
-}
-
-export const restoreExpressions = (css, replacements) =>
-  replacements.reduce((css, currentReplacement) => {
-    css = css.replace(
-      new RegExp(currentReplacement.replacement, 'g'),
-      currentReplacement.initial
-    )
-    return css
-  }, css)
-
-export const makeStyledJsxCss = (transformedCss, isTemplateLiteral) => {
-  if (!isTemplateLiteral) {
-    return t.stringLiteral(transformedCss)
-  }
-  // Build the expression from transformedCss
-  let css
-  traverse(parse(`\`${transformedCss}\``), {
-    TemplateLiteral(path) {
-      if (!css) {
-        css = path.node
-      }
-    }
-  })
-  return css
-}
-
-export const makeStyledJsxTag = (id, transformedCss, isTemplateLiteral) => {
-  let css
-
-  if (
-    typeof transformedCss === 'object' &&
-    (t.isIdentifier(transformedCss) || t.isMemberExpression(transformedCss))
-  ) {
-    css = transformedCss
-  } else {
-    css = makeStyledJsxCss(transformedCss, isTemplateLiteral)
-  }
-
-  return t.jSXElement(
-    t.jSXOpeningElement(
-      t.jSXIdentifier(STYLE_COMPONENT),
-      [
-        t.jSXAttribute(
-          t.jSXIdentifier(STYLE_COMPONENT_ID),
-          t.jSXExpressionContainer(
-            typeof id === 'number' ? t.numericLiteral(id) : id
-          )
-        ),
-        t.jSXAttribute(
-          t.jSXIdentifier(STYLE_COMPONENT_CSS),
-          t.jSXExpressionContainer(css)
-        )
-      ],
-      true
-    ),
-    null,
-    []
-  )
 }
 
 // We only allow constants to be used in template literals.
@@ -187,6 +71,197 @@ export const validateExpressionVisitor = {
 
 export const validateExpression = (expr, scope) =>
   expr.traverse(validateExpressionVisitor, scope)
+
+export const isDynamic = (expr, scope) => {
+  try {
+    expr.traverse(validateExpressionVisitor, scope)
+    return false
+  } catch (err) {}
+
+  return true
+}
+
+export const getJSXStyleInfo = (expr, scope) => {
+  const { node } = expr
+  const location = node.loc
+
+  // Assume string literal
+  if (t.isStringLiteral(node)) {
+    return {
+      hash: String(hashString(node.value)),
+      css: node.value,
+      expressions: [],
+      dynamic: false,
+      location
+    }
+  }
+
+  // Simple template literal without expressions
+  if (node.expressions.length === 0) {
+    return {
+      hash: String(hashString(node.quasis[0].value.cooked)),
+      css: node.quasis[0].value.cooked,
+      expressions: [],
+      dynamic: false,
+      location
+    }
+  }
+
+  // Special treatment for template literals that contain expressions:
+  //
+  // Expressions are replaced with a placeholder
+  // so that the CSS compiler can parse and
+  // transform the css source string
+  // without having to know about js literal expressions.
+  // Later expressions are restored.
+  //
+  // e.g.
+  // p { color: ${myConstant}; }
+  // becomes
+  // p { color: %%styled-jsx-placeholder-${id}%%; }
+
+  const { quasis, expressions } = node
+  const dynamic = scope && isDynamic(expr, scope)
+  const css = quasis.reduce((css, quasi, index) => {
+    return `${css}${quasi.value.cooked}${quasis.length === index + 1
+      ? ''
+      : `%%styled-jsx-placeholder-${index}%%`}`
+  }, '')
+  const hash = String(hashString(expr.getSource().slice(1, -1)))
+
+  return {
+    hash,
+    css,
+    expressions,
+    dynamic,
+    location
+  }
+}
+
+export const buildJsxId = (styles, externalJsxId) => {
+  if (styles.length === 0) {
+    return externalJsxId
+  }
+
+  const hashes = styles.reduce(
+    (acc, styles) => {
+      if (styles.dynamic === false) {
+        acc.static.push(styles.hash)
+      } else {
+        acc.dynamic.push(
+          t.arrayExpression([
+            t.stringLiteral(styles.hash),
+            t.arrayExpression(styles.expressions)
+          ])
+        )
+      }
+      return acc
+    },
+    {
+      static: [],
+      dynamic: []
+    }
+  )
+
+  if (hashes.dynamic.length === 0) {
+    return t.stringLiteral(hashes.static.join(' '))
+  }
+
+  // _JSXStyle.get([ ['1234', [props.foo, bar, fn(props)]], ... ])
+  const dynamic = t.callExpression(
+    // Callee: _JSXStyle.get
+    t.memberExpression(t.identifier(STYLE_COMPONENT), t.identifier('dynamic')),
+    // Arguments
+    [t.arrayExpression(hashes.dynamic)]
+  )
+
+  if (hashes.static.length === 0) {
+    return dynamic
+  }
+
+  // `1234 5678 ${_JSXStyle.get([ ['1234', [props.foo, bar, fn(props)]], ... ])}`
+  return t.templateLiteral(
+    [
+      t.templateElement(
+        { raw: hashes.static.join(' ') + ' ', cooked: hashes.static },
+        false
+      ),
+      t.templateElement({ raw: '', cooked: '' }, true)
+    ],
+    [dynamic]
+  )
+}
+
+export const templateLiteralFromPreprocessedCss = (css, expressions) => {
+  const quasis = []
+  const finalExpressions = []
+  const parts = css.split(/(?:%%styled-jsx-placeholder-(\d+)%%)/g)
+  parts.forEach((part, index) => {
+    if (index % 2 > 0) {
+      // This is necessary because after preprocessing declarations might have been alternate.
+      // eg. properties are auto prefixed and therefore expressions need to match.
+      finalExpressions.push(expressions[part])
+    } else {
+      quasis.push(part)
+    }
+  })
+
+  return t.templateLiteral(
+    quasis.map((quasi, index) =>
+      t.templateElement(
+        {
+          raw: quasi,
+          cooked: quasi
+        },
+        quasis.length === index + 1
+      )
+    ),
+    finalExpressions
+  )
+}
+
+export const makeStyledJsxTag = (
+  id,
+  transformedCss,
+  dynamic,
+  expressions = []
+) => {
+  let css
+
+  if (typeof transformedCss === 'string') {
+    css = t.stringLiteral(transformedCss)
+  } else {
+    css = transformedCss
+  }
+
+  const attributes = [
+    t.jSXAttribute(
+      t.jSXIdentifier(STYLE_COMPONENT_ID),
+      t.jSXExpressionContainer(
+        typeof id === 'string' ? t.stringLiteral(id) : id
+      )
+    ),
+    t.jSXAttribute(
+      t.jSXIdentifier(STYLE_COMPONENT_CSS),
+      t.jSXExpressionContainer(css)
+    )
+  ]
+
+  if (dynamic) {
+    attributes.push(
+      t.jSXAttribute(
+        t.jSXIdentifier(STYLE_COMPONENT_DYNAMIC),
+        t.jSXExpressionContainer(t.arrayExpression(expressions))
+      )
+    )
+  }
+
+  return t.jSXElement(
+    t.jSXOpeningElement(t.jSXIdentifier(STYLE_COMPONENT), attributes, true),
+    null,
+    []
+  )
+}
 
 export const generateAttribute = (name, value) =>
   t.jSXAttribute(t.jSXIdentifier(name), t.jSXExpressionContainer(value))

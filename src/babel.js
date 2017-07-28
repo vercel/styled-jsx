@@ -1,6 +1,5 @@
 // Packages
 import jsx from 'babel-plugin-syntax-jsx'
-import hash from 'string-hash'
 
 // Ours
 import transform from './lib/style-transform'
@@ -14,13 +13,13 @@ import {
   isGlobalEl,
   isStyledJsx,
   findStyles,
-  getExpressionText,
-  restoreExpressions,
   makeStyledJsxTag,
-  validateExpression,
   generateAttribute,
   makeSourceMapGenerator,
-  addSourceMaps
+  addSourceMaps,
+  getJSXStyleInfo,
+  buildJsxId,
+  templateLiteralFromPreprocessedCss
 } from './_utils'
 
 import {
@@ -29,7 +28,8 @@ import {
   MARKUP_ATTRIBUTE_EXTERNAL
 } from './_constants'
 
-const getPrefix = id => `[${MARKUP_ATTRIBUTE}="${id}"]`
+const getPrefix = (isDynamic, id) =>
+  `[${MARKUP_ATTRIBUTE}~="${isDynamic ? '?' : id}"]`
 const callExternalVisitor = (visitor, path, state) => {
   const { file } = state
   const { opts } = file
@@ -102,15 +102,7 @@ export default function({ types: t }) {
           }
 
           if (state.jsxId) {
-            el.attributes.push(
-              generateAttribute(MARKUP_ATTRIBUTE, t.numericLiteral(state.jsxId))
-            )
-          }
-
-          if (state.externalJsxId) {
-            el.attributes.push(
-              generateAttribute(MARKUP_ATTRIBUTE_EXTERNAL, state.externalJsxId)
-            )
+            el.attributes.push(generateAttribute(MARKUP_ATTRIBUTE, state.jsxId))
           }
         }
 
@@ -204,16 +196,10 @@ export default function({ types: t }) {
               )
             }
 
-            // Validate MemberExpressions and Identifiers
-            // to ensure that are constants not defined in the closest scope
-            validateExpression(expression, scope)
-
-            const styleText = getExpressionText(expression)
-            const styleId = hash(styleText.source || styleText)
-
-            state.styles.push([styleId, styleText, expression.node.loc])
+            state.styles.push(getJSXStyleInfo(expression, scope))
           }
 
+          let externalJsxId
           if (state.externalStyles.length > 0) {
             const expressions = state.externalStyles
               // Remove globals
@@ -223,13 +209,13 @@ export default function({ types: t }) {
             const expressionsLength = expressions.length
 
             if (expressionsLength === 0) {
-              state.externalJsxId = null
+              externalJsxId = null
             } else if (expressionsLength === 1) {
-              state.externalJsxId = expressions[0]
+              externalJsxId = expressions[0]
             } else {
               // Construct a template literal of this form:
               // `${styles.__scopedHash} ${otherStyles.__scopedHash}`
-              state.externalJsxId = t.templateLiteral(
+              externalJsxId = t.templateLiteral(
                 [
                   t.templateElement({ raw: '', cooked: '' }),
                   ...[...new Array(expressionsLength - 1)].map(() =>
@@ -242,10 +228,8 @@ export default function({ types: t }) {
             }
           }
 
-          if (state.styles.length > 0) {
-            state.jsxId = hash(
-              state.styles.map(s => s[1].source || s[1]).join('')
-            )
+          if (state.styles.length > 0 || externalJsxId) {
+            state.jsxId = buildJsxId(state.styles, externalJsxId)
           }
 
           state.hasJSXStyle = true
@@ -295,8 +279,13 @@ export default function({ types: t }) {
             return
           }
 
-          // We replace styles with the function call
-          const [id, css, loc] = state.styles.shift()
+          const {
+            hash,
+            css,
+            expressions,
+            dynamic,
+            location
+          } = state.styles.shift()
 
           const useSourceMaps = Boolean(state.file.opts.sourceMaps)
           let transformedCss
@@ -305,33 +294,31 @@ export default function({ types: t }) {
             const generator = makeSourceMapGenerator(state.file)
             const filename = state.file.opts.sourceFileName
             transformedCss = addSourceMaps(
-              transform(
-                isGlobal ? '' : getPrefix(state.jsxId),
-                css.modified || css,
-                {
-                  generator,
-                  offset: loc.start,
-                  filename
-                }
-              ),
+              transform(isGlobal ? '' : getPrefix(dynamic, hash), css, {
+                generator,
+                offset: location.start,
+                filename
+              }),
               generator,
               filename
             )
           } else {
             transformedCss = transform(
-              isGlobal ? '' : getPrefix(state.jsxId),
-              css.modified || css
+              isGlobal ? '' : getPrefix(dynamic, hash),
+              css
             )
           }
 
-          if (css.replacements) {
-            transformedCss = restoreExpressions(
+          if (expressions.length > 0) {
+            transformedCss = templateLiteralFromPreprocessedCss(
               transformedCss,
-              css.replacements
+              expressions
             )
           }
 
-          path.replaceWith(makeStyledJsxTag(id, transformedCss, css.modified))
+          path.replaceWith(
+            makeStyledJsxTag(hash, transformedCss, dynamic, expressions)
+          )
         }
       },
       Program: {
