@@ -92,21 +92,21 @@ const animationName = 'my-cool-animation';
 const obj = { display: 'block' };
 
 // eslint-disable-next-line no-unused-vars
-export default (({ display }) => <div data-jsx={\`2129566164 188072295 806016056 806016056 924167211 924167211 3469794077 945380644 3617592140 2369334310 3168033860 \${_JSXStyle.dynamic([['2799014000', [display ? 'block' : 'none']]])}\`}>
-    <p data-jsx={\`2129566164 188072295 806016056 806016056 924167211 924167211 3469794077 945380644 3617592140 2369334310 3168033860 \${_JSXStyle.dynamic([['2799014000', [display ? 'block' : 'none']]])}\`}>test</p>
-    <_JSXStyle styleId={\\"2129566164\\"} css={\`p.\${color}[data-jsx~=\\"2129566164\\"]{color:\${otherColor};display:\${obj.display}}\`} />
+export default (({ display }) => <div data-jsx={\`3864570373 188072295 964903971 964903971 2993630608 2993630608 2683050534 1376588607 3617592140 4197553757 3032198101 \${_JSXStyle.dynamic([['3588394506', [display ? 'block' : 'none']]])}\`}>
+    <p data-jsx={\`3864570373 188072295 964903971 964903971 2993630608 2993630608 2683050534 1376588607 3617592140 4197553757 3032198101 \${_JSXStyle.dynamic([['3588394506', [display ? 'block' : 'none']]])}\`}>test</p>
+    <_JSXStyle styleId={\\"3864570373\\"} css={\`p.\${color}[data-jsx~=\\"3864570373\\"]{color:\${otherColor};display:\${obj.display}}\`} />
     <_JSXStyle styleId={\\"188072295\\"} css={\\"p[data-jsx~=\\\\\\"188072295\\\\\\"]{color:red}\\"} />
-    <_JSXStyle styleId={\\"806016056\\"} css={\`body{background:\${color}}\`} />
-    <_JSXStyle styleId={\\"806016056\\"} css={\`body{background:\${color}}\`} />
-    <_JSXStyle styleId={\\"924167211\\"} css={\`p[data-jsx~=\\"924167211\\"]{color:\${color}}\`} />
-    <_JSXStyle styleId={\\"924167211\\"} css={\`p[data-jsx~=\\"924167211\\"]{color:\${color}}\`} />
-    <_JSXStyle styleId={\\"3469794077\\"} css={\`p[data-jsx~=\\"3469794077\\"]{color:\${darken(color)}}\`} />
-    <_JSXStyle styleId={\\"945380644\\"} css={\`p[data-jsx~=\\"945380644\\"]{color:\${darken(color) + 2}}\`} />
+    <_JSXStyle styleId={\\"964903971\\"} css={\`body{background:\${color}}\`} />
+    <_JSXStyle styleId={\\"964903971\\"} css={\`body{background:\${color}}\`} />
+    <_JSXStyle styleId={\\"2993630608\\"} css={\`p[data-jsx~=\\"2993630608\\"]{color:\${color}}\`} />
+    <_JSXStyle styleId={\\"2993630608\\"} css={\`p[data-jsx~=\\"2993630608\\"]{color:\${color}}\`} />
+    <_JSXStyle styleId={\\"2683050534\\"} css={\`p[data-jsx~=\\"2683050534\\"]{color:\${darken(color)}}\`} />
+    <_JSXStyle styleId={\\"1376588607\\"} css={\`p[data-jsx~=\\"1376588607\\"]{color:\${darken(color) + 2}}\`} />
     <_JSXStyle styleId={\\"3617592140\\"} css={\`@media (min-width:\${mediumScreen}){p[data-jsx~=\\"3617592140\\"]{color:green}p[data-jsx~=\\"3617592140\\"]{color:\${\`red\`}}}p[data-jsx~=\\"3617592140\\"]{color:red}\`} />
-    <_JSXStyle styleId={\\"2369334310\\"} css={\`p[data-jsx~=\\"2369334310\\"]{-webkit-animation-duration:\${animationDuration};animation-duration:\${animationDuration}}\`} />
-    <_JSXStyle styleId={\\"3168033860\\"} css={\`p[data-jsx~=\\"3168033860\\"]{-webkit-animation:\${animationDuration} forwards \${animationName};animation:\${animationDuration} forwards \${animationName}}\`} />
+    <_JSXStyle styleId={\\"4197553757\\"} css={\`p[data-jsx~=\\"4197553757\\"]{-webkit-animation-duration:\${animationDuration};animation-duration:\${animationDuration}}\`} />
+    <_JSXStyle styleId={\\"3032198101\\"} css={\`p[data-jsx~=\\"3032198101\\"]{-webkit-animation:\${animationDuration} forwards \${animationName};animation:\${animationDuration} forwards \${animationName}}\`} />
 
-      <_JSXStyle styleId={\\"2799014000\\"} css={\`span[data-jsx~=\\"?\\"]{display:\${display ? 'block' : 'none'}}\`} dynamic={[display ? 'block' : 'none']} />
+    <_JSXStyle styleId={\\"3588394506\\"} css={\`span[data-jsx~=\\"?\\"]{display:\${display ? 'block' : 'none'}}\`} dynamic={[display ? 'block' : 'none']} />
   </div>);"
 `;
 

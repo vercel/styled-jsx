@@ -1,5 +1,6 @@
 const tags = new Map()
 let prevStyles = new Map()
+const mountedInstancesCount = {}
 
 export default (typeof window === 'undefined' ? renderOnServer : renderOnClient)
 
@@ -25,11 +26,19 @@ function patch([added, removed]) {
       fromServer.set(id, document.getElementById(`__jsx-style-${id}`))
     }
 
-    const tag = fromServer.get(id) || makeStyleTag(css)
-    tags.set(id, tag)
+    mountedInstancesCount[id] = (mountedInstancesCount[id] || 0) + 1
+    if (mountedInstancesCount[id] === 1) {
+      const tag = fromServer.get(id) || makeStyleTag(css)
+      tags.set(id, tag)
+    }
   }
 
   for (const [id] of removed) {
+    mountedInstancesCount[id] -= 1
+    if (mountedInstancesCount[id] > 0) {
+      continue
+    }
+    delete mountedInstancesCount[id]
     const t = tags.get(id)
     tags.delete(id)
     t.parentNode.removeChild(t)

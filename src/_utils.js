@@ -30,7 +30,6 @@ export const findStyles = path => {
   return path.get('children').filter(isStyledJsx)
 }
 
-// We only allow constants to be used in template literals.
 // The following visitor ensures that MemberExpressions and Identifiers
 // are not in the scope of the current Method (render) or function (Component).
 export const validateExpressionVisitor = {
@@ -69,9 +68,7 @@ export const validateExpressionVisitor = {
   }
 }
 
-export const validateExpression = (expr, scope) =>
-  expr.traverse(validateExpressionVisitor, scope)
-
+// Use `validateExpressionVisitor` to determine whether the `expr`ession has dynamic values.
 export const isDynamic = (expr, scope) => {
   try {
     expr.traverse(validateExpressionVisitor, scope)
@@ -121,13 +118,15 @@ export const getJSXStyleInfo = (expr, scope) => {
   // p { color: %%styled-jsx-placeholder-${id}%%; }
 
   const { quasis, expressions } = node
-  const dynamic = scope && isDynamic(expr, scope)
-  const css = quasis.reduce((css, quasi, index) => {
-    return `${css}${quasi.value.cooked}${quasis.length === index + 1
-      ? ''
-      : `%%styled-jsx-placeholder-${index}%%`}`
-  }, '')
   const hash = String(hashString(expr.getSource().slice(1, -1)))
+  const dynamic = scope ? isDynamic(expr, scope) : false
+  const css = quasis.reduce(
+    (css, quasi, index) =>
+      `${css}${quasi.value.cooked}${quasis.length === index + 1
+        ? ''
+        : `%%styled-jsx-placeholder-${index}%%`}`,
+    ''
+  )
 
   return {
     hash,
@@ -167,9 +166,9 @@ export const buildJsxId = (styles, externalJsxId) => {
     return t.stringLiteral(hashes.static.join(' '))
   }
 
-  // _JSXStyle.get([ ['1234', [props.foo, bar, fn(props)]], ... ])
+  // _JSXStyle.dynamic([ ['1234', [props.foo, bar, fn(props)]], ... ])
   const dynamic = t.callExpression(
-    // Callee: _JSXStyle.get
+    // Callee: _JSXStyle.dynamic
     t.memberExpression(t.identifier(STYLE_COMPONENT), t.identifier('dynamic')),
     // Arguments
     [t.arrayExpression(hashes.dynamic)]
@@ -179,11 +178,14 @@ export const buildJsxId = (styles, externalJsxId) => {
     return dynamic
   }
 
-  // `1234 5678 ${_JSXStyle.get([ ['1234', [props.foo, bar, fn(props)]], ... ])}`
+  // `1234 5678 ${_JSXStyle.dynamic([ ['1234', [props.foo, bar, fn(props)]], ... ])}`
   return t.templateLiteral(
     [
       t.templateElement(
-        { raw: hashes.static.join(' ') + ' ', cooked: hashes.static },
+        {
+          raw: hashes.static.join(' ') + ' ',
+          cooked: hashes.static.join(' ') + ' '
+        },
         false
       ),
       t.templateElement({ raw: '', cooked: '' }, true)
@@ -198,7 +200,7 @@ export const templateLiteralFromPreprocessedCss = (css, expressions) => {
   const parts = css.split(/(?:%%styled-jsx-placeholder-(\d+)%%)/g)
   parts.forEach((part, index) => {
     if (index % 2 > 0) {
-      // This is necessary because after preprocessing declarations might have been alternate.
+      // This is necessary because, after preprocessing, declarations might have been alterate.
       // eg. properties are auto prefixed and therefore expressions need to match.
       finalExpressions.push(expressions[part])
     } else {

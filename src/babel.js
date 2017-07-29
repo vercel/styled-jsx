@@ -30,6 +30,7 @@ import {
 
 const getPrefix = (isDynamic, id) =>
   `[${MARKUP_ATTRIBUTE}~="${isDynamic ? '?' : id}"]`
+
 const callExternalVisitor = (visitor, path, state) => {
   const { file } = state
   const { opts } = file

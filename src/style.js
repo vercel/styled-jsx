@@ -1,9 +1,24 @@
 import { Component } from 'react'
+import hashString from 'string-hash'
 import render from './render'
 
 let components = []
 
+function hashArray(arr) {
+  return hashString(arr.join(','))
+}
+
 export default class extends Component {
+  static dynamic(arr) {
+    return arr
+      .map(tagInfo => {
+        const [styleId, expressions] = tagInfo
+        const hash = hashArray(expressions)
+        return `${styleId}-${hash}`
+      })
+      .join(' ')
+  }
+
   componentWillMount() {
     mount(this)
   }
@@ -14,7 +29,8 @@ export default class extends Component {
     update({
       instance: this,
       styleId: nextProps.styleId,
-      css: nextProps.css
+      css: nextProps.css,
+      dynamic: nextProps.dynamic
     })
   }
 
@@ -30,13 +46,16 @@ export default class extends Component {
 function stylesMap(updated) {
   const ret = new Map()
   for (const c of components) {
-    if (updated && c === updated.instance) {
-      // On `componentWillUpdate`
-      // we use `styleId` and `css` from updated component rather than reading `props`
-      // from the component since they haven't been updated yet.
-      ret.set(updated.styleId, updated.css)
+    // On `componentWillUpdate`
+    // we use `styleId` and `css` from updated component rather than reading `props`
+    // from the component since they haven't been updated yet.
+    const props = updated && c === updated.instance ? updated : c.props
+
+    if (props.dynamic) {
+      const styleId = `${props.styleId}-${hashArray(props.dynamic)}`
+      ret.set(styleId, scopeCss(styleId, props.css))
     } else {
-      ret.set(c.props.styleId, c.props.css)
+      ret.set(props.styleId, props.css)
     }
   }
   return ret
@@ -65,4 +84,8 @@ function unmount(component) {
 
 function update(updates) {
   render(stylesMap(updates))
+}
+
+function scopeCss(id, css) {
+  return css.replace(/\[data-jsx~="\?"]/g, `[data-jsx~="${id}"]`)
 }
