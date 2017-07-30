@@ -53,7 +53,7 @@ function stylesMap(updated) {
 
     if (props.dynamic) {
       const styleId = `${props.styleId}-${hashArray(props.dynamic)}`
-      ret.set(styleId, scopeCss(styleId, props.css))
+      ret.set(styleId, computeDynamic(styleId, props.css))
     } else {
       ret.set(props.styleId, props.css)
     }
@@ -86,6 +86,6 @@ function update(updates) {
   render(stylesMap(updates))
 }
 
-function scopeCss(id, css) {
+function computeDynamic(id, css) {
   return css.replace(/\[data-jsx~="\?"]/g, `[data-jsx~="${id}"]`)
 }
