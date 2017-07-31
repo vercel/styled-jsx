@@ -1,5 +1,5 @@
 import * as t from 'babel-types'
-import hashString from 'string-hash'
+import _hashString from 'string-hash'
 import { parse as parseCss } from 'css-tree'
 import { SourceMapGenerator } from 'source-map'
 import convert from 'convert-source-map'
@@ -12,6 +12,8 @@ import {
   STYLE_COMPONENT_CSS,
   STYLE_COMPONENT_DYNAMIC
 } from './_constants'
+
+const hashString = str => String(_hashString(str))
 
 export const isGlobalEl = el =>
   el.attributes.some(({ name }) => name && name.name === GLOBAL_ATTRIBUTE)
@@ -85,7 +87,7 @@ export const getJSXStyleInfo = (expr, scope) => {
   // Assume string literal
   if (t.isStringLiteral(node)) {
     return {
-      hash: String(hashString(node.value)),
+      hash: hashString(node.value),
       css: node.value,
       expressions: [],
       dynamic: false,
@@ -96,7 +98,7 @@ export const getJSXStyleInfo = (expr, scope) => {
   // Simple template literal without expressions
   if (node.expressions.length === 0) {
     return {
-      hash: String(hashString(node.quasis[0].value.cooked)),
+      hash: hashString(node.quasis[0].value.cooked),
       css: node.quasis[0].value.cooked,
       expressions: [],
       dynamic: false,
@@ -118,7 +120,7 @@ export const getJSXStyleInfo = (expr, scope) => {
   // p { color: %%styled-jsx-placeholder-${id}%%; }
 
   const { quasis, expressions } = node
-  const hash = String(hashString(expr.getSource().slice(1, -1)))
+  const hash = hashString(expr.getSource().slice(1, -1))
   const dynamic = scope ? isDynamic(expr, scope) : false
   const css = quasis.reduce(
     (css, quasi, index) =>
@@ -147,12 +149,7 @@ export const buildJsxId = (styles, externalJsxId) => {
       if (styles.dynamic === false) {
         acc.static.push(styles.hash)
       } else {
-        acc.dynamic.push(
-          t.arrayExpression([
-            t.stringLiteral(styles.hash),
-            t.arrayExpression(styles.expressions)
-          ])
-        )
+        acc.dynamic.push(styles)
       }
       return acc
     },
@@ -162,8 +159,10 @@ export const buildJsxId = (styles, externalJsxId) => {
     }
   )
 
+  const staticHash = hashString(hashes.static.join(','))
+
   if (hashes.dynamic.length === 0) {
-    return t.stringLiteral(hashes.static.join(' '))
+    return t.stringLiteral(staticHash)
   }
 
   // _JSXStyle.dynamic([ ['1234', [props.foo, bar, fn(props)]], ... ])
@@ -171,27 +170,39 @@ export const buildJsxId = (styles, externalJsxId) => {
     // Callee: _JSXStyle.dynamic
     t.memberExpression(t.identifier(STYLE_COMPONENT), t.identifier('dynamic')),
     // Arguments
-    [t.arrayExpression(hashes.dynamic)]
+    [
+      t.arrayExpression(
+        hashes.dynamic.map(styles =>
+          t.arrayExpression([
+            t.stringLiteral(hashString(styles.hash + staticHash)),
+            t.arrayExpression(styles.expressions)
+          ])
+        )
+      )
+    ]
   )
 
   if (hashes.static.length === 0) {
     return dynamic
   }
 
-  // `1234 5678 ${_JSXStyle.dynamic([ ['1234', [props.foo, bar, fn(props)]], ... ])}`
-  return t.templateLiteral(
-    [
-      t.templateElement(
-        {
-          raw: hashes.static.join(' ') + ' ',
-          cooked: hashes.static.join(' ') + ' '
-        },
-        false
-      ),
-      t.templateElement({ raw: '', cooked: '' }, true)
-    ],
-    [dynamic]
-  )
+  // `1234 ${_JSXStyle.dynamic([ ['5678', [props.foo, bar, fn(props)]], ... ])}`
+  return {
+    staticHash,
+    attribute: t.templateLiteral(
+      [
+        t.templateElement(
+          {
+            raw: staticHash + ' ',
+            cooked: staticHash + ' '
+          },
+          false
+        ),
+        t.templateElement({ raw: '', cooked: '' }, true)
+      ],
+      [dynamic]
+    )
+  }
 }
 
 export const templateLiteralFromPreprocessedCss = (css, expressions) => {

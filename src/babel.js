@@ -230,7 +230,12 @@ export default function({ types: t }) {
           }
 
           if (state.styles.length > 0 || externalJsxId) {
-            state.jsxId = buildJsxId(state.styles, externalJsxId)
+            const { staticHash, attribute } = buildJsxId(
+              state.styles,
+              externalJsxId
+            )
+            state.jsxId = attribute
+            state.staticJsxId = staticHash
           }
 
           state.hasJSXStyle = true
@@ -295,17 +300,21 @@ export default function({ types: t }) {
             const generator = makeSourceMapGenerator(state.file)
             const filename = state.file.opts.sourceFileName
             transformedCss = addSourceMaps(
-              transform(isGlobal ? '' : getPrefix(dynamic, hash), css, {
-                generator,
-                offset: location.start,
-                filename
-              }),
+              transform(
+                isGlobal ? '' : getPrefix(dynamic, state.staticJsxId),
+                css,
+                {
+                  generator,
+                  offset: location.start,
+                  filename
+                }
+              ),
               generator,
               filename
             )
           } else {
             transformedCss = transform(
-              isGlobal ? '' : getPrefix(dynamic, hash),
+              isGlobal ? '' : getPrefix(dynamic, state.staticJsxId),
               css
             )
           }
