@@ -162,7 +162,10 @@ export const buildJsxId = (styles, externalJsxId) => {
   const staticHash = hashString(hashes.static.join(','))
 
   if (hashes.dynamic.length === 0) {
-    return t.stringLiteral(staticHash)
+    return {
+      staticHash,
+      attribute: t.stringLiteral(staticHash)
+    }
   }
 
   // _JSXStyle.dynamic([ ['1234', [props.foo, bar, fn(props)]], ... ])
@@ -183,7 +186,9 @@ export const buildJsxId = (styles, externalJsxId) => {
   )
 
   if (hashes.static.length === 0) {
-    return dynamic
+    return {
+      attribute: dynamic
+    }
   }
 
   // `1234 ${_JSXStyle.dynamic([ ['5678', [props.foo, bar, fn(props)]], ... ])}`
