@@ -187,6 +187,7 @@ export const buildJsxId = (styles, externalJsxId) => {
 
   if (hashes.static.length === 0) {
     return {
+      staticHash,
       attribute: dynamic
     }
   }

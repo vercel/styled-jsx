@@ -333,7 +333,7 @@ export default function({ types: t }) {
 
           path.replaceWith(
             makeStyledJsxTag(
-              dynamic ? hashString(hash + state.jsxId) : hash,
+              dynamic ? hashString(hash + state.staticJsxId) : hash,
               transformedCss,
               expressions
             )
