@@ -14,12 +14,12 @@ import {
   isStyledJsx,
   findStyles,
   makeStyledJsxTag,
-  generateAttribute,
   makeSourceMapGenerator,
   addSourceMaps,
   getJSXStyleInfo,
   buildJsxId,
-  templateLiteralFromPreprocessedCss
+  templateLiteralFromPreprocessedCss,
+  hashString
 } from './_utils'
 
 import {
@@ -103,7 +103,12 @@ export default function({ types: t }) {
           }
 
           if (state.jsxId) {
-            el.attributes.push(generateAttribute(MARKUP_ATTRIBUTE, state.jsxId))
+            el.attributes.push(
+              t.jSXAttribute(
+                t.jSXIdentifier(MARKUP_ATTRIBUTE),
+                t.jSXExpressionContainer(state.jsxId)
+              )
+            )
           }
         }
 
@@ -327,7 +332,11 @@ export default function({ types: t }) {
           }
 
           path.replaceWith(
-            makeStyledJsxTag(hash, transformedCss, dynamic, expressions)
+            makeStyledJsxTag(
+              dynamic ? hashString(hash + state.jsxId) : hash,
+              transformedCss,
+              expressions
+            )
           )
         }
       },

@@ -13,7 +13,7 @@ import {
   STYLE_COMPONENT_DYNAMIC
 } from './_constants'
 
-const hashString = str => String(_hashString(str))
+export const hashString = str => String(_hashString(str))
 
 export const isGlobalEl = el =>
   el.attributes.some(({ name }) => name && name.name === GLOBAL_ATTRIBUTE)
@@ -238,12 +238,7 @@ export const templateLiteralFromPreprocessedCss = (css, expressions) => {
   )
 }
 
-export const makeStyledJsxTag = (
-  id,
-  transformedCss,
-  dynamic,
-  expressions = []
-) => {
+export const makeStyledJsxTag = (id, transformedCss, expressions = []) => {
   let css
 
   if (typeof transformedCss === 'string') {
@@ -265,7 +260,7 @@ export const makeStyledJsxTag = (
     )
   ]
 
-  if (dynamic) {
+  if (expressions.length > 0) {
     attributes.push(
       t.jSXAttribute(
         t.jSXIdentifier(STYLE_COMPONENT_DYNAMIC),
@@ -280,9 +275,6 @@ export const makeStyledJsxTag = (
     []
   )
 }
-
-export const generateAttribute = (name, value) =>
-  t.jSXAttribute(t.jSXIdentifier(name), t.jSXExpressionContainer(value))
 
 export const isValidCss = str => {
   try {
