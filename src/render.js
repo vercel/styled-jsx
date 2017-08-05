@@ -1,6 +1,5 @@
 const tags = new Map()
 let prevStyles = new Map()
-const mountedInstancesCount = {}
 
 export default (typeof window === 'undefined' ? renderOnServer : renderOnClient)
 
@@ -12,33 +11,38 @@ function renderOnClient(styles) {
 }
 
 function diff(a, b) {
-  const added = Array.from(b.entries()).filter(([k]) => !a.has(k))
-  const removed = Array.from(a.entries()).filter(([k]) => !b.has(k))
+  const added = Array.from(b).filter(([k]) => !a.has(k))
+  const removed = Array.from(a).filter(([k]) => !b.has(k))
   return [added, removed]
 }
 
 const fromServer = new Map()
 
 function patch([added, removed]) {
-  for (const [id, css] of added) {
+  let styles
+  let id
+  let css
+  let i = 0
+  let len = added.length
+  for (;i < len;i++) {
+    styles = added[i]
+    id = styles[0]
+    css = styles[1]
     // Avoid duplicates from server-rendered markup
     if (!fromServer.has(id)) {
       fromServer.set(id, document.getElementById(`__jsx-style-${id}`))
     }
 
-    mountedInstancesCount[id] = (mountedInstancesCount[id] || 0) + 1
-    if (mountedInstancesCount[id] === 1) {
-      const tag = fromServer.get(id) || makeStyleTag(css)
-      tags.set(id, tag)
-    }
+    const tag = fromServer.get(id) || makeStyleTag(css)
+    tags.set(id, tag)
   }
 
-  for (const [id] of removed) {
-    mountedInstancesCount[id] -= 1
-    if (mountedInstancesCount[id] > 0) {
-      continue
-    }
-    delete mountedInstancesCount[id]
+  id = undefined
+  i = 0
+  len = removed.length
+
+  for (;i < len; i++) {
+    id = removed[i][0]
     const t = tags.get(id)
     tags.delete(id)
     t.parentNode.removeChild(t)

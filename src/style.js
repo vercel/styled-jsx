@@ -4,16 +4,12 @@ import render from './render'
 
 let components = []
 
-function hashArray(arr) {
-  return hashString(arr.join(','))
-}
-
 export default class extends Component {
   static dynamic(arr) {
     return arr
       .map(tagInfo => {
         const [styleId, expressions] = tagInfo
-        const hash = hashArray(expressions)
+        const hash = hashString(expressions.toString())
         return `${styleId}-${hash}`
       })
       .join(' ')
@@ -21,6 +17,10 @@ export default class extends Component {
 
   componentWillMount() {
     mount(this)
+  }
+
+  shouldComponentUpdate(nextProps) {
+    return this.props.css !== nextProps.css
   }
 
   // To avoid FOUC, we process new changes
@@ -43,16 +43,34 @@ export default class extends Component {
   }
 }
 
+const computeDynamic = (function () {
+  const cache = {};
+  return function computeDynamic(id, css) {
+    if (!cache[id]) {
+      cache[id] = css.replace(/\[data-jsx~="\?"]/g, `[data-jsx~="${id}"]`);
+    }
+    return cache[id];
+  };
+})()
+
+// function computeDynamic(id, css) {
+//   return css.replace(/\[data-jsx~="\?"]/g, `[data-jsx~="${id}"]`)
+// }
+
 function stylesMap(updated) {
   const ret = new Map()
-  for (const c of components) {
+  let c
+  let i = 0
+  const len = components.length
+  for (;i < len; i++) {
+    c = components[i]
     // On `componentWillUpdate`
     // we use `styleId` and `css` from updated component rather than reading `props`
     // from the component since they haven't been updated yet.
     const props = updated && c === updated.instance ? updated : c.props
 
     if (props.dynamic) {
-      const styleId = `${props.styleId}-${hashArray(props.dynamic)}`
+      const styleId = `${props.styleId}-${hashString(props.dynamic.toString())}`
       ret.set(styleId, computeDynamic(styleId, props.css))
     } else {
       ret.set(props.styleId, props.css)
@@ -84,8 +102,4 @@ function unmount(component) {
 
 function update(updates) {
   render(stylesMap(updates))
-}
-
-function computeDynamic(id, css) {
-  return css.replace(/\[data-jsx~="\?"]/g, `[data-jsx~="${id}"]`)
 }
