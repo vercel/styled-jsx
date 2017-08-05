@@ -24,7 +24,7 @@ function patch([added, removed]) {
   let css
   let i = 0
   let len = added.length
-  for (;i < len;i++) {
+  for (; i < len; i++) {
     styles = added[i]
     id = styles[0]
     css = styles[1]
@@ -41,7 +41,7 @@ function patch([added, removed]) {
   i = 0
   len = removed.length
 
-  for (;i < len; i++) {
+  for (; i < len; i++) {
     id = removed[i][0]
     const t = tags.get(id)
     tags.delete(id)

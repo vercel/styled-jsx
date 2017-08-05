@@ -43,26 +43,22 @@ export default class extends Component {
   }
 }
 
-const computeDynamic = (function () {
-  const cache = {};
+const computeDynamic = (function memoizeComputeDynamic() {
+  const cache = {}
   return function computeDynamic(id, css) {
     if (!cache[id]) {
-      cache[id] = css.replace(/\[data-jsx~="\?"]/g, `[data-jsx~="${id}"]`);
+      cache[id] = css.replace(/\[data-jsx~="\?"]/g, `[data-jsx~="${id}"]`)
     }
-    return cache[id];
-  };
+    return cache[id]
+  }
 })()
-
-// function computeDynamic(id, css) {
-//   return css.replace(/\[data-jsx~="\?"]/g, `[data-jsx~="${id}"]`)
-// }
 
 function stylesMap(updated) {
   const ret = new Map()
   let c
   let i = 0
   const len = components.length
-  for (;i < len; i++) {
+  for (; i < len; i++) {
     c = components[i]
     // On `componentWillUpdate`
     // we use `styleId` and `css` from updated component rather than reading `props`
