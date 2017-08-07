@@ -2,6 +2,9 @@ import { Component } from 'react'
 import hashString from 'string-hash'
 import render from './render'
 
+const mountedCounts = {}
+const mounted = {}
+
 let components = []
 
 export default class extends Component {
@@ -16,7 +19,7 @@ export default class extends Component {
   }
 
   componentWillMount() {
-    mount(this)
+    mount(this, this.props)
   }
 
   shouldComponentUpdate(nextProps) {
@@ -26,16 +29,12 @@ export default class extends Component {
   // To avoid FOUC, we process new changes
   // on `componentWillUpdate` rather than `componentDidUpdate`.
   componentWillUpdate(nextProps) {
-    update({
-      instance: this,
-      styleId: nextProps.styleId,
-      css: nextProps.css,
-      dynamic: nextProps.dynamic
-    })
+    mount(this, nextProps)
+    unmount(this, this.props)
   }
 
   componentWillUnmount() {
-    unmount(this)
+    unmount(this, this.props)
   }
 
   render() {
@@ -81,21 +80,52 @@ export function flush() {
   return ret
 }
 
-function mount(component) {
-  components.push(component)
-  update()
-}
-
-function unmount(component) {
-  const i = components.indexOf(component)
-  if (i < 0) {
-    return
+function getIdAndCss(props) {
+  if (props.dynamic) {
+    const styleId = `${props.styleId}-${hashString(props.dynamic.toString())}`
+    return {
+      styleId,
+      css: computeDynamic(styleId, props.css)
+    }
   }
 
-  components.splice(i, 1)
-  update()
+  return props
 }
 
-function update(updates) {
-  render(stylesMap(updates))
+function mount(component, props) {
+  const {styleId, css} = getIdAndCss(props)
+  if (mountedCounts.hasOwnProperty(styleId)) {
+    mountedCounts[styleId] += 1
+    return
+  }
+  mountedCounts[styleId] = 1
+  mounted[styleId] = makeStyleTag(css)
+  components.push(component)
+}
+
+function unmount(component, props) {
+  const {styleId} = getIdAndCss(props)
+  mountedCounts[styleId] -= 1
+  if (mountedCounts[styleId] < 1) {
+    delete mountedCounts[styleId]
+    const t = mounted[styleId]
+    delete mounted[styleId]
+    t.parentNode.removeChild(t)
+    const i = components.indexOf(component)
+    if (i < 0) {
+      return
+    }
+    components.splice(i, 1)
+  }
+}
+
+function makeStyleTag(str) {
+  // Based on implementation by glamor
+  const tag = document.createElement('style')
+  tag.appendChild(document.createTextNode(str))
+
+  const head = document.head || document.getElementsByTagName('head')[0]
+  head.appendChild(tag)
+
+  return tag
 }
