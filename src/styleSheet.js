@@ -53,6 +53,22 @@ function remove(props) {
   }
 }
 
+function update(props, nextProps) {
+  const { styleId } = getIdAndCss(props)
+  if (instancesCounts[styleId] === 1) {
+    const next = getIdAndCss(nextProps)
+    const t = tags[styleId]
+    delete tags[styleId]
+    delete instancesCounts[styleId]
+    t.textContent = next.css
+    tags[next.styleId] = t
+    instancesCounts[next.styleId] = 1
+    return
+  }
+  insert(nextProps)
+  remove(props)
+}
+
 function makeStyleTag(str) {
   // Based on implementation by glamor
   const tag = document.createElement('style')
@@ -67,5 +83,6 @@ function makeStyleTag(str) {
 export default {
   insert: isBrowser ? insert : noop,
   remove: isBrowser ? remove : noop,
+  update: isBrowser ? update : noop,
   computeDynamic
 }

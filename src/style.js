@@ -26,8 +26,7 @@ export default class extends Component {
   // To avoid FOUC, we process new changes
   // on `componentWillUpdate` rather than `componentDidUpdate`.
   componentWillUpdate(nextProps) {
-    mount(this, nextProps)
-    unmount(this, this.props)
+    styleSheet.update(this.props, nextProps)
   }
 
   componentWillUnmount() {
@@ -39,18 +38,9 @@ export default class extends Component {
   }
 }
 
-function stylesMap(updated) {
+export function flush() {
   const ret = new Map()
-  let c
-  let i = 0
-  const len = components.length
-  for (; i < len; i++) {
-    c = components[i]
-    // On `componentWillUpdate`
-    // we use `styleId` and `css` from updated component rather than reading `props`
-    // from the component since they haven't been updated yet.
-    const props = updated && c === updated.instance ? updated : c.props
-
+  for (const {props} of components) {
     if (props.dynamic) {
       const styleId = `${props.styleId}-${hashString(props.dynamic.toString())}`
       ret.set(styleId, styleSheet.computeDynamic(styleId, props.css))
@@ -58,11 +48,6 @@ function stylesMap(updated) {
       ret.set(props.styleId, props.css)
     }
   }
-  return ret
-}
-
-export function flush() {
-  const ret = stylesMap()
   components = []
   return ret
 }
