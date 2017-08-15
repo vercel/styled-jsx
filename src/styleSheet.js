@@ -24,7 +24,9 @@ function getIdAndCss(props) {
     const styleId = `${props.styleId}-${hashString(props.dynamic.toString())}`
     return {
       styleId,
-      rules: useSingleSheet(props.css) ? props.css.map(rule => computeDynamic(styleId, rule)) : [props.css]
+      rules: useSingleSheet(props.css)
+        ? props.css.map(rule => computeDynamic(styleId, rule))
+        : [computeDynamic(styleId, props.css)]
     }
   }
 
@@ -61,14 +63,15 @@ function insert(props) {
     sheet = makeStyleTag('').sheet
   }
 
-  rules.forEach(rule => sheet.insertRule(rule, sheet.cssRules.length))
   // Insertion interval
   tags[styleId] = [
     // start
-    sheet.cssRules.length - rules.length - 1,
+    sheet.cssRules.length,
     // end
-    sheet.cssRules.length - 1
+    sheet.cssRules.length + rules.length - 1
   ]
+
+  rules.forEach(rule => sheet.insertRule(rule, sheet.cssRules.length))
 }
 
 function remove(props) {
@@ -84,9 +87,9 @@ function remove(props) {
       return
     }
 
-    for (let i=t[0]; i <= t[1]; i++) {
+    for (let i = t[0]; i <= t[1]; i++) {
       sheet.deleteRule(i)
-      sheet.insertRule('no-matching-tag {}', i)
+      sheet.insertRule('styledjsx-deleted-rule {}', i)
     }
   }
 }

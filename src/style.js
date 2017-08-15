@@ -40,12 +40,21 @@ export default class extends Component {
 
 export function flush() {
   const ret = new Map()
-  for (const {props} of components) {
+  for (const { props } of components) {
     if (props.dynamic) {
       const styleId = `${props.styleId}-${hashString(props.dynamic.toString())}`
-      ret.set(styleId, styleSheet.computeDynamic(styleId, Array.isArray(props.css) ? props.css.join('\n') : props.css))
+      ret.set(
+        styleId,
+        styleSheet.computeDynamic(
+          styleId,
+          Array.isArray(props.css) ? props.css.join('\n') : props.css
+        )
+      )
     } else {
-      ret.set(props.styleId, Array.isArray(props.css) ? props.css.join('\n') : props.css)
+      ret.set(
+        props.styleId,
+        Array.isArray(props.css) ? props.css.join('\n') : props.css
+      )
     }
   }
   components = []

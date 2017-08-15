@@ -298,8 +298,9 @@ export default function({ types: t }) {
             location
           } = state.styles.shift()
 
-          const splitRules = true // typeof state.opts.speedy === 'boolean' ? state.opts.speedy : process.env.NODE_ENV === 'production'
-          const useSourceMaps = Boolean(state.file.opts.sourceMaps) && !splitRules
+          const splitRules = true // typeof state.opts.optimized === 'boolean' ? state.opts.optimized : process.env.NODE_ENV === 'production'
+          const useSourceMaps =
+            Boolean(state.file.opts.sourceMaps) && !splitRules
           let transformedCss
 
           if (useSourceMaps) {
@@ -313,7 +314,7 @@ export default function({ types: t }) {
                   generator,
                   offset: location.start,
                   filename,
-                  splitRules,
+                  splitRules
                 }
               ),
               generator,
@@ -334,13 +335,14 @@ export default function({ types: t }) {
                 expressions
               )
             } else {
-              transformedCss = transformedCss.map(transformedCss => templateLiteralFromPreprocessedCss(
-                transformedCss,
-                expressions
-              ))
+              transformedCss = transformedCss.map(transformedCss =>
+                templateLiteralFromPreprocessedCss(transformedCss, expressions)
+              )
             }
           } else if (Array.isArray(transformedCss)) {
-            transformedCss = transformedCss.map(transformedCss => t.stringLiteral(transformedCss))
+            transformedCss = transformedCss.map(transformedCss =>
+              t.stringLiteral(transformedCss)
+            )
           }
 
           path.replaceWith(
