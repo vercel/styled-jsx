@@ -215,6 +215,11 @@ export const templateLiteralFromPreprocessedCss = (css, expressions) => {
   const quasis = []
   const finalExpressions = []
   const parts = css.split(/(?:%%styled-jsx-placeholder-(\d+)%%)/g)
+
+  if (parts.length === 1) {
+    return t.stringLiteral(css)
+  }
+
   parts.forEach((part, index) => {
     if (index % 2 > 0) {
       // This is necessary because, after preprocessing, declarations might have been alterate.
@@ -244,6 +249,8 @@ export const makeStyledJsxTag = (id, transformedCss, expressions = []) => {
 
   if (typeof transformedCss === 'string') {
     css = t.stringLiteral(transformedCss)
+  } else if (Array.isArray(transformedCss)) {
+    css = t.arrayExpression(transformedCss)
   } else {
     css = transformedCss
   }
@@ -338,9 +345,15 @@ export const makeSourceMapGenerator = file => {
   return generator
 }
 
-export const addSourceMaps = (code, generator, filename) =>
-  [
-    code,
+export const addSourceMaps = (code, generator, filename) => {
+  const sourceMaps = [
     convert.fromObject(generator).toComment({ multiline: true }),
     `/*@ sourceURL=${filename} */`
-  ].join('\n')
+  ]
+
+  if (Array.isArray(code)) {
+    return code.concat(sourceMaps)
+  }
+
+  return [code].concat(sourceMaps).join('\n')
+}

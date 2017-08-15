@@ -19,9 +19,9 @@ export default class extends Component {
     mount(this, this.props)
   }
 
-  shouldComponentUpdate(nextProps) {
-    return this.props.css !== nextProps.css
-  }
+  // shouldComponentUpdate(nextProps) {
+  //   return this.props.css !== nextProps.css
+  // }
 
   // To avoid FOUC, we process new changes
   // on `componentWillUpdate` rather than `componentDidUpdate`.
@@ -43,9 +43,9 @@ export function flush() {
   for (const {props} of components) {
     if (props.dynamic) {
       const styleId = `${props.styleId}-${hashString(props.dynamic.toString())}`
-      ret.set(styleId, styleSheet.computeDynamic(styleId, props.css))
+      ret.set(styleId, styleSheet.computeDynamic(styleId, Array.isArray(props.css) ? props.css.join('\n') : props.css))
     } else {
-      ret.set(props.styleId, props.css)
+      ret.set(props.styleId, Array.isArray(props.css) ? props.css.join('\n') : props.css)
     }
   }
   components = []

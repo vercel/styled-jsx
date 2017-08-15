@@ -298,7 +298,8 @@ export default function({ types: t }) {
             location
           } = state.styles.shift()
 
-          const useSourceMaps = Boolean(state.file.opts.sourceMaps)
+          const splitRules = true // typeof state.opts.speedy === 'boolean' ? state.opts.speedy : process.env.NODE_ENV === 'production'
+          const useSourceMaps = Boolean(state.file.opts.sourceMaps) && !splitRules
           let transformedCss
 
           if (useSourceMaps) {
@@ -311,7 +312,8 @@ export default function({ types: t }) {
                 {
                   generator,
                   offset: location.start,
-                  filename
+                  filename,
+                  splitRules,
                 }
               ),
               generator,
@@ -320,22 +322,32 @@ export default function({ types: t }) {
           } else {
             transformedCss = transform(
               isGlobal ? '' : getPrefix(dynamic, state.staticJsxId),
-              css
+              css,
+              { splitRules }
             )
           }
 
           if (expressions.length > 0) {
-            transformedCss = templateLiteralFromPreprocessedCss(
-              transformedCss,
-              expressions
-            )
+            if (typeof transformedCss === 'string') {
+              transformedCss = templateLiteralFromPreprocessedCss(
+                transformedCss,
+                expressions
+              )
+            } else {
+              transformedCss = transformedCss.map(transformedCss => templateLiteralFromPreprocessedCss(
+                transformedCss,
+                expressions
+              ))
+            }
+          } else if (Array.isArray(transformedCss)) {
+            transformedCss = transformedCss.map(transformedCss => t.stringLiteral(transformedCss))
           }
 
           path.replaceWith(
             makeStyledJsxTag(
               dynamic ? hashString(hash + state.staticJsxId) : hash,
               transformedCss,
-              expressions
+              dynamic && expressions
             )
           )
         }

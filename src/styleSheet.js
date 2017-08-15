@@ -1,6 +1,7 @@
 import hashString from 'string-hash'
 
 const isBrowser = typeof window !== 'undefined'
+const useSingleSheet = css => Array.isArray(css)
 function noop() {}
 
 const computeDynamic = (function memoizeComputeDynamic() {
@@ -16,30 +17,58 @@ const computeDynamic = (function memoizeComputeDynamic() {
 const fromServer = {}
 const instancesCounts = {}
 const tags = {}
+let sheet
 
 function getIdAndCss(props) {
   if (props.dynamic) {
     const styleId = `${props.styleId}-${hashString(props.dynamic.toString())}`
     return {
       styleId,
-      css: computeDynamic(styleId, props.css)
+      rules: useSingleSheet(props.css) ? props.css.map(rule => computeDynamic(styleId, rule)) : [props.css]
     }
   }
 
-  return props
+  return {
+    styleId: props.styleId,
+    rules: useSingleSheet(props.css) ? props.css : [props.css]
+  }
 }
 
 function insert(props) {
-  const { styleId, css } = getIdAndCss(props)
+  const { styleId, rules } = getIdAndCss(props)
+
   if (styleId in instancesCounts) {
     instancesCounts[styleId] += 1
     return
   }
+
+  instancesCounts[styleId] = 1
+
   if (!(styleId in fromServer)) {
     fromServer[styleId] = document.getElementById(`__jsx-style-${styleId}`)
+    if (fromServer[styleId]) {
+      tags[styleId] = fromServer[styleId]
+      return
+    }
   }
-  instancesCounts[styleId] = 1
-  tags[styleId] = fromServer[styleId] || makeStyleTag(css)
+
+  if (!useSingleSheet(props.css)) {
+    tags[styleId] = makeStyleTag(rules[0])
+    return
+  }
+
+  if (!sheet) {
+    sheet = makeStyleTag('').sheet
+  }
+
+  rules.forEach(rule => sheet.insertRule(rule, sheet.cssRules.length))
+  // Insertion interval
+  tags[styleId] = [
+    // start
+    sheet.cssRules.length - rules.length - 1,
+    // end
+    sheet.cssRules.length - 1
+  ]
 }
 
 function remove(props) {
@@ -49,22 +78,31 @@ function remove(props) {
     delete instancesCounts[styleId]
     const t = tags[styleId]
     delete tags[styleId]
-    t.parentNode.removeChild(t)
+
+    if (!useSingleSheet(props.css)) {
+      t.parentNode.removeChild(t)
+      return
+    }
+
+    for (let i=t[0]; i <= t[1]; i++) {
+      sheet.deleteRule(i)
+      sheet.insertRule('no-matching-tag {}', i)
+    }
   }
 }
 
 function update(props, nextProps) {
-  const { styleId } = getIdAndCss(props)
-  if (instancesCounts[styleId] === 1) {
-    const next = getIdAndCss(nextProps)
-    const t = tags[styleId]
-    delete tags[styleId]
-    delete instancesCounts[styleId]
-    t.textContent = next.css
-    tags[next.styleId] = t
-    instancesCounts[next.styleId] = 1
-    return
-  }
+  // const { styleId } = getIdAndCss(props)
+  // if (instancesCounts[styleId] === 1) {
+  //   const next = getIdAndCss(nextProps)
+  //   const t = tags[styleId]
+  //   delete tags[styleId]
+  //   delete instancesCounts[styleId]
+  //   t.textContent = next.rules[0]
+  //   tags[next.styleId] = t
+  //   instancesCounts[next.styleId] = 1
+  //   return
+  // }
   insert(nextProps)
   remove(props)
 }

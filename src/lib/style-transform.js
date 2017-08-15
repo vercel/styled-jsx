@@ -19,6 +19,7 @@ function disableNestingPlugin(...args) {
   }
 }
 
+
 let generator
 let filename
 let offset
@@ -65,8 +66,23 @@ function sourceMapsPlugin(...args) {
   }
 }
 
+let splitRules = false
+let rules = []
+
+function splitRulesPlugin(context, block, selectors) {
+  if (splitRules) {
+    switch (context) {
+      // executed whenever a block of css is done compiling.
+      case 2: case 3: {
+        rules.push(`${selectors.join(',')} { ${block} }`)
+      }
+    }
+  }
+}
+
 stylis.use(disableNestingPlugin)
 stylis.use(sourceMapsPlugin)
+stylis.use(splitRulesPlugin)
 stylis.set({
   cascade: false,
   compress: true
@@ -84,8 +100,15 @@ function transform(prefix, styles, settings = {}) {
   generator = settings.generator
   offset = settings.offset
   filename = settings.filename
+  splitRules = settings.splitRules
 
-  return stylis(prefix, styles)
+  rules = []
+  const cssString = stylis(prefix, styles)
+
+  if (splitRules) {
+    return rules
+  }
+  return cssString
 }
 
 module.exports = transform

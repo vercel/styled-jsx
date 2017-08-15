@@ -64,6 +64,7 @@ export default ({ display }) =>
       p {
         animation: ${animationDuration} forwards ${animationName};
       }
+      div { background: ${color} }
     `}</style>
 
     <style jsx>{`
