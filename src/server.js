@@ -7,7 +7,7 @@ export default function flushToReact() {
   for (const [id, css] of mem) {
     arr.push(
       React.createElement('style', {
-        id: `__jsx-style-${id}`,
+        'data-jsx-ssr': id,
         // Avoid warnings upon render with a key
         key: `__jsx-style-${id}`,
         dangerouslySetInnerHTML: {
@@ -23,7 +23,7 @@ export function flushToHTML() {
   const mem = flush()
   let html = ''
   for (const [id, css] of mem) {
-    html += `<style id="__jsx-style-${id}">${css}</style>`
+    html += `<style data-jsx-ssr="${id}">${css}</style>`
   }
   return html
 }

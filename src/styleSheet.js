@@ -14,7 +14,7 @@ const computeDynamic = (function memoizeComputeDynamic() {
   }
 })()
 
-const fromServer = {}
+let fromServer
 const instancesCounts = {}
 const tags = {}
 let sheet
@@ -36,7 +36,19 @@ function getIdAndCss(props) {
   }
 }
 
+function selectFromServer() {
+  const elements = Array.prototype.slice(document.querySelectorAll('[data-jsx-ssr]'))
+  return elements.reduce((acc, element) => {
+    acc[element.getAttribute('data-jsx-ssr')] = element
+    return acc
+  }, {})
+}
+
 function insert(props) {
+  if (!fromServer) {
+    fromServer = selectFromServer()
+  }
+
   const { styleId, rules } = getIdAndCss(props)
 
   if (styleId in instancesCounts) {
@@ -46,12 +58,9 @@ function insert(props) {
 
   instancesCounts[styleId] = 1
 
-  if (!(styleId in fromServer)) {
-    fromServer[styleId] = document.getElementById(`__jsx-style-${styleId}`)
-    if (fromServer[styleId]) {
-      tags[styleId] = fromServer[styleId]
-      return
-    }
+  if (fromServer[styleId]) {
+    tags[styleId] = fromServer[styleId]
+    return
   }
 
   if (!useSingleSheet(props.css)) {
@@ -82,8 +91,9 @@ function remove(props) {
     const t = tags[styleId]
     delete tags[styleId]
 
-    if (!useSingleSheet(props.css)) {
+    if (!useSingleSheet(props.css) || fromServer[styleId]) {
       t.parentNode.removeChild(t)
+      delete fromServer[styleId]
       return
     }
 
@@ -113,6 +123,7 @@ function update(props, nextProps) {
 function makeStyleTag(str) {
   // Based on implementation by glamor
   const tag = document.createElement('style')
+  tag.setAttribute('data-jsx-client', '')
   tag.appendChild(document.createTextNode(str))
 
   const head = document.head || document.getElementsByTagName('head')[0]
