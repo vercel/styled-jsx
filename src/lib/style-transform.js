@@ -71,11 +71,9 @@ let rules = []
 
 function splitRulesPlugin(context, block, selectors) {
   if (splitRules) {
-    switch (context) {
-      // executed whenever a block of css is done compiling.
-      case 2: case 3: {
-        rules.push(`${selectors.join(',')} { ${block} }`)
-      }
+    if (context === 2 || context === 3) {
+      // Executed whenever a block of css is done compiling.
+      rules.push(`${selectors.join(',')} { ${block} }`)
     }
   }
 }

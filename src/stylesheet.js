@@ -4,9 +4,21 @@ const isBrowser = typeof window !== 'undefined'
 const useSingleSheet = css => Array.isArray(css)
 function noop() {}
 
-const computeDynamic = (function memoizeComputeDynamic() {
+const computeId = (function () {
   const cache = {}
-  return function computeDynamic(id, css) {
+  return function (baseId, props) {
+    const propsToString = String(props)
+    const key = baseId+propsToString
+    if (!cache[key]) {
+      cache[key] = hashString(`${baseId}-${propsToString}`)
+    }
+    return cache[key]
+  }
+})()
+
+const computeSelector = (function () {
+  const cache = {}
+  return function (id, css) {
     if (!cache[id]) {
       cache[id] = css.replace(/\[data-jsx~="\?"]/g, `[data-jsx~="${id}"]`)
     }
@@ -21,12 +33,12 @@ let sheet
 
 function getIdAndCss(props) {
   if (props.dynamic) {
-    const styleId = `${props.styleId}-${hashString(props.dynamic.toString())}`
+    const styleId = computeId(props.styleId, props.dynamic)
     return {
       styleId,
       rules: useSingleSheet(props.css)
-        ? props.css.map(rule => computeDynamic(styleId, rule))
-        : [computeDynamic(styleId, props.css)]
+        ? props.css.map(rule => computeSelector(styleId, rule))
+        : [computeSelector(styleId, props.css)]
     }
   }
 
@@ -74,9 +86,9 @@ function insert(props) {
 
   // Insertion interval
   tags[styleId] = [
-    // start
+    // Start
     sheet.cssRules.length,
-    // end
+    // End
     sheet.cssRules.length + rules.length - 1
   ]
 
@@ -105,17 +117,17 @@ function remove(props) {
 }
 
 function update(props, nextProps) {
-  // const { styleId } = getIdAndCss(props)
-  // if (instancesCounts[styleId] === 1) {
-  //   const next = getIdAndCss(nextProps)
-  //   const t = tags[styleId]
-  //   delete tags[styleId]
-  //   delete instancesCounts[styleId]
-  //   t.textContent = next.rules[0]
-  //   tags[next.styleId] = t
-  //   instancesCounts[next.styleId] = 1
-  //   return
-  // }
+  const { styleId } = getIdAndCss(props)
+  if (instancesCounts[styleId] === 1 && !useSingleSheet(props.css)) {
+    const next = getIdAndCss(nextProps)
+    const t = tags[styleId]
+    delete tags[styleId]
+    delete instancesCounts[styleId]
+    t.textContent = next.rules[0]
+    tags[next.styleId] = t
+    instancesCounts[next.styleId] = 1
+    return
+  }
   insert(nextProps)
   remove(props)
 }
@@ -136,5 +148,5 @@ export default {
   insert: isBrowser ? insert : noop,
   remove: isBrowser ? remove : noop,
   update: isBrowser ? update : noop,
-  computeDynamic
+  computeId
 }

@@ -1,5 +1,4 @@
 import { Component } from 'react'
-import hashString from 'string-hash'
 import styleSheet from './stylesheet'
 
 let components = []
@@ -9,8 +8,7 @@ export default class extends Component {
     return arr
       .map(tagInfo => {
         const [styleId, expressions] = tagInfo
-        const hash = hashString(expressions.toString())
-        return `${styleId}-${hash}`
+        return styleSheet.computeId(styleId, expressions)
       })
       .join(' ')
   }
@@ -19,9 +17,9 @@ export default class extends Component {
     mount(this, this.props)
   }
 
-  // shouldComponentUpdate(nextProps) {
-  //   return this.props.css !== nextProps.css
-  // }
+  shouldComponentUpdate(nextProps) {
+    return this.props.css !== nextProps.css
+  }
 
   // To avoid FOUC, we process new changes
   // on `componentWillUpdate` rather than `componentDidUpdate`.
@@ -42,7 +40,7 @@ export function flush() {
   const ret = new Map()
   for (const { props } of components) {
     if (props.dynamic) {
-      const styleId = `${props.styleId}-${hashString(props.dynamic.toString())}`
+      const styleId = styleSheet.computeId(props.styleId, props.dynamic)
       ret.set(
         styleId,
         styleSheet.computeDynamic(
