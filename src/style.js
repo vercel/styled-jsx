@@ -43,7 +43,7 @@ export function flush() {
       const styleId = styleSheet.computeId(props.styleId, props.dynamic)
       ret.set(
         styleId,
-        styleSheet.computeDynamic(
+        styleSheet.computeSelector(
           styleId,
           Array.isArray(props.css) ? props.css.join('\n') : props.css
         )

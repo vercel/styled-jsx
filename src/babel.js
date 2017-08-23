@@ -19,7 +19,8 @@ import {
   getJSXStyleInfo,
   buildJsxId,
   templateLiteralFromPreprocessedCss,
-  hashString
+  hashString,
+  addClassName
 } from './_utils'
 
 import {
@@ -29,7 +30,7 @@ import {
 } from './_constants'
 
 const getPrefix = (isDynamic, id) =>
-  `[${MARKUP_ATTRIBUTE}~="${isDynamic ? '?' : id}"]`
+  isDynamic ? '.jsx-xxx' : `.${id}`
 
 const callExternalVisitor = (visitor, path, state) => {
   const { file } = state
@@ -103,12 +104,7 @@ export default function({ types: t }) {
           }
 
           if (state.jsxId) {
-            el.attributes.push(
-              t.jSXAttribute(
-                t.jSXIdentifier(MARKUP_ATTRIBUTE),
-                t.jSXExpressionContainer(state.jsxId)
-              )
-            )
+            addClassName(path, state.jsxId)
           }
         }
 
@@ -235,12 +231,12 @@ export default function({ types: t }) {
           }
 
           if (state.styles.length > 0 || externalJsxId) {
-            const { staticHash, attribute } = buildJsxId(
+            const { staticClassName, attribute } = buildJsxId(
               state.styles,
               externalJsxId
             )
             state.jsxId = attribute
-            state.staticJsxId = staticHash
+            state.staticClassName = staticClassName
           }
 
           state.hasJSXStyle = true
@@ -308,7 +304,7 @@ export default function({ types: t }) {
             const filename = state.file.opts.sourceFileName
             transformedCss = addSourceMaps(
               transform(
-                isGlobal ? '' : getPrefix(dynamic, state.staticJsxId),
+                isGlobal ? '' : getPrefix(dynamic, state.staticClassName),
                 css,
                 {
                   generator,
@@ -322,7 +318,7 @@ export default function({ types: t }) {
             )
           } else {
             transformedCss = transform(
-              isGlobal ? '' : getPrefix(dynamic, state.staticJsxId),
+              isGlobal ? '' : getPrefix(dynamic, state.staticClassName),
               css,
               { splitRules }
             )
@@ -347,7 +343,7 @@ export default function({ types: t }) {
 
           path.replaceWith(
             makeStyledJsxTag(
-              dynamic ? hashString(hash + state.staticJsxId) : hash,
+              dynamic ? hashString(hash + state.staticClassName) : hash,
               transformedCss,
               dynamic && expressions
             )

@@ -10,8 +10,82 @@ import {
   STYLE_COMPONENT_ID,
   STYLE_COMPONENT,
   STYLE_COMPONENT_CSS,
-  STYLE_COMPONENT_DYNAMIC
+  STYLE_COMPONENT_DYNAMIC,
+  MARKUP_ATTRIBUTE
 } from './_constants'
+
+const concat = (a, b) => t.binaryExpression('+', a, b)
+const and = (a, b) => t.logicalExpression('&&', a, b)
+const or = (a, b) => t.logicalExpression('||', a, b)
+
+const joinSpreads = spreads => spreads.reduce((acc, curr) => or(acc, curr))
+
+export const addClassName = (path, jsxId) => {
+  const jsxIdWithSpace = concat(jsxId, t.stringLiteral(' '))
+  const attributes = path.get('attributes')
+  const spreads = []
+  let className = null
+  // Find className and collect spreads
+  for (let i = attributes.length - 1, attr; (attr = attributes[i]); i--) {
+    const node = attr.node
+    if (t.isJSXSpreadAttribute(attr)) {
+      const name = node.argument.name
+      const attrNameDotClassName = t.memberExpression(t.identifier(name), t.identifier('className'))
+      spreads.push(
+        // `${name}.className != null && ${name}.className`
+        and(
+          t.binaryExpression(
+            '!=',
+            attrNameDotClassName,
+            t.nullLiteral()
+          ),
+          attrNameDotClassName
+        )
+      )
+      continue
+    }
+    if (t.isJSXAttribute(attr) && node.name.name === 'className') {
+      className = attributes[i]
+      // found className break the loop
+      break
+    }
+  }
+
+  if (className) {
+
+    let newClassName = className.node.value.expression || className.node.value
+    newClassName =
+      t.isStringLiteral(newClassName) || t.isTemplateLiteral(newClassName)
+        ? newClassName
+        : or(newClassName, t.stringLiteral(''))
+    className.remove()
+
+    className = t.jSXExpressionContainer(
+      spreads.length === 0
+        ? concat(jsxIdWithSpace, newClassName)
+        : concat(jsxIdWithSpace, or(joinSpreads(spreads), newClassName))
+    )
+  } else {
+    className =
+      t.jSXExpressionContainer(
+        spreads.length === 0
+          ? jsxId
+          : concat(
+              jsxIdWithSpace,
+              or(joinSpreads(spreads), t.stringLiteral(''))
+            )
+      )
+  }
+
+  path.node.attributes.push(
+    t.jSXAttribute(t.jSXIdentifier('className'), className)
+  )
+
+  // Mark the path so that we don't add duplicates later.
+  path.node.attributes.push(
+    t.jSXAttribute(t.jSXIdentifier(MARKUP_ATTRIBUTE), null)
+  )
+}
 
 export const hashString = str => String(_hashString(str))
 
@@ -159,12 +233,12 @@ export const buildJsxId = (styles, externalJsxId) => {
     }
   )
 
-  const staticHash = hashString(hashes.static.join(','))
+  const staticClassName = `jsx-${hashString(hashes.static.join(','))}`
 
   if (hashes.dynamic.length === 0) {
     return {
-      staticHash,
-      attribute: t.stringLiteral(staticHash)
+      staticClassName,
+      attribute: t.stringLiteral(staticClassName)
     }
   }
 
@@ -177,7 +251,7 @@ export const buildJsxId = (styles, externalJsxId) => {
       t.arrayExpression(
         hashes.dynamic.map(styles =>
           t.arrayExpression([
-            t.stringLiteral(hashString(styles.hash + staticHash)),
+            t.stringLiteral(hashString(styles.hash + staticClassName)),
             t.arrayExpression(styles.expressions)
           ])
         )
@@ -187,20 +261,20 @@ export const buildJsxId = (styles, externalJsxId) => {
 
   if (hashes.static.length === 0) {
     return {
-      staticHash,
+      staticClassName,
       attribute: dynamic
     }
   }
 
   // `1234 ${_JSXStyle.dynamic([ ['5678', [props.foo, bar, fn(props)]], ... ])}`
   return {
-    staticHash,
+    staticClassName,
     attribute: t.templateLiteral(
       [
         t.templateElement(
           {
-            raw: staticHash + ' ',
-            cooked: staticHash + ' '
+            raw: staticClassName + ' ',
+            cooked: staticClassName + ' '
           },
           false
         ),

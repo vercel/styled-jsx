@@ -4,23 +4,23 @@ const isBrowser = typeof window !== 'undefined'
 const useSingleSheet = css => Array.isArray(css)
 function noop() {}
 
-const computeId = (function () {
+const computeId = (function() {
   const cache = {}
-  return function (baseId, props) {
+  return function(baseId, props) {
     const propsToString = String(props)
-    const key = baseId+propsToString
+    const key = baseId + propsToString
     if (!cache[key]) {
-      cache[key] = hashString(`${baseId}-${propsToString}`)
+      cache[key] = `jsx-${hashString(`${baseId}-${propsToString}`)}`
     }
     return cache[key]
   }
 })()
 
-const computeSelector = (function () {
+const computeSelector = (function() {
   const cache = {}
-  return function (id, css) {
+  return function(id, css) {
     if (!cache[id]) {
-      cache[id] = css.replace(/\[data-jsx~="\?"]/g, `[data-jsx~="${id}"]`)
+      cache[id] = css.replace(/jsx-xxx/g, id)
     }
     return cache[id]
   }
@@ -49,7 +49,9 @@ function getIdAndCss(props) {
 }
 
 function selectFromServer() {
-  const elements = Array.prototype.slice(document.querySelectorAll('[data-jsx-ssr]'))
+  const elements = Array.prototype.slice(
+    document.querySelectorAll('[data-jsx-ssr]')
+  )
   return elements.reduce((acc, element) => {
     acc[element.getAttribute('data-jsx-ssr')] = element
     return acc
@@ -148,5 +150,6 @@ export default {
   insert: isBrowser ? insert : noop,
   remove: isBrowser ? remove : noop,
   update: isBrowser ? update : noop,
-  computeId
+  computeId,
+  computeSelector
 }
