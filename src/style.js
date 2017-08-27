@@ -50,7 +50,7 @@ export function flush() {
       )
     } else {
       ret.set(
-        props.styleId,
+        styleSheet.computeId(props.styleId),
         Array.isArray(props.css) ? props.css.join('\n') : props.css
       )
     }

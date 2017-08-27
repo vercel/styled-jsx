@@ -17,9 +17,9 @@ import {
   makeSourceMapGenerator,
   addSourceMaps,
   getJSXStyleInfo,
-  buildJsxId,
   templateLiteralFromPreprocessedCss,
   hashString,
+  computeClassNames,
   addClassName
 } from './_utils'
 
@@ -30,7 +30,7 @@ import {
 } from './_constants'
 
 const getPrefix = (isDynamic, id) =>
-  isDynamic ? '.jsx-xxx' : `.${id}`
+  isDynamic ? '.__jsx-style-dynamic-selector' : `.${id}`
 
 const callExternalVisitor = (visitor, path, state) => {
   const { file } = state
@@ -231,7 +231,7 @@ export default function({ types: t }) {
           }
 
           if (state.styles.length > 0 || externalJsxId) {
-            const { staticClassName, attribute } = buildJsxId(
+            const { staticClassName, attribute } = computeClassNames(
               state.styles,
               externalJsxId
             )

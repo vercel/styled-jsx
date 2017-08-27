@@ -44,7 +44,10 @@
     "extends": "prettier",
     "ignores": [
       "lib/style-transform.js"
-    ]
+    ],
+    "rules": {
+      "capitalized-comments": 0
+    }
   },
   "lint-staged": {
     "*.js": [

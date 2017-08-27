@@ -20,15 +20,15 @@ const computeSelector = (function() {
   const cache = {}
   return function(id, css) {
     if (!cache[id]) {
-      cache[id] = css.replace(/jsx-xxx/g, id)
+      cache[id] = css.replace(/__jsx-style-dynamic-selector/g, id)
     }
     return cache[id]
   }
 })()
 
-let fromServer
+let fromServer = false
 const instancesCounts = {}
-const tags = {}
+let tags = {}
 let sheet
 
 function getIdAndCss(props) {
@@ -49,18 +49,22 @@ function getIdAndCss(props) {
 }
 
 function selectFromServer() {
-  const elements = Array.prototype.slice(
-    document.querySelectorAll('[data-jsx-ssr]')
+  fromServer = true
+  const elements = Array.prototype.slice.call(
+    document.querySelectorAll('[id^="__jsx-"]')
   )
+
   return elements.reduce((acc, element) => {
-    acc[element.getAttribute('data-jsx-ssr')] = element
+    const id = element.id.slice(2)
+    acc[id] = element
+    instancesCounts[id] = 0
     return acc
   }, {})
 }
 
 function insert(props) {
   if (!fromServer) {
-    fromServer = selectFromServer()
+    tags = selectFromServer()
   }
 
   const { styleId, rules } = getIdAndCss(props)
@@ -71,11 +75,6 @@ function insert(props) {
   }
 
   instancesCounts[styleId] = 1
-
-  if (fromServer[styleId]) {
-    tags[styleId] = fromServer[styleId]
-    return
-  }
 
   if (!useSingleSheet(props.css)) {
     tags[styleId] = makeStyleTag(rules[0])
@@ -104,10 +103,12 @@ function remove(props) {
     delete instancesCounts[styleId]
     const t = tags[styleId]
     delete tags[styleId]
-
-    if (!useSingleSheet(props.css) || fromServer[styleId]) {
+    if (
+      !useSingleSheet(props.css) ||
+      /* server side rendered styles are not arrays of indices */
+      !Array.isArray(t)
+    ) {
       t.parentNode.removeChild(t)
-      delete fromServer[styleId]
       return
     }
 

@@ -30,15 +30,14 @@ export const addClassName = (path, jsxId) => {
     const node = attr.node
     if (t.isJSXSpreadAttribute(attr)) {
       const name = node.argument.name
-      const attrNameDotClassName = t.memberExpression(t.identifier(name), t.identifier('className'))
+      const attrNameDotClassName = t.memberExpression(
+        t.identifier(name),
+        t.identifier('className')
+      )
       spreads.push(
         // `${name}.className != null && ${name}.className`
         and(
-          t.binaryExpression(
-            '!=',
-            attrNameDotClassName,
-            t.nullLiteral()
-          ),
+          t.binaryExpression('!=', attrNameDotClassName, t.nullLiteral()),
           attrNameDotClassName
         )
       )
@@ -52,7 +51,6 @@ export const addClassName = (path, jsxId) => {
   }
 
   if (className) {
-
     let newClassName = className.node.value.expression || className.node.value
     newClassName =
       t.isStringLiteral(newClassName) || t.isTemplateLiteral(newClassName)
@@ -66,15 +64,11 @@ export const addClassName = (path, jsxId) => {
         : concat(jsxIdWithSpace, or(joinSpreads(spreads), newClassName))
     )
   } else {
-    className =
-      t.jSXExpressionContainer(
-        spreads.length === 0
-          ? jsxId
-          : concat(
-              jsxIdWithSpace,
-              or(joinSpreads(spreads), t.stringLiteral(''))
-            )
-      )
+    className = t.jSXExpressionContainer(
+      spreads.length === 0
+        ? jsxId
+        : concat(jsxIdWithSpace, or(joinSpreads(spreads), t.stringLiteral('')))
+    )
   }
 
   path.node.attributes.push(
@@ -213,7 +207,7 @@ export const getJSXStyleInfo = (expr, scope) => {
   }
 }
 
-export const buildJsxId = (styles, externalJsxId) => {
+export const computeClassNames = (styles, externalJsxId) => {
   if (styles.length === 0) {
     return externalJsxId
   }
