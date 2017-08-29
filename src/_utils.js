@@ -3,6 +3,7 @@ import _hashString from 'string-hash'
 import { parse as parseCss } from 'css-tree'
 import { SourceMapGenerator } from 'source-map'
 import convert from 'convert-source-map'
+import transform from './lib/style-transform'
 
 import {
   STYLE_ATTRIBUTE,
@@ -82,6 +83,13 @@ export const addClassName = (path, jsxId) => {
 }
 
 export const hashString = str => String(_hashString(str))
+
+export const getScope = path => (path.findParent(
+  path =>
+    path.isFunctionDeclaration() ||
+    path.isArrowFunctionExpression() ||
+    path.isClassMethod()
+) || path).scope
 
 export const isGlobalEl = el =>
   el.attributes.some(({ name }) => name && name.name === GLOBAL_ATTRIBUTE)
@@ -424,4 +432,78 @@ export const addSourceMaps = (code, generator, filename) => {
   }
 
   return [code].concat(sourceMaps).join('\n')
+}
+
+const getPrefix = (isDynamic, id) =>
+  isDynamic ? '.__jsx-style-dynamic-selector' : `.${id}`
+
+export const processCss = (stylesInfo, options) => {
+  const {
+    hash,
+    css,
+    expressions,
+    dynamic,
+    location,
+    fileInfo,
+    isGlobal,
+  } = stylesInfo
+
+  let staticClassName = stylesInfo.staticClassName || `jsx-${hash}`
+
+  const {
+    splitRules
+  } = options
+
+  const useSourceMaps =
+    Boolean(fileInfo.sourceMaps) && !splitRules
+
+  let transformedCss
+
+  if (useSourceMaps) {
+    const generator = makeSourceMapGenerator(fileInfo.file)
+    const filename = fileInfo.sourceFileName
+    transformedCss = addSourceMaps(
+      transform(
+        isGlobal ? '' : getPrefix(dynamic, staticClassName),
+        css,
+        {
+          generator,
+          offset: location.start,
+          filename,
+          splitRules
+        }
+      ),
+      generator,
+      filename
+    )
+  } else {
+    transformedCss = transform(
+      isGlobal ? '' : getPrefix(dynamic, staticClassName),
+      css,
+      { splitRules }
+    )
+  }
+
+  if (expressions.length > 0) {
+    if (typeof transformedCss === 'string') {
+      transformedCss = templateLiteralFromPreprocessedCss(
+        transformedCss,
+        expressions
+      )
+    } else {
+      transformedCss = transformedCss.map(transformedCss =>
+        templateLiteralFromPreprocessedCss(transformedCss, expressions)
+      )
+    }
+  } else if (Array.isArray(transformedCss)) {
+    transformedCss = transformedCss.map(transformedCss =>
+      t.stringLiteral(transformedCss)
+    )
+  }
+
+  return {
+    hash: dynamic ? hashString(hash + staticClassName) : hash,
+    css: transformedCss,
+    expressions: dynamic && expressions
+  }
 }

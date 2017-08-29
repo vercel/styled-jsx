@@ -2,7 +2,6 @@
 import jsx from 'babel-plugin-syntax-jsx'
 
 // Ours
-import transform from './lib/style-transform'
 import {
   exportDefaultDeclarationVisitor,
   namedExportDeclarationVisitor,
@@ -20,7 +19,9 @@ import {
   templateLiteralFromPreprocessedCss,
   hashString,
   computeClassNames,
-  addClassName
+  addClassName,
+  getScope,
+  processCss
 } from './_utils'
 
 import {
@@ -28,9 +29,6 @@ import {
   STYLE_COMPONENT,
   MARKUP_ATTRIBUTE_EXTERNAL
 } from './_constants'
-
-const getPrefix = (isDynamic, id) =>
-  isDynamic ? '.__jsx-style-dynamic-selector' : `.${id}`
 
 const callExternalVisitor = (visitor, path, state) => {
   const { file } = state
@@ -126,12 +124,7 @@ export default function({ types: t }) {
           state.styles = []
           state.externalStyles = []
 
-          const scope = (path.findParent(
-            path =>
-              path.isFunctionDeclaration() ||
-              path.isArrowFunctionExpression() ||
-              path.isClassMethod()
-          ) || path).scope
+          const scope = getScope(path)
 
           for (const style of styles) {
             // Compute children excluding whitespace
@@ -286,66 +279,25 @@ export default function({ types: t }) {
             return
           }
 
-          const {
-            hash,
-            css,
-            expressions,
-            dynamic,
-            location
-          } = state.styles.shift()
-
+          const stylesInfo = {
+            ...state.styles.shift(),
+            fileInfo: {
+              file: state.file,
+              sourceFileName: state.file.opts.sourceFileName,
+              sourceMaps: state.file.opts.sourceMaps,
+            },
+            staticClassName: state.staticClassName,
+            isGlobal
+          }
           const splitRules = true // typeof state.opts.optimized === 'boolean' ? state.opts.optimized : process.env.NODE_ENV === 'production'
-          const useSourceMaps =
-            Boolean(state.file.opts.sourceMaps) && !splitRules
-          let transformedCss
 
-          if (useSourceMaps) {
-            const generator = makeSourceMapGenerator(state.file)
-            const filename = state.file.opts.sourceFileName
-            transformedCss = addSourceMaps(
-              transform(
-                isGlobal ? '' : getPrefix(dynamic, state.staticClassName),
-                css,
-                {
-                  generator,
-                  offset: location.start,
-                  filename,
-                  splitRules
-                }
-              ),
-              generator,
-              filename
-            )
-          } else {
-            transformedCss = transform(
-              isGlobal ? '' : getPrefix(dynamic, state.staticClassName),
-              css,
-              { splitRules }
-            )
-          }
-
-          if (expressions.length > 0) {
-            if (typeof transformedCss === 'string') {
-              transformedCss = templateLiteralFromPreprocessedCss(
-                transformedCss,
-                expressions
-              )
-            } else {
-              transformedCss = transformedCss.map(transformedCss =>
-                templateLiteralFromPreprocessedCss(transformedCss, expressions)
-              )
-            }
-          } else if (Array.isArray(transformedCss)) {
-            transformedCss = transformedCss.map(transformedCss =>
-              t.stringLiteral(transformedCss)
-            )
-          }
+          const { hash, css, expressions } = processCss(stylesInfo, { splitRules })
 
           path.replaceWith(
             makeStyledJsxTag(
-              dynamic ? hashString(hash + state.staticClassName) : hash,
-              transformedCss,
-              dynamic && expressions
+              hash,
+              css,
+              expressions
             )
           )
         }

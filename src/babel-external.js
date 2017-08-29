@@ -9,8 +9,61 @@ import {
   makeStyledJsxCss,
   isValidCss,
   makeSourceMapGenerator,
-  addSourceMaps
+  addSourceMaps,
+  getJSXStyleInfo,
+  getScope,
+  processCss
 } from './_utils'
+
+function getTagNameFromImportDeclaration(path) {
+  if (path.node.source.value === 'styled-jsx/css') {
+    path.node.specifiers[0].local.name
+  }
+}
+
+function processTaggedTemplateExpression(path, tagName) {
+  if (path.node.tag.name !== tagName) {
+    return
+  }
+
+  const templateLiteral = path.get('quasi')
+  const stylesInfo = getJSXStyleInfo(templateLiteral, getScope(path))
+
+  if (stylesInfo.dynamic) {
+    throw path.buildCodeFrameError(`
+      Dynamic styles are not allowed in external files.
+      Please put the dynamic parts alongside the component. E.g.
+
+      <button>
+        <style jsx>{externalStylesReference}</style>
+        <style jsx>{\`
+          button { background-color: $\{props.theme.color} }
+        \`}</style>
+      </button>
+    `)
+  }
+
+  const fileInfo = {
+
+  }
+
+  const options = {
+    splitRules:
+  }
+
+  const globalStyles = processCss({
+    ...stylesInfo,
+    fileInfo,
+    isGlobal: true
+  }, options)
+
+  const scopedStyles = processCss({
+    ...stylesInfo,
+    fileInfo,
+    isGlobal: false
+  }, options)
+}
+
 
 const getCss = (path, validate = false) => {
   if (!path.isTemplateLiteral() && !path.isStringLiteral()) {
@@ -170,15 +223,18 @@ const callVisitor = (visitor, path, state) => {
 export default function() {
   return {
     visitor: {
-      ExportDefaultDeclaration(path, state) {
-        callVisitor(exportDefaultDeclarationVisitor, path, state)
-      },
-      MemberExpression(path, state) {
-        callVisitor(moduleExportsVisitor, path, state)
-      },
-      ExportNamedDeclaration(path, state) {
-        callVisitor(namedExportDeclarationVisitor, path, state)
+    ImportDeclaration(path, state) {
+      const tagName = getTagNameFromImportDeclaration(path)
+      if (!tagName) {
+        return
       }
+
+      state.jsxTag = tagName
+      path.remove()
+    },
+    TaggedTemplateExpression(path, state) {
+      processTaggedTemplateExpression(path, state.jsxTag)
     }
+  }
   }
 }
