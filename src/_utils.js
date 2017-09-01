@@ -1,6 +1,5 @@
 import * as t from 'babel-types'
 import _hashString from 'string-hash'
-import { parse as parseCss } from 'css-tree'
 import { SourceMapGenerator } from 'source-map'
 import convert from 'convert-source-map'
 import transform from './lib/style-transform'
@@ -84,12 +83,13 @@ export const addClassName = (path, jsxId) => {
 
 export const hashString = str => String(_hashString(str))
 
-export const getScope = path => (path.findParent(
-  path =>
-    path.isFunctionDeclaration() ||
-    path.isArrowFunctionExpression() ||
-    path.isClassMethod()
-) || path).scope
+export const getScope = path =>
+  (path.findParent(
+    path =>
+      path.isFunctionDeclaration() ||
+      path.isArrowFunctionExpression() ||
+      path.isClassMethod()
+  ) || path).scope
 
 export const isGlobalEl = el =>
   el.attributes.some(({ name }) => name && name.name === GLOBAL_ATTRIBUTE)
@@ -217,7 +217,9 @@ export const getJSXStyleInfo = (expr, scope) => {
 
 export const computeClassNames = (styles, externalJsxId) => {
   if (styles.length === 0) {
-    return externalJsxId
+    return {
+      attribute: externalJsxId
+    }
   }
 
   const hashes = styles.reduce(
@@ -240,7 +242,9 @@ export const computeClassNames = (styles, externalJsxId) => {
   if (hashes.dynamic.length === 0) {
     return {
       staticClassName,
-      attribute: t.stringLiteral(staticClassName)
+      attribute: externalJsxId
+        ? concat(t.stringLiteral(staticClassName + ' '), externalJsxId)
+        : t.stringLiteral(staticClassName)
     }
   }
 
@@ -320,16 +324,18 @@ export const templateLiteralFromPreprocessedCss = (css, expressions) => {
   )
 }
 
-export const makeStyledJsxTag = (id, transformedCss, expressions = []) => {
-  let css
-
-  if (typeof transformedCss === 'string') {
-    css = t.stringLiteral(transformedCss)
-  } else if (Array.isArray(transformedCss)) {
-    css = t.arrayExpression(transformedCss)
-  } else {
-    css = transformedCss
+export const cssToBabelType = css => {
+  if (typeof css === 'string') {
+    return t.stringLiteral(css)
+  } else if (Array.isArray(css)) {
+    return t.arrayExpression(css)
   }
+
+  return css
+}
+
+export const makeStyledJsxTag = (id, transformedCss, expressions = []) => {
+  const css = cssToBabelType(transformedCss)
 
   const attributes = [
     t.jSXAttribute(
@@ -358,56 +364,6 @@ export const makeStyledJsxTag = (id, transformedCss, expressions = []) => {
     null,
     []
   )
-}
-
-export const isValidCss = str => {
-  try {
-    parseCss(
-      // Replace the placeholders with some valid CSS
-      // so that parsing doesn't fail for otherwise valid CSS.
-      str
-        // Replace all the placeholders with `all`
-        .replace(
-          // `\S` (the `delimiter`) is to match
-          // the beginning of a block `{`
-          // a property `:`
-          // or the end of a property `;`
-          /(\S)?\s*%%styled-jsx-placeholder-[^%]+%%(?:\s*(\}))?/gi,
-          (match, delimiter, isBlockEnd) => {
-            // The `end` of the replacement would be
-            let end
-
-            if (delimiter === ':' && isBlockEnd) {
-              // ';}' single property block without semicolon
-              // E.g. { color: all;}
-              end = `;}`
-            } else if (delimiter === '{' || isBlockEnd) {
-              // ':;' when we are at the beginning or the end of a block
-              // E.g. { all:; ...otherstuff
-              // E.g. all:; }
-              end = `:;${isBlockEnd || ''}`
-            } else if (delimiter === ';') {
-              // ':' when we are inside of a block
-              // E.g. color: red; all:; display: block;
-              end = ':'
-            } else {
-              // Otherwise empty
-              end = ''
-            }
-
-            return `${delimiter || ''}all${end}`
-          }
-        )
-        // Replace block placeholders before media queries
-        // E.g. all @media (all) {}
-        .replace(/all\s*([@])/g, (match, delimiter) => `all {} ${delimiter}`)
-        // Replace block placeholders at the beginning of a media query block
-        // E.g. @media (all) { all:; div { ... }}
-        .replace(/@media[^{]+{\s*all:;/g, '@media (all) { ')
-    )
-    return true
-  } catch (err) {}
-  return false
 }
 
 export const makeSourceMapGenerator = file => {
@@ -445,17 +401,14 @@ export const processCss = (stylesInfo, options) => {
     dynamic,
     location,
     fileInfo,
-    isGlobal,
+    isGlobal
   } = stylesInfo
 
-  let staticClassName = stylesInfo.staticClassName || `jsx-${hash}`
+  const staticClassName = stylesInfo.staticClassName || `jsx-${hash}`
 
-  const {
-    splitRules
-  } = options
+  const { splitRules } = options
 
-  const useSourceMaps =
-    Boolean(fileInfo.sourceMaps) && !splitRules
+  const useSourceMaps = Boolean(fileInfo.sourceMaps) && !splitRules
 
   let transformedCss
 
@@ -463,16 +416,12 @@ export const processCss = (stylesInfo, options) => {
     const generator = makeSourceMapGenerator(fileInfo.file)
     const filename = fileInfo.sourceFileName
     transformedCss = addSourceMaps(
-      transform(
-        isGlobal ? '' : getPrefix(dynamic, staticClassName),
-        css,
-        {
-          generator,
-          offset: location.start,
-          filename,
-          splitRules
-        }
-      ),
+      transform(isGlobal ? '' : getPrefix(dynamic, staticClassName), css, {
+        generator,
+        offset: location.start,
+        filename,
+        splitRules
+      }),
       generator,
       filename
     )

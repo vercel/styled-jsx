@@ -1,240 +1,169 @@
-import hash from 'string-hash'
 import * as t from 'babel-types'
 
-import transform from './lib/style-transform'
-import { MARKUP_ATTRIBUTE_EXTERNAL } from './_constants'
-import {
-  getExpressionText,
-  restoreExpressions,
-  makeStyledJsxCss,
-  isValidCss,
-  makeSourceMapGenerator,
-  addSourceMaps,
-  getJSXStyleInfo,
-  getScope,
-  processCss
-} from './_utils'
+import { getJSXStyleInfo, processCss, cssToBabelType } from './_utils'
+
+const isModuleExports = t.buildMatchMemberExpression('module.exports')
 
 function getTagNameFromImportDeclaration(path) {
   if (path.node.source.value === 'styled-jsx/css') {
-    path.node.specifiers[0].local.name
+    return path.node.specifiers[0].local.name
   }
 }
 
-function processTaggedTemplateExpression(path, tagName) {
+function processTaggedTemplateExpression({
+  path,
+  tagName,
+  fileInfo,
+  splitRules
+}) {
   if (path.node.tag.name !== tagName) {
     return
   }
 
   const templateLiteral = path.get('quasi')
-  const stylesInfo = getJSXStyleInfo(templateLiteral, getScope(path))
 
-  if (stylesInfo.dynamic) {
-    throw path.buildCodeFrameError(`
-      Dynamic styles are not allowed in external files.
-      Please put the dynamic parts alongside the component. E.g.
+  // TODO detect undefined identifiers and throw - we'd use it to also prevent dynamic styles in external files
+  // if (isDynamic(templateLiteral, getScope(path))) {
+  //   throw path.buildCodeFrameError(`
+  //     Found an `undefined` value in your styles.
+  //
+  //     If you are tring to use dynamic styles in external files this is unfortunately not possible yet.
+  //     Please put the dynamic parts alongside the component. E.g.
 
-      <button>
-        <style jsx>{externalStylesReference}</style>
-        <style jsx>{\`
-          button { background-color: $\{props.theme.color} }
-        \`}</style>
-      </button>
-    `)
+  //     <button>
+  //       <style jsx>{externalStylesReference}</style>
+  //       <style jsx>{\`
+  //         button { background-color: $\{props.theme.color} }
+  //       \`}</style>
+  //     </button>
+  //   `)
+  // }
+
+  const stylesInfo = getJSXStyleInfo(templateLiteral)
+
+  const globalStyles = processCss(
+    {
+      ...stylesInfo,
+      hash: `${stylesInfo.hash}0`,
+      fileInfo,
+      isGlobal: true
+    },
+    { splitRules }
+  )
+
+  const scopedStyles = processCss(
+    {
+      ...stylesInfo,
+      hash: `${stylesInfo.hash}1`,
+      fileInfo,
+      isGlobal: false
+    },
+    { splitRules }
+  )
+
+  const id = path.parentPath.node.id
+  const baseExportName = id ? id.name : 'default'
+  let parentPath =
+    baseExportName === 'default'
+      ? path.parentPath
+      : path.findParent(
+          path =>
+            path.isVariableDeclaration() ||
+            (path.isAssignmentExpression() &&
+              isModuleExports(path.get('left').node))
+        )
+
+  if (baseExportName !== 'default' && !parentPath.parentPath.isProgram()) {
+    parentPath = parentPath.parentPath
   }
 
-  const fileInfo = {
-
+  const hashesAndScoped = {
+    hash: globalStyles.hash,
+    scoped: cssToBabelType(scopedStyles.css),
+    scopedHash: scopedStyles.hash
   }
 
-  const options = {
-    splitRules:
-  }
+  const globalCss = cssToBabelType(globalStyles.css)
 
-  const globalStyles = processCss({
-    ...stylesInfo,
-    fileInfo,
-    isGlobal: true
-  }, options)
+  // default exports
 
-  const scopedStyles = processCss({
-    ...stylesInfo,
-    fileInfo,
-    isGlobal: false
-  }, options)
-}
-
-
-const getCss = (path, validate = false) => {
-  if (!path.isTemplateLiteral() && !path.isStringLiteral()) {
+  if (baseExportName === 'default') {
+    const defaultExportIdentifier = path.scope.generateUidIdentifier(
+      'defaultExport'
+    )
+    parentPath.insertBefore(
+      t.variableDeclaration('const', [
+        t.variableDeclarator(
+          defaultExportIdentifier,
+          t.isArrayExpression(globalCss)
+            ? globalCss
+            : t.newExpression(t.identifier('String'), [globalCss])
+        )
+      ])
+    )
+    parentPath.insertBefore(
+      makeHashesAndScopedCssPaths(defaultExportIdentifier, hashesAndScoped)
+    )
+    path.replaceWith(defaultExportIdentifier)
     return
   }
-  const css = getExpressionText(path)
-  if (validate && !isValidCss(css.modified || css)) {
-    return
-  }
-  return css
+
+  // named exports
+
+  parentPath.insertAfter(
+    makeHashesAndScopedCssPaths(t.identifier(baseExportName), hashesAndScoped)
+  )
+  path.replaceWith(
+    t.isArrayExpression(globalCss)
+      ? globalCss
+      : t.newExpression(t.identifier('String'), [globalCss])
+  )
 }
 
-const getStyledJsx = (css, opts, path) => {
-  const useSourceMaps = Boolean(opts.sourceMaps)
-  const commonHash = hash(css.modified || css)
-  const globalHash = `1${commonHash}`
-  const scopedHash = `2${commonHash}`
-  let compiledCss
-  let globalCss
-  let scopedCss
-  const prefix = `[${MARKUP_ATTRIBUTE_EXTERNAL}~="${scopedHash}"]`
-  const isTemplateLiteral = Boolean(css.modified)
-
-  if (useSourceMaps) {
-    const generator = makeSourceMapGenerator(opts.file)
-    const filename = opts.sourceFileName
-    const offset = path.get('loc').node.start
-    compiledCss = [/* global */ '', prefix].map(prefix =>
-      addSourceMaps(
-        transform(prefix, css.modified || css, {
-          generator,
-          offset,
-          filename
-        }),
-        generator,
-        filename
-      )
-    )
-  } else {
-    compiledCss = ['', prefix].map(prefix =>
-      transform(prefix, css.modified || css)
-    )
-  }
-  globalCss = compiledCss[0]
-  scopedCss = compiledCss[1]
-
-  if (css.replacements) {
-    globalCss = restoreExpressions(globalCss, css.replacements)
-    scopedCss = restoreExpressions(scopedCss, css.replacements)
-  }
-
-  return {
-    initial: makeStyledJsxCss(globalCss, isTemplateLiteral),
-    hash: globalHash,
-    scoped: makeStyledJsxCss(scopedCss, isTemplateLiteral),
-    scopedHash
-  }
-}
-
-const makeHashesAndScopedCssPaths = (identifierName, data) => {
+function makeHashesAndScopedCssPaths(exportIdentifier, data) {
   return Object.keys(data).map(key => {
     const value =
-      typeof data[key] === 'object' ? data[key] : t.stringLiteral(data[key])
+      typeof data[key] === 'string' ? t.stringLiteral(data[key]) : data[key]
 
     return t.expressionStatement(
       t.assignmentExpression(
         '=',
-        t.memberExpression(
-          t.identifier(identifierName),
-          t.identifier(`__${key}`)
-        ),
+        t.memberExpression(exportIdentifier, t.identifier(`__${key}`)),
         value
       )
     )
   })
 }
 
-const defaultExports = (path, decl, opts) => {
-  const identifierName = '__styledJsxDefaultExport'
-  const css = getCss(decl, opts.validate)
-  if (!css) {
-    return
-  }
-  const { initial, hash, scoped, scopedHash } = getStyledJsx(css, opts, path)
-
-  path.insertBefore(
-    t.variableDeclaration('var', [
-      t.variableDeclarator(
-        t.identifier(identifierName),
-        t.newExpression(t.identifier('String'), [initial])
-      )
-    ])
-  )
-  path.insertBefore(
-    makeHashesAndScopedCssPaths(identifierName, {
-      hash,
-      scoped,
-      scopedHash
-    })
-  )
-  decl.replaceWithSourceString(identifierName)
-}
-
-export const exportDefaultDeclarationVisitor = (path, opts) => {
-  defaultExports(path, path.get('declaration'), opts)
-}
-
-export const namedExportDeclarationVisitor = (path, opts) => {
-  const decl = path.get('declaration')
-  if (!t.isVariableDeclaration(decl)) {
-    return
-  }
-  decl.get('declarations').forEach(decl => {
-    const src = decl.get('init')
-    const css = getCss(src, opts.validate)
-    if (!css) {
+export const visitor = {
+  ImportDeclaration(path, state) {
+    const tagName = getTagNameFromImportDeclaration(path)
+    if (!tagName) {
       return
     }
-    const { initial, hash, scoped, scopedHash } = getStyledJsx(css, opts, path)
 
-    const identifierName = decl.get('id').node.name
-    path.insertAfter(
-      makeHashesAndScopedCssPaths(identifierName, {
-        hash,
-        scoped,
-        scopedHash
-      })
-    )
-    src.replaceWith(t.newExpression(t.identifier('String'), [initial]))
-  })
-}
-
-const isModuleExports = t.buildMatchMemberExpression('module.exports')
-export const moduleExportsVisitor = (path, opts) => {
-  if (!isModuleExports(path.node)) {
-    return
+    state.jsxTag = tagName
+    path.remove()
+  },
+  TaggedTemplateExpression(path, state) {
+    processTaggedTemplateExpression({
+      path,
+      tagName: state.jsxTag,
+      fileInfo: {
+        file: state.file,
+        sourceFileName: state.file.opts.sourceFileName,
+        sourceMaps: state.file.opts.sourceMaps
+      },
+      splitRules:
+        typeof state.opts.optimizeForSpeed === 'boolean'
+          ? state.opts.optimizeForSpeed
+          : process.env.NODE_ENV === 'production'
+    })
   }
-  const parentPath = path.parentPath
-  // Avoid module.exports.foo
-  if (parentPath.isMemberExpression()) {
-    return
-  }
-  defaultExports(parentPath, parentPath.get('right'), opts)
-}
-
-const callVisitor = (visitor, path, state) => {
-  const { file } = state
-  const { opts } = file
-  visitor(path, {
-    validate: state.opts.validate || opts.validate,
-    sourceMaps: opts.sourceMaps,
-    sourceFileName: opts.sourceFileName,
-    file
-  })
 }
 
 export default function() {
   return {
-    visitor: {
-    ImportDeclaration(path, state) {
-      const tagName = getTagNameFromImportDeclaration(path)
-      if (!tagName) {
-        return
-      }
-
-      state.jsxTag = tagName
-      path.remove()
-    },
-    TaggedTemplateExpression(path, state) {
-      processTaggedTemplateExpression(path, state.jsxTag)
-    }
-  }
+    visitor
   }
 }

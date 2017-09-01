@@ -1,23 +1,14 @@
 // Packages
 import jsx from 'babel-plugin-syntax-jsx'
 
-// Ours
-import {
-  exportDefaultDeclarationVisitor,
-  namedExportDeclarationVisitor,
-  moduleExportsVisitor
-} from './babel-external'
+import { visitor as externalStylesVisitor } from './babel-external'
 
 import {
   isGlobalEl,
   isStyledJsx,
   findStyles,
   makeStyledJsxTag,
-  makeSourceMapGenerator,
-  addSourceMaps,
   getJSXStyleInfo,
-  templateLiteralFromPreprocessedCss,
-  hashString,
   computeClassNames,
   addClassName,
   getScope,
@@ -29,17 +20,6 @@ import {
   STYLE_COMPONENT,
   MARKUP_ATTRIBUTE_EXTERNAL
 } from './_constants'
-
-const callExternalVisitor = (visitor, path, state) => {
-  const { file } = state
-  const { opts } = file
-  visitor(path, {
-    validate: true,
-    sourceMaps: opts.sourceMaps,
-    sourceFileName: opts.sourceFileName,
-    file
-  })
-}
 
 export default function({ types: t }) {
   return {
@@ -205,16 +185,14 @@ export default function({ types: t }) {
 
             if (expressionsLength === 0) {
               externalJsxId = null
-            } else if (expressionsLength === 1) {
-              externalJsxId = expressions[0]
             } else {
               // Construct a template literal of this form:
               // `${styles.__scopedHash} ${otherStyles.__scopedHash}`
               externalJsxId = t.templateLiteral(
                 [
-                  t.templateElement({ raw: '', cooked: '' }),
+                  t.templateElement({ raw: 'jsx-', cooked: '' }),
                   ...[...new Array(expressionsLength - 1)].map(() =>
-                    t.templateElement({ raw: ' ', cooked: ' ' })
+                    t.templateElement({ raw: ' jsx-', cooked: ' ' })
                   ),
                   t.templateElement({ raw: '', cooked: '' }, true)
                 ],
@@ -284,22 +262,18 @@ export default function({ types: t }) {
             fileInfo: {
               file: state.file,
               sourceFileName: state.file.opts.sourceFileName,
-              sourceMaps: state.file.opts.sourceMaps,
+              sourceMaps: state.file.opts.sourceMaps
             },
             staticClassName: state.staticClassName,
             isGlobal
           }
-          const splitRules = true // typeof state.opts.optimized === 'boolean' ? state.opts.optimized : process.env.NODE_ENV === 'production'
+          const splitRules = true // typeof state.opts.optimizeForSpeed === 'boolean' ? state.opts.optimizeForSpeed : process.env.NODE_ENV === 'production'
 
-          const { hash, css, expressions } = processCss(stylesInfo, { splitRules })
+          const { hash, css, expressions } = processCss(stylesInfo, {
+            splitRules
+          })
 
-          path.replaceWith(
-            makeStyledJsxTag(
-              hash,
-              css,
-              expressions
-            )
-          )
+          path.replaceWith(makeStyledJsxTag(hash, css, expressions))
         }
       },
       Program: {
@@ -322,16 +296,9 @@ export default function({ types: t }) {
           node.body.unshift(importDeclaration)
         }
       },
-      // Transpile external StyleSheets
-      ExportDefaultDeclaration(path, state) {
-        callExternalVisitor(exportDefaultDeclarationVisitor, path, state)
-      },
-      MemberExpression(path, state) {
-        callExternalVisitor(moduleExportsVisitor, path, state)
-      },
-      ExportNamedDeclaration(path, state) {
-        callExternalVisitor(namedExportDeclarationVisitor, path, state)
-      }
+
+      // Transpile external styles
+      ...externalStylesVisitor
     }
   }
 }

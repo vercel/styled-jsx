@@ -7,6 +7,9 @@ function noop() {}
 const computeId = (function() {
   const cache = {}
   return function(baseId, props) {
+    if (!props) {
+      return `jsx-${baseId}`
+    }
     const propsToString = String(props)
     const key = baseId + propsToString
     if (!cache[key]) {

@@ -114,18 +114,18 @@ test('server rendering', t => {
       })
     )
   }
-
   // Expected CSS
   const expected =
-    '<style id="__jsx-style-1">p { color: red }</style>' +
-    '<style id="__jsx-style-2">div { color: blue }</style>' +
-    '<style id="__jsx-style-3">div { color: green }</style>'
+    '<style id="__jsx-1">p { color: red }</style>' +
+    '<style id="__jsx-2">div { color: blue }</style>' +
+    '<style id="__jsx-3">div { color: green }</style>'
 
   // Render using react
   ReactDOM.renderToString(React.createElement(App))
   const html = ReactDOM.renderToStaticMarkup(
     React.createElement('head', null, flush())
   )
+
   t.is(html, `<head>${expected}</head>`)
 
   // Assert that memory is empty
