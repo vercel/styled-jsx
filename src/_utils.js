@@ -239,6 +239,8 @@ export const computeClassNames = (styles, externalJsxId) => {
 
   const staticClassName = `jsx-${hashString(hashes.static.join(','))}`
 
+  // Static and optionally external classes. E.g.
+  // '[jsx-externalClasses] jsx-staticClasses'
   if (hashes.dynamic.length === 0) {
     return {
       staticClassName,
@@ -265,29 +267,22 @@ export const computeClassNames = (styles, externalJsxId) => {
     ]
   )
 
+  // Dynamic and optionally external classes. E.g.
+  // '[jsx-externalClasses] ' + _JSXStyle.dynamic([ ['1234', [props.foo, bar, fn(props)]], ... ])
   if (hashes.static.length === 0) {
     return {
       staticClassName,
-      attribute: dynamic
+      attribute: externalJsxId ? concat(externalJsxId, dynamic) : dynamic
     }
   }
 
-  // `1234 ${_JSXStyle.dynamic([ ['5678', [props.foo, bar, fn(props)]], ... ])}`
+  // Static, dynamic and optionally external classes. E.g.
+  // '[jsx-externalClasses] jsx-staticClasses ' + _JSXStyle.dynamic([ ['5678', [props.foo, bar, fn(props)]], ... ])
   return {
     staticClassName,
-    attribute: t.templateLiteral(
-      [
-        t.templateElement(
-          {
-            raw: staticClassName + ' ',
-            cooked: staticClassName + ' '
-          },
-          false
-        ),
-        t.templateElement({ raw: '', cooked: '' }, true)
-      ],
-      [dynamic]
-    )
+    attribute: externalJsxId
+      ? concat(externalJsxId, t.stringLiteral(` ${staticClassName} `), dynamic)
+      : concat(t.stringLiteral(`${staticClassName} `), dynamic)
   }
 }
 

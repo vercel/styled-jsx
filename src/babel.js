@@ -138,14 +138,14 @@ export default function({ types: t }) {
             if (t.isIdentifier(expression)) {
               const idName = expression.node.name
               if (state.imports.indexOf(idName) !== -1) {
-                const id = t.identifier(idName)
+                const externalStylesIdentifier = t.identifier(idName)
                 const isGlobal = isGlobalEl(style.get('openingElement').node)
                 state.externalStyles.push([
                   t.memberExpression(
-                    id,
+                    externalStylesIdentifier,
                     t.identifier(isGlobal ? '__hash' : '__scopedHash')
                   ),
-                  id,
+                  externalStylesIdentifier,
                   isGlobal
                 ])
                 continue
@@ -237,19 +237,15 @@ export default function({ types: t }) {
               return expression && expression.isIdentifier()
             }).length === 1
           ) {
-            const [
-              id,
-              externalStylesReference,
-              isGlobal
-            ] = state.externalStyles.shift()
+            const [id, css, isGlobal] = state.externalStyles.shift()
 
             path.replaceWith(
               makeStyledJsxTag(
                 id,
                 isGlobal
-                  ? externalStylesReference
+                  ? css
                   : t.memberExpression(
-                      t.identifier(externalStylesReference.name),
+                      t.identifier(css.name),
                       t.identifier('__scoped')
                     )
               )
@@ -267,7 +263,10 @@ export default function({ types: t }) {
             staticClassName: state.staticClassName,
             isGlobal
           }
-          const splitRules = true // typeof state.opts.optimizeForSpeed === 'boolean' ? state.opts.optimizeForSpeed : process.env.NODE_ENV === 'production'
+          const splitRules =
+            typeof state.opts.optimizeForSpeed === 'boolean'
+              ? state.opts.optimizeForSpeed
+              : process.env.NODE_ENV === 'production'
 
           const { hash, css, expressions } = processCss(stylesInfo, {
             splitRules
