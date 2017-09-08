@@ -93,16 +93,18 @@ export default class StyleSheet {
   }
 
   update(props, nextProps) {
-    const { styleId } = this.getIdAndCss(props)
-    if (this._instancesCounts[styleId] === 1 && !useSingleSheet(props.css)) {
-      const next = this.getIdAndCss(nextProps)
-      const t = this._tags[styleId]
-      delete this._tags[styleId]
-      delete this._instancesCounts[styleId]
-      t.textContent = next.rules[0]
-      this._tags[next.styleId] = t
-      this._instancesCounts[next.styleId] = 1
-      return
+    if (!useSingleSheet(props.css)) {
+      const { styleId } = this.getIdAndCss(props)
+      if (this._instancesCounts[styleId] === 1) {
+        const next = this.getIdAndCss(nextProps)
+        const t = this._tags[styleId]
+        delete this._tags[styleId]
+        delete this._instancesCounts[styleId]
+        t.textContent = next.rules[0]
+        this._tags[next.styleId] = t
+        this._instancesCounts[next.styleId] = 1
+        return
+      }
     }
     this.insert(nextProps)
     this.remove(props)
