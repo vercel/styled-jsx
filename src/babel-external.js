@@ -1,6 +1,11 @@
 import * as t from 'babel-types'
 
-import { getJSXStyleInfo, processCss, cssToBabelType } from './_utils'
+import {
+  getJSXStyleInfo,
+  processCss,
+  cssToBabelType,
+  validateExternalExpressions
+} from './_utils'
 
 const isModuleExports = t.buildMatchMemberExpression('module.exports')
 
@@ -22,22 +27,8 @@ function processTaggedTemplateExpression({
 
   const templateLiteral = path.get('quasi')
 
-  // TODO detect undefined identifiers and throw - we'd use it to also prevent dynamic styles in external files
-  // if (isDynamic(templateLiteral, getScope(path))) {
-  //   throw path.buildCodeFrameError(`
-  //     Found an `undefined` value in your styles.
-  //
-  //     If you are tring to use dynamic styles in external files this is unfortunately not possible yet.
-  //     Please put the dynamic parts alongside the component. E.g.
-
-  //     <button>
-  //       <style jsx>{externalStylesReference}</style>
-  //       <style jsx>{\`
-  //         button { background-color: $\{props.theme.color} }
-  //       \`}</style>
-  //     </button>
-  //   `)
-  // }
+  // Check whether there are undefined references or references to this.something (e.g. props or state)
+  validateExternalExpressions(templateLiteral)
 
   const stylesInfo = getJSXStyleInfo(templateLiteral)
 

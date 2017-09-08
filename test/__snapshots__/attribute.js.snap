@@ -1,0 +1,94 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`generate attribute for mixed modes (global, static, dynamic) 1`] = `
+"import _JSXStyle from 'styled-jsx/style';
+import styles from './styles';
+import { styles2 } from './styles2';
+
+// external only
+const Test1 = () => <div className={\`jsx-\${styles.__scopedHash} jsx-\${styles2.__scopedHash}\`} data-jsx>
+    <p className={\`jsx-\${styles.__scopedHash} jsx-\${styles2.__scopedHash}\`} data-jsx>external only</p>
+    <_JSXStyle styleId={styles.__scopedHash} css={styles.__scoped} />
+    <_JSXStyle styleId={styles2.__scopedHash} css={styles2.__scoped} />
+  </div>;
+
+// external and static
+const Test2 = () => <div className={'jsx-2743241663 ' + \`jsx-\${styles.__scopedHash}\`} data-jsx>
+    <p className={'jsx-2743241663 ' + \`jsx-\${styles.__scopedHash}\`} data-jsx>external and static</p>
+    <_JSXStyle styleId={\\"188072295\\"} css={\\"p.jsx-2743241663{color:red}\\"} />
+    <_JSXStyle styleId={styles.__scopedHash} css={styles.__scoped} />
+  </div>;
+
+// external and dynamic
+const Test3 = ({ color }) => <div className={\`jsx-\${styles.__scopedHash}\` + ' ' + _JSXStyle.dynamic([['4108831323', [color]]])} data-jsx>
+    <p className={\`jsx-\${styles.__scopedHash}\` + ' ' + _JSXStyle.dynamic([['4108831323', [color]]])} data-jsx>external and dynamic</p>
+    <_JSXStyle styleId={\\"4108831323\\"} css={\`p.__jsx-style-dynamic-selector{color:\${color}}\`} dynamic={[color]} />
+    <_JSXStyle styleId={styles.__scopedHash} css={styles.__scoped} />
+  </div>;
+
+// external, static and dynamic
+const Test4 = ({ color }) => <div className={\`jsx-\${styles.__scopedHash}\` + ' jsx-3387348460 ' + _JSXStyle.dynamic([['3764329014', [color]]])} data-jsx>
+    <p className={\`jsx-\${styles.__scopedHash}\` + ' jsx-3387348460 ' + _JSXStyle.dynamic([['3764329014', [color]]])} data-jsx>external, static and dynamic</p>
+    <_JSXStyle styleId={\\"3741049342\\"} css={\\"p.jsx-3387348460{display:inline-block}\\"} />
+    <_JSXStyle styleId={\\"3764329014\\"} css={\`p.__jsx-style-dynamic-selector{color:\${color}}\`} dynamic={[color]} />
+    <_JSXStyle styleId={styles.__scopedHash} css={styles.__scoped} />
+  </div>;
+
+// static only
+const Test5 = () => <div className={\\"jsx-1067519002\\"} data-jsx>
+    <p className={\\"jsx-1067519002\\"} data-jsx>static only</p>
+    <_JSXStyle styleId={\\"3741049342\\"} css={\\"p.jsx-1067519002{display:inline-block}\\"} />
+    <_JSXStyle styleId={\\"188072295\\"} css={\\"p.jsx-1067519002{color:red}\\"} />
+  </div>;
+
+// static and dynamic
+const Test6 = ({ color }) => <div className={'jsx-3387348460 ' + _JSXStyle.dynamic([['3764329014', [color]]])} data-jsx>
+    <p className={'jsx-3387348460 ' + _JSXStyle.dynamic([['3764329014', [color]]])} data-jsx>static and dynamic</p>
+    <_JSXStyle styleId={\\"3741049342\\"} css={\\"p.jsx-3387348460{display:inline-block}\\"} />
+    <_JSXStyle styleId={\\"3764329014\\"} css={\`p.__jsx-style-dynamic-selector{color:\${color}}\`} dynamic={[color]} />
+  </div>;
+
+// dynamic only
+const Test7 = ({ color }) => <div className={_JSXStyle.dynamic([['4108831323', [color]]])} data-jsx>
+    <p className={_JSXStyle.dynamic([['4108831323', [color]]])} data-jsx>dynamic only</p>
+    <_JSXStyle styleId={\\"4108831323\\"} css={\`p.__jsx-style-dynamic-selector{color:\${color}}\`} dynamic={[color]} />
+  </div>;"
+`;
+
+exports[`rewrites className 1`] = `
+"import _JSXStyle from \\"styled-jsx/style\\";
+export default (() => <div className={\\"jsx-2886504620\\"} data-jsx>
+    <div data-test=\\"test\\" className={\\"jsx-2886504620\\"} data-jsx />
+    <div className={\\"jsx-2886504620\\" + \\" \\" + \\"test\\"} data-jsx />
+    <div className={\\"jsx-2886504620\\" + \\" \\" + 'test'} data-jsx />
+    <div className={\\"jsx-2886504620\\" + \\" \\" + \`test\`} data-jsx />
+    <div className={\\"jsx-2886504620\\" + \\" \\" + \`test\${true ? ' test2' : ''}\`} data-jsx />
+    <div className={\\"jsx-2886504620\\" + \\" \\" + ('test ' + test || \\"\\")} data-jsx />
+    <div className={\\"jsx-2886504620\\" + \\" \\" + (['test', 'test2'].join(' ') || \\"\\")} data-jsx />
+    <div className={\\"jsx-2886504620\\" + \\" \\" + (true && 'test' || \\"\\")} data-jsx />
+    <div className={\\"jsx-2886504620\\" + \\" \\" + ((test ? 'test' : null) || \\"\\")} data-jsx />
+    <div className={\\"jsx-2886504620\\" + \\" \\" + (test || \\"\\")} data-jsx />
+    <div className={\\"jsx-2886504620\\" + \\" \\" + (test && 'test' || \\"\\")} data-jsx />
+    <div className={\\"jsx-2886504620\\" + \\" \\" + (test && test('test') || \\"\\")} data-jsx />
+    <div className={\\"jsx-2886504620\\" + \\" \\" + (undefined || \\"\\")} data-jsx />
+    <div className={\\"jsx-2886504620\\" + \\" \\" + (null || \\"\\")} data-jsx />
+    <div className={\\"jsx-2886504620\\" + \\" \\" + (false || \\"\\")} data-jsx />
+    <div data-test className={\\"jsx-2886504620\\" + \\" \\" + 'test'} data-jsx />
+    <div data-test className={\\"jsx-2886504620\\" + \\" \\" + 'test'} data-jsx />
+    <div data-test=\\"test\\" className={\\"jsx-2886504620\\" + \\" \\" + 'test'} data-jsx />
+    <div {...props} className={\\"jsx-2886504620\\" + \\" \\" + (props.className != null && props.className || 'test')} data-jsx />
+    <div {...props} {...rest} className={\\"jsx-2886504620\\" + \\" \\" + (rest.className != null && rest.className || props.className != null && props.className || 'test')} data-jsx />
+    <div {...props} className={\\"jsx-2886504620\\" + \\" \\" + (props.className != null && props.className || \`test \${test ? 'test' : ''}\`)} data-jsx />
+    <div {...props} className={\\"jsx-2886504620\\" + \\" \\" + (props.className != null && props.className || test && test('test') || \\"\\")} data-jsx />
+    <div {...props} className={\\"jsx-2886504620\\" + \\" \\" + (props.className != null && props.className || test && test('test') && 'test' || \\"\\")} data-jsx />
+    <div {...props} className={\\"jsx-2886504620\\" + \\" \\" + (props.className != null && props.className || test && test('test') && test2('test') || \\"\\")} data-jsx />
+    <div {...props} className={\\"jsx-2886504620\\" + \\" \\" + 'test'} data-jsx />
+    <div {...props} {...rest} className={\\"jsx-2886504620\\" + \\" \\" + 'test'} data-jsx />
+    <div {...props} {...rest} className={\\"jsx-2886504620\\" + \\" \\" + (rest.className != null && rest.className || 'test')} data-jsx />
+    <div {...props} className={\\"jsx-2886504620\\" + \\" \\" + (props.className != null && props.className || \\"\\")} data-jsx />
+    <div {...props} {...rest} className={\\"jsx-2886504620\\" + \\" \\" + (rest.className != null && rest.className || props.className != null && props.className || \\"\\")} data-jsx />
+    <div {...props} data-foo {...rest} className={\\"jsx-2886504620\\" + \\" \\" + (rest.className != null && rest.className || props.className != null && props.className || \\"\\")} data-jsx />
+    <div {...props} data-foo {...rest} className={\\"jsx-2886504620\\" + \\" \\" + (rest.className != null && rest.className || 'test')} data-jsx />
+    <_JSXStyle styleId={\\"2947263116\\"} css={\\"div.jsx-2886504620{color:red}\\"} />
+  </div>);"
+`;

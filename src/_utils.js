@@ -156,6 +156,47 @@ export const isDynamic = (expr, scope) => {
   return true
 }
 
+const validateExternalExpressionsVisitor = {
+  Identifier(path) {
+    let isInScope = false
+    const { name } = path.node
+    let parentPath = path
+    do {
+      if (parentPath && parentPath.scope.hasBinding(name)) {
+        isInScope = true
+      }
+      parentPath = parentPath.parentPath
+    } while (!isInScope && parentPath)
+
+    if (!isInScope) {
+      throw new Error(path.parentPath.getSource())
+    }
+  },
+  ThisExpression(path) {
+    throw new Error(path.parentPath.getSource())
+  }
+}
+
+export const validateExternalExpressions = path => {
+  try {
+    path.traverse(validateExternalExpressionsVisitor)
+  } catch (err) {
+    throw path.buildCodeFrameError(`
+      Found an \`undefined\` or invalid value in your styles: \`${err.message}\`.
+
+      If you are trying to use dynamic styles in external files this is unfortunately not possible yet.
+      Please put the dynamic parts alongside the component. E.g.
+
+      <button>
+        <style jsx>{externalStylesReference}</style>
+        <style jsx>{\`
+          button { background-color: $\{${err.message}} }
+        \`}</style>
+      </button>
+    `)
+  }
+}
+
 export const getJSXStyleInfo = (expr, scope) => {
   const { node } = expr
   const location = node.loc
@@ -272,7 +313,9 @@ export const computeClassNames = (styles, externalJsxId) => {
   if (hashes.static.length === 0) {
     return {
       staticClassName,
-      attribute: externalJsxId ? concat(externalJsxId, dynamic) : dynamic
+      attribute: externalJsxId
+        ? concat(concat(externalJsxId, t.stringLiteral(' ')), dynamic)
+        : dynamic
     }
   }
 
@@ -281,7 +324,10 @@ export const computeClassNames = (styles, externalJsxId) => {
   return {
     staticClassName,
     attribute: externalJsxId
-      ? concat(externalJsxId, t.stringLiteral(` ${staticClassName} `), dynamic)
+      ? concat(
+          concat(externalJsxId, t.stringLiteral(` ${staticClassName} `)),
+          dynamic
+        )
       : concat(t.stringLiteral(`${staticClassName} `), dynamic)
   }
 }

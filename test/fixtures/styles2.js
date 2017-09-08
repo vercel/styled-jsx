@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import css from 'styled-jsx/css'
 
 module.exports = css`

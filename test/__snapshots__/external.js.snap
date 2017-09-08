@@ -7,14 +7,13 @@ _defaultExport.__scoped = ['div.jsx-7060342741 { font-size:3em; }'];
 _defaultExport.__scopedHash = '7060342741';
 
 
-module.exports = _defaultExport; // eslint-disable-next-line import/no-extraneous-dependencies"
+module.exports = _defaultExport;"
 `;
 
 exports[`(optimized) transpiles external stylesheets 1`] = `
 "
 
-const color = 'red'; // eslint-disable-next-line import/no-extraneous-dependencies
-
+const color = 'red';
 
 const bar = ['div { font-size:3em; }'];
 bar.__hash = '7060342740';
@@ -42,14 +41,13 @@ _defaultExport.__scoped = 'div.jsx-7060342741{font-size:3em}';
 _defaultExport.__scopedHash = '7060342741';
 
 
-module.exports = _defaultExport; // eslint-disable-next-line import/no-extraneous-dependencies"
+module.exports = _defaultExport;"
 `;
 
 exports[`transpiles external stylesheets 1`] = `
 "
 
-const color = 'red'; // eslint-disable-next-line import/no-extraneous-dependencies
-
+const color = 'red';
 
 const bar = new String('div{font-size:3em}');
 bar.__hash = '7060342740';
@@ -69,4 +67,47 @@ _defaultExport.__hash = '40416528930';
 _defaultExport.__scoped = \`div.jsx-40416528931{font-size:3em}p.jsx-40416528931{color:\${color}}\`;
 _defaultExport.__scopedHash = '40416528931';
 export default _defaultExport;"
+`;
+
+exports[`use external stylesheets (global only) 1`] = `
+"import _JSXStyle from 'styled-jsx/style';
+import styles from './styles';
+const styles2 = require('./styles2');
+import { foo as styles3 } from './styles';
+
+export default (() => <div>
+    <p>test</p>
+    <div>woot</div>
+    <p>woot</p>
+    <_JSXStyle styleId={styles2.__hash} css={styles2} />
+    <_JSXStyle styleId={styles3.__hash} css={styles3} />
+    <_JSXStyle styleId={styles.__hash} css={styles} />
+  </div>);"
+`;
+
+exports[`use external stylesheets (multi-line) 1`] = `
+"import _JSXStyle from 'styled-jsx/style';
+import styles from './styles';
+
+export default (() => <div className={\`jsx-\${styles.__scopedHash}\`} data-jsx>
+    <p className={\`jsx-\${styles.__scopedHash}\`} data-jsx>test</p>
+    <_JSXStyle styleId={styles.__scopedHash} css={styles.__scoped} />
+  </div>);"
+`;
+
+exports[`use external stylesheets 1`] = `
+"import _JSXStyle from 'styled-jsx/style';
+import styles from './styles';
+const styles2 = require('./styles2');
+import { foo as styles3 } from './styles';
+
+export default (() => <div className={'jsx-2534288328 ' + \`jsx-\${styles3.__scopedHash} jsx-\${styles.__scopedHash}\`} data-jsx>
+    <p className={'jsx-2534288328 ' + \`jsx-\${styles3.__scopedHash} jsx-\${styles.__scopedHash}\`} data-jsx>test</p>
+    <p className={'jsx-2534288328 ' + \`jsx-\${styles3.__scopedHash} jsx-\${styles.__scopedHash}\`} data-jsx>woot</p>
+    <_JSXStyle styleId={styles2.__hash} css={styles2} />
+    <_JSXStyle styleId={styles3.__scopedHash} css={styles3.__scoped} />
+    <div className={'jsx-2534288328 ' + \`jsx-\${styles3.__scopedHash} jsx-\${styles.__scopedHash}\`} data-jsx>woot</div>
+    <_JSXStyle styleId={\\"1144769207\\"} css={\\"p.jsx-2534288328{color:red}div.jsx-2534288328{color:green}\\"} />
+    <_JSXStyle styleId={styles.__scopedHash} css={styles.__scoped} />
+  </div>);"
 `;
