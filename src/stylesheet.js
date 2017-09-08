@@ -1,10 +1,129 @@
 import hashString from 'string-hash'
 
-const isBrowser = typeof window !== 'undefined'
-const useSingleSheet = css => Array.isArray(css)
-function noop() {}
+export default class StyleSheet {
+  constructor() {
+    this._fromServer = false
+    this._instancesCounts = {}
+    this._tags = {}
+    this._sheet = null
 
-const computeId = (function() {
+    this.computeId = createComputeId()
+    this.computeSelector = createComputeSelector()
+  }
+
+  getIdAndCss(props) {
+    if (props.dynamic) {
+      const styleId = this.computeId(props.styleId, props.dynamic)
+      return {
+        styleId,
+        rules: useSingleSheet(props.css)
+          ? props.css.map(rule => this.computeSelector(styleId, rule))
+          : [this.computeSelector(styleId, props.css)]
+      }
+    }
+
+    return {
+      styleId: this.computeId(props.styleId),
+      rules: useSingleSheet(props.css) ? props.css : [props.css]
+    }
+  }
+
+  insert(props) {
+    if (!this._fromServer) {
+      this._tags = selectFromServer()
+      this._fromServer = this._tags
+      this._instancesCounts = Object.keys(this._tags).reduce((acc, tagName) => {
+        acc[tagName] = 0
+        return acc
+      }, {})
+    }
+
+    const { styleId, rules } = this.getIdAndCss(props)
+
+    if (styleId in this._instancesCounts) {
+      this._instancesCounts[styleId] += 1
+      return
+    }
+
+    this._instancesCounts[styleId] = 1
+
+    if (!useSingleSheet(props.css)) {
+      this._tags[styleId] = makeStyleTag(rules[0])
+      return
+    }
+
+    if (!this._sheet) {
+      this._sheet = makeStyleTag('').sheet
+    }
+
+    // Insertion interval
+    this._tags[styleId] = [
+      // Start
+      this._sheet.cssRules.length,
+      // End
+      this._sheet.cssRules.length + rules.length - 1
+    ]
+
+    rules.forEach(rule =>
+      this._sheet.insertRule(rule, this._sheet.cssRules.length)
+    )
+  }
+
+  remove(props) {
+    const { styleId } = this.getIdAndCss(props)
+    this._instancesCounts[styleId] -= 1
+    if (this._instancesCounts[styleId] < 1) {
+      delete this._instancesCounts[styleId]
+      const t = this._tags[styleId]
+      delete this._tags[styleId]
+      if (
+        !useSingleSheet(props.css) ||
+        /* server side rendered styles are not arrays of indices */
+        !Array.isArray(t)
+      ) {
+        t.parentNode.removeChild(t)
+        return
+      }
+
+      for (let i = t[0]; i <= t[1]; i++) {
+        this._sheet.deleteRule(i)
+        this._sheet.insertRule('styledjsx-deleted-rule {}', i)
+      }
+    }
+  }
+
+  update(props, nextProps) {
+    const { styleId } = this.getIdAndCss(props)
+    if (this._instancesCounts[styleId] === 1 && !useSingleSheet(props.css)) {
+      const next = this.getIdAndCss(nextProps)
+      const t = this._tags[styleId]
+      delete this._tags[styleId]
+      delete this._instancesCounts[styleId]
+      t.textContent = next.rules[0]
+      this._tags[next.styleId] = t
+      this._instancesCounts[next.styleId] = 1
+      return
+    }
+    this.insert(nextProps)
+    this.remove(props)
+  }
+}
+
+/**
+ * useSingleSheet
+ *
+ * When css is an array (of strings) it means that we use the CSSOM api and therefore a single stylesheet.
+ */
+function useSingleSheet(css) {
+  return Array.isArray(css)
+}
+
+/**
+ * createComputeId
+ *
+ * Creates a function to compute and memoize a jsx id from a basedId and optionally props.
+ */
+export function createComputeId() {
   const cache = {}
   return function(baseId, props) {
     if (!props) {
@@ -17,42 +136,31 @@ const computeId = (function() {
     }
     return cache[key]
   }
-})()
+}
 
-const computeSelector = (function() {
+/**
+ * createComputeSelector
+ *
+ * Creates a function to compute and memoize dynamic selectors.
+ */
+export function createComputeSelector(
+  selectoPlaceholderRegexp = /__jsx-style-dynamic-selector/g
+) {
   const cache = {}
   return function(id, css) {
     if (!cache[id]) {
-      cache[id] = css.replace(/__jsx-style-dynamic-selector/g, id)
+      cache[id] = css.replace(selectoPlaceholderRegexp, id)
     }
     return cache[id]
   }
-})()
-
-let fromServer = false
-const instancesCounts = {}
-let tags = {}
-let sheet
-
-function getIdAndCss(props) {
-  if (props.dynamic) {
-    const styleId = computeId(props.styleId, props.dynamic)
-    return {
-      styleId,
-      rules: useSingleSheet(props.css)
-        ? props.css.map(rule => computeSelector(styleId, rule))
-        : [computeSelector(styleId, props.css)]
-    }
-  }
-
-  return {
-    styleId: props.styleId,
-    rules: useSingleSheet(props.css) ? props.css : [props.css]
-  }
 }
 
-function selectFromServer() {
-  fromServer = true
+/**
+ * selectFromServer
+ *
+ * Collects style tags from the document with id __jsx-XXX
+ */
+export function selectFromServer() {
   const elements = Array.prototype.slice.call(
     document.querySelectorAll('[id^="__jsx-"]')
   )
@@ -60,85 +168,11 @@ function selectFromServer() {
   return elements.reduce((acc, element) => {
     const id = element.id.slice(2)
     acc[id] = element
-    instancesCounts[id] = 0
     return acc
   }, {})
 }
 
-function insert(props) {
-  if (!fromServer) {
-    tags = selectFromServer()
-  }
-
-  const { styleId, rules } = getIdAndCss(props)
-
-  if (styleId in instancesCounts) {
-    instancesCounts[styleId] += 1
-    return
-  }
-
-  instancesCounts[styleId] = 1
-
-  if (!useSingleSheet(props.css)) {
-    tags[styleId] = makeStyleTag(rules[0])
-    return
-  }
-
-  if (!sheet) {
-    sheet = makeStyleTag('').sheet
-  }
-
-  // Insertion interval
-  tags[styleId] = [
-    // Start
-    sheet.cssRules.length,
-    // End
-    sheet.cssRules.length + rules.length - 1
-  ]
-
-  rules.forEach(rule => sheet.insertRule(rule, sheet.cssRules.length))
-}
-
-function remove(props) {
-  const { styleId } = getIdAndCss(props)
-  instancesCounts[styleId] -= 1
-  if (instancesCounts[styleId] < 1) {
-    delete instancesCounts[styleId]
-    const t = tags[styleId]
-    delete tags[styleId]
-    if (
-      !useSingleSheet(props.css) ||
-      /* server side rendered styles are not arrays of indices */
-      !Array.isArray(t)
-    ) {
-      t.parentNode.removeChild(t)
-      return
-    }
-
-    for (let i = t[0]; i <= t[1]; i++) {
-      sheet.deleteRule(i)
-      sheet.insertRule('styledjsx-deleted-rule {}', i)
-    }
-  }
-}
-
-function update(props, nextProps) {
-  const { styleId } = getIdAndCss(props)
-  if (instancesCounts[styleId] === 1 && !useSingleSheet(props.css)) {
-    const next = getIdAndCss(nextProps)
-    const t = tags[styleId]
-    delete tags[styleId]
-    delete instancesCounts[styleId]
-    t.textContent = next.rules[0]
-    tags[next.styleId] = t
-    instancesCounts[next.styleId] = 1
-    return
-  }
-  insert(nextProps)
-  remove(props)
-}
-
-function makeStyleTag(str) {
+export function makeStyleTag(str) {
   // Based on implementation by glamor
   const tag = document.createElement('style')
   tag.setAttribute('data-jsx-client', '')
@@ -148,12 +182,4 @@ function makeStyleTag(str) {
   head.appendChild(tag)
 
   return tag
-}
-
-export default {
-  insert: isBrowser ? insert : noop,
-  remove: isBrowser ? remove : noop,
-  update: isBrowser ? update : noop,
-  computeId,
-  computeSelector
 }

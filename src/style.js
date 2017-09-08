@@ -1,9 +1,11 @@
 import { Component } from 'react'
-import styleSheet from './stylesheet'
+import StyleSheet from './stylesheet'
 
 let components = []
 
-export default class extends Component {
+const styleSheet = new StyleSheet()
+
+export default class JSXStyle extends Component {
   static dynamic(arr) {
     return arr
       .map(tagInfo => {
