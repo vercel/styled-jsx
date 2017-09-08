@@ -2,10 +2,11 @@ import hashString from 'string-hash'
 
 export default class StyleSheet {
   constructor() {
-    this._fromServer = false
+    this._fromServer = null
     this._instancesCounts = {}
     this._tags = {}
     this._sheet = null
+    this._isBrowser = typeof window !== 'undefined'
 
     this.computeId = createComputeId()
     this.computeSelector = createComputeSelector()
@@ -29,6 +30,9 @@ export default class StyleSheet {
   }
 
   insert(props) {
+    if (!this._isBrowser) {
+      return
+    }
     if (!this._fromServer) {
       this._tags = selectFromServer()
       this._fromServer = this._tags
@@ -70,6 +74,9 @@ export default class StyleSheet {
   }
 
   remove(props) {
+    if (!this._isBrowser) {
+      return
+    }
     const { styleId } = this.getIdAndCss(props)
     this._instancesCounts[styleId] -= 1
     if (this._instancesCounts[styleId] < 1) {
@@ -93,16 +100,26 @@ export default class StyleSheet {
   }
 
   update(props, nextProps) {
+    if (!this._isBrowser) {
+      return
+    }
     if (!useSingleSheet(props.css)) {
       const { styleId } = this.getIdAndCss(props)
       if (this._instancesCounts[styleId] === 1) {
-        const next = this.getIdAndCss(nextProps)
         const t = this._tags[styleId]
         delete this._tags[styleId]
         delete this._instancesCounts[styleId]
-        t.textContent = next.rules[0]
-        this._tags[next.styleId] = t
-        this._instancesCounts[next.styleId] = 1
+        const next = this.getIdAndCss(nextProps)
+        // If it's already been replaced just remove the old one.
+        if (this._tags[next.styleId]) {
+          t.parentNode.removeChild(t)
+          this._instancesCounts[next.styleId] += 1
+        } else {
+          // Never been inserted, replace the current tag content with the new one.
+          t.textContent = next.rules[0]
+          this._tags[next.styleId] = t
+          this._instancesCounts[next.styleId] = 1
+        }
         return
       }
     }

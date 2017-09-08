@@ -41,21 +41,8 @@ export default class JSXStyle extends Component {
 export function flush() {
   const ret = new Map()
   for (const { props } of components) {
-    if (props.dynamic) {
-      const styleId = styleSheet.computeId(props.styleId, props.dynamic)
-      ret.set(
-        styleId,
-        styleSheet.computeSelector(
-          styleId,
-          Array.isArray(props.css) ? props.css.join('\n') : props.css
-        )
-      )
-    } else {
-      ret.set(
-        styleSheet.computeId(props.styleId),
-        Array.isArray(props.css) ? props.css.join('\n') : props.css
-      )
-    }
+    const { styleId, rules } = styleSheet.getIdAndCss(props)
+    ret.set(styleId, rules.join('\n'))
   }
   components = []
   return ret
