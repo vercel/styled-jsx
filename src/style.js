@@ -1,16 +1,16 @@
 import { Component } from 'react'
-import StyleSheet from './stylesheet'
+import StyleSheetRegistry from './stylesheet-registry'
 
 let components = []
 
-const styleSheet = new StyleSheet()
+const styleSheetRegistry = new StyleSheetRegistry()
 
 export default class JSXStyle extends Component {
   static dynamic(arr) {
     return arr
       .map(tagInfo => {
         const [styleId, expressions] = tagInfo
-        return styleSheet.computeId(styleId, expressions)
+        return styleSheetRegistry.computeId(styleId, expressions)
       })
       .join(' ')
   }
@@ -26,7 +26,7 @@ export default class JSXStyle extends Component {
   // To avoid FOUC, we process new changes
   // on `componentWillUpdate` rather than `componentDidUpdate`.
   componentWillUpdate(nextProps) {
-    styleSheet.update(this.props, nextProps)
+    styleSheetRegistry.update(this.props, nextProps)
   }
 
   componentWillUnmount() {
@@ -41,7 +41,7 @@ export default class JSXStyle extends Component {
 export function flush() {
   const ret = new Map()
   for (const { props } of components) {
-    const { styleId, rules } = styleSheet.getIdAndCss(props)
+    const { styleId, rules } = styleSheetRegistry.getIdAndRules(props)
     ret.set(styleId, rules.join('\n'))
   }
   components = []
@@ -49,12 +49,12 @@ export function flush() {
 }
 
 function mount(component, props) {
-  styleSheet.insert(props)
+  styleSheetRegistry.add(props)
   components.push(component)
 }
 
 function unmount(component, props) {
-  styleSheet.remove(props)
+  styleSheetRegistry.remove(props)
   const i = components.indexOf(component)
   if (i < 0) {
     return

@@ -58,6 +58,7 @@ gulp.task('benchmark', () => {
 
 gulp.task('watch', () => {
   gulp.watch('src/*', ['transpile'])
+  gulp.watch('src/lib/*', ['transpile'])
   gulp.watch('benchmark/*.js', ['benchmark'])
 })
 

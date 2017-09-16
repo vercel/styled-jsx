@@ -24,19 +24,29 @@ export default class StyleSheet {
       '`setOptimizeForSpeed` accepts a boolean'
     )
     invariant(
-      !this._injected,
-      'optimizeForSpeed cannot be set after the sheet has been injected'
+      this._rulesCount === 0,
+      'optimizeForSpeed cannot be when rules have already been inserted'
     )
+    this.flush()
     this._optimizeForSpeed = bool
+    this.inject()
   }
 
   inject() {
     invariant(!this._injected, 'sheet already injected')
     this._injected = true
-    if (isBrowser) {
+    if (isBrowser && this._optimizeForSpeed) {
       this._tags[0] = this.makeStyleTag(this._name)
-      this._optimizeForSpeed =
-        this._optimizeForSpeed && this.getSheet().insertRule
+      this._optimizeForSpeed = 'insertRule' in this.getSheet()
+      if (!this._optimizeForSpeed) {
+        if (!isProd) {
+          console.warn(
+            'StyleSheet: optimizeForSpeed mode not supported falling back to standard mode.'
+          ) // eslint-disable-line no-console
+        }
+        this.flush()
+        this._injected = true
+      }
       return
     }
 
@@ -104,7 +114,7 @@ export default class StyleSheet {
       const sheet = this.getSheet()
       rule = rule.trim() ? rule : '#___stylesheet-empty-rule____{}'
       sheet.deleteRule(index)
-      sheet.insertRule(rule, index)
+      sheet.insertRule(rule)
     } else {
       const tag = this._tags[index]
       invariant(tag, `old rule at index \`${index}\` not found`)
