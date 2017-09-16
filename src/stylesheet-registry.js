@@ -45,12 +45,7 @@ export default class StyleSheetRegistry {
     }
 
     this._instancesCounts[styleId] = 1
-    this._indices[styleId] = rules.map(rule => {
-      if (typeof rule !== 'string') {
-        console.log(rule)
-      }
-      return this._sheet.insertRule(rule)
-    })
+    this._indices[styleId] = rules.map(rule => this._sheet.insertRule(rule))
   }
 
   remove(props) {
@@ -60,11 +55,12 @@ export default class StyleSheetRegistry {
       const tagFromServer = this._fromServer[styleId]
       if (tagFromServer) {
         tagFromServer.parentNode.removeChild(tagFromServer)
+        delete this._fromServer[styleId]
       } else {
         this._indices[styleId].forEach(index => this._sheet.deleteRule(index))
+        delete this._indices[styleId]
       }
       delete this._instancesCounts[styleId]
-      delete this._indices[styleId]
     }
   }
 

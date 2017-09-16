@@ -71,26 +71,27 @@ export default class StyleSheet {
     }
   }
 
-  insertRule(rule) {
+  insertRule(rule, index) {
     invariant(typeof rule === 'string', '`insertRule` accepts only strings')
 
     if (!isBrowser) {
-      this._serverSheet.insertRule(
-        rule,
-        rule.indexOf('@import') === -1 ? this._serverSheet.cssRules.length : 0
-      )
+      if (typeof index !== 'number') {
+        index =
+          rule.indexOf('@import') === -1 ? this._serverSheet.cssRules.length : 0
+      }
+      this._serverSheet.insertRule(rule, index)
       return this._rulesCount++
     }
 
     if (this._optimizeForSpeed) {
       const sheet = this.getSheet()
+      if (typeof index !== 'number') {
+        index = rule.indexOf('@import') === -1 ? sheet.cssRules.length : 0
+      }
       // this weirdness for perf, and chrome's weird bug
       // https://stackoverflow.com/questions/20007992/chrome-suddenly-stopped-accepting-insertrule
       try {
-        sheet.insertRule(
-          rule,
-          rule.indexOf('@import') === -1 ? sheet.cssRules.length : 0
-        )
+        sheet.insertRule(rule, index)
       } catch (err) {
         if (!isProd) {
           console.warn(
@@ -100,9 +101,9 @@ export default class StyleSheet {
       }
     } else {
       const insertionPoint =
-        this._tags[0] && rule.indexOf('@import') === -1
+        this._tags[index || 0] && rule.indexOf('@import') === -1
           ? undefined
-          : this._tags[0]
+          : this._tags[index || 0]
       this._tags.push(this.makeStyleTag(this._name, rule, insertionPoint))
     }
 
@@ -112,9 +113,9 @@ export default class StyleSheet {
   replaceRule(index, rule) {
     if (this._optimizeForSpeed) {
       const sheet = this.getSheet()
-      rule = rule.trim() ? rule : '#___stylesheet-empty-rule____{}'
+      rule = rule.trim() ? rule : `#${this._name}-empty-rule____{}`
+      sheet.insertRule(rule, index)
       sheet.deleteRule(index)
-      sheet.insertRule(rule)
     } else {
       const tag = this._tags[index]
       invariant(tag, `old rule at index \`${index}\` not found`)
