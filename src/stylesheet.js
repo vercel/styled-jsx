@@ -94,7 +94,7 @@ export default class StyleSheet {
 
       for (let i = t[0]; i <= t[1]; i++) {
         this._sheet.deleteRule(i)
-        this._sheet.insertRule('styledjsx-deleted-rule {}', i)
+        this._sheet.insertRule('#styledjsx-deleted-rule {}', i)
       }
     }
   }
