@@ -16,8 +16,8 @@ export default class StyleSheetRegistry {
     this._indices = {}
     this._instancesCounts = {}
 
-    this.computeId = cacheCurry(this.computeId)
-    this.computeSelector = cacheCurry(this.computeSelector)
+    this.computeId = this.createComputeId()
+    this.computeSelector = this.createComputeSelector()
   }
 
   add(props) {
@@ -74,16 +74,20 @@ export default class StyleSheetRegistry {
    *
    * Creates a function to compute and memoize a jsx id from a basedId and optionally props.
    */
-  computeId(cache = {}, baseId, props) {
-    if (!props) {
-      return `jsx-${baseId}`
+  createComputeId() {
+    const cache = {}
+    return function(baseId, props) {
+      if (!props) {
+        return `jsx-${baseId}`
+      }
+      const propsToString = String(props)
+      const key = baseId + propsToString
+      // return `jsx-${hashString(`${baseId}-${propsToString}`)}`
+      if (!cache[key]) {
+        cache[key] = `jsx-${hashString(`${baseId}-${propsToString}`)}`
+      }
+      return cache[key]
     }
-    const propsToString = String(props)
-    const key = baseId + propsToString
-    if (!cache[key]) {
-      cache[key] = `jsx-${hashString(`${baseId}-${propsToString}`)}`
-    }
-    return cache[key]
   }
 
   /**
@@ -91,16 +95,16 @@ export default class StyleSheetRegistry {
    *
    * Creates a function to compute and memoize dynamic selectors.
    */
-  computeSelector(
-    cache = {},
-    id,
-    css,
+  createComputeSelector(
     selectoPlaceholderRegexp = /__jsx-style-dynamic-selector/g
   ) {
-    if (!cache[id]) {
-      cache[id] = css.replace(selectoPlaceholderRegexp, id)
+    const cache = {}
+    return function(id, css) {
+      if (!cache[id]) {
+        cache[id] = css.replace(selectoPlaceholderRegexp, id)
+      }
+      return cache[id]
     }
-    return cache[id]
   }
 
   getIdAndRules(props) {
@@ -135,14 +139,5 @@ export default class StyleSheetRegistry {
       acc[id] = element
       return acc
     }, {})
-  }
-}
-
-function cacheCurry(fn) {
-  const cache = {}
-  return function() {
-    const args = [].slice.call(arguments)
-    args.unshift(cache)
-    return fn.apply(null, args)
   }
 }
