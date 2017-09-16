@@ -69,6 +69,32 @@ export default class StyleSheetRegistry {
     this.remove(props)
   }
 
+  flush() {
+    this._sheet.flush()
+    this._fromServer = undefined
+    this._indices = {}
+    this._instancesCounts = {}
+
+    this.computeId = this.createComputeId()
+    this.computeSelector = this.createComputeSelector()
+  }
+
+  cssRules() {
+    const fromServer = this._fromServer
+      ? Object.keys(this._fromServer).map(styleId => [
+          styleId,
+          this._fromServer[styleId]
+        ])
+      : []
+    const cssRules = this._sheet.cssRules()
+    return fromServer.concat(
+      Object.keys(this._indices).map(styleId => [
+        styleId,
+        this._indices[styleId].map(index => cssRules[index].cssText).join('\n')
+      ])
+    )
+  }
+
   /**
    * createComputeId
    *
