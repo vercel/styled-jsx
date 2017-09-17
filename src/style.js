@@ -37,5 +37,7 @@ export default class JSXStyle extends Component {
 }
 
 export function flush() {
-  return new Map(styleSheetRegistry.cssRules())
+  const cssRules = styleSheetRegistry.cssRules()
+  styleSheetRegistry.flush()
+  return new Map(cssRules)
 }

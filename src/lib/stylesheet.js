@@ -1,8 +1,13 @@
-const isBrowser = typeof window !== 'undefined'
 const isProd = process.env && process.env.NODE_ENV === 'production'
 
 export default class StyleSheet {
-  constructor({ name = 'stylesheet', optimizeForSpeed = isProd } = {}) {
+  constructor(
+    {
+      name = 'stylesheet',
+      optimizeForSpeed = isProd,
+      isBrowser = typeof window !== 'undefined'
+    } = {}
+  ) {
     invariant(typeof name === 'string', '`name` must be a string')
     this._name = name
 
@@ -11,6 +16,7 @@ export default class StyleSheet {
       '`optimizeForSpeed` must be a boolean'
     )
     this._optimizeForSpeed = optimizeForSpeed
+    this._isBrowser = isBrowser
 
     this._serverSheet = undefined
     this._tags = []
@@ -23,6 +29,7 @@ export default class StyleSheet {
       typeof bool === 'boolean',
       '`setOptimizeForSpeed` accepts a boolean'
     )
+
     invariant(
       this._rulesCount === 0,
       'optimizeForSpeed cannot be when rules have already been inserted'
@@ -35,7 +42,7 @@ export default class StyleSheet {
   inject() {
     invariant(!this._injected, 'sheet already injected')
     this._injected = true
-    if (isBrowser && this._optimizeForSpeed) {
+    if (this._isBrowser && this._optimizeForSpeed) {
       this._tags[0] = this.makeStyleTag(this._name)
       this._optimizeForSpeed = 'insertRule' in this.getSheet()
       if (!this._optimizeForSpeed) {
@@ -52,17 +59,22 @@ export default class StyleSheet {
 
     this._serverSheet = {
       cssRules: [],
-      insertRule: rule => {
-        this._serverSheet.cssRules.push({ cssText: rule })
+      insertRule: (rule, index) => {
+        if (typeof index === 'number') {
+          this._serverSheet.cssRules[index] = { cssText: rule }
+        } else {
+          this._serverSheet.cssRules.push({ cssText: rule })
+        }
+        return index
       }
     }
   }
 
-  getSheet() {
-    const tag = this._tags[this._tags.length - 1]
+  getSheetForTag(tag) {
     if (tag.sheet) {
       return tag.sheet
     }
+
     // this weirdness brought to you by firefox
     for (let i = 0; i < document.styleSheets.length; i++) {
       if (document.styleSheets[i].ownerNode === tag) {
@@ -71,13 +83,16 @@ export default class StyleSheet {
     }
   }
 
+  getSheet() {
+    return this.getSheetForTag(this._tags[this._tags.length - 1])
+  }
+
   insertRule(rule, index) {
     invariant(typeof rule === 'string', '`insertRule` accepts only strings')
 
-    if (!isBrowser) {
+    if (!this._isBrowser) {
       if (typeof index !== 'number') {
-        index =
-          rule.indexOf('@import') === -1 ? this._serverSheet.cssRules.length : 0
+        index = this._serverSheet.cssRules.length
       }
       this._serverSheet.insertRule(rule, index)
       return this._rulesCount++
@@ -86,7 +101,7 @@ export default class StyleSheet {
     if (this._optimizeForSpeed) {
       const sheet = this.getSheet()
       if (typeof index !== 'number') {
-        index = rule.indexOf('@import') === -1 ? sheet.cssRules.length : 0
+        index = sheet.cssRules.length
       }
       // this weirdness for perf, and chrome's weird bug
       // https://stackoverflow.com/questions/20007992/chrome-suddenly-stopped-accepting-insertrule
@@ -100,10 +115,7 @@ export default class StyleSheet {
         }
       }
     } else {
-      const insertionPoint =
-        this._tags[index || 0] && rule.indexOf('@import') === -1
-          ? undefined
-          : this._tags[index || 0]
+      const insertionPoint = this._tags[index]
       this._tags.push(this.makeStyleTag(this._name, rule, insertionPoint))
     }
 
@@ -114,8 +126,8 @@ export default class StyleSheet {
     if (this._optimizeForSpeed) {
       const sheet = this.getSheet()
       rule = rule.trim() ? rule : `#${this._name}-empty-rule____{}`
-      sheet.insertRule(rule, index)
       sheet.deleteRule(index)
+      sheet.insertRule(rule, index)
     } else {
       const tag = this._tags[index]
       invariant(tag, `old rule at index \`${index}\` not found`)
@@ -125,12 +137,24 @@ export default class StyleSheet {
   }
 
   deleteRule(index) {
-    this.replaceRule(index, '')
+    if (this._optimizeForSpeed) {
+      this.replaceRule(index, '')
+    } else {
+      const tag = this._tags[index]
+      invariant(tag, `rule at index \`${index}\` not found`)
+      tag.parentNode.removeChild(tag)
+      this._tags[index] = null
+      // {
+      //   sheet: {
+      //     cssRules: [{ cssText: '' }]
+      //   }
+      // }
+    }
   }
 
   flush() {
     this._injected = false
-    if (isBrowser) {
+    if (this._isBrowser) {
       this._tags.forEach(tag => tag.parentNode.removeChild(tag))
       this._tags = []
       this._rulesCount = 0
@@ -141,13 +165,20 @@ export default class StyleSheet {
   }
 
   cssRules() {
-    if (!isBrowser) {
+    if (!this._isBrowser) {
       return this._serverSheet.cssRules
     }
-    if (this._optimizeForSpeed) {
-      return Array.from(this.getSheet().cssRules)
-    }
-    return this._tags.map(tag => tag.textContent)
+    const rules = []
+    this._tags
+      .filter(Boolean)
+      .forEach(tag =>
+        rules.splice(
+          rules.length,
+          0,
+          ...Array.from(this.getSheetForTag(tag).cssRules)
+        )
+      )
+    return rules
   }
 
   makeStyleTag(name, cssString, relativeToTag) {
@@ -160,7 +191,9 @@ export default class StyleSheet {
     const tag = document.createElement('style')
     tag.type = 'text/css'
     tag.setAttribute(`data-${name}`, '')
-    tag.appendChild(document.createTextNode(cssString || ''))
+    if (cssString) {
+      tag.appendChild(document.createTextNode(cssString))
+    }
     const head = document.head || document.getElementsByTagName('head')[0]
     if (relativeToTag) {
       head.insertBefore(tag, relativeToTag)
