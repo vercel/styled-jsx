@@ -83,9 +83,8 @@
     "lint-staged": "^3.4.2",
     "mz": "2.6.0",
     "prettier": "^1.5.2",
-    "react": "15.6.1",
-    "react-dom": "15.6.1",
-    "react-jsdom": "^2.0.5",
+    "react": "^16.0.0-rc.3",
+    "react-dom": "^16.0.0-rc.3",
     "xo": "0.18.2"
   },
   "peerDependencies": {
