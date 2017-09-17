@@ -57,9 +57,14 @@ export default class StyleSheetRegistry {
 
   remove(props) {
     const { styleId } = this.getIdAndRules(props)
+    invariant(
+      styleId in this._instancesCounts,
+      `styleId: \`${styleId}\` not found`
+    )
     this._instancesCounts[styleId] -= 1
+
     if (this._instancesCounts[styleId] < 1) {
-      const tagFromServer = this._fromServer[styleId]
+      const tagFromServer = this._fromServer && this._fromServer[styleId]
       if (tagFromServer) {
         tagFromServer.parentNode.removeChild(tagFromServer)
         delete this._fromServer[styleId]
@@ -95,6 +100,7 @@ export default class StyleSheetRegistry {
         ])
       : []
     const cssRules = this._sheet.cssRules()
+
     return fromServer.concat(
       Object.keys(this._indices).map(styleId => [
         styleId,
@@ -134,10 +140,11 @@ export default class StyleSheetRegistry {
   ) {
     const cache = {}
     return function(id, css) {
-      if (!cache[id]) {
-        cache[id] = css.replace(selectoPlaceholderRegexp, id)
+      const idcss = id + css
+      if (!cache[idcss]) {
+        cache[idcss] = css.replace(selectoPlaceholderRegexp, id)
       }
-      return cache[id]
+      return cache[idcss]
     }
   }
 
@@ -173,5 +180,11 @@ export default class StyleSheetRegistry {
       acc[id] = element
       return acc
     }, {})
+  }
+}
+
+function invariant(condition, message) {
+  if (!condition) {
+    throw new Error(`StyleSheetRegistry: ${message}.`)
   }
 }

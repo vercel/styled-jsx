@@ -133,8 +133,9 @@ export default class StyleSheet {
   replaceRule(index, rule) {
     if (this._optimizeForSpeed || !this._isBrowser) {
       const sheet = this._isBrowser ? this.getSheet() : this._serverSheet
-      rule = rule.trim() ? rule : this._deletedRulePlaceholder
-      sheet.deleteRule(index)
+      if (!rule.trim()) {
+        rule = this._deletedRulePlaceholder
+      }
       sheet.insertRule(rule, index)
     } else {
       const tag = this._tags[index]
@@ -220,6 +221,6 @@ export default class StyleSheet {
 
 function invariant(condition, message) {
   if (!condition) {
-    throw new Error(`StyleSheet: ${message}`)
+    throw new Error(`StyleSheet: ${message}.`)
   }
 }
