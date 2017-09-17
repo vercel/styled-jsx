@@ -40,6 +40,10 @@ export default class StyleSheet {
     this.inject()
   }
 
+  isOptimizeForSpeed() {
+    return this._optimizeForSpeed
+  }
+
   inject() {
     invariant(!this._injected, 'sheet already injected')
     this._injected = true

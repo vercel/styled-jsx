@@ -3,14 +3,20 @@ import DefaultStyleSheet from './lib/stylesheet'
 
 export default class StyleSheetRegistry {
   constructor(
-    { StyleSheet = DefaultStyleSheet, optimizeForSpeed = false } = {}
+    {
+      styleSheet = null,
+      optimizeForSpeed = false,
+      isBrowser = typeof window !== 'undefined'
+    } = {}
   ) {
-    this._sheet = new StyleSheet({
-      name: 'styled-jsx',
-      optimizeForSpeed
-    })
+    this._sheet =
+      styleSheet ||
+      new DefaultStyleSheet({
+        name: 'styled-jsx',
+        optimizeForSpeed
+      })
     this._sheet.inject()
-    this._isBrowser = typeof window !== 'undefined'
+    this._isBrowser = isBrowser
 
     this._fromServer = undefined
     this._indices = {}
@@ -24,6 +30,7 @@ export default class StyleSheetRegistry {
     if (undefined === this._optimizeForSpeed) {
       this._optimizeForSpeed = Array.isArray(props.css)
       this._sheet.setOptimizeForSpeed(this._optimizeForSpeed)
+      this._optimizeForSpeed = this._sheet.isOptimizeForSpeed()
     }
 
     if (this._isBrowser && !this._fromServer) {

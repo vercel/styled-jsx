@@ -4,7 +4,9 @@ import test from 'ava'
 // Ours
 import StyleSheet from '../src/lib/stylesheet'
 
-function makeSheet(options = { optimizeForSpeed: true, isBrowser: true }) {
+export default function makeSheet(
+  options = { optimizeForSpeed: true, isBrowser: true }
+) {
   const sheet = new StyleSheet(options)
   // mocks
   sheet.makeStyleTag = function(name, cssString) {
