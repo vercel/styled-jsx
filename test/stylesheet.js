@@ -9,7 +9,7 @@ function makeSheet(options = { optimizeForSpeed: true, isBrowser: true }) {
   // mocks
   sheet.makeStyleTag = function(name, cssString) {
     const cssRules = cssString ? [{ cssText: cssString }] : []
-    return {
+    const tag = {
       sheet: {
         cssRules,
         insertRule: (rule, index) => {
@@ -27,11 +27,22 @@ function makeSheet(options = { optimizeForSpeed: true, isBrowser: true }) {
           cssRules[index] = { cssText: rule }
         }
       },
-      textContent: cssString,
       parentNode: {
         removeChild: () => {}
       }
     }
+
+    let textContent = cssString
+    Object.defineProperty(tag, 'textContent', {
+      get: () => textContent,
+      set: text => {
+        textContent = text
+        cssRules.length = 0
+        cssRules.push({ cssText: text })
+      }
+    })
+
+    return tag
   }
   return sheet
 }
@@ -116,6 +127,10 @@ test('deleteRule', t => {
     {
       optimizeForSpeed: true,
       isBrowser: false
+    },
+    {
+      optimizeForSpeed: false,
+      isBrowser: false
     }
   ]
 
@@ -125,18 +140,45 @@ test('deleteRule', t => {
 
     sheet.insertRule('div { color: red }')
     sheet.insertRule('div { color: green }')
+    const rulesCount = sheet.length
+
     sheet.deleteRule(1)
+    // When deleting we replace rules with placeholders to keep the indices stable.
+    t.is(sheet.length, rulesCount)
 
-    t.deepEqual(
-      sheet.cssRules(),
-      options.optimizeForSpeed
-        ? [
-            { cssText: 'div { color: red }' },
-            { cssText: '#stylesheet-empty-rule____{}' }
-          ]
-        : [{ cssText: 'div { color: red }' }]
-    )
+    t.deepEqual(sheet.cssRules(), [{ cssText: 'div { color: red }' }])
+  })
+})
 
-    // t.deepEqual(sheet.cssRules(), [{ cssText: 'div { color: red }' }, { cssText: 'div { color: green }' }])
+// sheet.replaceRule
+
+test('replaceRule', t => {
+  const options = [
+    {
+      optimizeForSpeed: true,
+      isBrowser: true
+    },
+    {
+      optimizeForSpeed: false,
+      isBrowser: true
+    },
+    {
+      optimizeForSpeed: true,
+      isBrowser: false
+    },
+    {
+      optimizeForSpeed: false,
+      isBrowser: false
+    }
+  ]
+
+  options.forEach(options => {
+    const sheet = makeSheet(options)
+    sheet.inject()
+
+    const index = sheet.insertRule('div { color: red }')
+    sheet.replaceRule(index, 'p { color: hotpink }')
+
+    t.deepEqual(sheet.cssRules(), [{ cssText: 'p { color: hotpink }' }])
   })
 })

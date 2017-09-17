@@ -10,6 +10,7 @@ export default class StyleSheet {
   ) {
     invariant(typeof name === 'string', '`name` must be a string')
     this._name = name
+    this._deletedRulePlaceholder = `#${name}-deleted-rule____{}`
 
     invariant(
       typeof optimizeForSpeed === 'boolean',
@@ -66,6 +67,9 @@ export default class StyleSheet {
           this._serverSheet.cssRules.push({ cssText: rule })
         }
         return index
+      },
+      deleteRule: index => {
+        this._serverSheet.cssRules[index] = null
       }
     }
   }
@@ -123,9 +127,9 @@ export default class StyleSheet {
   }
 
   replaceRule(index, rule) {
-    if (this._optimizeForSpeed) {
-      const sheet = this.getSheet()
-      rule = rule.trim() ? rule : `#${this._name}-empty-rule____{}`
+    if (this._optimizeForSpeed || !this._isBrowser) {
+      const sheet = this._isBrowser ? this.getSheet() : this._serverSheet
+      rule = rule.trim() ? rule : this._deletedRulePlaceholder
       sheet.deleteRule(index)
       sheet.insertRule(rule, index)
     } else {
@@ -137,6 +141,11 @@ export default class StyleSheet {
   }
 
   deleteRule(index) {
+    if (!this._isBrowser) {
+      this._serverSheet.deleteRule(index)
+      return
+    }
+
     if (this._optimizeForSpeed) {
       this.replaceRule(index, '')
     } else {
@@ -155,7 +164,7 @@ export default class StyleSheet {
   flush() {
     this._injected = false
     if (this._isBrowser) {
-      this._tags.forEach(tag => tag.parentNode.removeChild(tag))
+      this._tags.forEach(tag => tag && tag.parentNode.removeChild(tag))
       this._tags = []
       this._rulesCount = 0
     } else {
@@ -166,7 +175,7 @@ export default class StyleSheet {
 
   cssRules() {
     if (!this._isBrowser) {
-      return this._serverSheet.cssRules
+      return this._serverSheet.cssRules.filter(Boolean)
     }
     const rules = []
     this._tags
@@ -175,7 +184,11 @@ export default class StyleSheet {
         rules.splice(
           rules.length,
           0,
-          ...Array.from(this.getSheetForTag(tag).cssRules)
+          ...Array.from(
+            this.getSheetForTag(tag).cssRules.filter(
+              rule => rule.cssText !== this._deletedRulePlaceholder
+            )
+          )
         )
       )
     return rules
@@ -201,6 +214,10 @@ export default class StyleSheet {
       head.appendChild(tag)
     }
     return tag
+  }
+
+  get length() {
+    return this._rulesCount
   }
 }
 
