@@ -146,7 +146,7 @@ test('deleteRule', t => {
     // When deleting we replace rules with placeholders to keep the indices stable.
     t.is(sheet.length, rulesCount)
 
-    t.deepEqual(sheet.cssRules(), [{ cssText: 'div { color: red }' }])
+    t.deepEqual(sheet.cssRules(), [{ cssText: 'div { color: red }' }, null])
   })
 })
 

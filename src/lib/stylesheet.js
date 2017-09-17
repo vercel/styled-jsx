@@ -153,20 +153,15 @@ export default class StyleSheet {
       invariant(tag, `rule at index \`${index}\` not found`)
       tag.parentNode.removeChild(tag)
       this._tags[index] = null
-      // {
-      //   sheet: {
-      //     cssRules: [{ cssText: '' }]
-      //   }
-      // }
     }
   }
 
   flush() {
     this._injected = false
+    this._rulesCount = 0
     if (this._isBrowser) {
       this._tags.forEach(tag => tag && tag.parentNode.removeChild(tag))
       this._tags = []
-      this._rulesCount = 0
     } else {
       // simpler on server
       this._serverSheet.cssRules = []
@@ -175,23 +170,21 @@ export default class StyleSheet {
 
   cssRules() {
     if (!this._isBrowser) {
-      return this._serverSheet.cssRules.filter(Boolean)
+      return this._serverSheet.cssRules
     }
-    const rules = []
-    this._tags
-      .filter(Boolean)
-      .forEach(tag =>
-        rules.splice(
-          rules.length,
-          0,
-          ...Array.from(
-            this.getSheetForTag(tag).cssRules.filter(
-              rule => rule.cssText !== this._deletedRulePlaceholder
-            )
+    return this._tags.reduce((rules, tag) => {
+      if (tag) {
+        rules = rules.concat(
+          this.getSheetForTag(tag).cssRules.map(
+            rule =>
+              rule.cssText === this._deletedRulePlaceholder ? null : rule
           )
         )
-      )
-    return rules
+      } else {
+        rules.push(null)
+      }
+      return rules
+    }, [])
   }
 
   makeStyleTag(name, cssString, relativeToTag) {

@@ -71,6 +71,7 @@ export default class StyleSheetRegistry {
 
   flush() {
     this._sheet.flush()
+    this._sheet.inject()
     this._fromServer = undefined
     this._indices = {}
     this._instancesCounts = {}
