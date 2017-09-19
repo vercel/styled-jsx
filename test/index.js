@@ -15,6 +15,11 @@ const transform = (file, opts = {}) =>
     ...opts
   })
 
+test('works with array children', async t => {
+  const { code } = await transform('./fixtures/array-children.js')
+  t.snapshot(code)
+})
+
 test('works with stateless', async t => {
   const { code } = await transform('./fixtures/stateless.js')
   t.snapshot(code)

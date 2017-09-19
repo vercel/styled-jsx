@@ -95,6 +95,12 @@ export const isStyledJsx = ({ node: el }) =>
   el.openingElement.attributes.some(attr => attr.name.name === STYLE_ATTRIBUTE)
 
 export const findStyles = path => {
+  if (Array.isArray(path.container)) {
+    return [...path.parentPath.get('elements'), ...path.get('children')].filter(
+      isStyledJsx
+    )
+  }
+
   if (isStyledJsx(path)) {
     const { node } = path
     return isGlobalEl(node.openingElement) ? [path] : []
