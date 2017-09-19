@@ -71,48 +71,48 @@ exports[`works with array children 1`] = `
 "import _JSXStyle from \\"styled-jsx/style\\";
 /* eslint-disable no-unused-vars */
 
-const Test1 = () => [<div data-jsx={465566775}>Foo</div>, <span data-jsx={465566775}>Bar</span>, <_JSXStyle styleId={465566775} css={\\"div[data-jsx=\\\\\\"465566775\\\\\\"]{color:red}\\"} />];
+const Test1 = () => [<div data-jsx={1486255031}>Foo</div>, <span data-jsx={1486255031}>Bar</span>, <_JSXStyle styleId={1486255031} css={\\"div[data-jsx=\\\\\\"1486255031\\\\\\"]{color:red}\\"} />];
 
 const Test2 = () => [<p data-jsx={2639504339}>Hello World</p>, <_JSXStyle styleId={2639504339} css={\\"p{color:white}\\"} />];
 
-const Test3 = () => [<div data-jsx={2293543665}>
-        <p data-jsx={2293543665}>Hello World</p>
-        <_JSXStyle styleId={2293543665} css={\\"p[data-jsx=\\\\\\"2293543665\\\\\\"]{color:blue}\\"} />
-    </div>, <div>Hello World</div>];
+const Test3 = () => [<div data-jsx={4193872369}>
+    <p data-jsx={4193872369}>Hello World</p>
+    <_JSXStyle styleId={4193872369} css={\\"p[data-jsx=\\\\\\"4193872369\\\\\\"]{color:blue}\\"} />
+  </div>, <div>Hello World</div>];
 
-const Test4 = () => [<div data-jsx={1371748502}>
-        <span data-jsx={1371748502}>Styled by root style tag</span>
-        <p className=\\"one\\" data-jsx={1371748502}>Lorem</p>
-        <p className=\\"two\\" data-jsx={1371748502}>Ipsum</p>
-        <_JSXStyle styleId={3751795765} css={\\"span[data-jsx=\\\\\\"1371748502\\\\\\"]{background:magenta}\\"} />
-    </div>, <div data-jsx={3751795765}>
-        <p className=\\"one\\" data-jsx={3751795765}>Dolor</p>
-        <p className=\\"two\\" data-jsx={3751795765}>Sit</p>
-    </div>, <div data-jsx={1844802545}>
-        <p className=\\"one\\" data-jsx={1844802545}>Dolor</p>
-        <p className=\\"two\\" data-jsx={1844802545}>Sit</p>
-        <_JSXStyle styleId={3751795765} css={\\"span{background:magenta}\\"} />
-    </div>, <_JSXStyle styleId={3751795765} css={\\"span[data-jsx=\\\\\\"3751795765\\\\\\"]{background:magenta}\\"} />];
+const Test4 = () => [<div data-jsx={493673878}>
+    <span data-jsx={493673878}>Styled by root style tag</span>
+    <p className=\\"one\\" data-jsx={493673878}>Lorem</p>
+    <p className=\\"two\\" data-jsx={493673878}>Ipsum</p>
+    <_JSXStyle styleId={1597461941} css={\\"span[data-jsx=\\\\\\"493673878\\\\\\"]{background:magenta}\\"} />
+  </div>, <div data-jsx={1597461941}>
+    <p className=\\"one\\" data-jsx={1597461941}>Dolor</p>
+    <p className=\\"two\\" data-jsx={1597461941}>Sit</p>
+  </div>, <div data-jsx={4046372977}>
+    <p className=\\"one\\" data-jsx={4046372977}>Dolor</p>
+    <p className=\\"two\\" data-jsx={4046372977}>Sit</p>
+    <_JSXStyle styleId={1597461941} css={\\"span{background:magenta}\\"} />
+  </div>, <_JSXStyle styleId={1597461941} css={\\"span[data-jsx=\\\\\\"1597461941\\\\\\"]{background:magenta}\\"} />];
 
-const Test5 = () => [<div data-jsx={387450454}>Foo</div>, <div data-jsx={387450454}>
-        <div data-jsx={387450454}>
-            <div className=\\"bar\\" data-jsx={387450454}>Bar</div>
-        </div>
-    </div>, <div data-jsx={387450454}>
-        <main data-jsx={387450454}>
-            <div data-jsx={387450454}>
-                <div id=\\"baz\\" data-jsx={387450454}>Baz</div>
-            </div>
-        </main>
-    </div>, <_JSXStyle styleId={387450454} css={\\"main[data-jsx=\\\\\\"387450454\\\\\\"]{color:red}.bar[data-jsx=\\\\\\"387450454\\\\\\"]{color:white}.baz[data-jsx=\\\\\\"387450454\\\\\\"]{color:blue}\\"} />];
+const Test5 = () => [<div data-jsx={3832907478}>Foo</div>, <div data-jsx={3832907478}>
+    <div data-jsx={3832907478}>
+      <div className=\\"bar\\" data-jsx={3832907478}>Bar</div>
+    </div>
+  </div>, <div data-jsx={3832907478}>
+    <main data-jsx={3832907478}>
+      <div data-jsx={3832907478}>
+        <div id=\\"baz\\" data-jsx={3832907478}>Baz</div>
+      </div>
+    </main>
+  </div>, <_JSXStyle styleId={3832907478} css={\\"main[data-jsx=\\\\\\"3832907478\\\\\\"]{color:red}.bar[data-jsx=\\\\\\"3832907478\\\\\\"]{color:white}.baz[data-jsx=\\\\\\"3832907478\\\\\\"]{color:blue}\\"} />];
 
 export default (() => <div>
-        <Test1 />
-        <Test2 />
-        <Test3 />
-        <Test4 />
-        <Test5 />
-    </div>);"
+    <Test1 />
+    <Test2 />
+    <Test3 />
+    <Test4 />
+    <Test5 />
+  </div>);"
 `;
 
 exports[`works with class 1`] = `
