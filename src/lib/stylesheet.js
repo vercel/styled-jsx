@@ -136,6 +136,7 @@ export default class StyleSheet {
       if (!rule.trim()) {
         rule = this._deletedRulePlaceholder
       }
+      sheet.deleteRule(index)
       sheet.insertRule(rule, index)
     } else {
       const tag = this._tags[index]

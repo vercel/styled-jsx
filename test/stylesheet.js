@@ -23,7 +23,13 @@ export default function makeSheet(
           return index
         },
         deleteRule: index => {
-          cssRules.splice(index, 1)
+          if (options.optimizeForSpeed) {
+            cssRules[index] = {
+              cssText: `#${name}-deleted-rule____{}`
+            }
+          } else {
+            cssRules[index] = null
+          }
         },
         replaceRule: (index, rule) => {
           cssRules[index] = { cssText: rule }
