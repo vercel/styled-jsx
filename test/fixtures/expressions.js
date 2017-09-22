@@ -6,8 +6,7 @@ const animationDuration = '200ms'
 const animationName = 'my-cool-animation'
 const obj = { display: 'block' }
 
-// eslint-disable-next-line no-unused-vars
-export default ({ display }) =>
+export default ({ display }) => (
   <div>
     <p>test</p>
     <style jsx>{`
@@ -16,9 +15,7 @@ export default ({ display }) =>
         display: ${obj.display};
       }
     `}</style>
-    <style jsx>
-      {'p { color: red }'}
-    </style>
+    <style jsx>{'p { color: red }'}</style>
     <style jsx global>{`
       body {
         background: ${color};
@@ -64,7 +61,9 @@ export default ({ display }) =>
       p {
         animation: ${animationDuration} forwards ${animationName};
       }
-      div { background: ${color} }
+      div {
+        background: ${color};
+      }
     `}</style>
 
     <style jsx>{`
@@ -73,3 +72,4 @@ export default ({ display }) =>
       }
     `}</style>
   </div>
+)

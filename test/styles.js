@@ -10,7 +10,7 @@ test('transpile styles with attributes', async t => {
   // Use an id that's a number (inside a string) so
   // that we can test that animations get correctly prefixed
   // (since CSS forbids them from starting with a number)
-  t.snapshot(transform('[data-jsx="123"]', src))
+  t.snapshot(transform('.jsx-123', src))
 })
 
 test('throws when using nesting', t => {
@@ -46,7 +46,7 @@ test('throws when using nesting', t => {
 
   fixtures.forEach(fixture => {
     t.throws(() => transform('', fixture))
-    t.throws(() => transform('[data-jsx="123"]', fixture))
+    t.throws(() => transform('.jsx-123', fixture))
   })
 })
 
@@ -77,6 +77,25 @@ test("doesn't throw when using at-rules", t => {
 
   fixtures.forEach(fixture => {
     t.notThrows(() => transform('', fixture))
-    t.notThrows(() => transform('[data-jsx="123"]', fixture))
+    t.notThrows(() => transform('.jsx-123', fixture))
   })
+})
+
+test('splits rules for `optimizeForSpeed`', t => {
+  function assert(input, expected, prefix = '') {
+    t.deepEqual(transform(prefix, input, { splitRules: true }), expected)
+  }
+  assert('div { color: red }', ['div { color:red; }'])
+  assert('div { color: red } .p { color: red }', [
+    'div { color:red; }',
+    '.p { color:red; }'
+  ])
+  assert('div, span { color: red } a > .p { color: red }', [
+    'div,span { color:red; }',
+    'a>.p { color:red; }'
+  ])
+  assert(
+    '@media (min-width: 400px) { div, span { color: red } } a > .p { color: red }',
+    ['@media (min-width:400px) { div,span{color:red;} }', 'a>.p { color:red; }']
+  )
 })
