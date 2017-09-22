@@ -1,9 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`(optimized) transpiles external stylesheets (CommonJS modules) 1`] = `
-"const _defaultExport = ['div { font-size:3em; }'];
+"const _defaultExport = ['div{font-size:3em;}'];
 _defaultExport.__hash = '7060342740';
-_defaultExport.__scoped = ['div.jsx-7060342741 { font-size:3em; }'];
+_defaultExport.__scoped = ['div.jsx-7060342741{font-size:3em;}'];
 _defaultExport.__scopedHash = '7060342741';
 
 
@@ -15,20 +15,20 @@ exports[`(optimized) transpiles external stylesheets 1`] = `
 
 const color = 'red';
 
-const bar = ['div { font-size:3em; }'];
+const bar = ['div{font-size:3em;}'];
 bar.__hash = '7060342740';
-bar.__scoped = ['div.jsx-7060342741 { font-size:3em; }'];
+bar.__scoped = ['div.jsx-7060342741{font-size:3em;}'];
 bar.__scopedHash = '7060342741';
 export const uh = bar;
 
-export const foo = [\`div { color:\${color}; }\`];
+export const foo = [\`div{color:\${color};}\`];
 
 foo.__hash = '31421784000';
-foo.__scoped = [\`div.jsx-31421784001 { color:\${color}; }\`];
+foo.__scoped = [\`div.jsx-31421784001{color:\${color};}\`];
 foo.__scopedHash = '31421784001';
-const _defaultExport = ['div { font-size:3em; }', \`p { color:\${color}; }\`];
+const _defaultExport = ['div{font-size:3em;}', \`p{color:\${color};}\`];
 _defaultExport.__hash = '40416528930';
-_defaultExport.__scoped = ['div.jsx-40416528931 { font-size:3em; }', \`p.jsx-40416528931 { color:\${color}; }\`];
+_defaultExport.__scoped = ['div.jsx-40416528931{font-size:3em;}', \`p.jsx-40416528931{color:\${color};}\`];
 _defaultExport.__scopedHash = '40416528931';
 export default _defaultExport;"
 `;

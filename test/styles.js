@@ -85,17 +85,40 @@ test('splits rules for `optimizeForSpeed`', t => {
   function assert(input, expected, prefix = '') {
     t.deepEqual(transform(prefix, input, { splitRules: true }), expected)
   }
-  assert('div { color: red }', ['div { color:red; }'])
+
+  assert('div { color: red }', ['div{color:red;}'])
+
   assert('div { color: red } .p { color: red }', [
-    'div { color:red; }',
-    '.p { color:red; }'
+    'div{color:red;}',
+    '.p{color:red;}'
   ])
+
   assert('div, span { color: red } a > .p { color: red }', [
-    'div,span { color:red; }',
-    'a>.p { color:red; }'
+    'div,span{color:red;}',
+    'a>.p{color:red;}'
   ])
+
   assert(
     '@media (min-width: 400px) { div, span { color: red } } a > .p { color: red }',
-    ['@media (min-width:400px) { div,span{color:red;} }', 'a>.p { color:red; }']
+    ['@media (min-width:400px){div,span{color:red;}}', 'a>.p{color:red;}']
   )
+
+  assert(
+    '@media (min-width: 400px) { div { color: red } span { color: red } } a > .p { color: red }',
+    [
+      '@media (min-width:400px){div{color:red;}span{color:red;}}',
+      'a>.p{color:red;}'
+    ]
+  )
+
+  assert(
+    'span { color: red } @font-face { font-family: test; src: url(test.woff); } div { color: red }',
+    [
+      'span{color:red;}',
+      '@font-face{font-family:test;src:url(test.woff);}',
+      'div{color:red;}'
+    ]
+  )
+
+  assert('@import "./test.css"', ['@import "./test.css"'])
 })

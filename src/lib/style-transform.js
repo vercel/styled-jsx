@@ -19,7 +19,6 @@ function disableNestingPlugin(...args) {
   }
 }
 
-
 let generator
 let filename
 let offset
@@ -66,14 +65,57 @@ function sourceMapsPlugin(...args) {
   }
 }
 
-let splitRules = false
-let rules = []
+/**
+ * splitRulesPlugin
+ * Used to split a blob of css into an array of rules
+ * that can inserted via sheet.insertRule
+ *
+ * curtesy  of and (c) the emotion folks (with some fixes from us)
+ * https://github.com/emotion-js/emotion/blob/994ea265cf5a411c5fa9b606dd140ce66776d1db/packages/emotion/src/index.js#L23-L60
+ */
+let isSplitRulesEnabled = false
+let splitRules = []
+let splitRulesQueue = []
+const nestedAtRules = ['media', 'supports', 'document', 'keyframes'].map(
+  rule => `@` + rule
+)
 
-function splitRulesPlugin(context, block, selectors) {
-  if (splitRules) {
-    if (context === 2 || context === 3) {
-      // Executed whenever a block of css is done compiling.
-      rules.push(`${selectors.join(',')} { ${block} }`)
+function splitRulesPlugin(
+  context,
+  content,
+  selectors,
+  parent,
+  line,
+  column,
+  length,
+  id
+) {
+  if (context === -2) {
+    splitRulesQueue.forEach(rule => splitRules.push(rule))
+    splitRulesQueue = []
+    return
+  }
+
+  if (context === 2) {
+    if (id === 0) {
+      const joinedSelectors = selectors.join(',')
+      const rule = `${joinedSelectors}{${content}}`
+      if (parent.join(',') === joinedSelectors || parent[0] === '') {
+        splitRulesQueue.push(rule)
+      } else {
+        splitRulesQueue.unshift(rule)
+      }
+    }
+    return
+  }
+
+  // after an at rule block
+  if (context === 3) {
+    const s = selectors.join(',')
+    if (nestedAtRules.some(r => s.slice(0, r.length) === r)) {
+      splitRulesQueue.push(`${selectors.join(',')}{${content}}`)
+    } else {
+      splitRulesQueue.push(`${selectors.join(',')}${content}`)
     }
   }
 }
@@ -98,13 +140,13 @@ function transform(prefix, styles, settings = {}) {
   generator = settings.generator
   offset = settings.offset
   filename = settings.filename
-  splitRules = settings.splitRules
+  isSplitRulesEnabled = settings.splitRules
+  splitRules = []
 
-  rules = []
   const cssString = stylis(prefix, styles)
 
-  if (splitRules) {
-    return rules
+  if (isSplitRulesEnabled) {
+    return splitRules
   }
   return cssString
 }
