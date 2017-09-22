@@ -70,7 +70,7 @@ function sourceMapsPlugin(...args) {
  * Used to split a blob of css into an array of rules
  * that can inserted via sheet.insertRule
  *
- * courtesy  of and (c) the emotion folks (with some fixes from us)
+ * courtesy of and (c) the emotion folks (with some fixes from us)
  * https://github.com/emotion-js/emotion/blob/994ea265cf5a411c5fa9b606dd140ce66776d1db/packages/emotion/src/index.js#L23-L60
  */
 let isSplitRulesEnabled = false
@@ -111,11 +111,11 @@ function splitRulesPlugin(
 
   // after an at rule block
   if (context === 3) {
-    const s = selectors.join(',')
-    if (nestedAtRules.some(r => s.slice(0, r.length) === r)) {
-      splitRulesQueue.push(`${selectors.join(',')}{${content}}`)
+    const selectrs = selectors.join(',')
+    if (nestedAtRules.some(r => selectrs.slice(0, r.length) === r)) {
+      splitRulesQueue.push(`${selectrs}{${content}}`)
     } else {
-      splitRulesQueue.push(`${selectors.join(',')}${content}`)
+      splitRulesQueue.push(`${selectrs}${content}`)
     }
   }
 }
