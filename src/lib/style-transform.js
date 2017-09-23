@@ -76,9 +76,7 @@ function sourceMapsPlugin(...args) {
 let isSplitRulesEnabled = false
 let splitRules = []
 let splitRulesQueue = []
-const nestedAtRules = ['media', 'supports', 'document', 'keyframes'].map(
-  rule => `@` + rule
-)
+const nestedAtRules = ['m', 's', 'd', 'k', '-']
 
 function splitRulesPlugin(
   context,
@@ -91,7 +89,14 @@ function splitRulesPlugin(
   id
 ) {
   if (context === -2) {
-    splitRulesQueue.forEach(rule => splitRules.push(rule))
+    if (
+      selectors.filter(Boolean).length === 0 &&
+      content.charAt(0) === '@' &&
+      nestedAtRules.indexOf(content.charAt(1)) === -1
+    ) {
+      splitRulesQueue.push(content)
+    }
+    splitRules = splitRules.concat(splitRulesQueue)
     splitRulesQueue = []
     return
   }
@@ -112,10 +117,13 @@ function splitRulesPlugin(
   // after an at rule block
   if (context === 3) {
     const selectrs = selectors.join(',')
-    if (nestedAtRules.some(r => selectrs.slice(0, r.length) === r)) {
-      splitRulesQueue.push(`${selectrs}{${content}}`)
-    } else {
+    if (nestedAtRules.indexOf(selectrs.charAt(1)) === -1) {
       splitRulesQueue.push(`${selectrs}${content}`)
+    } else {
+      if (selectrs.charAt(1) === 'k') {
+        splitRulesQueue.push(`@-webkit-${selectrs.slice(1)}{${content}}`)
+      }
+      splitRulesQueue.push(`${selectrs}{${content}}`)
     }
   }
 }

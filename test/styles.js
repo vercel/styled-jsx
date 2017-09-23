@@ -120,5 +120,36 @@ test('splits rules for `optimizeForSpeed`', t => {
     ]
   )
 
+  assert('@charset "UTF-8"', ['@charset "UTF-8"'])
+
   assert('@import "./test.css"', ['@import "./test.css"'])
+
+  assert(
+    `
+    @keyframes test {
+      0% { opacity: 0 }
+      100% { opacity: 1 }
+    }
+  `,
+    [
+      '@-webkit-keyframes test{0%{opacity:0;}100%{opacity:1;}}',
+      '@keyframes test{0%{opacity:0;}100%{opacity:1;}}'
+    ]
+  )
+
+  assert(
+    `
+    @supports (display: flex) {
+      div { display: flex; }
+    }
+  `,
+    [
+      '@supports (display:flex){div{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}}'
+    ]
+  )
+
+  // TODO - the ones below are still failing
+  // assert('@namespace url(http://www.w3.org/1999/xhtml)', ['@namespace url(http://www.w3.org/1999/xhtml);'])
+  // assert('@namespace svg url(http://www.w3.org/2000/svg)', ['@namespace svg url(http://www.w3.org/2000/svg)'])
+  // assert('@page :first { margin: 1in; }', ['@page :first{margin:1in;}'])
 })

@@ -1,3 +1,8 @@
+/*
+Based on Glamor's sheet
+https://github.com/threepointone/glamor/blob/667b480d31b3721a905021b26e1290ce92ca2879/src/sheet.js
+*/
+
 const isProd = process.env && process.env.NODE_ENV === 'production'
 
 export default class StyleSheet {
