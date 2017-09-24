@@ -89,16 +89,16 @@ function splitRulesPlugin(
   id
 ) {
   if (context === -2) {
-    if (
-      selectors.filter(Boolean).length === 0 &&
-      content.charAt(0) === '@' &&
-      nestedAtRules.indexOf(content.charAt(1)) === -1
-    ) {
-      splitRulesQueue.push(content)
-    }
     splitRules = splitRules.concat(splitRulesQueue)
     splitRulesQueue = []
     return
+  }
+
+  if (context === 1) {
+    if (content.charAt(0) === '@') {
+      splitRulesQueue.push(content)
+      return ''
+    }
   }
 
   if (context === 2) {

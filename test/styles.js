@@ -156,8 +156,32 @@ test('splits rules for `optimizeForSpeed`', t => {
     ]
   )
 
-  // TODO - the ones below are still failing
-  // assert('@namespace url(http://www.w3.org/1999/xhtml)', ['@namespace url(http://www.w3.org/1999/xhtml);'])
-  // assert('@namespace svg url(http://www.w3.org/2000/svg)', ['@namespace svg url(http://www.w3.org/2000/svg)'])
-  // assert('@page :first { margin: 1in; }', ['@page :first{margin:1in;}'])
+  assert(
+    `
+    @import "./test.css";
+    @supports (display: flex) {
+      div { display: flex; }
+    }
+    div { color: red }
+    a, div { color: red }
+    @import "./test.css";
+    @media (min-width: 400px) { div, span { color: red } }
+  `,
+    [
+      '@import "./test.css"',
+      '@supports (display:flex){div{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}}',
+      'div{color:red;}',
+      'a,div{color:red;}',
+      '@import "./test.css"',
+      '@media (min-width:400px){div,span{color:red;}}'
+    ]
+  )
+
+  assert('@namespace url(http://www.w3.org/1999/xhtml)', [
+    '@namespace url(http://www.w3.org/1999/xhtml)'
+  ])
+  assert('@namespace svg url(http://www.w3.org/2000/svg)', [
+    '@namespace svg url(http://www.w3.org/2000/svg)'
+  ])
+  assert('@page :first { margin: 1in; }', ['@page :first{margin:1in;}'])
 })
