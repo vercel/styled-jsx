@@ -7,6 +7,11 @@
 
 Full, scoped and component-friendly CSS support for JSX (rendered on the server or the client).
 
+
+<small>
+  Code and docs are for v2.0-beta which we highly recommend you to try. Looking for styled-jsx v1? Switch branch to [master](./master).
+</small>
+
 ## Usage
 
 Firstly, install the package:
@@ -31,8 +36,10 @@ Now add `<style jsx>` to your code and fill it with CSS:
 export default () => (
   <div>
     <p>only this paragraph will get the style :)</p>
+
     { /* you can include <Component />s here that include
          other <p>s that don't get unexpected styles! */ }
+
     <style jsx>{`
       p {
         color: red;
@@ -42,16 +49,37 @@ export default () => (
 )
 ```
 
+## Configuration
+
+The following are optional settings for the babel plugin.
+
+#### `optimizeForSpeed`
+
+Blazing fast and optimized CSS rules injection system based on the CSSOM APIs.
+
+```
+{
+  "plugins": [
+    ["styled-jsx/babel", { "optimizeForSpeed": true }]
+  ]
+}
+```
+When in production\* this mode is automatically enabled.<br>
+Beware that when using this option source maps cannot be generated and styles cannot be edited via the devtools.
+
+\* `process.env.NODE_ENV === 'production'`
+
 ## Features
 
 - Full CSS support, no tradeoffs in power
-- Runtime size of just **2kb** (gzipped, from 6kb)
+- Runtime size of just **3kb** (gzipped, from 12kb)
 - Complete isolation: Selectors, animations, keyframes
 - Built-in CSS vendor prefixing
 - Very fast, minimal and efficient transpilation (see below)
 - High-performance runtime-CSS-injection when not server-rendering
 - Future-proof: Equivalent to server-renderable "Shadow CSS"
-- Works like the deprecated `<style scoped>`, but the styles get injected only once per component
+- Source maps support
+- Dynamic styles and themes support ***new**
 
 ## How It Works
 
@@ -61,34 +89,37 @@ The example above transpiles to the following:
 import _JSXStyle from 'styled-jsx/style'
 
 export default () => (
-  <div data-jsx='cn2o3j'>
-    <p data-jsx='cn2o3j'>only this paragraph will get the style :)</p>
-    <_JSXStyle styleId='cn2o3j' css={`p[data-jsx=cn2o3j] {color: red;}`} />
+  <div className='jsx-123'>
+    <p className='jsx-123'>only this paragraph will get the style :)</p>
+    <_JSXStyle styleId='123' css={`p.jsx-123 {color: red;}`} />
   </div>
 )
 ```
 
 ### Why It Works Like This
 
-Data attributes give us style encapsulation and `_JSXStyle` is heavily optimized for:
+Unique classnames give us style encapsulation and `_JSXStyle` is heavily optimized for:
 
 - Injecting styles upon render
 - Only injecting a certain component's style once (even if the component is included multiple times)
 - Removing unused styles
-- Keeping track of styles for server-side rendering (discussed in the next section)
+- Keeping track of styles for server-side rendering
 
 ### Keeping CSS in separate files
 
-Styles can be defined in separate JavaScript modules e.g.
+Styles can be defined in separate JavaScript modules by tagging with `css` any template literal that contain CSS.
+
+`css` must be imported from `styled-jsx/css`:
 
 ```js
 /* styles.js */
+import css from 'styled-jsx/css'
 
-export const button = `button { color: hotpink; }`
-export default `div { color: green; }`
+export const button = css`button { color: hotpink; }`
+export default css`div { color: green; }`
 ```
 
-and imported as regular strings
+imported as regular strings:
 
 ```jsx
 import styles, { button } from './styles'
@@ -107,15 +138,15 @@ Styles are automatically scoped but if you want you can also consume them as [gl
 N.B. We support CommonJS exports but you can only export one string per module:
 
 ```js
-module.exports = `div { color: green; }`
+module.exports = css`div { color: green; }`
 
 // the following won't work
-// module.exports = { styles: `div { color: green; }` }
+// module.exports = { styles: css`div { color: green; }` }
 ```
 
 ### Targeting The Root
 
-Notice that the parent `<div>` above also gets a `data-jsx` attribute. We do this so that
+Notice that the parent `<div>` from the example above also gets a `jsx-123` classname. We do this so that
 you can target the "root" element, in the same manner that
 [`:host`](https://www.html5rocks.com/en/tutorials/webcomponents/shadowdom-201/#toc-style-host) works with Shadow DOM.
 
@@ -172,6 +203,7 @@ export default () => (
 
     <style jsx>{`
       /* "div" will be prefixed, but ".react-select" won't */
+
       div :global(.react-select) {
         color: red
       }
@@ -182,9 +214,56 @@ export default () => (
 
 ### Dynamic styles
 
+To make a component's visual representation customizable from the outside world, there are three options.
+
+#### Via interpolated dynamic props
+
+Any value that comes from the component's Render scope is treated as dynamic. This makes it possible to use `props` and `state` for example.
+
+```jsx
+const Button = (props) => (
+  <button>
+     { props.children }
+     <style jsx>{`
+        button {
+          padding: ${ 'large' in props ? '50' : '20' }px;
+          background: ${props.theme.background};
+          color: #999;
+          display: inline-block;
+          font-size: 1em;
+        }
+     `}</style>
+  </button>
+)
+```
+
+New styles injection is optimized to perform well at runtime and maintain 60fps.
+Nonetheless we recommend to split static and dynamic styles when possible. The following will be even faster:
+
+```jsx
+const Button = (props) => (
+  <button>
+     { props.children }
+     <style jsx>{`
+        button {
+          color: #999;
+          display: inline-block;
+          font-size: 2em;
+        }
+     `}</style>
+     <style jsx>{`
+        button {
+          padding: ${ 'large' in props ? '50' : '20' }px;
+          background: ${props.theme.background};
+        }
+     `}</style>
+  </button>
+)
+```
+
 #### Via `className` toggling
 
-To make a component's visual representation customizable from the outside world, there are two options. The first one is to pass properties that toggle class names.
+The second option is to pass properties that toggle class names.
 
 ```jsx
 const Button = (props) => (
@@ -208,6 +287,8 @@ Then you would use this component as either `<Button>Hi</Button>` or `<Button la
 
 #### Via inline `style`
 
+***best for animations**
+
 Imagine that you wanted to make the padding in the button above completely customizable. You can override the CSS you configure via inline-styles:
 
 ```jsx
@@ -227,7 +308,7 @@ const Button = ({ padding, children }) => (
 
 In this example, the padding defaults to the one set in `<style>` (`20`), but the user can pass a custom one via `<Button padding={30}>`.
 
-### Constants and Config
+### Constants
 
 It is possible to use constants like so:
 
@@ -249,8 +330,7 @@ const Button = ({ children }) => (
 )
 ```
 
-N.B. Only constants defined outside of the component scope are allowed here.
-If you want to use or toggle dynamic values depending on the component `state` or `props` then we recommend to use one of the techniques from the [Dynamic styles section](#dynamic-styles)
+Please keep in mind that constants defined outside of the component scope are treated as static styles.
 
 ## Server-Side Rendering
 
