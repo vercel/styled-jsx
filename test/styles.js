@@ -7,9 +7,6 @@ import read from './_read'
 
 test('transpile styles with attributes', async t => {
   const src = await read('./fixtures/transform.css')
-  // Use an id that's a number (inside a string) so
-  // that we can test that animations get correctly prefixed
-  // (since CSS forbids them from starting with a number)
   t.snapshot(transform('.jsx-123', src))
 })
 
@@ -108,6 +105,17 @@ test('splits rules for `optimizeForSpeed`', t => {
     [
       '@media (min-width:400px){div{color:red;}span{color:red;}}',
       'a>.p{color:red;}'
+    ]
+  )
+
+  assert(
+    `@media (min-width: 1px) and (max-width: 768px) {
+      [class*='test__test--'] {
+        color: red;
+      }
+    }`,
+    [
+      `@media (min-width:1px) and (max-width:768px){[class*='test__test--']{color:red;}}`
     ]
   )
 

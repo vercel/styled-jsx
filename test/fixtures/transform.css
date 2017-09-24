@@ -153,3 +153,10 @@ test
 {
   outline: none;
 }
+
+@media (min-width: 1px) and (max-width: 768px) {
+  [class*='grid__col--'] {
+    margin-top: 12px;
+    margin-bottom: 12px;
+  }
+}
