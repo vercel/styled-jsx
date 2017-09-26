@@ -9,9 +9,11 @@ import {
   makeStyledJsxCss,
   isValidCss,
   makeSourceMapGenerator,
-  addSourceMaps
+  addSourceMaps,
+  combinePlugins
 } from './_utils'
 
+let plugins
 const getCss = (path, validate = false) => {
   if (!path.isTemplateLiteral() && !path.isStringLiteral()) {
     return
@@ -24,7 +26,6 @@ const getCss = (path, validate = false) => {
 }
 
 const getStyledJsx = (css, opts, path) => {
-  const useSourceMaps = Boolean(opts.sourceMaps)
   const commonHash = hash(css.modified || css)
   const globalHash = `1${commonHash}`
   const scopedHash = `2${commonHash}`
@@ -34,16 +35,17 @@ const getStyledJsx = (css, opts, path) => {
   const prefix = `[${MARKUP_ATTRIBUTE_EXTERNAL}~="${scopedHash}"]`
   const isTemplateLiteral = Boolean(css.modified)
 
-  if (useSourceMaps) {
+  if (opts.sourceMaps) {
     const generator = makeSourceMapGenerator(opts.file)
     const filename = opts.sourceFileName
     const offset = path.get('loc').node.start
     compiledCss = [/* global */ '', prefix].map(prefix =>
       addSourceMaps(
-        transform(prefix, css.modified || css, {
+        transform(prefix, opts.plugins(css.modified || css), {
           generator,
           offset,
-          filename
+          filename,
+          vendorPrefix: opts.vendorPrefix
         }),
         generator,
         filename
@@ -51,7 +53,9 @@ const getStyledJsx = (css, opts, path) => {
     )
   } else {
     compiledCss = ['', prefix].map(prefix =>
-      transform(prefix, css.modified || css)
+      transform(prefix, opts.plugins(css.modified || css), {
+        vendorPrefix: opts.vendorPrefix
+      })
     )
   }
   globalCss = compiledCss[0]
@@ -161,15 +165,28 @@ const callVisitor = (visitor, path, state) => {
   const { opts } = file
   visitor(path, {
     validate: state.opts.validate || opts.validate,
-    sourceMaps: opts.sourceMaps,
+    sourceMaps: state.opts.sourceMaps || opts.sourceMaps,
     sourceFileName: opts.sourceFileName,
-    file
+    file,
+    plugins,
+    vendorPrefix: state.opts.vendorPrefix
   })
 }
 
 export default function() {
   return {
     visitor: {
+      Program(path, state) {
+        if (!plugins) {
+          const { sourceMaps, vendorPrefix } = state.opts
+          plugins = combinePlugins(state.opts.plugins, {
+            sourceMaps: sourceMaps || state.file.opts.sourceMaps,
+            vendorPrefix: typeof vendorPrefix === 'boolean'
+              ? vendorPrefix
+              : true
+          })
+        }
+      },
       ExportDefaultDeclaration(path, state) {
         callVisitor(exportDefaultDeclarationVisitor, path, state)
       },

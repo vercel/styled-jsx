@@ -20,7 +20,8 @@ import {
   validateExpression,
   generateAttribute,
   makeSourceMapGenerator,
-  addSourceMaps
+  addSourceMaps,
+  combinePlugins
 } from './_utils'
 
 import {
@@ -29,15 +30,18 @@ import {
   MARKUP_ATTRIBUTE_EXTERNAL
 } from './_constants'
 
+let plugins
 const getPrefix = id => `[${MARKUP_ATTRIBUTE}="${id}"]`
 const callExternalVisitor = (visitor, path, state) => {
   const { file } = state
   const { opts } = file
   visitor(path, {
     validate: true,
-    sourceMaps: opts.sourceMaps,
+    sourceMaps: state.opts.sourceMaps || opts.sourceMaps,
     sourceFileName: opts.sourceFileName,
-    file
+    file,
+    plugins,
+    vendorPrefix: state.opts.vendorPrefix
   })
 }
 
@@ -298,7 +302,9 @@ export default function({ types: t }) {
           // We replace styles with the function call
           const [id, css, loc] = state.styles.shift()
 
-          const useSourceMaps = Boolean(state.file.opts.sourceMaps)
+          const useSourceMaps = Boolean(
+            state.opts.sourceMaps || state.file.opts.sourceMaps
+          )
           let transformedCss
 
           if (useSourceMaps) {
@@ -307,11 +313,12 @@ export default function({ types: t }) {
             transformedCss = addSourceMaps(
               transform(
                 isGlobal ? '' : getPrefix(state.jsxId),
-                css.modified || css,
+                plugins(css.modified || css),
                 {
                   generator,
                   offset: loc.start,
-                  filename
+                  filename,
+                  vendorPrefix: state.opts.vendorPrefix
                 }
               ),
               generator,
@@ -320,7 +327,10 @@ export default function({ types: t }) {
           } else {
             transformedCss = transform(
               isGlobal ? '' : getPrefix(state.jsxId),
-              css.modified || css
+              plugins(css.modified || css),
+              {
+                vendorPrefix: state.opts.vendorPrefix
+              }
             )
           }
 
@@ -340,6 +350,15 @@ export default function({ types: t }) {
           state.ignoreClosing = null
           state.file.hasJSXStyle = false
           state.imports = []
+          if (!plugins) {
+            const { sourceMaps, vendorPrefix } = state.opts
+            plugins = combinePlugins(state.opts.plugins, {
+              sourceMaps: sourceMaps || state.file.opts.sourceMaps,
+              vendorPrefix: typeof vendorPrefix === 'boolean'
+                ? vendorPrefix
+                : true
+            })
+          }
         },
         exit({ node, scope }, state) {
           if (!(state.file.hasJSXStyle && !scope.hasBinding(STYLE_COMPONENT))) {
