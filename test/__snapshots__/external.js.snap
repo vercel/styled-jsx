@@ -89,8 +89,8 @@ exports[`use external stylesheets (multi-line) 1`] = `
 "import _JSXStyle from 'styled-jsx/style';
 import styles from './styles';
 
-export default (() => <div className={\`jsx-\${styles.__scopedHash}\`} data-jsx>
-    <p className={\`jsx-\${styles.__scopedHash}\`} data-jsx>test</p>
+export default (() => <div className={\`jsx-\${styles.__scopedHash}\`}>
+    <p className={\`jsx-\${styles.__scopedHash}\`}>test</p>
     <_JSXStyle styleId={styles.__scopedHash} css={styles.__scoped} />
   </div>);"
 `;

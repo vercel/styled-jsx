@@ -15,7 +15,7 @@ import {
   processCss
 } from './_utils'
 
-import { MARKUP_ATTRIBUTE, STYLE_COMPONENT } from './_constants'
+import { STYLE_COMPONENT } from './_constants'
 
 export default function({ types: t }) {
   return {
@@ -62,16 +62,6 @@ export default function({ types: t }) {
           name !== STYLE_COMPONENT &&
           name.charAt(0) !== name.charAt(0).toUpperCase()
         ) {
-          for (const { name } of el.attributes) {
-            if (!name) {
-              continue
-            }
-            if (name === MARKUP_ATTRIBUTE || name.name === MARKUP_ATTRIBUTE) {
-              // Avoid double attributes
-              return
-            }
-          }
-
           if (state.jsxId) {
             addClassName(path, state.jsxId)
           }

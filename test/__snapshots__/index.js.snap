@@ -2,9 +2,9 @@
 
 exports[`generates source maps 1`] = `
 "import _JSXStyle from 'styled-jsx/style';
-export default (() => <div className={\\"jsx-2743241663\\"} data-jsx>
-    <p className={\\"jsx-2743241663\\"} data-jsx>test</p>
-    <p className={\\"jsx-2743241663\\"} data-jsx>woot</p>
+export default (() => <div className={\\"jsx-2743241663\\"}>
+    <p className={\\"jsx-2743241663\\"}>test</p>
+    <p className={\\"jsx-2743241663\\"}>woot</p>
     <_JSXStyle styleId={\\"188072295\\"} css={\\"p.jsx-2743241663{color:red}\\\\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNvdXJjZS1tYXBzLmpzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUlnQixBQUNjLFVBQUMiLCJmaWxlIjoic291cmNlLW1hcHMuanMiLCJzb3VyY2VzQ29udGVudCI6WyJleHBvcnQgZGVmYXVsdCAoKSA9PiAoXG4gIDxkaXY+XG4gICAgPHA+dGVzdDwvcD5cbiAgICA8cD53b290PC9wPlxuICAgIDxzdHlsZSBqc3g+eydwIHsgY29sb3I6IHJlZCB9J308L3N0eWxlPlxuICA8L2Rpdj5cbilcbiJdfQ== */\\\\n/*@ sourceURL=source-maps.js */\\"} />
   </div>);"
 `;
@@ -18,10 +18,10 @@ exports[`ignores when attribute is absent 1`] = `
 
 exports[`ignores whitespace around expression container 1`] = `
 "import _JSXStyle from 'styled-jsx/style';
-export default (() => <div className={\\"jsx-2743241663\\"} data-jsx>
-    <p className={\\"jsx-2743241663\\"} data-jsx>test</p>
-    <p className={\\"jsx-2743241663\\"} data-jsx>woot</p>
-    <p className={\\"jsx-2743241663\\"} data-jsx>woot</p>
+export default (() => <div className={\\"jsx-2743241663\\"}>
+    <p className={\\"jsx-2743241663\\"}>test</p>
+    <p className={\\"jsx-2743241663\\"}>woot</p>
+    <p className={\\"jsx-2743241663\\"}>woot</p>
     <_JSXStyle styleId={\\"188072295\\"} css={\\"p.jsx-2743241663{color:red}\\"} />
   </div>);"
 `;
@@ -30,8 +30,8 @@ exports[`mixed global and scoped 1`] = `
 "import _JSXStyle from 'styled-jsx/style';
 const Test = () => <_JSXStyle styleId={\\"188072295\\"} css={\\"p{color:red}\\"} />;
 
-export default (() => <div className={\\"jsx-2673076688\\"} data-jsx>
-    <p className={\\"jsx-2673076688\\"} data-jsx>test</p>
+export default (() => <div className={\\"jsx-2673076688\\"}>
+    <p className={\\"jsx-2673076688\\"}>test</p>
     <_JSXStyle styleId={\\"3149549172\\"} css={\\"body{background:red}\\"} />
     <_JSXStyle styleId={\\"188072295\\"} css={\\"p.jsx-2673076688{color:red}\\"} />
   </div>);"
@@ -42,13 +42,13 @@ exports[`should have different jsx ids 1`] = `
 const color = 'red';
 const otherColor = 'green';
 
-const A = () => <div className={\\"jsx-57381496\\"} data-jsx>
-    <p className={\\"jsx-57381496\\"} data-jsx>test</p>
+const A = () => <div className={\\"jsx-57381496\\"}>
+    <p className={\\"jsx-57381496\\"}>test</p>
     <_JSXStyle styleId={\\"924167211\\"} css={\`p.jsx-57381496{color:\${color}}\`} />
   </div>;
 
-const B = () => <div className={\\"jsx-3099245642\\"} data-jsx>
-    <p className={\\"jsx-3099245642\\"} data-jsx>test</p>
+const B = () => <div className={\\"jsx-3099245642\\"}>
+    <p className={\\"jsx-3099245642\\"}>test</p>
     <_JSXStyle styleId={\\"45234319\\"} css={\`p.jsx-3099245642{color:\${otherColor}}\`} />
   </div>;
 
@@ -60,8 +60,8 @@ export default (() => <div>
 
 exports[`should not add the data-jsx attribute to components instances 1`] = `
 "import _JSXStyle from \\"styled-jsx/style\\";
-const Test = () => <div className={\\"jsx-2529315885\\"} data-jsx>
-    <span className={\\"jsx-2529315885\\"} data-jsx>test</span>
+const Test = () => <div className={\\"jsx-2529315885\\"}>
+    <span className={\\"jsx-2529315885\\"}>test</span>
     <Component />
     <_JSXStyle styleId={\\"1535297024\\"} css={\\"span.jsx-2529315885{color:red}\\"} />
   </div>;"
@@ -72,8 +72,8 @@ exports[`works with class 1`] = `
 export default class {
 
   render() {
-    return <div className={\\"jsx-2101845350\\"} data-jsx>
-        <p className={\\"jsx-2101845350\\"} data-jsx>test</p>
+    return <div className={\\"jsx-2101845350\\"}>
+        <p className={\\"jsx-2101845350\\"}>test</p>
         <_JSXStyle styleId={\\"1891769468\\"} css={\\"p.jsx-2101845350{color:red}\\"} />
       </div>;
   }
@@ -91,8 +91,8 @@ const animationDuration = '200ms';
 const animationName = 'my-cool-animation';
 const obj = { display: 'block' };
 
-export default (({ display }) => <div className={'jsx-3922596756 ' + _JSXStyle.dynamic([['1795062918', [display ? 'block' : 'none']]])} data-jsx>
-    <p className={'jsx-3922596756 ' + _JSXStyle.dynamic([['1795062918', [display ? 'block' : 'none']]])} data-jsx>test</p>
+export default (({ display }) => <div className={'jsx-3922596756 ' + _JSXStyle.dynamic([['1795062918', [display ? 'block' : 'none']]])}>
+    <p className={'jsx-3922596756 ' + _JSXStyle.dynamic([['1795062918', [display ? 'block' : 'none']]])}>test</p>
     <_JSXStyle styleId={\\"3864570373\\"} css={\`p.\${color}.jsx-3922596756{color:\${otherColor};display:\${obj.display}}\`} />
     <_JSXStyle styleId={\\"188072295\\"} css={\\"p.jsx-3922596756{color:red}\\"} />
     <_JSXStyle styleId={\\"964903971\\"} css={\`body{background:\${color}}\`} />
@@ -155,7 +155,7 @@ export default (() => <div className={'jsx-2534288328 ' + \`jsx-\${styles3.__sco
 
 exports[`works with global styles 1`] = `
 "import _JSXStyle from 'styled-jsx/style';
-const Test = () => <div className={\\"jsx-2209073070\\"} data-jsx>
+const Test = () => <div className={\\"jsx-2209073070\\"}>
     <_JSXStyle styleId={\\"3477488769\\"} css={\\"body{color:red}:hover{color:red;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-animation:foo 1s ease-out;animation:foo 1s ease-out}div a{display:none}[data-test]>div{color:red}\\"} />
   </div>;
 
@@ -168,23 +168,23 @@ const attrs = {
   id: 'test'
 };
 
-const Test1 = () => <div className={\\"jsx-2529315885\\"} data-jsx>
-    <span {...attrs} data-test=\\"test\\" className={\\"jsx-2529315885\\" + \\" \\" + (attrs.className != null && attrs.className || \\"\\")} data-jsx>test</span>
+const Test1 = () => <div className={\\"jsx-2529315885\\"}>
+    <span {...attrs} data-test=\\"test\\" className={\\"jsx-2529315885\\" + \\" \\" + (attrs.className != null && attrs.className || \\"\\")}>test</span>
     <Component />
     <_JSXStyle styleId={\\"1535297024\\"} css={\\"span.jsx-2529315885{color:red}\\"} />
   </div>;
 
 const Test2 = () => <span>test</span>;
 
-const Test3 = () => <div className={\\"jsx-2529315885\\"} data-jsx>
-    <span className={\\"jsx-2529315885\\"} data-jsx>test</span>
+const Test3 = () => <div className={\\"jsx-2529315885\\"}>
+    <span className={\\"jsx-2529315885\\"}>test</span>
     <_JSXStyle styleId={\\"1535297024\\"} css={\\"span.jsx-2529315885{color:red}\\"} />
   </div>;
 
 export default class {
   render() {
-    return <div className={\\"jsx-2101845350\\"} data-jsx>
-        <p className={\\"jsx-2101845350\\"} data-jsx>test</p>
+    return <div className={\\"jsx-2101845350\\"}>
+        <p className={\\"jsx-2101845350\\"}>test</p>
         <_JSXStyle styleId={\\"1891769468\\"} css={\\"p.jsx-2101845350{color:red}\\"} />
       </div>;
   }
@@ -193,8 +193,8 @@ export default class {
 
 exports[`works with non styled-jsx styles 1`] = `
 "import _JSXStyle from 'styled-jsx/style';
-export default (() => <div className={\\"jsx-2743241663\\"} data-jsx>
-    <p className={\\"jsx-2743241663\\"} data-jsx>woot</p>
+export default (() => <div className={\\"jsx-2743241663\\"}>
+    <p className={\\"jsx-2743241663\\"}>woot</p>
     <style dangerouslySetInnerHTML={{ __html: \`body { margin: 0; }\` }}></style>
     <_JSXStyle styleId={\\"188072295\\"} css={\\"p.jsx-2743241663{color:red}\\"} />
   </div>);"
@@ -202,10 +202,10 @@ export default (() => <div className={\\"jsx-2743241663\\"} data-jsx>
 
 exports[`works with stateless 1`] = `
 "import _JSXStyle from 'styled-jsx/style';
-export default (() => <div className={\\"jsx-2743241663\\"} data-jsx>
-    <p className={\\"jsx-2743241663\\"} data-jsx>test</p>
-    <p className={\\"jsx-2743241663\\"} data-jsx>woot</p>
-    <p className={\\"jsx-2743241663\\"} data-jsx>woot</p>
+export default (() => <div className={\\"jsx-2743241663\\"}>
+    <p className={\\"jsx-2743241663\\"}>test</p>
+    <p className={\\"jsx-2743241663\\"}>woot</p>
+    <p className={\\"jsx-2743241663\\"}>woot</p>
     <_JSXStyle styleId={\\"188072295\\"} css={\\"p.jsx-2743241663{color:red}\\"} />
   </div>);"
 `;

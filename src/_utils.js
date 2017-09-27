@@ -10,8 +10,7 @@ import {
   STYLE_COMPONENT_ID,
   STYLE_COMPONENT,
   STYLE_COMPONENT_CSS,
-  STYLE_COMPONENT_DYNAMIC,
-  MARKUP_ATTRIBUTE
+  STYLE_COMPONENT_DYNAMIC
 } from './_constants'
 
 const concat = (a, b) => t.binaryExpression('+', a, b)
@@ -73,11 +72,6 @@ export const addClassName = (path, jsxId) => {
 
   path.node.attributes.push(
     t.jSXAttribute(t.jSXIdentifier('className'), className)
-  )
-
-  // Mark the path so that we don't add duplicates later.
-  path.node.attributes.push(
-    t.jSXAttribute(t.jSXIdentifier(MARKUP_ATTRIBUTE), null)
   )
 }
 
