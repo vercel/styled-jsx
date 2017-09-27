@@ -15,11 +15,7 @@ import {
   processCss
 } from './_utils'
 
-import {
-  MARKUP_ATTRIBUTE,
-  STYLE_COMPONENT,
-  MARKUP_ATTRIBUTE_EXTERNAL
-} from './_constants'
+import { MARKUP_ATTRIBUTE, STYLE_COMPONENT } from './_constants'
 
 export default function({ types: t }) {
   return {
@@ -70,12 +66,7 @@ export default function({ types: t }) {
             if (!name) {
               continue
             }
-            if (
-              name === MARKUP_ATTRIBUTE ||
-              name.name === MARKUP_ATTRIBUTE ||
-              name === MARKUP_ATTRIBUTE_EXTERNAL ||
-              name.name === MARKUP_ATTRIBUTE_EXTERNAL
-            ) {
+            if (name === MARKUP_ATTRIBUTE || name.name === MARKUP_ATTRIBUTE) {
               // Avoid double attributes
               return
             }

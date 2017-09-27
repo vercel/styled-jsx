@@ -89,7 +89,8 @@ export const getScope = path =>
       path.isFunctionDeclaration() ||
       path.isArrowFunctionExpression() ||
       path.isClassMethod()
-  ) || path).scope
+  ) || path
+  ).scope
 
 export const isGlobalEl = el =>
   el.attributes.some(({ name }) => name && name.name === GLOBAL_ATTRIBUTE)
