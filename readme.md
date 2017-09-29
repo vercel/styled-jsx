@@ -8,7 +8,7 @@
 Full, scoped and component-friendly CSS support for JSX (rendered on the server or the client).
 
 
- Code and docs are for v2.0.0-beta which we highly recommend you to try. Looking for styled-jsx v1? Switch branch to [master](https://github.com/zeit/styled-jsx/tree/master).
+ Code and docs are for v2.0.0-beta which we highly recommend you to try. Looking for styled-jsx v1? Switch to the [v1 branch](https://github.com/zeit/styled-jsx/tree/v1).
 
 ## Usage
 
