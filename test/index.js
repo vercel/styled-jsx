@@ -77,34 +77,6 @@ test('works with non styled-jsx styles', async t => {
   t.snapshot(code)
 })
 
-test('throws when using `props` or constants defined in the closest scope', async t => {
-  const promises = [1, 2, 3, 4].map(i => {
-    return t.throws(
-      transform(`./fixtures/invalid-expressions/${i}.js`),
-      SyntaxError
-    )
-  })
-
-  await Promise.all(promises)
-})
-
-test('works with external stylesheets', async t => {
-  const { code } = await transform('./fixtures/external-stylesheet.js')
-  t.snapshot(code)
-})
-
-test('works with external stylesheets (multi-line)', async t => {
-  const { code } = await transform(
-    './fixtures/external-stylesheet-multi-line.js'
-  )
-  t.snapshot(code)
-})
-
-test('works with external stylesheets (global only)', async t => {
-  const { code } = await transform('./fixtures/external-stylesheet-global.js')
-  t.snapshot(code)
-})
-
 test('server rendering', t => {
   function App() {
     const color = 'green'
@@ -125,18 +97,18 @@ test('server rendering', t => {
       })
     )
   }
-
   // Expected CSS
   const expected =
-    '<style id="__jsx-style-1">p { color: red }</style>' +
-    '<style id="__jsx-style-2">div { color: blue }</style>' +
-    '<style id="__jsx-style-3">div { color: green }</style>'
+    '<style id="__jsx-1">p { color: red }</style>' +
+    '<style id="__jsx-2">div { color: blue }</style>' +
+    '<style id="__jsx-3">div { color: green }</style>'
 
   // Render using react
   ReactDOM.renderToString(React.createElement(App))
   const html = ReactDOM.renderToStaticMarkup(
     React.createElement('head', null, flush())
   )
+
   t.is(html, `<head>${expected}</head>`)
 
   // Assert that memory is empty

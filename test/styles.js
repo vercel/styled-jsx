@@ -7,10 +7,7 @@ import read from './_read'
 
 test('transpile styles with attributes', async t => {
   const src = await read('./fixtures/transform.css')
-  // Use an id that's a number (inside a string) so
-  // that we can test that animations get correctly prefixed
-  // (since CSS forbids them from starting with a number)
-  t.snapshot(transform('[data-jsx="123"]', src))
+  t.snapshot(transform('.jsx-123', src))
 })
 
 test('throws when using nesting', t => {
@@ -46,7 +43,7 @@ test('throws when using nesting', t => {
 
   fixtures.forEach(fixture => {
     t.throws(() => transform('', fixture))
-    t.throws(() => transform('[data-jsx="123"]', fixture))
+    t.throws(() => transform('.jsx-123', fixture))
   })
 })
 
@@ -77,6 +74,114 @@ test("doesn't throw when using at-rules", t => {
 
   fixtures.forEach(fixture => {
     t.notThrows(() => transform('', fixture))
-    t.notThrows(() => transform('[data-jsx="123"]', fixture))
+    t.notThrows(() => transform('.jsx-123', fixture))
   })
+})
+
+test('splits rules for `optimizeForSpeed`', t => {
+  function assert(input, expected, prefix = '') {
+    t.deepEqual(transform(prefix, input, { splitRules: true }), expected)
+  }
+
+  assert('div { color: red }', ['div{color:red;}'])
+
+  assert('div { color: red } .p { color: red }', [
+    'div{color:red;}',
+    '.p{color:red;}'
+  ])
+
+  assert('div, span { color: red } a > .p { color: red }', [
+    'div,span{color:red;}',
+    'a>.p{color:red;}'
+  ])
+
+  assert(
+    '@media (min-width: 400px) { div, span { color: red } } a > .p { color: red }',
+    ['@media (min-width:400px){div,span{color:red;}}', 'a>.p{color:red;}']
+  )
+
+  assert(
+    '@media (min-width: 400px) { div { color: red } span { color: red } } a > .p { color: red }',
+    [
+      '@media (min-width:400px){div{color:red;}span{color:red;}}',
+      'a>.p{color:red;}'
+    ]
+  )
+
+  assert(
+    `@media (min-width: 1px) and (max-width: 768px) {
+      [class*='test__test--'] {
+        color: red;
+      }
+    }`,
+    [
+      `@media (min-width:1px) and (max-width:768px){[class*='test__test--']{color:red;}}`
+    ]
+  )
+
+  assert(
+    'span { color: red } @font-face { font-family: test; src: url(test.woff); } div { color: red }',
+    [
+      'span{color:red;}',
+      '@font-face{font-family:test;src:url(test.woff);}',
+      'div{color:red;}'
+    ]
+  )
+
+  assert('@charset "UTF-8"', ['@charset "UTF-8"'])
+
+  assert('@import "./test.css"', ['@import "./test.css"'])
+
+  assert(
+    `
+    @keyframes test {
+      0% { opacity: 0 }
+      100% { opacity: 1 }
+    }
+  `,
+    [
+      '@-webkit-keyframes test{0%{opacity:0;}100%{opacity:1;}}',
+      '@keyframes test{0%{opacity:0;}100%{opacity:1;}}'
+    ]
+  )
+
+  assert(
+    `
+    @supports (display: flex) {
+      div { display: flex; }
+    }
+  `,
+    [
+      '@supports (display:flex){div{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}}'
+    ]
+  )
+
+  assert(
+    `
+    @import "./test.css";
+    @supports (display: flex) {
+      div { display: flex; }
+    }
+    div { color: red }
+    a, div { color: red }
+    @import "./test.css";
+    @media (min-width: 400px) { div, span { color: red } }
+  `,
+    [
+      '@import "./test.css"',
+      '@supports (display:flex){div{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}}',
+      'div{color:red;}',
+      'a,div{color:red;}',
+      '@import "./test.css"',
+      '@media (min-width:400px){div,span{color:red;}}'
+    ]
+  )
+
+  assert('@namespace url(http://www.w3.org/1999/xhtml)', [
+    '@namespace url(http://www.w3.org/1999/xhtml)'
+  ])
+  assert('@namespace svg url(http://www.w3.org/2000/svg)', [
+    '@namespace svg url(http://www.w3.org/2000/svg)'
+  ])
+  assert('@page :first { margin: 1in; }', ['@page :first{margin:1in;}'])
 })

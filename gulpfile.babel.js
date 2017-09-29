@@ -10,11 +10,19 @@ import size from 'human-size'
 import benchmark from 'gulp-benchmark'
 
 gulp.task('transpile', () => {
-  gulp.src('src/**/*.js').pipe(babel()).pipe(gulp.dest('dist'))
+  gulp
+    .src('src/**/*.js')
+    .pipe(babel())
+    .pipe(gulp.dest('dist'))
 })
 
 gulp.task('runtime-size', async () => {
-  const files = ['flush.js', 'server.js', 'memory.js', 'render.js', 'style.js']
+  const files = [
+    'stylesheet-registry.js',
+    'server.js',
+    'style.js',
+    'lib/stylesheet.js'
+  ]
 
   const result = await Promise.all(
     files.map(f => join(__dirname, 'src', f)).map(transform)
@@ -58,6 +66,7 @@ gulp.task('benchmark', () => {
 
 gulp.task('watch', () => {
   gulp.watch('src/*', ['transpile'])
+  gulp.watch('src/lib/*', ['transpile'])
   gulp.watch('benchmark/*.js', ['benchmark'])
 })
 

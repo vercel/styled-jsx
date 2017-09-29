@@ -31,8 +31,7 @@
   },
   "ava": {
     "require": [
-      "babel-register",
-      "./test/helpers/_browser-env.js"
+      "babel-register"
     ],
     "babel": "inherit"
   },
@@ -44,7 +43,10 @@
     "extends": "prettier",
     "ignores": [
       "lib/style-transform.js"
-    ]
+    ],
+    "rules": {
+      "capitalized-comments": 0
+    }
   },
   "lint-staged": {
     "*.js": [
@@ -55,12 +57,8 @@
   },
   "dependencies": {
     "babel-plugin-syntax-jsx": "6.18.0",
-    "babel-traverse": "6.21.0",
     "babel-types": "6.23.0",
-    "babylon": "6.14.1",
     "convert-source-map": "1.3.0",
-    "css-tree": "1.0.0-alpha17",
-    "escape-string-regexp": "1.0.5",
     "source-map": "0.5.6",
     "string-hash": "1.1.1",
     "stylis": "3.2.18"
@@ -76,7 +74,6 @@
     "babel-preset-stage-3": "6.22.0",
     "babel-register": "6.18.0",
     "benchmark": "2.1.3",
-    "browser-env": "2.0.31",
     "eslint-config-prettier": "^2.1.0",
     "gulp": "3.9.1",
     "gulp-babel": "6.1.2",
@@ -86,8 +83,9 @@
     "lint-staged": "^3.4.2",
     "mz": "2.6.0",
     "prettier": "^1.5.2",
-    "react": "15.4.1",
-    "react-dom": "15.4.1",
+    "react": "15.6.1",
+    "react-dom": "15.6.1",
+    "react-jsdom": "^2.0.5",
     "xo": "0.18.2"
   },
   "peerDependencies": {

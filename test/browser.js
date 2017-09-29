@@ -1,27 +1,28 @@
 import test from 'ava'
 import React from 'react'
-import ReactDOM from 'react-dom'
-// eslint-disable-next-line no-unused-vars
-import JSXStyle from '../src/style'
+import ReactJSDOM from 'react-jsdom'
 
 test('Renders styles and updates them', t => {
-  const mountPoint = document.createElement('div')
-  document.body.appendChild(mountPoint)
-
-  const getStyles = () =>
-    [].slice
-      .call(document.querySelectorAll('style'))
-      .map(s => s.textContent)
-      .join('\n')
+  // Workaround so that JSXStyle works as if it was running on a browser.
+  const originalWindow = global.window
+  global.window = true
+  // eslint-disable-next-line no-unused-vars
+  const JSXStyle = require('../src/style').default
 
   // eslint-disable-next-line no-unused-vars
   class Component extends React.Component {
     constructor(props) {
       super(props)
       this.state = {
-        styleId: 345,
+        styleId: '345',
         css: 'div { font-size: 10px }'
       }
+    }
+    getStyles() {
+      return [].slice
+        .call(document.querySelectorAll('style'))
+        .map(s => s.textContent)
+        .join('\n')
     }
     getExpectedStyles() {
       const { styleId, css } = this.state
@@ -29,11 +30,10 @@ test('Renders styles and updates them', t => {
     }
     componentDidMount() {
       t.is(
-        getStyles(),
+        this.getStyles(),
         this.getExpectedStyles(),
         'styles not rendered correctly'
       )
-
       // Now update styles
       this.setState({
         styleId: 678,
@@ -42,22 +42,22 @@ test('Renders styles and updates them', t => {
     }
     componentDidUpdate() {
       t.is(
-        getStyles(),
+        this.getStyles(),
         this.getExpectedStyles(),
         'styles not updated correctly'
       )
-      // @TODO(giuseppeg) very hackish way to do clean up, find a better way to do so.
-      document.documentElement.innerHTML = ''
     }
     render() {
       const { styleId, css } = this.state
       return (
         <div>
-          <JSXStyle styleId={123} css={'/*123*/div { color: red }'} />
+          <JSXStyle styleId={'123'} css={'/*123*/div { color: red }'} />
           <JSXStyle styleId={styleId} css={`/*${styleId}*/${css}`} />
         </div>
       )
     }
   }
-  ReactDOM.render(<Component />, mountPoint)
+
+  ReactJSDOM.render(<Component />)
+  global.window = originalWindow
 })

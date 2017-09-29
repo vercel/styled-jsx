@@ -1,94 +1,113 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`transpiles external stylesheets (CommonJS modules) 1`] = `
-"var __styledJsxDefaultExport = new String(\\"div{font-size:3em}\\");
+exports[`(optimized) transpiles external stylesheets (CommonJS modules) 1`] = `
+"const _defaultExport = ['div{font-size:3em;}'];
+_defaultExport.__hash = '7060342740';
+_defaultExport.__scoped = ['div.jsx-7060342741{font-size:3em;}'];
+_defaultExport.__scopedHash = '7060342741';
 
-__styledJsxDefaultExport.__hash = \\"1706034274\\";
-__styledJsxDefaultExport.__scoped = \\"div[data-jsx-ext~=\\\\\\"2706034274\\\\\\"]{font-size:3em}\\";
-__styledJsxDefaultExport.__scopedHash = \\"2706034274\\";
-module.exports = __styledJsxDefaultExport;"
+
+module.exports = _defaultExport;"
+`;
+
+exports[`(optimized) transpiles external stylesheets 1`] = `
+"
+
+const color = 'red';
+
+const bar = ['div{font-size:3em;}'];
+bar.__hash = '7060342740';
+bar.__scoped = ['div.jsx-7060342741{font-size:3em;}'];
+bar.__scopedHash = '7060342741';
+export const uh = bar;
+
+export const foo = [\`div{color:\${color};}\`];
+
+foo.__hash = '31421784000';
+foo.__scoped = [\`div.jsx-31421784001{color:\${color};}\`];
+foo.__scopedHash = '31421784001';
+const _defaultExport = ['div{font-size:3em;}', \`p{color:\${color};}\`];
+_defaultExport.__hash = '40416528930';
+_defaultExport.__scoped = ['div.jsx-40416528931{font-size:3em;}', \`p.jsx-40416528931{color:\${color};}\`];
+_defaultExport.__scopedHash = '40416528931';
+export default _defaultExport;"
+`;
+
+exports[`transpiles external stylesheets (CommonJS modules) 1`] = `
+"const _defaultExport = new String('div{font-size:3em}');
+
+_defaultExport.__hash = '7060342740';
+_defaultExport.__scoped = 'div.jsx-7060342741{font-size:3em}';
+_defaultExport.__scopedHash = '7060342741';
+
+
+module.exports = _defaultExport;"
 `;
 
 exports[`transpiles external stylesheets 1`] = `
-"const color = 'red';
+"
+
+const color = 'red';
+
+const bar = new String('div{font-size:3em}');
+bar.__hash = '7060342740';
+bar.__scoped = 'div.jsx-7060342741{font-size:3em}';
+bar.__scopedHash = '7060342741';
+export const uh = bar;
 
 export const foo = new String(\`div{color:\${color}}\`);
 
-foo.__hash = '166851635';
-foo.__scoped = \`div[data-jsx-ext~=\\"266851635\\"]{color:\${color}}\`;
-foo.__scopedHash = '266851635';
+foo.__hash = '31421784000';
+foo.__scoped = \`div.jsx-31421784001{color:\${color}}\`;
+foo.__scopedHash = '31421784001';
 
-var __styledJsxDefaultExport = new String(\`div{font-size:3em}p{color:\${color}}\`);
+const _defaultExport = new String(\`div{font-size:3em}p{color:\${color}}\`);
 
-__styledJsxDefaultExport.__hash = '12602670606';
-__styledJsxDefaultExport.__scoped = \`div[data-jsx-ext~=\\"22602670606\\"]{font-size:3em}p[data-jsx-ext~=\\"22602670606\\"]{color:\${color}}\`;
-__styledJsxDefaultExport.__scopedHash = '22602670606';
-export default __styledJsxDefaultExport;"
+_defaultExport.__hash = '40416528930';
+_defaultExport.__scoped = \`div.jsx-40416528931{font-size:3em}p.jsx-40416528931{color:\${color}}\`;
+_defaultExport.__scopedHash = '40416528931';
+export default _defaultExport;"
 `;
 
-exports[`transpiles external stylesheets with validation (expressions) 1`] = `
-"const expr = 'test';
+exports[`use external stylesheets (global only) 1`] = `
+"import _JSXStyle from 'styled-jsx/style';
+import styles, { foo as styles3 } from './styles';
 
-var __styledJsxDefaultExport = new String(\`\${expr} \${expr} \${expr},div{display:\${expr};color:\${expr};\${expr};\${expr} \${expr};background:red;-webkit-animation:\${expr} 10s ease-out;animation:\${expr} 10s ease-out}div{color:red;\${expr}}div{color:red;\${expr}}@media (\${expr}){\${expr} span.\${expr}{color:red}\${expr} \${expr}{color:red}\${expr},\${expr}{color:red}\${expr} div,\${expr}{color:red}}@media (min-width:\${expr}){div.\${expr}{color:red}all\${expr}{\${expr} color:red}}@font-face{\${expr}}\`);
+const styles2 = require('./styles2');
 
-__styledJsxDefaultExport.__hash = '12538838655';
-__styledJsxDefaultExport.__scoped = \`\${expr}[data-jsx-ext~=\\"22538838655\\"] \${expr}[data-jsx-ext~=\\"22538838655\\"] \${expr}[data-jsx-ext~=\\"22538838655\\"],div[data-jsx-ext~=\\"22538838655\\"]{display:\${expr};color:\${expr};\${expr};\${expr} \${expr};background:red;-webkit-animation:\${expr} 10s ease-out;animation:\${expr} 10s ease-out}div[data-jsx-ext~=\\"22538838655\\"]{color:red;\${expr}}div[data-jsx-ext~=\\"22538838655\\"]{color:red;\${expr}}@media (\${expr}){\${expr} span.\${expr}[data-jsx-ext~=\\"22538838655\\"]{color:red}\${expr} \${expr}[data-jsx-ext~=\\"22538838655\\"]{color:red}\${expr}[data-jsx-ext~=\\"22538838655\\"],\${expr}[data-jsx-ext~=\\"22538838655\\"]{color:red}\${expr} div[data-jsx-ext~=\\"22538838655\\"],\${expr}[data-jsx-ext~=\\"22538838655\\"]{color:red}}@media (min-width:\${expr}){div.\${expr}[data-jsx-ext~=\\"22538838655\\"]{color:red}all\${expr}[data-jsx-ext~=\\"22538838655\\"]{\${expr} color:red}}@font-face{\${expr}}\`;
-__styledJsxDefaultExport.__scopedHash = '22538838655';
-export default __styledJsxDefaultExport;"
+export default (() => <div>
+    <p>test</p>
+    <div>woot</div>
+    <p>woot</p>
+    <_JSXStyle styleId={styles2.__hash} css={styles2} />
+    <_JSXStyle styleId={styles3.__hash} css={styles3} />
+    <_JSXStyle styleId={styles.__hash} css={styles} />
+  </div>);"
 `;
 
-exports[`transpiles external stylesheets with validation 1`] = `
-"const color = 'red';
+exports[`use external stylesheets (multi-line) 1`] = `
+"import _JSXStyle from 'styled-jsx/style';
+import styles from './styles';
 
-export const foo = new String(\`div{color:\${color}}\`);
-
-foo.__hash = '166851635';
-foo.__scoped = \`div[data-jsx-ext~=\\"266851635\\"]{color:\${color}}\`;
-foo.__scopedHash = '266851635';
-
-var __styledJsxDefaultExport = new String(\`div{font-size:3em}p{color:\${color}}\`);
-
-__styledJsxDefaultExport.__hash = '12602670606';
-__styledJsxDefaultExport.__scoped = \`div[data-jsx-ext~=\\"22602670606\\"]{font-size:3em}p[data-jsx-ext~=\\"22602670606\\"]{color:\${color}}\`;
-__styledJsxDefaultExport.__scopedHash = '22602670606';
-export default __styledJsxDefaultExport;"
+export default (() => <div className={\`jsx-\${styles.__scopedHash}\`}>
+    <p className={\`jsx-\${styles.__scopedHash}\`}>test</p>
+    <_JSXStyle styleId={styles.__scopedHash} css={styles.__scoped} />
+  </div>);"
 `;
 
-exports[`transpiles external stylesheets with validation 2`] = `
-"const expr = 'test';
+exports[`use external stylesheets 1`] = `
+"import _JSXStyle from 'styled-jsx/style';
+import styles from './styles';
+const styles2 = require('./styles2');
+import { foo as styles3 } from './styles';
 
-export const expressionsTest = \`
-  div {
-  display: \${expr};
-    color: \${expr};
-    \${expr};
-    \${expr}
-    \${expr};
-    background: red;
-  animation: \${expr} 10s ease-out;
-  }
-
-  @media (\${expr}) {
-   div.\${expr} {
-    color: red;
-   }
-   \${expr}
-  \${expr} {
-    color: red;
-  }
-  }
-
-  @media (min-width: \${expr}) {
-   div.\${expr} {
-    color: red;
-   }
-  all\${expr} {
-    color: red;
-  }
-  }
-
-  @font-face {
-    \${expr}
-  }
-\`;"
+export default (() => <div className={'jsx-2534288328 ' + \`jsx-\${styles3.__scopedHash} jsx-\${styles.__scopedHash}\`} data-jsx>
+    <p className={'jsx-2534288328 ' + \`jsx-\${styles3.__scopedHash} jsx-\${styles.__scopedHash}\`} data-jsx>test</p>
+    <p className={'jsx-2534288328 ' + \`jsx-\${styles3.__scopedHash} jsx-\${styles.__scopedHash}\`} data-jsx>woot</p>
+    <_JSXStyle styleId={styles2.__hash} css={styles2} />
+    <_JSXStyle styleId={styles3.__scopedHash} css={styles3.__scoped} />
+    <div className={'jsx-2534288328 ' + \`jsx-\${styles3.__scopedHash} jsx-\${styles.__scopedHash}\`} data-jsx>woot</div>
+    <_JSXStyle styleId={\\"1144769207\\"} css={\\"p.jsx-2534288328{color:red}div.jsx-2534288328{color:green}\\"} />
+    <_JSXStyle styleId={styles.__scopedHash} css={styles.__scoped} />
+  </div>);"
 `;
