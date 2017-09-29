@@ -1,25 +1,34 @@
 import { Component } from 'react'
-import render from './render'
+import StyleSheetRegistry from './stylesheet-registry'
 
-let components = []
+const styleSheetRegistry = new StyleSheetRegistry()
 
-export default class extends Component {
+export default class JSXStyle extends Component {
+  static dynamic(info) {
+    return info
+      .map(tagInfo => {
+        const [baseId, props] = tagInfo
+        return styleSheetRegistry.computeId(baseId, props)
+      })
+      .join(' ')
+  }
+
   componentWillMount() {
-    mount(this)
+    styleSheetRegistry.add(this.props)
+  }
+
+  shouldComponentUpdate(nextProps) {
+    return this.props.css !== nextProps.css
   }
 
   // To avoid FOUC, we process new changes
   // on `componentWillUpdate` rather than `componentDidUpdate`.
   componentWillUpdate(nextProps) {
-    update({
-      instance: this,
-      styleId: nextProps.styleId,
-      css: nextProps.css
-    })
+    styleSheetRegistry.update(this.props, nextProps)
   }
 
   componentWillUnmount() {
-    unmount(this)
+    styleSheetRegistry.remove(this.props)
   }
 
   render() {
@@ -27,42 +36,8 @@ export default class extends Component {
   }
 }
 
-function stylesMap(updated) {
-  const ret = new Map()
-  for (const c of components) {
-    if (updated && c === updated.instance) {
-      // On `componentWillUpdate`
-      // we use `styleId` and `css` from updated component rather than reading `props`
-      // from the component since they haven't been updated yet.
-      ret.set(updated.styleId, updated.css)
-    } else {
-      ret.set(c.props.styleId, c.props.css)
-    }
-  }
-  return ret
-}
-
 export function flush() {
-  const ret = stylesMap()
-  components = []
-  return ret
-}
-
-function mount(component) {
-  components.push(component)
-  update()
-}
-
-function unmount(component) {
-  const i = components.indexOf(component)
-  if (i < 0) {
-    return
-  }
-
-  components.splice(i, 1)
-  update()
-}
-
-function update(updates) {
-  render(stylesMap(updates))
+  const cssRules = styleSheetRegistry.cssRules()
+  styleSheetRegistry.flush()
+  return new Map(cssRules)
 }

@@ -2,14 +2,11 @@ import css from 'styled-jsx/css'
 
 const color = 'red'
 
-const bar = css`
-  div { font-size: 3em }
-`
-export const uh = bar
-
 export const foo = css`div { color: ${color}}`
 
+const props = { color: 'red ' }
+
 export default css`
-  div { font-size: 3em }
-  p { color: ${color};}
+  div { font-size: 3em; color: ${props.color} }
+  p { color: ${this.props.color};}
 `

@@ -1,45 +1,21 @@
 // Packages
 import jsx from 'babel-plugin-syntax-jsx'
-import hash from 'string-hash'
 
-// Ours
-import transform from './lib/style-transform'
-import {
-  exportDefaultDeclarationVisitor,
-  namedExportDeclarationVisitor,
-  moduleExportsVisitor
-} from './babel-external'
+import { visitor as externalStylesVisitor } from './babel-external'
 
 import {
   isGlobalEl,
   isStyledJsx,
   findStyles,
-  getExpressionText,
-  restoreExpressions,
   makeStyledJsxTag,
-  validateExpression,
-  generateAttribute,
-  makeSourceMapGenerator,
-  addSourceMaps
+  getJSXStyleInfo,
+  computeClassNames,
+  addClassName,
+  getScope,
+  processCss
 } from './_utils'
 
-import {
-  MARKUP_ATTRIBUTE,
-  STYLE_COMPONENT,
-  MARKUP_ATTRIBUTE_EXTERNAL
-} from './_constants'
-
-const getPrefix = id => `[${MARKUP_ATTRIBUTE}="${id}"]`
-const callExternalVisitor = (visitor, path, state) => {
-  const { file } = state
-  const { opts } = file
-  visitor(path, {
-    validate: true,
-    sourceMaps: opts.sourceMaps,
-    sourceFileName: opts.sourceFileName,
-    file
-  })
-}
+import { STYLE_COMPONENT } from './_constants'
 
 export default function({ types: t }) {
   return {
@@ -86,31 +62,8 @@ export default function({ types: t }) {
           name !== STYLE_COMPONENT &&
           name.charAt(0) !== name.charAt(0).toUpperCase()
         ) {
-          for (const { name } of el.attributes) {
-            if (!name) {
-              continue
-            }
-            if (
-              name === MARKUP_ATTRIBUTE ||
-              name.name === MARKUP_ATTRIBUTE ||
-              name === MARKUP_ATTRIBUTE_EXTERNAL ||
-              name.name === MARKUP_ATTRIBUTE_EXTERNAL
-            ) {
-              // Avoid double attributes
-              return
-            }
-          }
-
           if (state.jsxId) {
-            el.attributes.push(
-              generateAttribute(MARKUP_ATTRIBUTE, t.numericLiteral(state.jsxId))
-            )
-          }
-
-          if (state.externalJsxId) {
-            el.attributes.push(
-              generateAttribute(MARKUP_ATTRIBUTE_EXTERNAL, state.externalJsxId)
-            )
+            addClassName(path, state.jsxId)
           }
         }
 
@@ -132,12 +85,7 @@ export default function({ types: t }) {
           state.styles = []
           state.externalStyles = []
 
-          const scope = (path.findParent(
-            path =>
-              path.isFunctionDeclaration() ||
-              path.isArrowFunctionExpression() ||
-              path.isClassMethod()
-          ) || path).scope
+          const scope = getScope(path)
 
           for (const style of styles) {
             // Compute children excluding whitespace
@@ -171,14 +119,14 @@ export default function({ types: t }) {
             if (t.isIdentifier(expression)) {
               const idName = expression.node.name
               if (state.imports.indexOf(idName) !== -1) {
-                const id = t.identifier(idName)
+                const externalStylesIdentifier = t.identifier(idName)
                 const isGlobal = isGlobalEl(style.get('openingElement').node)
                 state.externalStyles.push([
                   t.memberExpression(
-                    id,
+                    externalStylesIdentifier,
                     t.identifier(isGlobal ? '__hash' : '__scopedHash')
                   ),
-                  id,
+                  externalStylesIdentifier,
                   isGlobal
                 ])
                 continue
@@ -204,16 +152,10 @@ export default function({ types: t }) {
               )
             }
 
-            // Validate MemberExpressions and Identifiers
-            // to ensure that are constants not defined in the closest scope
-            validateExpression(expression, scope)
-
-            const styleText = getExpressionText(expression)
-            const styleId = hash(styleText.source || styleText)
-
-            state.styles.push([styleId, styleText, expression.node.loc])
+            state.styles.push(getJSXStyleInfo(expression, scope))
           }
 
+          let externalJsxId
           if (state.externalStyles.length > 0) {
             const expressions = state.externalStyles
               // Remove globals
@@ -223,17 +165,15 @@ export default function({ types: t }) {
             const expressionsLength = expressions.length
 
             if (expressionsLength === 0) {
-              state.externalJsxId = null
-            } else if (expressionsLength === 1) {
-              state.externalJsxId = expressions[0]
+              externalJsxId = null
             } else {
               // Construct a template literal of this form:
               // `${styles.__scopedHash} ${otherStyles.__scopedHash}`
-              state.externalJsxId = t.templateLiteral(
+              externalJsxId = t.templateLiteral(
                 [
-                  t.templateElement({ raw: '', cooked: '' }),
+                  t.templateElement({ raw: 'jsx-', cooked: '' }),
                   ...[...new Array(expressionsLength - 1)].map(() =>
-                    t.templateElement({ raw: ' ', cooked: ' ' })
+                    t.templateElement({ raw: ' jsx-', cooked: ' ' })
                   ),
                   t.templateElement({ raw: '', cooked: '' }, true)
                 ],
@@ -242,10 +182,13 @@ export default function({ types: t }) {
             }
           }
 
-          if (state.styles.length > 0) {
-            state.jsxId = hash(
-              state.styles.map(s => s[1].source || s[1]).join('')
+          if (state.styles.length > 0 || externalJsxId) {
+            const { staticClassName, attribute } = computeClassNames(
+              state.styles,
+              externalJsxId
             )
+            state.jsxId = attribute
+            state.staticClassName = staticClassName
           }
 
           state.hasJSXStyle = true
@@ -275,19 +218,15 @@ export default function({ types: t }) {
               return expression && expression.isIdentifier()
             }).length === 1
           ) {
-            const [
-              id,
-              externalStylesReference,
-              isGlobal
-            ] = state.externalStyles.shift()
+            const [id, css, isGlobal] = state.externalStyles.shift()
 
             path.replaceWith(
               makeStyledJsxTag(
                 id,
                 isGlobal
-                  ? externalStylesReference
+                  ? css
                   : t.memberExpression(
-                      t.identifier(externalStylesReference.name),
+                      t.identifier(css.name),
                       t.identifier('__scoped')
                     )
               )
@@ -295,43 +234,26 @@ export default function({ types: t }) {
             return
           }
 
-          // We replace styles with the function call
-          const [id, css, loc] = state.styles.shift()
-
-          const useSourceMaps = Boolean(state.file.opts.sourceMaps)
-          let transformedCss
-
-          if (useSourceMaps) {
-            const generator = makeSourceMapGenerator(state.file)
-            const filename = state.file.opts.sourceFileName
-            transformedCss = addSourceMaps(
-              transform(
-                isGlobal ? '' : getPrefix(state.jsxId),
-                css.modified || css,
-                {
-                  generator,
-                  offset: loc.start,
-                  filename
-                }
-              ),
-              generator,
-              filename
-            )
-          } else {
-            transformedCss = transform(
-              isGlobal ? '' : getPrefix(state.jsxId),
-              css.modified || css
-            )
+          const stylesInfo = {
+            ...state.styles.shift(),
+            fileInfo: {
+              file: state.file,
+              sourceFileName: state.file.opts.sourceFileName,
+              sourceMaps: state.file.opts.sourceMaps
+            },
+            staticClassName: state.staticClassName,
+            isGlobal
           }
+          const splitRules =
+            typeof state.opts.optimizeForSpeed === 'boolean'
+              ? state.opts.optimizeForSpeed
+              : process.env.NODE_ENV === 'production'
 
-          if (css.replacements) {
-            transformedCss = restoreExpressions(
-              transformedCss,
-              css.replacements
-            )
-          }
+          const { hash, css, expressions } = processCss(stylesInfo, {
+            splitRules
+          })
 
-          path.replaceWith(makeStyledJsxTag(id, transformedCss, css.modified))
+          path.replaceWith(makeStyledJsxTag(hash, css, expressions))
         }
       },
       Program: {
@@ -354,16 +276,9 @@ export default function({ types: t }) {
           node.body.unshift(importDeclaration)
         }
       },
-      // Transpile external StyleSheets
-      ExportDefaultDeclaration(path, state) {
-        callExternalVisitor(exportDefaultDeclarationVisitor, path, state)
-      },
-      MemberExpression(path, state) {
-        callExternalVisitor(moduleExportsVisitor, path, state)
-      },
-      ExportNamedDeclaration(path, state) {
-        callExternalVisitor(namedExportDeclarationVisitor, path, state)
-      }
+
+      // Transpile external styles
+      ...externalStylesVisitor
     }
   }
 }
