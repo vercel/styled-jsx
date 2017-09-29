@@ -8,16 +8,14 @@
 Full, scoped and component-friendly CSS support for JSX (rendered on the server or the client).
 
 
-<small>
-  Code and docs are for v2.0-beta which we highly recommend you to try. Looking for styled-jsx v1? Switch branch to [master](./master).
-</small>
+ Code and docs are for v2.0.0-beta which we highly recommend you to try. Looking for styled-jsx v1? Switch branch to [master](https://github.com/zeit/styled-jsx/tree/master).
 
 ## Usage
 
 Firstly, install the package:
 
 ```bash
-npm install --save styled-jsx
+npm install --save styled-jsx@beta
 ```
 
 Next, add `styled-jsx/babel` to `plugins` in your babel configuration:
@@ -79,7 +77,7 @@ Beware that when using this option source maps cannot be generated and styles ca
 - High-performance runtime-CSS-injection when not server-rendering
 - Future-proof: Equivalent to server-renderable "Shadow CSS"
 - Source maps support
-- Dynamic styles and themes support ***new**
+- Dynamic styles and themes support \***new**
 
 ## How It Works
 
@@ -133,7 +131,7 @@ export default () => (
 )
 ```
 
-Styles are automatically scoped but if you want you can also consume them as [globals](#global-styles).
+Styles are automatically scoped but you can also be consumed as [globals](#global-styles).
 
 N.B. We support CommonJS exports but you can only export one string per module:
 
@@ -214,11 +212,11 @@ export default () => (
 
 ### Dynamic styles
 
-To make a component's visual representation customizable from the outside world, there are three options.
+To make a component's visual representation customizable from the outside world there are three options.
 
 #### Via interpolated dynamic props
 
-Any value that comes from the component's Render scope is treated as dynamic. This makes it possible to use `props` and `state` for example.
+Any value that comes from the component's `render` method scope is treated as dynamic. This makes it possible to use `props` and `state` for example.
 
 ```jsx
 const Button = (props) => (
@@ -237,8 +235,9 @@ const Button = (props) => (
 )
 ```
 
-New styles injection is optimized to perform well at runtime and maintain 60fps.
-Nonetheless we recommend to split static and dynamic styles when possible. The following will be even faster:
+New styles' injection is optimized to perform well at runtime.
+
+That said when your CSS is mostly static we recommend to split it up in static and dynamic styles and use two separate `style` tags so that, when changing, only the dynamic parts are recomputed/rendered.
 
 ```jsx
 const Button = (props) => (
@@ -287,7 +286,7 @@ Then you would use this component as either `<Button>Hi</Button>` or `<Button la
 
 #### Via inline `style`
 
-***best for animations**
+\***best for animations**
 
 Imagine that you wanted to make the padding in the button above completely customizable. You can override the CSS you configure via inline-styles:
 
