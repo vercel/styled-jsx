@@ -84,13 +84,7 @@ export default function({ types: t }) {
           state.styles = []
           state.externalStyles = []
 
-          const scope = (path.findParent(
-            path =>
-              path.isFunctionDeclaration() ||
-              path.isArrowFunctionExpression() ||
-              path.isClassMethod()
-          ) || path
-          ).scope
+          const scope = getScope(path)
 
           for (const style of styles) {
             // Compute children excluding whitespace
@@ -274,12 +268,7 @@ export default function({ types: t }) {
             splitRules
           })
 
-          path.replaceWith(makeStyledJsxTag(id, transformedCss, css.modified))
-          if (styleElementInArrayChildren) {
-            state.hasJSXStyle = null
-            state.jsxId = null
-            state.externalJsxId = null
-          }
+          path.replaceWith(makeStyledJsxTag(hash, css, expressions))
         }
       },
       Program: {

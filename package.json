@@ -85,6 +85,7 @@
     "prettier": "^1.5.2",
     "react": "^16.0.0-rc.3",
     "react-dom": "^16.0.0-rc.3",
+    "react-jsdom": "2.0.5",
     "xo": "0.18.2"
   },
   "peerDependencies": {
