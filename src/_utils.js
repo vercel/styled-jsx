@@ -426,6 +426,57 @@ export const addSourceMaps = (code, generator, filename) => {
   return [code].concat(sourceMaps).join('\n')
 }
 
+export const combinePlugins = (plugins, opts) => {
+  if (!plugins) {
+    return css => css
+  }
+
+  if (
+    !Array.isArray(plugins) ||
+    plugins.some(p => !Array.isArray(p) && typeof p !== 'string')
+  ) {
+    throw new Error(
+      '`plugins` must be an array of plugins names (string) or an array `[plugin-name, {options}]`'
+    )
+  }
+
+  return plugins
+    .map((plugin, i) => {
+      let options = {}
+      if (Array.isArray(plugin)) {
+        options = plugin[1] || {}
+        plugin = plugin[0]
+      }
+
+      // eslint-disable-next-line import/no-dynamic-require
+      let p = require(plugin)
+      if (p.default) {
+        p = p.default
+      }
+
+      const type = typeof p
+      if (type !== 'function') {
+        throw new Error(
+          `Expected plugin ${plugins[
+            i
+          ]} to be a function but instead got ${type}`
+        )
+      }
+      return {
+        plugin: p,
+        settings: {
+          ...options,
+          babel: opts
+        }
+      }
+    })
+    .reduce(
+      (previous, { plugin, settings }) => css =>
+        plugin(previous ? previous(css) : css, settings),
+      null
+    )
+}
+
 const getPrefix = (isDynamic, id) =>
   isDynamic ? '.__jsx-style-dynamic-selector' : `.${id}`
 
@@ -437,7 +488,9 @@ export const processCss = (stylesInfo, options) => {
     dynamic,
     location,
     fileInfo,
-    isGlobal
+    isGlobal,
+    plugins,
+    vendorPrefix
   } = stylesInfo
 
   const staticClassName =
@@ -453,20 +506,25 @@ export const processCss = (stylesInfo, options) => {
     const generator = makeSourceMapGenerator(fileInfo.file)
     const filename = fileInfo.sourceFileName
     transformedCss = addSourceMaps(
-      transform(isGlobal ? '' : getPrefix(dynamic, staticClassName), css, {
-        generator,
-        offset: location.start,
-        filename,
-        splitRules
-      }),
+      transform(
+        isGlobal ? '' : getPrefix(dynamic, staticClassName),
+        plugins(css),
+        {
+          generator,
+          offset: location.start,
+          filename,
+          splitRules,
+          vendorPrefix
+        }
+      ),
       generator,
       filename
     )
   } else {
     transformedCss = transform(
       isGlobal ? '' : getPrefix(dynamic, staticClassName),
-      css,
-      { splitRules }
+      plugins(css),
+      { splitRules, vendorPrefix }
     )
   }
 

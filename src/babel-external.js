@@ -4,12 +4,14 @@ import {
   getJSXStyleInfo,
   processCss,
   cssToBabelType,
-  validateExternalExpressions
+  validateExternalExpressions,
+  combinePlugins,
+  booleanOption
 } from './_utils'
 
 const isModuleExports = t.buildMatchMemberExpression('module.exports')
 
-function processTaggedTemplateExpression({ path, fileInfo, splitRules }) {
+function processTaggedTemplateExpression({ path, fileInfo, splitRules, plugins, vendorPrefix }) {
   const templateLiteral = path.get('quasi')
 
   // Check whether there are undefined references or references to this.something (e.g. props or state)
@@ -22,7 +24,9 @@ function processTaggedTemplateExpression({ path, fileInfo, splitRules }) {
       ...stylesInfo,
       hash: `${stylesInfo.hash}0`,
       fileInfo,
-      isGlobal: true
+      isGlobal: true,
+      plugins,
+      vendorPrefix
     },
     { splitRules }
   )
@@ -32,7 +36,9 @@ function processTaggedTemplateExpression({ path, fileInfo, splitRules }) {
       ...stylesInfo,
       hash: `${stylesInfo.hash}1`,
       fileInfo,
-      isGlobal: false
+      isGlobal: false,
+      plugins,
+      vendorPrefix
     },
     { splitRules }
   )
@@ -111,6 +117,7 @@ function makeHashesAndScopedCssPaths(exportIdentifier, data) {
   })
 }
 
+let plugins
 export const visitor = {
   ImportDeclaration(path, state) {
     if (path.node.source.value !== 'styled-jsx/css') {
@@ -132,18 +139,21 @@ export const visitor = {
       return
     }
 
+    const { vendorPrefix, sourceMaps } = state.opts
     taggedTemplateExpressions.forEach(path => {
       processTaggedTemplateExpression({
         path,
         fileInfo: {
           file: state.file,
           sourceFileName: state.file.opts.sourceFileName,
-          sourceMaps: state.file.opts.sourceMaps
+          sourceMaps
         },
         splitRules:
           typeof state.opts.optimizeForSpeed === 'boolean'
             ? state.opts.optimizeForSpeed
-            : process.env.NODE_ENV === 'production'
+            : process.env.NODE_ENV === 'production',
+        plugins: state.plugins,
+        vendorPrefix
       })
     })
 
@@ -154,6 +164,28 @@ export const visitor = {
 
 export default function() {
   return {
-    visitor
+    Program(path, state) {
+      const vendorPrefix = booleanOption([
+        state.opts.vendorPrefix,
+        state.file.opts.vendorPrefix
+      ])
+      state.opts.vendorPrefix =
+        typeof vendorPrefix === 'boolean' ? vendorPrefix : true
+      const sourceMaps = booleanOption([
+        state.opts.sourceMaps,
+        state.file.opts.sourceMaps
+      ])
+      state.opts.sourceMaps = Boolean(sourceMaps)
+
+      if (!plugins) {
+        const { sourceMaps, vendorPrefix } = state.opts
+        plugins = combinePlugins(state.opts.plugins, {
+          sourceMaps: sourceMaps || state.file.opts.sourceMaps,
+          vendorPrefix: typeof vendorPrefix === 'boolean' ? vendorPrefix : true
+        })
+      }
+      state.plugins = plugins
+    },
+    ...visitor
   }
 }

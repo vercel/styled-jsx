@@ -12,10 +12,13 @@ import {
   computeClassNames,
   addClassName,
   getScope,
-  processCss
+  processCss,
+  combinePlugins
 } from './_utils'
 
 import { STYLE_COMPONENT } from './_constants'
+
+let plugins
 
 export default function({ types: t }) {
   return {
@@ -234,6 +237,7 @@ export default function({ types: t }) {
             return
           }
 
+          const { vendorPrefix } = state.opts
           const stylesInfo = {
             ...state.styles.shift(),
             fileInfo: {
@@ -242,7 +246,10 @@ export default function({ types: t }) {
               sourceMaps: state.file.opts.sourceMaps
             },
             staticClassName: state.staticClassName,
-            isGlobal
+            isGlobal,
+            plugins: state.plugins,
+            vendorPrefix:
+              typeof vendorPrefix === 'boolean' ? vendorPrefix : true
           }
           const splitRules =
             typeof state.opts.optimizeForSpeed === 'boolean'
@@ -262,6 +269,16 @@ export default function({ types: t }) {
           state.ignoreClosing = null
           state.file.hasJSXStyle = false
           state.imports = []
+
+          if (!plugins) {
+            const { sourceMaps, vendorPrefix } = state.opts
+            plugins = combinePlugins(state.opts.plugins, {
+              sourceMaps: sourceMaps || state.file.opts.sourceMaps,
+              vendorPrefix:
+                typeof vendorPrefix === 'boolean' ? vendorPrefix : true
+            })
+          }
+          state.plugins = plugins
         },
         exit({ node, scope }, state) {
           if (!(state.file.hasJSXStyle && !scope.hasBinding(STYLE_COMPONENT))) {
