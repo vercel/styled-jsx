@@ -78,6 +78,7 @@ Beware that when using this option source maps cannot be generated and styles ca
 - Future-proof: Equivalent to server-renderable "Shadow CSS"
 - Source maps support
 - Dynamic styles and themes support \***new**
+- CSS Preprocessing via Plugins \***new**
 
 ## How It Works
 
@@ -381,6 +382,84 @@ export default (req, res) => {
 It's **paramount** that you use one of these two functions so that
 the generated styles can be diffed when the client loads and
 duplicate styles are avoided.
+
+### CSS Preprocessing via Plugins
+
+Styles can be preprocessed via plugins.
+
+Plugins are regular JavaScript modules that export a simple function with the following signature:
+
+```js
+(css: string, settings: Object) => string
+```
+
+Basically they accept a CSS string in input, optionally modify it and finally return it.
+
+Plugins make it possible to use popular preprocessors like SASS, Less, Stylus, PostCSS or apply custom transformations to the styles at **compile time**.
+
+To register a plugin add an option `plugins` for `styled-jsx/babel` to your `.babelrc`. `plugins` must be an array of module names or *full* paths for local plugins.
+
+```json
+{
+  "plugins": [
+    [
+      "styled-jsx/babel",
+      { "plugins": ["my-styled-jsx-plugin-package", "/full/path/to/local/plugin"] }
+    ]
+  ]
+}
+```
+
+In order to resolve local plugins paths you can use NodeJS' [require.resolve](https://nodejs.org/api/globals.html#globals_require_resolve).
+
+Plugins are applied in definition order left to right before styles are scoped.
+
+N.B. when applying the plugins styled-jsx replaces template literals expressions with placeholders e.g. `%%styledjsxexpression_ExprNumber%%` because otherwise CSS parsers would get invalid CSS.
+
+**Plugins won't transform expressions** (eg. dynamic styles).
+
+#### Plugin options and settings
+
+Users can set plugin options by registering a plugin as an array that contains
+the plugin path and an options object.
+
+```json
+{
+  "plugins": [
+    [
+      "styled-jsx/babel",
+      {
+        "plugins": [
+          ["my-styled-jsx-plugin-package", { "exampleOption":  true }]
+        ],
+        "sourceMaps": true
+      }
+    ]
+  ]
+}
+```
+
+Each plugin receives a `settings` object as second argument which contains
+the babel and user options:
+
+```js
+(css, settings) => { /* ... */ }
+```
+
+The `settings` object has the following shape:
+
+```js
+{
+  // user options
+  exampleOption: true,
+
+  // babel options
+  babel: {
+    sourceMaps: true,
+    vendorPrefix: true,
+  }
+}
+```
 
 ## Syntax Highlighting
 
