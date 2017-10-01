@@ -5,9 +5,9 @@ exports[`applies plugins 1`] = `
 import styles from './styles';
 const color = 'red';
 
-export default (() => <div className={'jsx-3797634184 ' + \`jsx-\${styles.__scopedHash}\`}>
-    <p className={'jsx-3797634184 ' + \`jsx-\${styles.__scopedHash}\`}>test</p>
-    <_JSXStyle styleId={\\"4216192053\\"} css={\`span.\${color}.jsx-3797634184{color:\${otherColor}}\`} />
+export default (() => <div className={'jsx-3382438999 ' + \`jsx-\${styles.__scopedHash}\`}>
+    <p className={'jsx-3382438999 ' + \`jsx-\${styles.__scopedHash}\`}>test</p>
+    <_JSXStyle styleId={\\"254166606\\"} css={\`span.\${color}.jsx-3382438999{color:\${otherColor}}\`} />
     <_JSXStyle styleId={styles.__scopedHash} css={styles.__scoped} />
   </div>);"
 `;

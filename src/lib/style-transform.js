@@ -99,6 +99,11 @@ function transform(hash, styles, settings = {}) {
   filename = settings.filename
   splitRules = []
 
+  stylis.set({
+    prefix:
+      typeof settings.vendorPrefix === 'boolean' ? settings.vendorPrefix : true
+  })
+
   stylis(hash, styles)
 
   if (settings.splitRules) {
