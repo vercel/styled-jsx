@@ -67,6 +67,15 @@ Beware that when using this option source maps cannot be generated and styles ca
 
 \* `process.env.NODE_ENV === 'production'`
 
+
+#### `sourceMaps`
+
+Generates source maps (default: `false`)
+
+#### `vendorPrefix`
+
+Turn on/off automatic vendor prefixing (default: `true`)
+
 ## Features
 
 - Full CSS support, no tradeoffs in power
