@@ -426,7 +426,7 @@ export const addSourceMaps = (code, generator, filename) => {
   return [code].concat(sourceMaps).join('\n')
 }
 
-export const combinePlugins = (plugins, opts) => {
+export const combinePlugins = plugins => {
   if (!plugins) {
     return css => css
   }
@@ -464,16 +464,16 @@ export const combinePlugins = (plugins, opts) => {
       }
       return {
         plugin: p,
-        settings: {
-          ...options,
-          babel: opts
-        }
+        options,
       }
     })
     .reduce(
-      (previous, { plugin, settings }) => css =>
-        plugin(previous ? previous(css) : css, settings),
-      null
+      (previous, { plugin, options }) => (css, babelOptions) =>
+        plugin(previous ? previous(css, babelOptions) : css, {
+          ...options,
+          babel: babelOptions
+        }),
+        null
     )
 }
 
@@ -490,7 +490,7 @@ export const processCss = (stylesInfo, options) => {
     fileInfo,
     isGlobal,
     plugins,
-    vendorPrefix
+    vendorPrefixes
   } = stylesInfo
 
   const staticClassName =
@@ -500,6 +500,17 @@ export const processCss = (stylesInfo, options) => {
 
   const useSourceMaps = Boolean(fileInfo.sourceMaps) && !splitRules
 
+  const pluginsOptions = {
+    location: {
+      start: { ...location.start },
+      end: { ...location.end },
+    },
+    vendorPrefixes,
+    sourceMaps: useSourceMaps,
+    isGlobal,
+    filename: fileInfo.filename,
+  }
+
   let transformedCss
 
   if (useSourceMaps) {
@@ -508,13 +519,13 @@ export const processCss = (stylesInfo, options) => {
     transformedCss = addSourceMaps(
       transform(
         isGlobal ? '' : getPrefix(dynamic, staticClassName),
-        plugins(css),
+        plugins(css, pluginsOptions),
         {
           generator,
           offset: location.start,
           filename,
           splitRules,
-          vendorPrefix
+          vendorPrefixes
         }
       ),
       generator,
@@ -523,8 +534,8 @@ export const processCss = (stylesInfo, options) => {
   } else {
     transformedCss = transform(
       isGlobal ? '' : getPrefix(dynamic, staticClassName),
-      plugins(css),
-      { splitRules, vendorPrefix }
+      plugins(css, pluginsOptions),
+      { splitRules, vendorPrefixes }
     )
   }
 

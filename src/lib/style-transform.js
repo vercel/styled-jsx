@@ -101,7 +101,7 @@ function transform(hash, styles, settings = {}) {
 
   stylis.set({
     prefix:
-      typeof settings.vendorPrefix === 'boolean' ? settings.vendorPrefix : true
+      typeof settings.vendorPrefixes === 'boolean' ? settings.vendorPrefixes : true
   })
 
   stylis(hash, styles)

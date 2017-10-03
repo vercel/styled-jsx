@@ -20,7 +20,6 @@ import {
 import { STYLE_COMPONENT } from './_constants'
 
 let plugins
-
 export default function({ types: t }) {
   return {
     inherits: jsx,
@@ -238,18 +237,19 @@ export default function({ types: t }) {
             return
           }
 
-          const { vendorPrefix, sourceMaps } = state.opts
+          const { vendorPrefixes, sourceMaps } = state.opts
           const stylesInfo = {
             ...state.styles.shift(),
             fileInfo: {
               file: state.file,
               sourceFileName: state.file.opts.sourceFileName,
-              sourceMaps
+              sourceMaps,
+              filename: state.file.filename
             },
             staticClassName: state.staticClassName,
             isGlobal,
             plugins: state.plugins,
-            vendorPrefix
+            vendorPrefixes
           }
           const splitRules =
             typeof state.opts.optimizeForSpeed === 'boolean'
@@ -270,12 +270,12 @@ export default function({ types: t }) {
           state.file.hasJSXStyle = false
           state.imports = []
 
-          const vendorPrefix = booleanOption([
-            state.opts.vendorPrefix,
-            state.file.opts.vendorPrefix
+          const vendorPrefixes = booleanOption([
+            state.opts.vendorPrefixes,
+            state.file.opts.vendorPrefixes
           ])
-          state.opts.vendorPrefix =
-            typeof vendorPrefix === 'boolean' ? vendorPrefix : true
+          state.opts.vendorPrefixes =
+            typeof vendorPrefixes === 'boolean' ? vendorPrefixes : true
           const sourceMaps = booleanOption([
             state.opts.sourceMaps,
             state.file.opts.sourceMaps
@@ -285,7 +285,7 @@ export default function({ types: t }) {
           if (!plugins) {
             plugins = combinePlugins(state.opts.plugins, {
               sourceMaps: state.opts.sourceMaps,
-              vendorPrefix: state.opts.vendorPrefix
+              vendorPrefixes: state.opts.vendorPrefixes
             })
           }
           state.plugins = plugins

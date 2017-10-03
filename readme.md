@@ -72,7 +72,7 @@ Beware that when using this option source maps cannot be generated and styles ca
 
 Generates source maps (default: `false`)
 
-#### `vendorPrefix`
+#### `vendorPrefixes`
 
 Turn on/off automatic vendor prefixing (default: `true`)
 
@@ -399,7 +399,7 @@ Styles can be preprocessed via plugins.
 Plugins are regular JavaScript modules that export a simple function with the following signature:
 
 ```js
-(css: string, settings: Object) => string
+(css: string, options: Object) => string
 ```
 
 Basically they accept a CSS string in input, optionally modify it and finally return it.
@@ -427,7 +427,14 @@ N.B. when applying the plugins styled-jsx replaces template literals expressions
 
 **Plugins won't transform expressions** (eg. dynamic styles).
 
-#### Plugin options and settings
+When publishing a plugin you may want to add the keywords: `styled-jsx` and `styled-jsx-plugin`.
+We also encourage you to use the following naming convention for your plugins:
+
+```
+styled-jsx-plugin-<your-plugin-name>
+```
+
+#### Plugin options
 
 Users can set plugin options by registering a plugin as an array that contains
 the plugin path and an options object.
@@ -448,24 +455,36 @@ the plugin path and an options object.
 }
 ```
 
-Each plugin receives a `settings` object as second argument which contains
+Each plugin receives a `options` object as second argument which contains
 the babel and user options:
 
 ```js
-(css, settings) => { /* ... */ }
+(css, options) => { /* ... */ }
 ```
 
-The `settings` object has the following shape:
+The `options` object has the following shape:
 
 ```js
 {
-  // user options
-  exampleOption: true,
+  // user options go here
+  // eg. exampleOption: true
 
   // babel options
   babel: {
-    sourceMaps: true,
-    vendorPrefix: true,
+    sourceMaps: boolean,
+    vendorPrefixes: boolean,
+    isGlobal: boolean,
+    filename: ?string, // defined only when styled-jsx/babel is used via Babel CLI,
+    location: { // the original location of the CSS block in the JavaScript file
+      start: {
+        line: number,
+        column: number,
+      },
+      end: {
+        line: number,
+        column: number,
+      }
+    }
   }
 }
 ```
