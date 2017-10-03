@@ -71,40 +71,40 @@ exports[`works with array children 1`] = `
 "import _JSXStyle from \\"styled-jsx/style\\";
 /* eslint-disable no-unused-vars */
 
-const Test1 = () => [<div data-jsx={1486255031}>Foo</div>, <span data-jsx={1486255031}>Bar</span>, <_JSXStyle styleId={1486255031} css={\\"div[data-jsx=\\\\\\"1486255031\\\\\\"]{color:red}\\"} />];
+const Test1 = () => [<div className={\\"jsx-336794318\\"}>Foo</div>, <span className={\\"jsx-336794318\\"}>Bar</span>, <_JSXStyle styleId={\\"1486255031\\"} css={\\"div.jsx-336794318{color:red}\\"} />];
 
-const Test2 = () => [<p data-jsx={2639504339}>Hello World</p>, <_JSXStyle styleId={2639504339} css={\\"p{color:white}\\"} />];
+const Test2 = () => [<p className={\\"jsx-136928739\\"}>Hello World</p>, <_JSXStyle styleId={\\"2639504339\\"} css={\\"p{color:white}\\"} />];
 
-const Test3 = () => [<div data-jsx={4193872369}>
-    <p data-jsx={4193872369}>Hello World</p>
-    <_JSXStyle styleId={4193872369} css={\\"p[data-jsx=\\\\\\"4193872369\\\\\\"]{color:blue}\\"} />
+const Test3 = () => [<div className={\\"jsx-3360849707\\"}>
+    <p className={\\"jsx-3360849707\\"}>Hello World</p>
+    <_JSXStyle styleId={\\"4193872369\\"} css={\\"p.jsx-3360849707{color:blue}\\"} />
   </div>, <div>Hello World</div>];
 
-const Test4 = () => [<div data-jsx={493673878}>
-    <span data-jsx={493673878}>Styled by root style tag</span>
-    <p className=\\"one\\" data-jsx={493673878}>Lorem</p>
-    <p className=\\"two\\" data-jsx={493673878}>Ipsum</p>
-    <_JSXStyle styleId={1597461941} css={\\"span[data-jsx=\\\\\\"493673878\\\\\\"]{background:magenta}\\"} />
-  </div>, <div data-jsx={1597461941}>
-    <p className=\\"one\\" data-jsx={1597461941}>Dolor</p>
-    <p className=\\"two\\" data-jsx={1597461941}>Sit</p>
-  </div>, <div data-jsx={4046372977}>
-    <p className=\\"one\\" data-jsx={4046372977}>Dolor</p>
-    <p className=\\"two\\" data-jsx={4046372977}>Sit</p>
-    <_JSXStyle styleId={1597461941} css={\\"span{background:magenta}\\"} />
-  </div>, <_JSXStyle styleId={1597461941} css={\\"span[data-jsx=\\\\\\"1597461941\\\\\\"]{background:magenta}\\"} />];
+const Test4 = () => [<div className={\\"jsx-612908104\\"}>
+    <span className={\\"jsx-612908104\\"}>Styled by root style tag</span>
+    <p className={\\"jsx-612908104\\" + \\" \\" + \\"one\\"}>Lorem</p>
+    <p className={\\"jsx-612908104\\" + \\" \\" + \\"two\\"}>Ipsum</p>
+    <_JSXStyle styleId={\\"1597461941\\"} css={\\"span.jsx-612908104{background:magenta}\\"} />
+  </div>, <div className={\\"jsx-2944581440\\"}>
+    <p className={\\"jsx-2944581440\\" + \\" \\" + \\"one\\"}>Dolor</p>
+    <p className={\\"jsx-2944581440\\" + \\" \\" + \\"two\\"}>Sit</p>
+  </div>, <div className={\\"jsx-1719653926\\"}>
+    <p className={\\"jsx-1719653926\\" + \\" \\" + \\"one\\"}>Dolor</p>
+    <p className={\\"jsx-1719653926\\" + \\" \\" + \\"two\\"}>Sit</p>
+    <_JSXStyle styleId={\\"1597461941\\"} css={\\"span{background:magenta}\\"} />
+  </div>, <_JSXStyle styleId={\\"1597461941\\"} css={\\"span.jsx-2944581440{background:magenta}\\"} />];
 
-const Test5 = () => [<div data-jsx={3832907478}>Foo</div>, <div data-jsx={3832907478}>
-    <div data-jsx={3832907478}>
-      <div className=\\"bar\\" data-jsx={3832907478}>Bar</div>
+const Test5 = () => [<div className={\\"jsx-3303020362\\"}>Foo</div>, <div className={\\"jsx-3303020362\\"}>
+    <div className={\\"jsx-3303020362\\"}>
+      <div className={\\"jsx-3303020362\\" + \\" \\" + \\"bar\\"}>Bar</div>
     </div>
-  </div>, <div data-jsx={3832907478}>
-    <main data-jsx={3832907478}>
-      <div data-jsx={3832907478}>
-        <div id=\\"baz\\" data-jsx={3832907478}>Baz</div>
+  </div>, <div className={\\"jsx-3303020362\\"}>
+    <main className={\\"jsx-3303020362\\"}>
+      <div className={\\"jsx-3303020362\\"}>
+        <div id=\\"baz\\" className={\\"jsx-3303020362\\"}>Baz</div>
       </div>
     </main>
-  </div>, <_JSXStyle styleId={3832907478} css={\\"main[data-jsx=\\\\\\"3832907478\\\\\\"]{color:red}.bar[data-jsx=\\\\\\"3832907478\\\\\\"]{color:white}.baz[data-jsx=\\\\\\"3832907478\\\\\\"]{color:blue}\\"} />];
+  </div>, <_JSXStyle styleId={\\"3832907478\\"} css={\\"main.jsx-3303020362{color:red}.bar.jsx-3303020362{color:white}.baz.jsx-3303020362{color:blue}\\"} />];
 
 export default (() => <div>
     <Test1 />
