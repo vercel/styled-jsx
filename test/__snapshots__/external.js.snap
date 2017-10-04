@@ -2,9 +2,9 @@
 
 exports[`(optimized) transpiles external stylesheets (CommonJS modules) 1`] = `
 "const _defaultExport = ['div{font-size:3em;}'];
-_defaultExport.__hash = '7060342740';
-_defaultExport.__scoped = ['div.jsx-7060342741{font-size:3em;}'];
-_defaultExport.__scopedHash = '7060342741';
+_defaultExport.__hash = '761548770';
+_defaultExport.__scoped = ['div.jsx-3720287939{font-size:3em;}'];
+_defaultExport.__scopedHash = '3720287939';
 
 
 module.exports = _defaultExport;"
@@ -16,29 +16,29 @@ exports[`(optimized) transpiles external stylesheets 1`] = `
 const color = 'red';
 
 const bar = ['div{font-size:3em;}'];
-bar.__hash = '7060342740';
-bar.__scoped = ['div.jsx-7060342741{font-size:3em;}'];
-bar.__scopedHash = '7060342741';
+bar.__hash = '761548770';
+bar.__scoped = ['div.jsx-3720287939{font-size:3em;}'];
+bar.__scopedHash = '3720287939';
 export const uh = bar;
 
 export const foo = [\`div{color:\${color};}\`];
 
-foo.__hash = '31421784000';
-foo.__scoped = [\`div.jsx-31421784001{color:\${color};}\`];
-foo.__scopedHash = '31421784001';
+foo.__hash = '3319550427';
+foo.__scoped = [\`div.jsx-3980805466{color:\${color};}\`];
+foo.__scopedHash = '3980805466';
 const _defaultExport = ['div{font-size:3em;}', \`p{color:\${color};}\`];
-_defaultExport.__hash = '40416528930';
-_defaultExport.__scoped = ['div.jsx-40416528931{font-size:3em;}', \`p.jsx-40416528931{color:\${color};}\`];
-_defaultExport.__scopedHash = '40416528931';
+_defaultExport.__hash = '392586103';
+_defaultExport.__scoped = ['div.jsx-311488054{font-size:3em;}', \`p.jsx-311488054{color:\${color};}\`];
+_defaultExport.__scopedHash = '311488054';
 export default _defaultExport;"
 `;
 
 exports[`transpiles external stylesheets (CommonJS modules) 1`] = `
 "const _defaultExport = new String('div{font-size:3em}');
 
-_defaultExport.__hash = '7060342740';
-_defaultExport.__scoped = 'div.jsx-7060342741{font-size:3em}';
-_defaultExport.__scopedHash = '7060342741';
+_defaultExport.__hash = '761548770';
+_defaultExport.__scoped = 'div.jsx-3720287939{font-size:3em}';
+_defaultExport.__scopedHash = '3720287939';
 
 
 module.exports = _defaultExport;"
@@ -50,22 +50,22 @@ exports[`transpiles external stylesheets 1`] = `
 const color = 'red';
 
 const bar = new String('div{font-size:3em}');
-bar.__hash = '7060342740';
-bar.__scoped = 'div.jsx-7060342741{font-size:3em}';
-bar.__scopedHash = '7060342741';
+bar.__hash = '761548770';
+bar.__scoped = 'div.jsx-3720287939{font-size:3em}';
+bar.__scopedHash = '3720287939';
 export const uh = bar;
 
 export const foo = new String(\`div{color:\${color}}\`);
 
-foo.__hash = '31421784000';
-foo.__scoped = \`div.jsx-31421784001{color:\${color}}\`;
-foo.__scopedHash = '31421784001';
+foo.__hash = '3319550427';
+foo.__scoped = \`div.jsx-3980805466{color:\${color}}\`;
+foo.__scopedHash = '3980805466';
 
 const _defaultExport = new String(\`div{font-size:3em}p{color:\${color}}\`);
 
-_defaultExport.__hash = '40416528930';
-_defaultExport.__scoped = \`div.jsx-40416528931{font-size:3em}p.jsx-40416528931{color:\${color}}\`;
-_defaultExport.__scopedHash = '40416528931';
+_defaultExport.__hash = '392586103';
+_defaultExport.__scoped = \`div.jsx-311488054{font-size:3em}p.jsx-311488054{color:\${color}}\`;
+_defaultExport.__scopedHash = '311488054';
 export default _defaultExport;"
 `;
 
