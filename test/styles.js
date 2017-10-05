@@ -11,35 +11,23 @@ test('transpile styles with attributes', async t => {
 })
 
 test('throws when using nesting', t => {
-  const fixtures = [
-    `div { &:hover { color: red } }`,
-
-    `div {
+  const fixtures = [`div { &:hover { color: red } }`, `div {
       color: green;
-      &:hover { color: red } }`,
-
-    `:hover { div { color: red } }`,
-
-    `@media all {
+      &:hover { color: red } }`, `:hover { div { color: red } }`, `@media all {
       div {
         &:hover { color: red }
       }
-    }`,
-
-    `* { div { color: red }
+    }`, `* { div { color: red }
       &.test {
         color: red;
       }
-    }`,
-
-    `span {}
+    }`, `span {}
       .test {
         color: red;
       div& {
         color: red;
       }
-    }`
-  ]
+    }`]
 
   fixtures.forEach(fixture => {
     t.throws(() => transform('', fixture))
@@ -48,29 +36,15 @@ test('throws when using nesting', t => {
 })
 
 test("doesn't throw when using at-rules", t => {
-  const fixtures = [
-    '@media (min-width: 480px) { div { color: red } }',
-
-    `span {}
-      @media (min-width: 480px) { div { color: red } }`,
-
-    `@media (min-width: 480px) { div { color: red } }
-    span {}`,
-
-    `:hover {}
-      @media (min-width: 480px) { div { color: red } }`,
-
-    `:hover { color: green }
-      @media (min-width: 480px) { div { color: red } }`,
-
-    `@media (min-width: 480px) { div {} }`,
-
-    `@keyframes foo {
+  const fixtures = ['@media (min-width: 480px) { div { color: red } }', `span {}
+      @media (min-width: 480px) { div { color: red } }`, `@media (min-width: 480px) { div { color: red } }
+    span {}`, `:hover {}
+      @media (min-width: 480px) { div { color: red } }`, `:hover { color: green }
+      @media (min-width: 480px) { div { color: red } }`, `@media (min-width: 480px) { div {} }`, `@keyframes foo {
       0% { opacity: 0 }
       100% { opacity: 1}
     }
-    `
-  ]
+    `]
 
   fixtures.forEach(fixture => {
     t.notThrows(() => transform('', fixture))
@@ -184,4 +158,48 @@ test('splits rules for `optimizeForSpeed`', t => {
     '@namespace svg url(http://www.w3.org/2000/svg)'
   ])
   assert('@page :first { margin: 1in; }', ['@page :first{margin:1in;}'])
+
+  assert(`
+    div {
+      animation: fade-in ease-in 1;
+      animation-fill-mode: forwards;
+      animation-duration: 500ms;
+      opacity: 0;
+    }
+    @keyframes fade-in {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+  `, ['div.jsx-123{-webkit-animation:fade-in-jsx-123 ease-in 1;animation:fade-in-jsx-123 ease-in 1;-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards;-webkit-animation-duration:500ms;animation-duration:500ms;opacity:0;}', '@-webkit-keyframes fade-in-jsx-123{from{opacity:0;}to{opacity:1;}}', '@keyframes fade-in-jsx-123{from{opacity:0;}to{opacity:1;}}'], '.jsx-123')
+
+  assert(
+    `
+    div {
+      animation: fade-in ease-in 1;
+      animation-fill-mode: forwards;
+      animation-duration: 500ms;
+      opacity: 0;
+    }
+
+    @keyframes fade-in {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+  `,
+    [
+      'div{-webkit-animation:fade-in ease-in 1;animation:fade-in ease-in 1;-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards;-webkit-animation-duration:500ms;animation-duration:500ms;opacity:0;}',
+      '@-webkit-keyframes fade-in{from{opacity:0;}to{opacity:1;}}',
+      '@keyframes fade-in{from{opacity:0;}to{opacity:1;}}'
+    ]
+  )
 })
