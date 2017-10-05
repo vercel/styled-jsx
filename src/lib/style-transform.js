@@ -76,6 +76,7 @@ function sourceMapsPlugin(...args) {
 let isSplitRulesEnabled = false
 let splitRules = []
 let splitRulesQueue = []
+let scopeHash
 const nestedAtRules = ['m', 's', 'd', 'k', '-']
 
 function splitRulesPlugin(
@@ -119,10 +120,13 @@ function splitRulesPlugin(
     const selectrs = selectors.join(',')
     if (nestedAtRules.indexOf(selectrs.charAt(1)) === -1) {
       splitRulesQueue.push(`${selectrs}${content}`)
+    } else if (selectrs.charAt(1) === 'k') {
+      const animationName = scopeHash.replace(/^\./, '-')
+      splitRulesQueue.push(
+        `@-webkit-${selectrs.slice(1)}${animationName}{${content}}`
+      )
+      splitRulesQueue.push(`${selectrs}${animationName}{${content}}`)
     } else {
-      if (selectrs.charAt(1) === 'k') {
-        splitRulesQueue.push(`@-webkit-${selectrs.slice(1)}{${content}}`)
-      }
       splitRulesQueue.push(`${selectrs}{${content}}`)
     }
   }
@@ -139,19 +143,20 @@ stylis.set({
 /**
  * Public transform function
  *
- * @param {String} prefix
+ * @param {String} hash
  * @param {String} styles
  * @param {Object} settings
  * @return {string}
  */
-function transform(prefix, styles, settings = {}) {
+function transform(hash, styles, settings = {}) {
   generator = settings.generator
   offset = settings.offset
   filename = settings.filename
   isSplitRulesEnabled = settings.splitRules
   splitRules = []
+  scopeHash = hash
 
-  const cssString = stylis(prefix, styles)
+  const cssString = stylis(scopeHash, styles)
 
   if (isSplitRulesEnabled) {
     return splitRules
