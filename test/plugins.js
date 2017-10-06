@@ -79,21 +79,24 @@ test('applies plugins', async t => {
   t.snapshot(code)
 })
 
-test.only('passes options to plugins', async t => {
-  const { code } = await transform(
-    './fixtures/with-plugins.js',
-    {
-      plugins: [
-        [
-          babelPlugin,
-          { plugins: [
+test('passes options to plugins', async t => {
+  const { code } = await transform('./fixtures/with-plugins.js', {
+    plugins: [
+      [
+        babelPlugin,
+        {
+          plugins: [
             [require.resolve('./fixtures/plugins/options'), { foo: true }],
             require.resolve('./fixtures/plugins/multiple-options'),
-          ] }
-        ]
+            [
+              require.resolve('./fixtures/plugins/multiple-options'),
+              { foo: false }
+            ]
+          ],
+          vendorPrefixes: false
+        }
       ]
-    }
-  )
-  // t.snapshot(code)
-  console.log(code)
+    ]
+  })
+  t.snapshot(code)
 })

@@ -1,4 +1,2 @@
-export default (css, settings) => {
-  console.log(settings)
-  return `.test { content: "${JSON.stringify(settings)}"; }`
-}
+export default (css, settings) =>
+  `.test { content: "${JSON.stringify(settings)}"; }`
