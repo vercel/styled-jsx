@@ -126,6 +126,7 @@ export default class StyleSheet {
             `StyleSheet: illegal rule: \n\n${rule}\n\nSee https://stackoverflow.com/q/20007992 for more info`
           ) // eslint-disable-line no-console
         }
+        return -1
       }
     } else {
       const insertionPoint = this._tags[index]
@@ -141,8 +142,25 @@ export default class StyleSheet {
       if (!rule.trim()) {
         rule = this._deletedRulePlaceholder
       }
+
+      if (!sheet.cssRules[index]) {
+        // @TBD Should we throw an error?
+        return index
+      }
+
       sheet.deleteRule(index)
-      sheet.insertRule(rule, index)
+
+      try {
+        sheet.insertRule(rule, index)
+      } catch (err) {
+        if (!isProd) {
+          console.warn(
+            `StyleSheet: illegal rule: \n\n${rule}\n\nSee https://stackoverflow.com/q/20007992 for more info`
+          ) // eslint-disable-line no-console
+        }
+        // In order to preserve the indices we insert a deleteRulePlaceholder
+        sheet.insertRule(this._deletedRulePlaceholder, index)
+      }
     } else {
       const tag = this._tags[index]
       invariant(tag, `old rule at index \`${index}\` not found`)

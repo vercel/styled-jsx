@@ -4,6 +4,8 @@ import test from 'ava'
 // Ours
 import StyleSheet from '../src/lib/stylesheet'
 
+export const invalidRules = ['invalid rule']
+
 export default function makeSheet(
   options = { optimizeForSpeed: true, isBrowser: true }
 ) {
@@ -15,6 +17,9 @@ export default function makeSheet(
       sheet: {
         cssRules,
         insertRule: (rule, index) => {
+          if (invalidRules.includes(rule)) {
+            throw new Error('invalid rule')
+          }
           if (typeof index === 'number') {
             cssRules[index] = { cssText: rule }
           } else {
@@ -79,20 +84,7 @@ test('can change optimizeForSpeed only when the stylesheet is empty', t => {
 // sheet.insertRule
 
 test('insertRule', t => {
-  const options = [
-    {
-      optimizeForSpeed: true,
-      isBrowser: true
-    },
-    {
-      optimizeForSpeed: false,
-      isBrowser: true
-    },
-    {
-      optimizeForSpeed: true,
-      isBrowser: false
-    }
-  ]
+  const options = [{ optimizeForSpeed: true, isBrowser: true }, { optimizeForSpeed: false, isBrowser: true }, { optimizeForSpeed: true, isBrowser: false }]
 
   options.forEach(options => {
     const sheet = makeSheet(options)
@@ -120,27 +112,18 @@ test('insertRule - returns the rule index', t => {
   t.is(i, 1)
 })
 
+test('insertRule - handles invalid rules and returns -1 as index', t => {
+  const sheet = makeSheet()
+  sheet.inject()
+
+  const i = sheet.insertRule(invalidRules[0])
+  t.is(i, -1)
+})
+
 // sheet.deleteRule
 
 test('deleteRule', t => {
-  const options = [
-    {
-      optimizeForSpeed: true,
-      isBrowser: true
-    },
-    {
-      optimizeForSpeed: false,
-      isBrowser: true
-    },
-    {
-      optimizeForSpeed: true,
-      isBrowser: false
-    },
-    {
-      optimizeForSpeed: false,
-      isBrowser: false
-    }
-  ]
+  const options = [{ optimizeForSpeed: true, isBrowser: true }, { optimizeForSpeed: false, isBrowser: true }, { optimizeForSpeed: true, isBrowser: false }, { optimizeForSpeed: false, isBrowser: false }]
 
   options.forEach(options => {
     const sheet = makeSheet(options)
@@ -158,27 +141,19 @@ test('deleteRule', t => {
   })
 })
 
+test('deleteRule - does not throw when the rule at index does not exist', t => {
+  const sheet = makeSheet()
+  sheet.inject()
+
+  t.notThrows(() => {
+    sheet.deleteRule(sheet.length + 1)
+  })
+})
+
 // sheet.replaceRule
 
 test('replaceRule', t => {
-  const options = [
-    {
-      optimizeForSpeed: true,
-      isBrowser: true
-    },
-    {
-      optimizeForSpeed: false,
-      isBrowser: true
-    },
-    {
-      optimizeForSpeed: true,
-      isBrowser: false
-    },
-    {
-      optimizeForSpeed: false,
-      isBrowser: false
-    }
-  ]
+  const options = [{ optimizeForSpeed: true, isBrowser: true }, { optimizeForSpeed: false, isBrowser: true }, { optimizeForSpeed: true, isBrowser: false }, { optimizeForSpeed: false, isBrowser: false }]
 
   options.forEach(options => {
     const sheet = makeSheet(options)
@@ -189,4 +164,23 @@ test('replaceRule', t => {
 
     t.deepEqual(sheet.cssRules(), [{ cssText: 'p { color: hotpink }' }])
   })
+})
+
+test('replaceRule - handles invalid rules gracefully', t => {
+  const sheet = makeSheet()
+  sheet.inject()
+
+  // Insert two rules
+  sheet.insertRule('div { color: red }')
+  const index = sheet.insertRule('div { color: red }')
+
+  // Replace the latter with an invalid rule
+  const i = sheet.replaceRule(index, invalidRules[0])
+  t.is(i, index)
+  t.is(sheet.length, 2)
+
+  // Even though replacement (insertion) failed deletion succeeded
+  // therefore the lib must insert a delete placeholder which resolves to `null`
+  // when `cssRules()` is called.
+  t.deepEqual(sheet.cssRules(), [{ cssText: 'div { color: red }' }, null])
 })

@@ -3,7 +3,7 @@ import test from 'ava'
 
 // Ours
 import StyleSheetRegistry from '../src/stylesheet-registry'
-import makeSheet from './stylesheet'
+import makeSheet, { invalidRules } from './stylesheet'
 
 function makeRegistry(options) {
   const registry = new StyleSheetRegistry({
@@ -20,24 +20,7 @@ const cssRuleAlt = 'p { color: red }'
 // registry.add
 
 test('add', t => {
-  const options = [
-    {
-      optimizeForSpeed: true,
-      isBrowser: true
-    },
-    {
-      optimizeForSpeed: false,
-      isBrowser: true
-    },
-    {
-      optimizeForSpeed: true,
-      isBrowser: false
-    },
-    {
-      optimizeForSpeed: false,
-      isBrowser: false
-    }
-  ]
+  const options = [{ optimizeForSpeed: true, isBrowser: true }, { optimizeForSpeed: false, isBrowser: true }, { optimizeForSpeed: true, isBrowser: false }, { optimizeForSpeed: false, isBrowser: false }]
 
   options.forEach(options => {
     const registry = makeRegistry(options)
@@ -68,10 +51,7 @@ test('add', t => {
     ])
 
     if (options.optimizeForSpeed) {
-      registry.add({
-        styleId: '456',
-        css: [cssRule, cssRuleAlt]
-      })
+      registry.add({ styleId: '456', css: [cssRule, cssRuleAlt] })
 
       t.deepEqual(registry.cssRules(), [
         ['jsx-123', cssRule],
@@ -82,27 +62,28 @@ test('add', t => {
   })
 })
 
+test('add - filters out invalid rules (index `-1`)', t => {
+  const registry = makeRegistry()
+
+  // Insert a valid rule
+  registry.add({ styleId: '123', css: [cssRule] })
+
+  // Insert an invalid rule
+  registry.add({ styleId: '456', css: [invalidRules[0]] })
+
+  // Insert another valid rule
+  registry.add({ styleId: '678', css: [cssRule] })
+
+  t.deepEqual(registry.cssRules(), [
+    ['jsx-123', 'div { color: red }'],
+    ['jsx-678', 'div { color: red }']
+  ])
+})
+
 // registry.remove
 
 test('remove', t => {
-  const options = [
-    {
-      optimizeForSpeed: true,
-      isBrowser: true
-    },
-    {
-      optimizeForSpeed: false,
-      isBrowser: true
-    },
-    {
-      optimizeForSpeed: true,
-      isBrowser: false
-    },
-    {
-      optimizeForSpeed: false,
-      isBrowser: false
-    }
-  ]
+  const options = [{ optimizeForSpeed: true, isBrowser: true }, { optimizeForSpeed: false, isBrowser: true }, { optimizeForSpeed: true, isBrowser: false }, { optimizeForSpeed: false, isBrowser: false }]
 
   options.forEach(options => {
     const registry = makeRegistry(options)
@@ -138,24 +119,7 @@ test('remove', t => {
 // registry.update
 
 test('update', t => {
-  const options = [
-    {
-      optimizeForSpeed: true,
-      isBrowser: true
-    },
-    {
-      optimizeForSpeed: false,
-      isBrowser: true
-    },
-    {
-      optimizeForSpeed: true,
-      isBrowser: false
-    },
-    {
-      optimizeForSpeed: false,
-      isBrowser: false
-    }
-  ]
+  const options = [{ optimizeForSpeed: true, isBrowser: true }, { optimizeForSpeed: false, isBrowser: true }, { optimizeForSpeed: true, isBrowser: false }, { optimizeForSpeed: false, isBrowser: false }]
 
   options.forEach(options => {
     const registry = makeRegistry(options)
@@ -169,13 +133,7 @@ test('update', t => {
       css: options.optimizeForSpeed ? [cssRule] : cssRule
     })
 
-    registry.update(
-      { styleId: '123' },
-      {
-        styleId: '345',
-        css: options.optimizeForSpeed ? [cssRuleAlt] : cssRuleAlt
-      }
-    )
+    registry.update({ styleId: '123' }, { styleId: '345', css: options.optimizeForSpeed ? [cssRuleAlt] : cssRuleAlt })
     // Doesn't remove when there are multiple instances of 123
     t.deepEqual(registry.cssRules(), [
       ['jsx-123', cssRule],
@@ -186,13 +144,7 @@ test('update', t => {
     t.deepEqual(registry.cssRules(), [['jsx-123', cssRule]])
 
     // Update again
-    registry.update(
-      { styleId: '123' },
-      {
-        styleId: '345',
-        css: options.optimizeForSpeed ? [cssRuleAlt] : cssRuleAlt
-      }
-    )
+    registry.update({ styleId: '123' }, { styleId: '345', css: options.optimizeForSpeed ? [cssRuleAlt] : cssRuleAlt })
     // 123 replaced with 345
     t.deepEqual(registry.cssRules(), [['jsx-345', cssRuleAlt]])
   })
@@ -219,13 +171,7 @@ test('createComputeId', t => {
 test('createComputeSelector', t => {
   const computeSelector = utilRegistry.createComputeSelector()
 
-  t.is(
-    computeSelector(
-      'jsx-123',
-      '.test {} .__jsx-style-dynamic-selector { color: red } .__jsx-style-dynamic-selector { color: red }'
-    ),
-    '.test {} .jsx-123 { color: red } .jsx-123 { color: red }'
-  )
+  t.is(computeSelector('jsx-123', '.test {} .__jsx-style-dynamic-selector { color: red } .__jsx-style-dynamic-selector { color: red }'), '.test {} .jsx-123 { color: red } .jsx-123 { color: red }')
 })
 
 // getIdAndRules
