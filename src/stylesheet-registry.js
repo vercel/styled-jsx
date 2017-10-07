@@ -51,8 +51,15 @@ export default class StyleSheetRegistry {
       return
     }
 
-    this._instancesCounts[styleId] = 1
-    this._indices[styleId] = rules.map(rule => this._sheet.insertRule(rule))
+    const indices = rules
+      .map(rule => this._sheet.insertRule(rule))
+      // Filter out invalid rules
+      .filter(index => index !== -1)
+
+    if (indices.length > 0) {
+      this._indices[styleId] = indices
+      this._instancesCounts[styleId] = 1
+    }
   }
 
   remove(props) {
