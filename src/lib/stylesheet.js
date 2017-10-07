@@ -158,6 +158,7 @@ export default class StyleSheet {
             `StyleSheet: illegal rule: \n\n${rule}\n\nSee https://stackoverflow.com/q/20007992 for more info`
           ) // eslint-disable-line no-console
         }
+        // In order to preserve the indices we insert a deleteRulePlaceholder
         sheet.insertRule(this._deletedRulePlaceholder, index)
       }
     } else {

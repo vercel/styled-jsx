@@ -180,7 +180,7 @@ test('replaceRule - handles invalid rules gracefully', t => {
   t.is(sheet.length, 2)
 
   // Even though replacement (insertion) failed deletion succeeded
-  // therefore the lib must insert an delete placeholder which resolves to `null`
+  // therefore the lib must insert a delete placeholder which resolves to `null`
   // when `cssRules()` is called.
   t.deepEqual(sheet.cssRules(), [{ cssText: 'div { color: red }' }, null])
 })
