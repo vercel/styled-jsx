@@ -120,6 +120,14 @@ test('insertRule - handles invalid rules and returns -1 as index', t => {
   t.is(i, -1)
 })
 
+test('insertRule - does not fail when the css is a String object', t => {
+  const sheet = makeSheet()
+  sheet.inject()
+
+  sheet.insertRule(new String('div { color: red }')) // eslint-disable-line no-new-wrappers
+  t.deepEqual(sheet.cssRules(), [{ cssText: 'div { color: red }' }])
+})
+
 // sheet.deleteRule
 
 test('deleteRule', t => {
