@@ -4,6 +4,7 @@ https://github.com/threepointone/glamor/blob/667b480d31b3721a905021b26e1290ce92c
 */
 
 const isProd = process.env && process.env.NODE_ENV === 'production'
+const isString = o => Object.prototype.toString.call(o) === '[object String]'
 
 export default class StyleSheet {
   constructor(
@@ -13,7 +14,7 @@ export default class StyleSheet {
       isBrowser = typeof window !== 'undefined'
     } = {}
   ) {
-    invariant(typeof name === 'string', '`name` must be a string')
+    invariant(isString(name), '`name` must be a string')
     this._name = name
     this._deletedRulePlaceholder = `#${name}-deleted-rule____{}`
 
@@ -101,7 +102,7 @@ export default class StyleSheet {
   }
 
   insertRule(rule, index) {
-    invariant(typeof rule === 'string', '`insertRule` accepts only strings')
+    invariant(isString(rule), '`insertRule` accepts only strings')
 
     if (!this._isBrowser) {
       if (typeof index !== 'number') {
@@ -219,7 +220,7 @@ export default class StyleSheet {
   makeStyleTag(name, cssString, relativeToTag) {
     if (cssString) {
       invariant(
-        typeof cssString === 'string',
+        isString(cssString),
         'makeStyleTag acceps only strings as second parameter'
       )
     }
