@@ -168,12 +168,12 @@ export default function({ types: t }) {
               externalJsxId = null
             } else {
               // Construct a template literal of this form:
-              // `${styles.__scopedHash} ${otherStyles.__scopedHash}`
+              // `jsx-${styles.__scopedHash} jsx-${otherStyles.__scopedHash}`
               externalJsxId = t.templateLiteral(
                 [
-                  t.templateElement({ raw: 'jsx-', cooked: '' }),
+                  t.templateElement({ raw: 'jsx-', cooked: 'jsx-' }),
                   ...[...new Array(expressionsLength - 1)].map(() =>
-                    t.templateElement({ raw: ' jsx-', cooked: ' ' })
+                    t.templateElement({ raw: ' jsx-', cooked: ' jsx-' })
                   ),
                   t.templateElement({ raw: '', cooked: '' }, true)
                 ],
