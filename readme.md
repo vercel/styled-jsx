@@ -8,14 +8,14 @@
 Full, scoped and component-friendly CSS support for JSX (rendered on the server or the client).
 
 
- Code and docs are for v2.0.0-beta which we highly recommend you to try. Looking for styled-jsx v1? Switch to the [v1 branch](https://github.com/zeit/styled-jsx/tree/v1).
+ Code and docs are for v2 which we highly recommend you to try. Looking for styled-jsx v1? Switch to the [v1 branch](https://github.com/zeit/styled-jsx/tree/v1).
 
 ## Usage
 
 Firstly, install the package:
 
 ```bash
-npm install --save styled-jsx@beta
+npm install --save styled-jsx
 ```
 
 Next, add `styled-jsx/babel` to `plugins` in your babel configuration:
