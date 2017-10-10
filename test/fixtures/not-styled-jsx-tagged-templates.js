@@ -19,3 +19,12 @@ export default css`
     color: ${color};
   }
 `
+
+const Title = styled.h1`
+  color: red;
+  font-size: 50px;
+`
+
+const AnotherTitle = Title.extend`color: blue;`
+
+export const Component = () => <AnotherTitle>My page</AnotherTitle>
