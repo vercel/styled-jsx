@@ -34,6 +34,11 @@ test('(optimized) transpiles external stylesheets (CommonJS modules)', async t =
   t.snapshot(code)
 })
 
+test('does not transpile non-styled-jsx tagged teplate literals', async t => {
+  const { code } = await transform('./fixtures/not-styled-jsx-tagged-templates.js')
+  t.snapshot(code)
+})
+
 test('throws when using `this.something` in external stylesheets', async t => {
   const { message } = await t.throws(transform('./fixtures/styles-external-invalid.js'))
   t.regex(message, /this\.props/)
