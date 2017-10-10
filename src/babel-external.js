@@ -118,9 +118,14 @@ export const visitor = {
     }
 
     const tagName = path.node.specifiers[0].local.name
-    const taggedTemplateExpressions = path.scope
-      .getBinding(tagName)
-      .referencePaths.map(ref => ref.parentPath)
+    const binding = path.scope.getBinding(tagName)
+
+    if (!binding || !Array.isArray(binding.referencePaths)) {
+      return
+    }
+
+    const taggedTemplateExpressions = binding.referencePaths
+      .map(ref => ref.parentPath)
       .filter(path => path.isTaggedTemplateExpression())
 
     if (taggedTemplateExpressions.length === 0) {
