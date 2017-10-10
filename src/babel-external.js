@@ -9,22 +9,7 @@ import {
 
 const isModuleExports = t.buildMatchMemberExpression('module.exports')
 
-function getTagNameFromImportDeclaration(path) {
-  if (path.node.source.value === 'styled-jsx/css') {
-    return path.node.specifiers[0].local.name
-  }
-}
-
-function processTaggedTemplateExpression({
-  path,
-  tagName,
-  fileInfo,
-  splitRules
-}) {
-  if (path.node.tag.name !== tagName) {
-    return
-  }
-
+function processTaggedTemplateExpression({ path, fileInfo, splitRules }) {
   const templateLiteral = path.get('quasi')
 
   // Check whether there are undefined references or references to this.something (e.g. props or state)
@@ -128,28 +113,42 @@ function makeHashesAndScopedCssPaths(exportIdentifier, data) {
 
 export const visitor = {
   ImportDeclaration(path, state) {
-    const tagName = getTagNameFromImportDeclaration(path)
-    if (!tagName) {
+    if (path.node.source.value !== 'styled-jsx/css') {
       return
     }
 
-    state.jsxTag = tagName
-    path.remove()
-  },
-  TaggedTemplateExpression(path, state) {
-    processTaggedTemplateExpression({
-      path,
-      tagName: state.jsxTag,
-      fileInfo: {
-        file: state.file,
-        sourceFileName: state.file.opts.sourceFileName,
-        sourceMaps: state.file.opts.sourceMaps
-      },
-      splitRules:
-        typeof state.opts.optimizeForSpeed === 'boolean'
-          ? state.opts.optimizeForSpeed
-          : process.env.NODE_ENV === 'production'
+    const tagName = path.node.specifiers[0].local.name
+    const binding = path.scope.getBinding(tagName)
+
+    if (!binding || !Array.isArray(binding.referencePaths)) {
+      return
+    }
+
+    const taggedTemplateExpressions = binding.referencePaths
+      .map(ref => ref.parentPath)
+      .filter(path => path.isTaggedTemplateExpression())
+
+    if (taggedTemplateExpressions.length === 0) {
+      return
+    }
+
+    taggedTemplateExpressions.forEach(path => {
+      processTaggedTemplateExpression({
+        path,
+        fileInfo: {
+          file: state.file,
+          sourceFileName: state.file.opts.sourceFileName,
+          sourceMaps: state.file.opts.sourceMaps
+        },
+        splitRules:
+          typeof state.opts.optimizeForSpeed === 'boolean'
+            ? state.opts.optimizeForSpeed
+            : process.env.NODE_ENV === 'production'
+      })
     })
+
+    // Finally remove the import
+    path.remove()
   }
 }
 
