@@ -11,7 +11,13 @@ import {
 
 const isModuleExports = t.buildMatchMemberExpression('module.exports')
 
-function processTaggedTemplateExpression({ path, fileInfo, splitRules, plugins, vendorPrefix }) {
+function processTaggedTemplateExpression({
+  path,
+  fileInfo,
+  splitRules,
+  plugins,
+  vendorPrefix
+}) {
   const templateLiteral = path.get('quasi')
 
   // Check whether there are undefined references or references to this.something (e.g. props or state)
@@ -117,7 +123,6 @@ function makeHashesAndScopedCssPaths(exportIdentifier, data) {
   })
 }
 
-let plugins
 export const visitor = {
   ImportDeclaration(path, state) {
     if (path.node.source.value !== 'styled-jsx/css') {
@@ -140,6 +145,7 @@ export const visitor = {
     }
 
     const { vendorPrefix, sourceMaps } = state.opts
+
     taggedTemplateExpressions.forEach(path => {
       processTaggedTemplateExpression({
         path,
@@ -177,14 +183,13 @@ export default function() {
       ])
       state.opts.sourceMaps = Boolean(sourceMaps)
 
-      if (!plugins) {
+      if (!state.plugins) {
         const { sourceMaps, vendorPrefix } = state.opts
-        plugins = combinePlugins(state.opts.plugins, {
+        state.plugins = combinePlugins(state.opts.plugins, {
           sourceMaps: sourceMaps || state.file.opts.sourceMaps,
           vendorPrefix: typeof vendorPrefix === 'boolean' ? vendorPrefix : true
         })
       }
-      state.plugins = plugins
     },
     ...visitor
   }

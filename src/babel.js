@@ -19,7 +19,6 @@ import {
 
 import { STYLE_COMPONENT } from './_constants'
 
-let plugins
 export default function({ types: t }) {
   return {
     inherits: jsx,
@@ -282,13 +281,12 @@ export default function({ types: t }) {
           ])
           state.opts.sourceMaps = Boolean(sourceMaps)
 
-          if (!plugins) {
-            plugins = combinePlugins(state.opts.plugins, {
+          if (!state.plugins) {
+            state.plugins = combinePlugins(state.opts.plugins, {
               sourceMaps: state.opts.sourceMaps,
               vendorPrefixes: state.opts.vendorPrefixes
             })
           }
-          state.plugins = plugins
         },
         exit({ node, scope }, state) {
           if (!(state.file.hasJSXStyle && !scope.hasBinding(STYLE_COMPONENT))) {
