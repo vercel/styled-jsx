@@ -392,7 +392,7 @@ It's **paramount** that you use one of these two functions so that
 the generated styles can be diffed when the client loads and
 duplicate styles are avoided.
 
-### CSS Preprocessing via Plugins
+## CSS Preprocessing via Plugins
 
 Styles can be preprocessed via plugins.
 
@@ -419,11 +419,41 @@ To register a plugin add an option `plugins` for `styled-jsx/babel` to your `.ba
 }
 ```
 
-In order to resolve local plugins paths you can use NodeJS' [require.resolve](https://nodejs.org/api/globals.html#globals_require_resolve).
+<details>
+  <summary>Instructions to integrate with Next.js</summary>
+  In order to register styled-jsx plugins in a Next.js app you need to create a custom .babelrc file:
+
+  ```json
+  {
+    "presets": [
+      [
+        "next/babel",
+        {
+          "styled-jsx": {
+            "plugins": [
+              "styled-jsx-plugin-postcss"
+            ]
+          }
+        }
+      ]
+    ]
+  }
+  ```
+
+  This is a fairly new feature so make sure that you using a version of Next.js that supports passing options to `styled-jsx`.
+</details>
+<br>
 
 Plugins are applied in definition order left to right before styles are scoped.
 
-N.B. when applying the plugins styled-jsx replaces template literals expressions with placeholders e.g. `%%styledjsxexpression_ExprNumber%%` because otherwise CSS parsers would get invalid CSS.
+In order to resolve local plugins paths you can use NodeJS' [require.resolve](https://nodejs.org/api/globals.html#globals_require_resolve).
+
+N.B. when applying the plugins styled-jsx replaces template literals expressions with placeholders because otherwise CSS parsers would get invalid CSS E.g.
+
+```css
+/* `ExprNumber` is a number */
+%%styled-jsx-placeholder-ExprNumber%%
+```
 
 **Plugins won't transform expressions** (eg. dynamic styles).
 

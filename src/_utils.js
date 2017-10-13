@@ -446,6 +446,12 @@ export const combinePlugins = plugins => {
       if (Array.isArray(plugin)) {
         options = plugin[1] || {}
         plugin = plugin[0]
+        if (Object.prototype.hasOwnProperty.call(options, 'babel')) {
+          throw new Error(`
+            Error while trying to register the styled-jsx plugin: ${plugin}
+            The option name \`babel\` is reserved.
+          `)
+        }
       }
 
       // eslint-disable-next-line import/no-dynamic-require
@@ -464,7 +470,7 @@ export const combinePlugins = plugins => {
       }
       return {
         plugin: p,
-        options,
+        options
       }
     })
     .reduce(
@@ -473,7 +479,7 @@ export const combinePlugins = plugins => {
           ...options,
           babel: babelOptions
         }),
-        null
+      null
     )
 }
 
@@ -503,12 +509,12 @@ export const processCss = (stylesInfo, options) => {
   const pluginsOptions = {
     location: {
       start: { ...location.start },
-      end: { ...location.end },
+      end: { ...location.end }
     },
     vendorPrefixes,
     sourceMaps: useSourceMaps,
     isGlobal,
-    filename: fileInfo.filename,
+    filename: fileInfo.filename
   }
 
   let transformedCss

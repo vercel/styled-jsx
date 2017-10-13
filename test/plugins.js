@@ -100,3 +100,9 @@ test('passes options to plugins', async t => {
   })
   t.snapshot(code)
 })
+
+test('combinePlugins throws if passing an option called `babel`', t => {
+  t.throws(() => {
+    combinePlugins([['test', { babel: true }]])
+  })
+})
