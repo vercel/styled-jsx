@@ -489,6 +489,13 @@ The `options` object has the following shape:
 }
 ```
 
+#### Example plugins
+
+The following plugins are proof of concepts/sample:
+
+* [styled-jsx-plugin-sass](https://github.com/giuseppeg/styled-jsx-plugin-sass)
+* [styled-jsx-plugin-postcss](https://github.com/giuseppeg/styled-jsx-plugin-postcss)
+
 ## Syntax Highlighting
 
 When working with template literals a common drawback is missing syntax highlighting. The following editors currently have support for highlighting CSS inside `<style jsx>` elements.
