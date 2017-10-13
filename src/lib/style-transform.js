@@ -1,4 +1,5 @@
 const Stylis = require('stylis')
+const stylisRuleSheet = require('stylis-rule-sheet')
 
 const stylis = new Stylis()
 
@@ -69,68 +70,12 @@ function sourceMapsPlugin(...args) {
  * splitRulesPlugin
  * Used to split a blob of css into an array of rules
  * that can inserted via sheet.insertRule
- *
- * courtesy of and (c) the emotion folks (with some fixes from us)
- * https://github.com/emotion-js/emotion/blob/994ea265cf5a411c5fa9b606dd140ce66776d1db/packages/emotion/src/index.js#L23-L60
  */
-let isSplitRulesEnabled = false
 let splitRules = []
-let splitRulesQueue = []
-let scopeHash
-const nestedAtRules = ['m', 's', 'd', 'k', '-']
 
-function splitRulesPlugin(
-  context,
-  content,
-  selectors,
-  parent,
-  line,
-  column,
-  length,
-  id
-) {
-  if (context === -2) {
-    splitRules = splitRules.concat(splitRulesQueue)
-    splitRulesQueue = []
-    return
-  }
-
-  if (context === 1) {
-    if (content.charAt(0) === '@') {
-      splitRulesQueue.push(content)
-      return ''
-    }
-  }
-
-  if (context === 2) {
-    if (id === 0) {
-      const joinedSelectors = selectors.join(',')
-      const rule = `${joinedSelectors}{${content}}`
-      if (parent.join(',') === joinedSelectors || parent[0] === '') {
-        splitRulesQueue.push(rule)
-      } else {
-        splitRulesQueue.unshift(rule)
-      }
-    }
-    return
-  }
-
-  // after an at rule block
-  if (context === 3) {
-    const selectrs = selectors.join(',')
-    if (nestedAtRules.indexOf(selectrs.charAt(1)) === -1) {
-      splitRulesQueue.push(`${selectrs}${content}`)
-    } else if (selectrs.charAt(1) === 'k') {
-      const animationName = scopeHash.replace(/^\./, '-')
-      splitRulesQueue.push(
-        `@-webkit-${selectrs.slice(1)}${animationName}{${content}}`
-      )
-      splitRulesQueue.push(`${selectrs}${animationName}{${content}}`)
-    } else {
-      splitRulesQueue.push(`${selectrs}{${content}}`)
-    }
-  }
-}
+const splitRulesPlugin = stylisRuleSheet(rule => {
+  splitRules.push(rule)
+})
 
 stylis.use(disableNestingPlugin)
 stylis.use(sourceMapsPlugin)
@@ -152,16 +97,15 @@ function transform(hash, styles, settings = {}) {
   generator = settings.generator
   offset = settings.offset
   filename = settings.filename
-  isSplitRulesEnabled = settings.splitRules
   splitRules = []
-  scopeHash = hash
 
-  const cssString = stylis(scopeHash, styles)
+  stylis(hash, styles)
 
-  if (isSplitRulesEnabled) {
+  if (settings.splitRules) {
     return splitRules
   }
-  return cssString
+
+  return splitRules.join('')
 }
 
 module.exports = transform
