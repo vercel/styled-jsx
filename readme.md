@@ -454,6 +454,13 @@ By now, this extension doesn't support autocomplete. However, you can install [E
 
 Install [vim-styled-jsx](https://github.com/alampros/vim-styled-jsx) with your plugin manager of choice.
 
+## ESLint
+If you're using `eslint-plugin-import`, the `css` import will generate errors, being that it's a "magic" import (not listed in package.json). To avoid these, simply add the following line to your eslint configuration:
+
+```
+"settings": {"import/core-modules": ["styled-jsx/css"] }
+```
+
 ## Credits
 
 - **Pedram Emrouznejad** ([rijs](https://github.com/rijs/fullstack)) suggested attribute selectors over my initial class prefixing idea.
