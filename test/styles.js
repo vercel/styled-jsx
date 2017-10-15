@@ -96,8 +96,8 @@ test('splits rules for `optimizeForSpeed`', t => {
   assert(
     'span { color: red } @font-face { font-family: test; src: url(test.woff); } div { color: red }',
     [
-      'span{color:red;}',
       '@font-face{font-family:test;src:url(test.woff);}',
+      'span{color:red;}',
       'div{color:red;}'
     ]
   )
@@ -126,7 +126,7 @@ test('splits rules for `optimizeForSpeed`', t => {
     }
   `,
     [
-      '@supports (display:flex){div{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}}'
+      '@supports (display:-webkit-box) or (display:-webkit-flex) or (display:-ms-flexbox) or (display:flex){div{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}}'
     ]
   )
 
@@ -143,10 +143,10 @@ test('splits rules for `optimizeForSpeed`', t => {
   `,
     [
       '@import "./test.css"',
-      '@supports (display:flex){div{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}}',
+      '@import "./test.css"',
+      '@supports (display:-webkit-box) or (display:-webkit-flex) or (display:-ms-flexbox) or (display:flex){div{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}}',
       'div{color:red;}',
       'a,div{color:red;}',
-      '@import "./test.css"',
       '@media (min-width:400px){div,span{color:red;}}'
     ]
   )
@@ -202,4 +202,6 @@ test('splits rules for `optimizeForSpeed`', t => {
       '@keyframes fade-in{from{opacity:0;}to{opacity:1;}}'
     ]
   )
+
+  assert(`div { color: red } ::placeholder { color: green }`, ['div.jsx-123{color:red;}', '.jsx-123::-webkit-input-placeholder{color:green;}', '.jsx-123::-moz-placeholder{color:green;}', '.jsx-123:-ms-input-placeholder{color:green;}', '.jsx-123::placeholder{color:green;}'], '.jsx-123')
 })

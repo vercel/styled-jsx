@@ -67,10 +67,10 @@ export const Component = () => <AnotherTitle>My page</AnotherTitle>;"
 `;
 
 exports[`transpiles external stylesheets (CommonJS modules) 1`] = `
-"const _defaultExport = new String('div{font-size:3em}');
+"const _defaultExport = new String('div{font-size:3em;}');
 
 _defaultExport.__hash = '761548770';
-_defaultExport.__scoped = 'div.jsx-3720287939{font-size:3em}';
+_defaultExport.__scoped = 'div.jsx-3720287939{font-size:3em;}';
 _defaultExport.__scopedHash = '3720287939';
 
 
@@ -82,22 +82,22 @@ exports[`transpiles external stylesheets 1`] = `
 
 const color = 'red';
 
-const bar = new String('div{font-size:3em}');
+const bar = new String('div{font-size:3em;}');
 bar.__hash = '761548770';
-bar.__scoped = 'div.jsx-3720287939{font-size:3em}';
+bar.__scoped = 'div.jsx-3720287939{font-size:3em;}';
 bar.__scopedHash = '3720287939';
 export const uh = bar;
 
-export const foo = new String(\`div{color:\${color}}\`);
+export const foo = new String(\`div{color:\${color};}\`);
 
 foo.__hash = '3319550427';
-foo.__scoped = \`div.jsx-3980805466{color:\${color}}\`;
+foo.__scoped = \`div.jsx-3980805466{color:\${color};}\`;
 foo.__scopedHash = '3980805466';
 
-const _defaultExport = new String(\`div{font-size:3em}p{color:\${color}}\`);
+const _defaultExport = new String(\`div{font-size:3em;}p{color:\${color};}\`);
 
 _defaultExport.__hash = '392586103';
-_defaultExport.__scoped = \`div.jsx-311488054{font-size:3em}p.jsx-311488054{color:\${color}}\`;
+_defaultExport.__scoped = \`div.jsx-311488054{font-size:3em;}p.jsx-311488054{color:\${color};}\`;
 _defaultExport.__scopedHash = '311488054';
 export default _defaultExport;"
 `;
@@ -140,7 +140,7 @@ export default (() => <div className={'jsx-1646697228 ' + \`jsx-\${styles3.__sco
     <_JSXStyle styleId={styles2.__hash} css={styles2} />
     <_JSXStyle styleId={styles3.__scopedHash} css={styles3.__scoped} />
     <div className={'jsx-1646697228 ' + \`jsx-\${styles3.__scopedHash} jsx-\${styles.__scopedHash}\`}>woot</div>
-    <_JSXStyle styleId={\\"1646697228\\"} css={\\"p.jsx-1646697228{color:red}div.jsx-1646697228{color:green}\\"} />
+    <_JSXStyle styleId={\\"1646697228\\"} css={\\"p.jsx-1646697228{color:red;}div.jsx-1646697228{color:green;}\\"} />
     <_JSXStyle styleId={styles.__scopedHash} css={styles.__scoped} />
   </div>);
 
@@ -149,6 +149,6 @@ export const Test = () => <div className={'jsx-1646697228 ' + \`jsx-\${styles3._
     <p className={'jsx-1646697228 ' + \`jsx-\${styles3.__scopedHash}\`}>woot</p>
     <_JSXStyle styleId={styles3.__scopedHash} css={styles3.__scoped} />
     <div className={'jsx-1646697228 ' + \`jsx-\${styles3.__scopedHash}\`}>woot</div>
-    <_JSXStyle styleId={\\"1646697228\\"} css={\\"p.jsx-1646697228{color:red}div.jsx-1646697228{color:green}\\"} />
+    <_JSXStyle styleId={\\"1646697228\\"} css={\\"p.jsx-1646697228{color:red;}div.jsx-1646697228{color:green;}\\"} />
   </div>;"
 `;

@@ -16,43 +16,43 @@ export const Test1 = () => <div className={\`jsx-\${styles.__scopedHash} jsx-\${
 // external and static
 export const Test2 = () => <div className={'jsx-2982525546 ' + \`jsx-\${styles.__scopedHash}\`}>
     <p className={'jsx-2982525546 ' + \`jsx-\${styles.__scopedHash}\`}>external and static</p>
-    <_JSXStyle styleId={\\"2982525546\\"} css={\\"p.jsx-2982525546{color:red}\\"} />
+    <_JSXStyle styleId={\\"2982525546\\"} css={\\"p.jsx-2982525546{color:red;}\\"} />
     <_JSXStyle styleId={styles.__scopedHash} css={styles.__scoped} />
   </div>;
 
 // external and dynamic
 export const Test3 = ({ color }) => <div className={\`jsx-\${styles.__scopedHash}\` + ' ' + _JSXStyle.dynamic([['1947484460', [color]]])}>
     <p className={\`jsx-\${styles.__scopedHash}\` + ' ' + _JSXStyle.dynamic([['1947484460', [color]]])}>external and dynamic</p>
-    <_JSXStyle styleId={\\"1947484460\\"} css={\`p.__jsx-style-dynamic-selector{color:\${color}}\`} dynamic={[color]} />
+    <_JSXStyle styleId={\\"1947484460\\"} css={\`p.__jsx-style-dynamic-selector{color:\${color};}\`} dynamic={[color]} />
     <_JSXStyle styleId={styles.__scopedHash} css={styles.__scoped} />
   </div>;
 
 // external, static and dynamic
 export const Test4 = ({ color }) => <div className={\`jsx-\${styles.__scopedHash}\` + ' jsx-3190985107 ' + _JSXStyle.dynamic([['1336444426', [color]]])}>
     <p className={\`jsx-\${styles.__scopedHash}\` + ' jsx-3190985107 ' + _JSXStyle.dynamic([['1336444426', [color]]])}>external, static and dynamic</p>
-    <_JSXStyle styleId={\\"3190985107\\"} css={\\"p.jsx-3190985107{display:inline-block}\\"} />
-    <_JSXStyle styleId={\\"1336444426\\"} css={\`p.__jsx-style-dynamic-selector{color:\${color}}\`} dynamic={[color]} />
+    <_JSXStyle styleId={\\"3190985107\\"} css={\\"p.jsx-3190985107{display:inline-block;}\\"} />
+    <_JSXStyle styleId={\\"1336444426\\"} css={\`p.__jsx-style-dynamic-selector{color:\${color};}\`} dynamic={[color]} />
     <_JSXStyle styleId={styles.__scopedHash} css={styles.__scoped} />
   </div>;
 
 // static only
 export const Test5 = () => <div className={\\"jsx-1372669040\\"}>
     <p className={\\"jsx-1372669040\\"}>static only</p>
-    <_JSXStyle styleId={\\"3190985107\\"} css={\\"p.jsx-1372669040{display:inline-block}\\"} />
-    <_JSXStyle styleId={\\"2982525546\\"} css={\\"p.jsx-1372669040{color:red}\\"} />
+    <_JSXStyle styleId={\\"3190985107\\"} css={\\"p.jsx-1372669040{display:inline-block;}\\"} />
+    <_JSXStyle styleId={\\"2982525546\\"} css={\\"p.jsx-1372669040{color:red;}\\"} />
   </div>;
 
 // static and dynamic
 export const Test6 = ({ color }) => <div className={'jsx-3190985107 ' + _JSXStyle.dynamic([['1336444426', [color]]])}>
     <p className={'jsx-3190985107 ' + _JSXStyle.dynamic([['1336444426', [color]]])}>static and dynamic</p>
-    <_JSXStyle styleId={\\"3190985107\\"} css={\\"p.jsx-3190985107{display:inline-block}\\"} />
-    <_JSXStyle styleId={\\"1336444426\\"} css={\`p.__jsx-style-dynamic-selector{color:\${color}}\`} dynamic={[color]} />
+    <_JSXStyle styleId={\\"3190985107\\"} css={\\"p.jsx-3190985107{display:inline-block;}\\"} />
+    <_JSXStyle styleId={\\"1336444426\\"} css={\`p.__jsx-style-dynamic-selector{color:\${color};}\`} dynamic={[color]} />
   </div>;
 
 // dynamic only
 export const Test7 = ({ color }) => <div className={_JSXStyle.dynamic([['1947484460', [color]]])}>
     <p className={_JSXStyle.dynamic([['1947484460', [color]]])}>dynamic only</p>
-    <_JSXStyle styleId={\\"1947484460\\"} css={\`p.__jsx-style-dynamic-selector{color:\${color}}\`} dynamic={[color]} />
+    <_JSXStyle styleId={\\"1947484460\\"} css={\`p.__jsx-style-dynamic-selector{color:\${color};}\`} dynamic={[color]} />
   </div>;"
 `;
 
@@ -90,6 +90,6 @@ export default (() => <div className={\\"jsx-2886504620\\"}>
     <div {...props} {...rest} className={\\"jsx-2886504620\\" + \\" \\" + (rest.className != null && rest.className || props.className != null && props.className || \\"\\")} />
     <div {...props} data-foo {...rest} className={\\"jsx-2886504620\\" + \\" \\" + (rest.className != null && rest.className || props.className != null && props.className || \\"\\")} />
     <div {...props} data-foo {...rest} className={\\"jsx-2886504620\\" + \\" \\" + (rest.className != null && rest.className || 'test')} />
-    <_JSXStyle styleId={\\"2886504620\\"} css={\\"div.jsx-2886504620{color:red}\\"} />
+    <_JSXStyle styleId={\\"2886504620\\"} css={\\"div.jsx-2886504620{color:red;}\\"} />
   </div>);"
 `;
