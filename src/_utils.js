@@ -426,6 +426,63 @@ export const addSourceMaps = (code, generator, filename) => {
   return [code].concat(sourceMaps).join('\n')
 }
 
+export const combinePlugins = plugins => {
+  if (!plugins) {
+    return css => css
+  }
+
+  if (
+    !Array.isArray(plugins) ||
+    plugins.some(p => !Array.isArray(p) && typeof p !== 'string')
+  ) {
+    throw new Error(
+      '`plugins` must be an array of plugins names (string) or an array `[plugin-name, {options}]`'
+    )
+  }
+
+  return plugins
+    .map((plugin, i) => {
+      let options = {}
+      if (Array.isArray(plugin)) {
+        options = plugin[1] || {}
+        plugin = plugin[0]
+        if (Object.prototype.hasOwnProperty.call(options, 'babel')) {
+          throw new Error(`
+            Error while trying to register the styled-jsx plugin: ${plugin}
+            The option name \`babel\` is reserved.
+          `)
+        }
+      }
+
+      // eslint-disable-next-line import/no-dynamic-require
+      let p = require(plugin)
+      if (p.default) {
+        p = p.default
+      }
+
+      const type = typeof p
+      if (type !== 'function') {
+        throw new Error(
+          `Expected plugin ${plugins[
+            i
+          ]} to be a function but instead got ${type}`
+        )
+      }
+      return {
+        plugin: p,
+        options
+      }
+    })
+    .reduce(
+      (previous, { plugin, options }) => (css, babelOptions) =>
+        plugin(previous ? previous(css, babelOptions) : css, {
+          ...options,
+          babel: babelOptions
+        }),
+      null
+    )
+}
+
 const getPrefix = (isDynamic, id) =>
   isDynamic ? '.__jsx-style-dynamic-selector' : `.${id}`
 
@@ -437,7 +494,9 @@ export const processCss = (stylesInfo, options) => {
     dynamic,
     location,
     fileInfo,
-    isGlobal
+    isGlobal,
+    plugins,
+    vendorPrefixes
   } = stylesInfo
 
   const staticClassName =
@@ -447,26 +506,42 @@ export const processCss = (stylesInfo, options) => {
 
   const useSourceMaps = Boolean(fileInfo.sourceMaps) && !splitRules
 
+  const pluginsOptions = {
+    location: {
+      start: { ...location.start },
+      end: { ...location.end }
+    },
+    vendorPrefixes,
+    sourceMaps: useSourceMaps,
+    isGlobal,
+    filename: fileInfo.filename
+  }
+
   let transformedCss
 
   if (useSourceMaps) {
     const generator = makeSourceMapGenerator(fileInfo.file)
     const filename = fileInfo.sourceFileName
     transformedCss = addSourceMaps(
-      transform(isGlobal ? '' : getPrefix(dynamic, staticClassName), css, {
-        generator,
-        offset: location.start,
-        filename,
-        splitRules
-      }),
+      transform(
+        isGlobal ? '' : getPrefix(dynamic, staticClassName),
+        plugins(css, pluginsOptions),
+        {
+          generator,
+          offset: location.start,
+          filename,
+          splitRules,
+          vendorPrefixes
+        }
+      ),
       generator,
       filename
     )
   } else {
     transformedCss = transform(
       isGlobal ? '' : getPrefix(dynamic, staticClassName),
-      css,
-      { splitRules }
+      plugins(css, pluginsOptions),
+      { splitRules, vendorPrefixes }
     )
   }
 
@@ -492,4 +567,16 @@ export const processCss = (stylesInfo, options) => {
     css: transformedCss,
     expressions: dynamic && expressions
   }
+}
+
+export const booleanOption = opts => {
+  let ret
+  opts.some(opt => {
+    if (typeof opt === 'boolean') {
+      ret = opt
+      return true
+    }
+    return false
+  })
+  return ret
 }

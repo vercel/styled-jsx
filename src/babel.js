@@ -12,7 +12,9 @@ import {
   computeClassNames,
   addClassName,
   getScope,
-  processCss
+  processCss,
+  combinePlugins,
+  booleanOption
 } from './_utils'
 
 import { STYLE_COMPONENT } from './_constants'
@@ -234,15 +236,19 @@ export default function({ types: t }) {
             return
           }
 
+          const { vendorPrefixes, sourceMaps } = state.opts
           const stylesInfo = {
             ...state.styles.shift(),
             fileInfo: {
               file: state.file,
               sourceFileName: state.file.opts.sourceFileName,
-              sourceMaps: state.file.opts.sourceMaps
+              sourceMaps,
+              filename: state.file.filename
             },
             staticClassName: state.staticClassName,
-            isGlobal
+            isGlobal,
+            plugins: state.plugins,
+            vendorPrefixes
           }
           const splitRules =
             typeof state.opts.optimizeForSpeed === 'boolean'
@@ -262,6 +268,25 @@ export default function({ types: t }) {
           state.ignoreClosing = null
           state.file.hasJSXStyle = false
           state.imports = []
+
+          const vendorPrefixes = booleanOption([
+            state.opts.vendorPrefixes,
+            state.file.opts.vendorPrefixes
+          ])
+          state.opts.vendorPrefixes =
+            typeof vendorPrefixes === 'boolean' ? vendorPrefixes : true
+          const sourceMaps = booleanOption([
+            state.opts.sourceMaps,
+            state.file.opts.sourceMaps
+          ])
+          state.opts.sourceMaps = Boolean(sourceMaps)
+
+          if (!state.plugins) {
+            state.plugins = combinePlugins(state.opts.plugins, {
+              sourceMaps: state.opts.sourceMaps,
+              vendorPrefixes: state.opts.vendorPrefixes
+            })
+          }
         },
         exit({ node, scope }, state) {
           if (!(state.file.hasJSXStyle && !scope.hasBinding(STYLE_COMPONENT))) {
