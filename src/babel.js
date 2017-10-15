@@ -79,7 +79,6 @@ export default function({ types: t }) {
           }
 
           const styles = findStyles(path)
-
           if (styles.length === 0) {
             return
           }
@@ -199,14 +198,25 @@ export default function({ types: t }) {
         },
         exit(path, state) {
           const isGlobal = isGlobalEl(path.node.openingElement)
+          const styleElementInArrayChildren =
+            path.parentPath.type === 'ArrayExpression' &&
+            path.node.openingElement.name.name === 'style'
 
-          if (state.hasJSXStyle && !--state.ignoreClosing && !isGlobal) {
+          if (
+            state.hasJSXStyle &&
+            !--state.ignoreClosing &&
+            !isGlobal &&
+            !styleElementInArrayChildren
+          ) {
             state.hasJSXStyle = null
             state.className = null
             state.externalJsxId = null
           }
 
-          if (!state.hasJSXStyle || !isStyledJsx(path)) {
+          if (
+            (!state.hasJSXStyle || !isStyledJsx(path)) &&
+            !styleElementInArrayChildren
+          ) {
             return
           }
 
@@ -233,6 +243,11 @@ export default function({ types: t }) {
                     )
               )
             )
+            if (styleElementInArrayChildren) {
+              state.hasJSXStyle = null
+              state.jsxId = null
+              state.externalJsxId = null
+            }
             return
           }
 

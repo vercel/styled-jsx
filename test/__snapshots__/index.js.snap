@@ -67,6 +67,54 @@ const Test = () => <div className={\\"jsx-2529315885\\"}>
   </div>;"
 `;
 
+exports[`works with array children 1`] = `
+"import _JSXStyle from \\"styled-jsx/style\\";
+/* eslint-disable no-unused-vars */
+
+const Test1 = () => [<div className={\\"jsx-336794318\\"}>Foo</div>, <span className={\\"jsx-336794318\\"}>Bar</span>, <_JSXStyle styleId={\\"1486255031\\"} css={\\"div.jsx-336794318{color:red}\\"} />];
+
+const Test2 = () => [<p className={\\"jsx-136928739\\"}>Hello World</p>, <_JSXStyle styleId={\\"2639504339\\"} css={\\"p{color:white}\\"} />];
+
+const Test3 = () => [<div className={\\"jsx-3360849707\\"}>
+    <p className={\\"jsx-3360849707\\"}>Hello World</p>
+    <_JSXStyle styleId={\\"4193872369\\"} css={\\"p.jsx-3360849707{color:blue}\\"} />
+  </div>, <div>Hello World</div>];
+
+const Test4 = () => [<div className={\\"jsx-612908104\\"}>
+    <span className={\\"jsx-612908104\\"}>Styled by root style tag</span>
+    <p className={\\"jsx-612908104\\" + \\" \\" + \\"one\\"}>Lorem</p>
+    <p className={\\"jsx-612908104\\" + \\" \\" + \\"two\\"}>Ipsum</p>
+    <_JSXStyle styleId={\\"1597461941\\"} css={\\"span.jsx-612908104{background:magenta}\\"} />
+  </div>, <div className={\\"jsx-2944581440\\"}>
+    <p className={\\"jsx-2944581440\\" + \\" \\" + \\"one\\"}>Dolor</p>
+    <p className={\\"jsx-2944581440\\" + \\" \\" + \\"two\\"}>Sit</p>
+  </div>, <div className={\\"jsx-1719653926\\"}>
+    <p className={\\"jsx-1719653926\\" + \\" \\" + \\"one\\"}>Dolor</p>
+    <p className={\\"jsx-1719653926\\" + \\" \\" + \\"two\\"}>Sit</p>
+    <_JSXStyle styleId={\\"1597461941\\"} css={\\"span{background:magenta}\\"} />
+  </div>, <_JSXStyle styleId={\\"1597461941\\"} css={\\"span.jsx-2944581440{background:magenta}\\"} />];
+
+const Test5 = () => [<div className={\\"jsx-3303020362\\"}>Foo</div>, <div className={\\"jsx-3303020362\\"}>
+    <div className={\\"jsx-3303020362\\"}>
+      <div className={\\"jsx-3303020362\\" + \\" \\" + \\"bar\\"}>Bar</div>
+    </div>
+  </div>, <div className={\\"jsx-3303020362\\"}>
+    <main className={\\"jsx-3303020362\\"}>
+      <div className={\\"jsx-3303020362\\"}>
+        <div id=\\"baz\\" className={\\"jsx-3303020362\\"}>Baz</div>
+      </div>
+    </main>
+  </div>, <_JSXStyle styleId={\\"3832907478\\"} css={\\"main.jsx-3303020362{color:red}.bar.jsx-3303020362{color:white}.baz.jsx-3303020362{color:blue}\\"} />];
+
+export default (() => <div>
+    <Test1 />
+    <Test2 />
+    <Test3 />
+    <Test4 />
+    <Test5 />
+  </div>);"
+`;
+
 exports[`works with class 1`] = `
 "import _JSXStyle from \\"styled-jsx/style\\";
 export default class {
