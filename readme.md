@@ -526,6 +526,7 @@ The following plugins are proof of concepts/sample:
 * [styled-jsx-plugin-sass](https://github.com/giuseppeg/styled-jsx-plugin-sass)
 * [styled-jsx-plugin-postcss](https://github.com/giuseppeg/styled-jsx-plugin-postcss)
 * [styled-jsx-plugin-stylelint](https://github.com/giuseppeg/styled-jsx-plugin-stylelint)
+* [styled-jsx-plugin-less](https://github.com/erasmo-marin/styled-jsx-plugin-less)
 
 ## Syntax Highlighting
 
