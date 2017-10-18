@@ -112,7 +112,8 @@ export const validateExpressionVisitor = {
       (t.isIdentifier(node.property) &&
         (t.isThisExpression(node.object) &&
           (node.property.name === 'props' ||
-            node.property.name === 'state'))) ||
+            node.property.name === 'state' ||
+            node.property.name === 'context'))) ||
       (t.isIdentifier(node.object) && scope.hasOwnBinding(node.object.name))
     ) {
       throw path.buildCodeFrameError(
@@ -153,18 +154,21 @@ export const isDynamic = (expr, scope) => {
 
 const validateExternalExpressionsVisitor = {
   Identifier(path) {
-    let isInScope = false
+    if (t.isMemberExpression(path.parentPath)) {
+      return
+    }
     const { name } = path.node
-    let parentPath = path
-    do {
-      if (parentPath && parentPath.scope.hasBinding(name)) {
-        isInScope = true
-      }
-      parentPath = parentPath.parentPath
-    } while (!isInScope && parentPath)
-
-    if (!isInScope) {
-      throw new Error(path.parentPath.getSource())
+    if (!path.scope.hasBinding(name)) {
+      throw path.buildCodeFrameError(path.getSource())
+    }
+  },
+  MemberExpression(path) {
+    const { node } = path
+    if (!t.isIdentifier(node.object)) {
+      return
+    }
+    if (!path.scope.hasBinding(node.object.name)) {
+      throw path.buildCodeFrameError(path.getSource())
     }
   },
   ThisExpression(path) {
