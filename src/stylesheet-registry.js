@@ -64,6 +64,11 @@ export default class StyleSheetRegistry {
 
   remove(props) {
     const { styleId } = this.getIdAndRules(props)
+
+    if (!this._instancesCounts[styleId]) {
+      return false
+    }
+
     invariant(
       styleId in this._instancesCounts,
       `styleId: \`${styleId}\` not found`
