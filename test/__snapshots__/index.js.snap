@@ -5,7 +5,7 @@ exports[`generates source maps 1`] = `
 export default (() => <div className={\\"jsx-2743241663\\"}>
     <p className={\\"jsx-2743241663\\"}>test</p>
     <p className={\\"jsx-2743241663\\"}>woot</p>
-    <_JSXStyle styleId={\\"2743241663\\"} css={\\"p.jsx-2743241663{color:red;}\\\\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNvdXJjZS1tYXBzLmpzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUlnQixBQUNjLFVBQUMiLCJmaWxlIjoic291cmNlLW1hcHMuanMiLCJzb3VyY2VzQ29udGVudCI6WyJleHBvcnQgZGVmYXVsdCAoKSA9PiAoXG4gIDxkaXY+XG4gICAgPHA+dGVzdDwvcD5cbiAgICA8cD53b290PC9wPlxuICAgIDxzdHlsZSBqc3g+eydwIHsgY29sb3I6IHJlZCB9J308L3N0eWxlPlxuICA8L2Rpdj5cbilcbiJdfQ== */\\\\n/*@ sourceURL=source-maps.js */\\"} />
+    <_JSXStyle styleId={\\"2743241663\\"} css={\\"p.jsx-2743241663{color:red;}\\\\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNvdXJjZS1tYXBzLmpzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUlnQixBQUNjLFVBQUMiLCJmaWxlIjoic291cmNlLW1hcHMuanMiLCJzb3VyY2VzQ29udGVudCI6WyJleHBvcnQgZGVmYXVsdCAoKSA9PiAoXG4gIDxkaXY+XG4gICAgPHA+dGVzdDwvcD5cbiAgICA8cD53b290PC9wPlxuICAgIDxzdHlsZSBqc3g+eydwIHsgY29sb3I6IHJlZCB9J308L3N0eWxlPlxuICA8L2Rpdj5cbilcbiJdfQ== */\\\\n/*@ sourceURL=source-maps.js */\\"} />
   </div>);"
 `;
 
