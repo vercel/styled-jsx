@@ -1,6 +1,6 @@
 {
   "name": "styled-jsx",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "license": "MIT",
   "repository": "zeit/styled-jsx",
   "description": "Full CSS support for JSX without compromises",
