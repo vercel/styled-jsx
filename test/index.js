@@ -77,6 +77,11 @@ test('works with non styled-jsx styles', async t => {
   t.snapshot(code)
 })
 
+test('works with css tagged template literals in the same file', async t => {
+  const { code } = await transform('./fixtures/css-tag-same-file.js')
+  t.snapshot(code)
+})
+
 test('server rendering', t => {
   function App() {
     const color = 'green'

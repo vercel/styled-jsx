@@ -23,24 +23,6 @@ export default function({ types: t }) {
   return {
     inherits: jsx,
     visitor: {
-      ImportDefaultSpecifier(path, state) {
-        state.imports.push(path.get('local').node.name)
-      },
-      ImportSpecifier(path, state) {
-        state.imports.push(
-          (path.get('local') || path.get('imported')).node.name
-        )
-      },
-      VariableDeclarator(path, state) {
-        const subpath = path.get('init')
-        if (
-          !subpath.isCallExpression() ||
-          subpath.get('callee').node.name !== 'require'
-        ) {
-          return
-        }
-        state.imports.push(path.get('id').node.name)
-      },
       JSXOpeningElement(path, state) {
         const el = path.node
         const { name } = el.name || {}
@@ -120,7 +102,7 @@ export default function({ types: t }) {
 
             if (t.isIdentifier(expression)) {
               const idName = expression.node.name
-              if (state.imports.indexOf(idName) !== -1) {
+              if (expression.scope.hasBinding(idName)) {
                 const externalStylesIdentifier = t.identifier(idName)
                 const isGlobal = isGlobalEl(style.get('openingElement').node)
                 state.externalStyles.push([
@@ -267,7 +249,6 @@ export default function({ types: t }) {
           state.hasJSXStyle = null
           state.ignoreClosing = null
           state.file.hasJSXStyle = false
-          state.imports = []
 
           const vendorPrefixes = booleanOption([
             state.opts.vendorPrefixes,
