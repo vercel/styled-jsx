@@ -30,11 +30,25 @@ export const addClassName = (path, jsxId) => {
   for (let i = attributes.length - 1, attr; (attr = attributes[i]); i--) {
     const node = attr.node
     if (t.isJSXSpreadAttribute(attr)) {
+      console.log('node arg', node)
+
       const name = node.argument.name
-      const attrNameDotClassName = t.memberExpression(
+      let attrNameDotClassName = t.memberExpression(
         t.identifier(name),
         t.identifier('className')
       )
+
+      if (node.argument.type === 'MemberExpression') {
+        attrNameDotClassName = t.memberExpression(
+          t.memberExpression(
+            t.identifier(node.argument.object.name),
+            t.identifier(node.argument.property.name)
+          ),
+          t.identifier('className')
+        )
+      }
+
+      console.log('\n\n ------------ \n\n')
       spreads.push(
         // `${name}.className != null && ${name}.className`
         and(
@@ -78,12 +92,13 @@ export const addClassName = (path, jsxId) => {
 }
 
 export const getScope = path =>
-  (path.findParent(
-    path =>
-      path.isFunctionDeclaration() ||
-      path.isArrowFunctionExpression() ||
-      path.isClassMethod()
-  ) || path
+  (
+    path.findParent(
+      path =>
+        path.isFunctionDeclaration() ||
+        path.isArrowFunctionExpression() ||
+        path.isClassMethod()
+    ) || path
   ).scope
 
 export const isGlobalEl = el =>
@@ -181,7 +196,9 @@ export const validateExternalExpressions = path => {
     path.traverse(validateExternalExpressionsVisitor)
   } catch (err) {
     throw path.buildCodeFrameError(`
-      Found an \`undefined\` or invalid value in your styles: \`${err.message}\`.
+      Found an \`undefined\` or invalid value in your styles: \`${
+        err.message
+      }\`.
 
       If you are trying to use dynamic styles in external files this is unfortunately not possible yet.
       Please put the dynamic parts alongside the component. E.g.
@@ -240,9 +257,9 @@ export const getJSXStyleInfo = (expr, scope) => {
   const dynamic = scope ? isDynamic(expr, scope) : false
   const css = quasis.reduce(
     (css, quasi, index) =>
-      `${css}${quasi.value.cooked}${quasis.length === index + 1
-        ? ''
-        : `%%styled-jsx-placeholder-${index}%%`}`,
+      `${css}${quasi.value.cooked}${
+        quasis.length === index + 1 ? '' : `%%styled-jsx-placeholder-${index}%%`
+      }`,
     ''
   )
 
@@ -467,9 +484,9 @@ export const combinePlugins = plugins => {
       const type = typeof p
       if (type !== 'function') {
         throw new Error(
-          `Expected plugin ${plugins[
-            i
-          ]} to be a function but instead got ${type}`
+          `Expected plugin ${plugins[i]} to be a function but instead got ${
+            type
+          }`
         )
       }
       return {

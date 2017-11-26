@@ -81,6 +81,17 @@ export default class {
 }"
 `;
 
+exports[`works with complex spread props 1`] = `
+"import _JSXStyle from \\"styled-jsx/style\\";
+import React from 'react';
+
+const A = props => <div {...props.red} className={\\"jsx-362219527\\" + \\" \\" + (props.red.className != null && props.red.className || \\"a-component\\")}>
+    <_JSXStyle styleId={\\"362219527\\"} css={\\".a-component.jsx-362219527{color:red;}\\"} />
+  </div>;
+
+export default A;"
+`;
+
 exports[`works with css tagged template literals in the same file 1`] = `
 "import _JSXStyle from 'styled-jsx/style';
 

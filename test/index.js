@@ -20,6 +20,11 @@ test('works with stateless', async t => {
   t.snapshot(code)
 })
 
+test('works with complex spread props', async t => {
+  const { code } = await transform('./fixtures/spread.js')
+  t.snapshot(code)
+})
+
 test('ignores whitespace around expression container', async t => {
   const { code } = await transform('./fixtures/whitespace.js')
   t.snapshot(code)
