@@ -20,16 +20,6 @@ test('works with stateless', async t => {
   t.snapshot(code)
 })
 
-// test('works with complex spread props', async t => {
-//   const { code } = await transform('./fixtures/attribute-generation-classname-rewriting.js')
-//   t.snapshot(code)
-// })
-//
-// test('works with complex spread props (class)', async t => {
-//   const { code } = await transform('./fixtures/attribute-generation-classname-rewriting-with-class.js')
-//   t.snapshot(code)
-// })
-
 test('ignores whitespace around expression container', async t => {
   const { code } = await transform('./fixtures/whitespace.js')
   t.snapshot(code)
