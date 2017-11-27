@@ -30,8 +30,6 @@ export const addClassName = (path, jsxId) => {
   for (let i = attributes.length - 1, attr; (attr = attributes[i]); i--) {
     const node = attr.node
     if (t.isJSXSpreadAttribute(attr)) {
-      console.log('node arg', node)
-
       const name = node.argument.name
       let attrNameDotClassName = t.memberExpression(
         t.identifier(name),
@@ -40,15 +38,11 @@ export const addClassName = (path, jsxId) => {
 
       if (node.argument.type === 'MemberExpression') {
         attrNameDotClassName = t.memberExpression(
-          t.memberExpression(
-            t.identifier(node.argument.object.name),
-            t.identifier(node.argument.property.name)
-          ),
+          node.argument,
           t.identifier('className')
         )
       }
 
-      console.log('\n\n ------------ \n\n')
       spreads.push(
         // `${name}.className != null && ${name}.className`
         and(

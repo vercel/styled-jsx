@@ -81,6 +81,21 @@ export default class {
 }"
 `;
 
+exports[`works with complex spread props (class) 1`] = `
+"import _JSXStyle from \\"styled-jsx/style\\";
+import React from 'react';
+
+class A extends React.Component {
+  render() {
+    return <div {...this.props} className={\\"jsx-362219527\\" + \\" \\" + (this.props.className != null && this.props.className || \\"a-component\\")}>
+        <_JSXStyle styleId={\\"362219527\\"} css={\\".a-component.jsx-362219527{color:red;}\\"} />
+      </div>;
+  }
+}
+
+export default A;"
+`;
+
 exports[`works with complex spread props 1`] = `
 "import _JSXStyle from \\"styled-jsx/style\\";
 import React from 'react';
@@ -88,6 +103,21 @@ import React from 'react';
 const A = props => <div {...props.red} className={\\"jsx-362219527\\" + \\" \\" + (props.red.className != null && props.red.className || \\"a-component\\")}>
     <_JSXStyle styleId={\\"362219527\\"} css={\\".a-component.jsx-362219527{color:red;}\\"} />
   </div>;
+
+export default A;"
+`;
+
+exports[`works with complex spread props 2`] = `
+"import _JSXStyle from \\"styled-jsx/style\\";
+import React from 'react';
+
+class A extends React.Component {
+  render() {
+    return <div {...this.props} className={\\"jsx-362219527\\" + \\" \\" + (this.props.className != null && this.props.className || \\"a-component\\")}>
+        <_JSXStyle styleId={\\"362219527\\"} css={\\".a-component.jsx-362219527{color:red;}\\"} />
+      </div>;
+  }
+}
 
 export default A;"
 `;
