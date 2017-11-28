@@ -81,47 +81,6 @@ export default class {
 }"
 `;
 
-exports[`works with complex spread props (class) 1`] = `
-"import _JSXStyle from \\"styled-jsx/style\\";
-import React from 'react';
-
-class A extends React.Component {
-  render() {
-    return <div {...this.props} className={\\"jsx-362219527\\" + \\" \\" + (this.props.className != null && this.props.className || \\"a-component\\")}>
-        <_JSXStyle styleId={\\"362219527\\"} css={\\".a-component.jsx-362219527{color:red;}\\"} />
-      </div>;
-  }
-}
-
-export default A;"
-`;
-
-exports[`works with complex spread props 1`] = `
-"import _JSXStyle from \\"styled-jsx/style\\";
-import React from 'react';
-
-const A = props => <div {...props.red} className={\\"jsx-362219527\\" + \\" \\" + (props.red.className != null && props.red.className || \\"a-component\\")}>
-    <_JSXStyle styleId={\\"362219527\\"} css={\\".a-component.jsx-362219527{color:red;}\\"} />
-  </div>;
-
-export default A;"
-`;
-
-exports[`works with complex spread props 2`] = `
-"import _JSXStyle from \\"styled-jsx/style\\";
-import React from 'react';
-
-class A extends React.Component {
-  render() {
-    return <div {...this.props} className={\\"jsx-362219527\\" + \\" \\" + (this.props.className != null && this.props.className || \\"a-component\\")}>
-        <_JSXStyle styleId={\\"362219527\\"} css={\\".a-component.jsx-362219527{color:red;}\\"} />
-      </div>;
-  }
-}
-
-export default A;"
-`;
-
 exports[`works with css tagged template literals in the same file 1`] = `
 "import _JSXStyle from 'styled-jsx/style';
 
@@ -174,50 +133,6 @@ export default (({ display }) => <div className={'jsx-3922596756 ' + _JSXStyle.d
   </div>);"
 `;
 
-exports[`works with external stylesheets (global only) 1`] = `
-"import _JSXStyle from 'styled-jsx/style';
-import styles from './styles';
-const styles2 = require('./styles2');
-import { foo as styles3 } from './styles';
-
-export default (() => <div className={\\"jsx-2534288328\\"} data-jsx>
-    <p className={\\"jsx-2534288328\\"} data-jsx>test</p>
-    <p className={\\"jsx-2534288328\\"} data-jsx>woot</p>
-    <_JSXStyle styleId={styles2.__hash} css={styles2} />
-    <_JSXStyle styleId={styles3.__hash} css={styles3} />
-    <div className={\\"jsx-2534288328\\"} data-jsx>woot</div>
-    <_JSXStyle styleId={\\"1144769207\\"} css={\\"p.jsx-2534288328{color:red}div.jsx-2534288328{color:green}\\"} />
-    <_JSXStyle styleId={styles.__hash} css={styles} />
-  </div>);"
-`;
-
-exports[`works with external stylesheets (multi-line) 1`] = `
-"import _JSXStyle from 'styled-jsx/style';
-import styles from './styles';
-
-export default (() => <div className={\`jsx-\${styles.__scopedHash}\`} data-jsx>
-    <p className={\`jsx-\${styles.__scopedHash}\`} data-jsx>test</p>
-    <_JSXStyle styleId={styles.__scopedHash} css={styles.__scoped} />
-  </div>);"
-`;
-
-exports[`works with external stylesheets 1`] = `
-"import _JSXStyle from 'styled-jsx/style';
-import styles from './styles';
-const styles2 = require('./styles2');
-import { foo as styles3 } from './styles';
-
-export default (() => <div className={'jsx-2534288328 ' + \`jsx-\${styles3.__scopedHash} jsx-\${styles.__scopedHash}\`} data-jsx>
-    <p className={'jsx-2534288328 ' + \`jsx-\${styles3.__scopedHash} jsx-\${styles.__scopedHash}\`} data-jsx>test</p>
-    <p className={'jsx-2534288328 ' + \`jsx-\${styles3.__scopedHash} jsx-\${styles.__scopedHash}\`} data-jsx>woot</p>
-    <_JSXStyle styleId={styles2.__hash} css={styles2} />
-    <_JSXStyle styleId={styles3.__scopedHash} css={styles3.__scoped} />
-    <div className={'jsx-2534288328 ' + \`jsx-\${styles3.__scopedHash} jsx-\${styles.__scopedHash}\`} data-jsx>woot</div>
-    <_JSXStyle styleId={\\"1144769207\\"} css={\\"p.jsx-2534288328{color:red}div.jsx-2534288328{color:green}\\"} />
-    <_JSXStyle styleId={styles.__scopedHash} css={styles.__scoped} />
-  </div>);"
-`;
-
 exports[`works with global styles 1`] = `
 "import _JSXStyle from 'styled-jsx/style';
 const Test = () => <div className={\\"jsx-2209073070\\"}>
@@ -265,49 +180,6 @@ export default (() => <div className={\\"jsx-2743241663\\"}>
   </div>);"
 `;
 
-exports[`works with spread 1`] = `
-"var _this = this;
-
-import _JSXStyle from \\"styled-jsx/style\\";
-export default (() => <div className={\\"jsx-2886504620\\"}>
-    <div {...test.test} className={\\"jsx-2886504620\\" + \\" \\" + (test.test.className != null && test.test.className || \\"test\\")} />
-    <div {...test.test.test} className={\\"jsx-2886504620\\" + \\" \\" + (test.test.test.className != null && test.test.test.className || \\"test\\")} />
-    <div {..._this.test.test} className={\\"jsx-2886504620\\" + \\" \\" + (_this.test.test.className != null && _this.test.test.className || \\"test\\")} />
-    <div data-test=\\"test\\" className={\\"jsx-2886504620\\"} />
-    <div className={\\"jsx-2886504620\\" + \\" \\" + \\"test\\"} />
-    <div className={\\"jsx-2886504620\\" + \\" \\" + 'test'} />
-    <div className={\\"jsx-2886504620\\" + \\" \\" + \`test\`} />
-    <div className={\\"jsx-2886504620\\" + \\" \\" + \`test\${true ? ' test2' : ''}\`} />
-    <div className={\\"jsx-2886504620\\" + \\" \\" + ('test ' + test || \\"\\")} />
-    <div className={\\"jsx-2886504620\\" + \\" \\" + (['test', 'test2'].join(' ') || \\"\\")} />
-    <div className={\\"jsx-2886504620\\" + \\" \\" + (true && 'test' || \\"\\")} />
-    <div className={\\"jsx-2886504620\\" + \\" \\" + ((test ? 'test' : null) || \\"\\")} />
-    <div className={\\"jsx-2886504620\\" + \\" \\" + (test || \\"\\")} />
-    <div className={\\"jsx-2886504620\\" + \\" \\" + (test && 'test' || \\"\\")} />
-    <div className={\\"jsx-2886504620\\" + \\" \\" + (test && test('test') || \\"\\")} />
-    <div className={\\"jsx-2886504620\\" + \\" \\" + (undefined || \\"\\")} />
-    <div className={\\"jsx-2886504620\\" + \\" \\" + (null || \\"\\")} />
-    <div className={\\"jsx-2886504620\\" + \\" \\" + (false || \\"\\")} />
-    <div data-test className={\\"jsx-2886504620\\" + \\" \\" + 'test'} />
-    <div data-test className={\\"jsx-2886504620\\" + \\" \\" + 'test'} />
-    <div data-test=\\"test\\" className={\\"jsx-2886504620\\" + \\" \\" + 'test'} />
-    <div {...props} className={\\"jsx-2886504620\\" + \\" \\" + (props.className != null && props.className || 'test')} />
-    <div {...props} {...rest} className={\\"jsx-2886504620\\" + \\" \\" + (rest.className != null && rest.className || props.className != null && props.className || 'test')} />
-    <div {...props} className={\\"jsx-2886504620\\" + \\" \\" + (props.className != null && props.className || \`test \${test ? 'test' : ''}\`)} />
-    <div {...props} className={\\"jsx-2886504620\\" + \\" \\" + (props.className != null && props.className || test && test('test') || \\"\\")} />
-    <div {...props} className={\\"jsx-2886504620\\" + \\" \\" + (props.className != null && props.className || test && test('test') && 'test' || \\"\\")} />
-    <div {...props} className={\\"jsx-2886504620\\" + \\" \\" + (props.className != null && props.className || test && test('test') && test2('test') || \\"\\")} />
-    <div {...props} className={\\"jsx-2886504620\\" + \\" \\" + 'test'} />
-    <div {...props} {...rest} className={\\"jsx-2886504620\\" + \\" \\" + 'test'} />
-    <div {...props} {...rest} className={\\"jsx-2886504620\\" + \\" \\" + (rest.className != null && rest.className || 'test')} />
-    <div {...props} className={\\"jsx-2886504620\\" + \\" \\" + (props.className != null && props.className || \\"\\")} />
-    <div {...props} {...rest} className={\\"jsx-2886504620\\" + \\" \\" + (rest.className != null && rest.className || props.className != null && props.className || \\"\\")} />
-    <div {...props} data-foo {...rest} className={\\"jsx-2886504620\\" + \\" \\" + (rest.className != null && rest.className || props.className != null && props.className || \\"\\")} />
-    <div {...props} data-foo {...rest} className={\\"jsx-2886504620\\" + \\" \\" + (rest.className != null && rest.className || 'test')} />
-    <_JSXStyle styleId={\\"2886504620\\"} css={\\"div.jsx-2886504620{color:red;}\\"} />
-  </div>);"
-`;
-
 exports[`works with stateless 1`] = `
 "import _JSXStyle from 'styled-jsx/style';
 export default (() => <div className={\\"jsx-2743241663\\"}>
@@ -315,19 +187,5 @@ export default (() => <div className={\\"jsx-2743241663\\"}>
     <p className={\\"jsx-2743241663\\"}>woot</p>
     <p className={\\"jsx-2743241663\\"}>woot</p>
     <_JSXStyle styleId={\\"2743241663\\"} css={\\"p.jsx-2743241663{color:red;}\\"} />
-  </div>);"
-`;
-
-exports[`works without import 1`] = `
-"import _JSXStyle from \\"styled-jsx/style\\";
-const styles = css\`
-  .apples {
-    color: red;
-  }
-\`;
-
-export default (() => <div className={\`jsx-\${styles.__scopedHash}\`}>
-    <_JSXStyle styleId={styles.__scopedHash} css={styles.__scoped} />
-    <p className={\`jsx-\${styles.__scopedHash}\` + \\" \\" + \\"apples\\"}>Red apples!</p>
   </div>);"
 `;
