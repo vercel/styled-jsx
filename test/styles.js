@@ -11,23 +11,30 @@ test('transpile styles with attributes', async t => {
 })
 
 test('throws when using nesting', t => {
-  const fixtures = [`div { &:hover { color: red } }`, `div {
+  const fixtures = [
+    `div { &:hover { color: red } }`,
+    `div {
       color: green;
-      &:hover { color: red } }`, `:hover { div { color: red } }`, `@media all {
+      &:hover { color: red } }`,
+    `:hover { div { color: red } }`,
+    `@media all {
       div {
         &:hover { color: red }
       }
-    }`, `* { div { color: red }
+    }`,
+    `* { div { color: red }
       &.test {
         color: red;
       }
-    }`, `span {}
+    }`,
+    `span {}
       .test {
         color: red;
       div& {
         color: red;
       }
-    }`]
+    }`
+  ]
 
   fixtures.forEach(fixture => {
     t.throws(() => transform('', fixture))
@@ -36,15 +43,23 @@ test('throws when using nesting', t => {
 })
 
 test("doesn't throw when using at-rules", t => {
-  const fixtures = ['@media (min-width: 480px) { div { color: red } }', `span {}
-      @media (min-width: 480px) { div { color: red } }`, `@media (min-width: 480px) { div { color: red } }
-    span {}`, `:hover {}
-      @media (min-width: 480px) { div { color: red } }`, `:hover { color: green }
-      @media (min-width: 480px) { div { color: red } }`, `@media (min-width: 480px) { div {} }`, `@keyframes foo {
+  const fixtures = [
+    '@media (min-width: 480px) { div { color: red } }',
+    `span {}
+      @media (min-width: 480px) { div { color: red } }`,
+    `@media (min-width: 480px) { div { color: red } }
+    span {}`,
+    `:hover {}
+      @media (min-width: 480px) { div { color: red } }`,
+    `:hover { color: green }
+      @media (min-width: 480px) { div { color: red } }`,
+    `@media (min-width: 480px) { div {} }`,
+    `@keyframes foo {
       0% { opacity: 0 }
       100% { opacity: 1}
     }
-    `]
+    `
+  ]
 
   fixtures.forEach(fixture => {
     t.notThrows(() => transform('', fixture))
@@ -102,9 +117,9 @@ test('splits rules for `optimizeForSpeed`', t => {
     ]
   )
 
-  assert('@charset "UTF-8"', ['@charset "UTF-8"'])
+  assert('@charset "UTF-8"', ['@charset "UTF-8";'])
 
-  assert('@import "./test.css"', ['@import "./test.css"'])
+  assert('@import "./test.css"', ['@import "./test.css";'])
 
   assert(
     `
@@ -142,8 +157,8 @@ test('splits rules for `optimizeForSpeed`', t => {
     @media (min-width: 400px) { div, span { color: red } }
   `,
     [
-      '@import "./test.css"',
-      '@import "./test.css"',
+      '@import "./test.css";',
+      '@import "./test.css";',
       '@supports (display:-webkit-box) or (display:-webkit-flex) or (display:-ms-flexbox) or (display:flex){div{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}}',
       'div{color:red;}',
       'a,div{color:red;}',
@@ -152,14 +167,15 @@ test('splits rules for `optimizeForSpeed`', t => {
   )
 
   assert('@namespace url(http://www.w3.org/1999/xhtml)', [
-    '@namespace url(http://www.w3.org/1999/xhtml)'
+    '@namespace url(http://www.w3.org/1999/xhtml);'
   ])
   assert('@namespace svg url(http://www.w3.org/2000/svg)', [
-    '@namespace svg url(http://www.w3.org/2000/svg)'
+    '@namespace svg url(http://www.w3.org/2000/svg);'
   ])
   assert('@page :first { margin: 1in; }', ['@page :first{margin:1in;}'])
 
-  assert(`
+  assert(
+    `
     div {
       animation: fade-in ease-in 1;
       animation-fill-mode: forwards;
@@ -175,7 +191,14 @@ test('splits rules for `optimizeForSpeed`', t => {
         opacity: 1;
       }
     }
-  `, ['div.jsx-123{-webkit-animation:fade-in-jsx-123 ease-in 1;animation:fade-in-jsx-123 ease-in 1;-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards;-webkit-animation-duration:500ms;animation-duration:500ms;opacity:0;}', '@-webkit-keyframes fade-in-jsx-123{from{opacity:0;}to{opacity:1;}}', '@keyframes fade-in-jsx-123{from{opacity:0;}to{opacity:1;}}'], '.jsx-123')
+  `,
+    [
+      'div.jsx-123{-webkit-animation:fade-in-jsx-123 ease-in 1;animation:fade-in-jsx-123 ease-in 1;-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards;-webkit-animation-duration:500ms;animation-duration:500ms;opacity:0;}',
+      '@-webkit-keyframes fade-in-jsx-123{from{opacity:0;}to{opacity:1;}}',
+      '@keyframes fade-in-jsx-123{from{opacity:0;}to{opacity:1;}}'
+    ],
+    '.jsx-123'
+  )
 
   assert(
     `
@@ -203,5 +226,15 @@ test('splits rules for `optimizeForSpeed`', t => {
     ]
   )
 
-  assert(`div { color: red } ::placeholder { color: green }`, ['div.jsx-123{color:red;}', '.jsx-123::-webkit-input-placeholder{color:green;}', '.jsx-123::-moz-placeholder{color:green;}', '.jsx-123:-ms-input-placeholder{color:green;}', '.jsx-123::placeholder{color:green;}'], '.jsx-123')
+  assert(
+    `div { color: red } ::placeholder { color: green }`,
+    [
+      'div.jsx-123{color:red;}',
+      '.jsx-123::-webkit-input-placeholder{color:green;}',
+      '.jsx-123::-moz-placeholder{color:green;}',
+      '.jsx-123:-ms-input-placeholder{color:green;}',
+      '.jsx-123::placeholder{color:green;}'
+    ],
+    '.jsx-123'
+  )
 })
