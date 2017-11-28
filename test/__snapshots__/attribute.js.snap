@@ -57,8 +57,13 @@ export const Test7 = ({ color }) => <div className={_JSXStyle.dynamic([['1947484
 `;
 
 exports[`rewrites className 1`] = `
-"import _JSXStyle from \\"styled-jsx/style\\";
+"var _this = this;
+
+import _JSXStyle from \\"styled-jsx/style\\";
 export default (() => <div className={\\"jsx-2886504620\\"}>
+    <div {...test.test} className={\\"jsx-2886504620\\" + \\" \\" + (test.test.className != null && test.test.className || \\"test\\")} />
+    <div {...test.test.test} className={\\"jsx-2886504620\\" + \\" \\" + (test.test.test.className != null && test.test.test.className || \\"test\\")} />
+    <div {..._this.test.test} className={\\"jsx-2886504620\\" + \\" \\" + (_this.test.test.className != null && _this.test.test.className || \\"test\\")} />
     <div data-test=\\"test\\" className={\\"jsx-2886504620\\"} />
     <div className={\\"jsx-2886504620\\" + \\" \\" + \\"test\\"} />
     <div className={\\"jsx-2886504620\\" + \\" \\" + 'test'} />

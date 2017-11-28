@@ -133,50 +133,6 @@ export default (({ display }) => <div className={'jsx-3922596756 ' + _JSXStyle.d
   </div>);"
 `;
 
-exports[`works with external stylesheets (global only) 1`] = `
-"import _JSXStyle from 'styled-jsx/style';
-import styles from './styles';
-const styles2 = require('./styles2');
-import { foo as styles3 } from './styles';
-
-export default (() => <div className={\\"jsx-2534288328\\"} data-jsx>
-    <p className={\\"jsx-2534288328\\"} data-jsx>test</p>
-    <p className={\\"jsx-2534288328\\"} data-jsx>woot</p>
-    <_JSXStyle styleId={styles2.__hash} css={styles2} />
-    <_JSXStyle styleId={styles3.__hash} css={styles3} />
-    <div className={\\"jsx-2534288328\\"} data-jsx>woot</div>
-    <_JSXStyle styleId={\\"1144769207\\"} css={\\"p.jsx-2534288328{color:red}div.jsx-2534288328{color:green}\\"} />
-    <_JSXStyle styleId={styles.__hash} css={styles} />
-  </div>);"
-`;
-
-exports[`works with external stylesheets (multi-line) 1`] = `
-"import _JSXStyle from 'styled-jsx/style';
-import styles from './styles';
-
-export default (() => <div className={\`jsx-\${styles.__scopedHash}\`} data-jsx>
-    <p className={\`jsx-\${styles.__scopedHash}\`} data-jsx>test</p>
-    <_JSXStyle styleId={styles.__scopedHash} css={styles.__scoped} />
-  </div>);"
-`;
-
-exports[`works with external stylesheets 1`] = `
-"import _JSXStyle from 'styled-jsx/style';
-import styles from './styles';
-const styles2 = require('./styles2');
-import { foo as styles3 } from './styles';
-
-export default (() => <div className={'jsx-2534288328 ' + \`jsx-\${styles3.__scopedHash} jsx-\${styles.__scopedHash}\`} data-jsx>
-    <p className={'jsx-2534288328 ' + \`jsx-\${styles3.__scopedHash} jsx-\${styles.__scopedHash}\`} data-jsx>test</p>
-    <p className={'jsx-2534288328 ' + \`jsx-\${styles3.__scopedHash} jsx-\${styles.__scopedHash}\`} data-jsx>woot</p>
-    <_JSXStyle styleId={styles2.__hash} css={styles2} />
-    <_JSXStyle styleId={styles3.__scopedHash} css={styles3.__scoped} />
-    <div className={'jsx-2534288328 ' + \`jsx-\${styles3.__scopedHash} jsx-\${styles.__scopedHash}\`} data-jsx>woot</div>
-    <_JSXStyle styleId={\\"1144769207\\"} css={\\"p.jsx-2534288328{color:red}div.jsx-2534288328{color:green}\\"} />
-    <_JSXStyle styleId={styles.__scopedHash} css={styles.__scoped} />
-  </div>);"
-`;
-
 exports[`works with global styles 1`] = `
 "import _JSXStyle from 'styled-jsx/style';
 const Test = () => <div className={\\"jsx-2209073070\\"}>

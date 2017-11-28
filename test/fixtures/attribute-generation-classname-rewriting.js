@@ -1,5 +1,8 @@
-export default () =>
+export default () => (
   <div>
+    <div className="test" {...test.test} />
+    <div className="test" {...test.test.test} />
+    <div className="test" {...this.test.test} />
     <div data-test="test" />
     <div className="test" />
     <div className={'test'} />
@@ -31,7 +34,6 @@ export default () =>
     <div {...props} {...rest} />
     <div {...props} data-foo {...rest} />
     <div {...props} className={'test'} data-foo {...rest} />
-    <style jsx>
-      {'div { color: red }'}
-    </style>
+    <style jsx>{'div { color: red }'}</style>
   </div>
+)
