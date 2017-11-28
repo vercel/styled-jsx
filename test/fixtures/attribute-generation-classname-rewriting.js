@@ -1,5 +1,8 @@
 export default () => (
   <div>
+    <div className="test" {...test.test} />
+    <div className="test" {...test.test.test} />
+    <div className="test" {...this.test.test} />
     <div data-test="test" />
     <div className="test" />
     <div className={'test'} />

@@ -274,3 +274,17 @@ export default (() => <div className={\\"jsx-2743241663\\"}>
     <_JSXStyle styleId={\\"2743241663\\"} css={\\"p.jsx-2743241663{color:red;}\\"} />
   </div>);"
 `;
+
+exports[`works without import 1`] = `
+"import _JSXStyle from \\"styled-jsx/style\\";
+const styles = css\`
+  .apples {
+    color: red;
+  }
+\`;
+
+export default (() => <div className={\`jsx-\${styles.__scopedHash}\`}>
+    <_JSXStyle styleId={styles.__scopedHash} css={styles.__scoped} />
+    <p className={\`jsx-\${styles.__scopedHash}\` + \\" \\" + \\"apples\\"}>Red apples!</p>
+  </div>);"
+`;
