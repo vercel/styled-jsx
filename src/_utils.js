@@ -31,14 +31,16 @@ export const addClassName = (path, jsxId) => {
     const node = attr.node
     if (t.isJSXSpreadAttribute(attr)) {
       const name = node.argument.name
-      let attrNameDotClassName = t.memberExpression(
-        t.identifier(name),
-        t.identifier('className')
-      )
+      let attrNameDotClassName
 
-      if (node.argument.type === 'MemberExpression') {
+      if (t.isMemberExpression(node.argument)) {
         attrNameDotClassName = t.memberExpression(
           node.argument,
+          t.identifier('className')
+        )
+      } else {
+        attrNameDotClassName = t.memberExpression(
+          t.identifier(name),
           t.identifier('className')
         )
       }
