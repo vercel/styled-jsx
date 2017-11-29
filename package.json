@@ -9,7 +9,8 @@
     "lib",
     "server.js",
     "babel.js",
-    "style.js"
+    "style.js",
+    "css.js"
   ],
   "babel": {
     "presets": [
