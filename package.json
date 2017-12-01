@@ -14,12 +14,12 @@
   ],
   "babel": {
     "presets": [
-      "es2015",
-      "stage-3",
-      "react"
+      "@babel/preset-es2015",
+      "@babel/preset-stage-3",
+      "@babel/preset-react"
     ],
     "plugins": [
-      "transform-runtime"
+      "@babel/plugin-transform-runtime"
     ]
   },
   "scripts": {
@@ -32,7 +32,7 @@
   },
   "ava": {
     "require": [
-      "babel-register"
+      "@babel/register"
     ],
     "babel": "inherit"
   },
@@ -57,8 +57,8 @@
     ]
   },
   "dependencies": {
-    "babel-plugin-syntax-jsx": "6.18.0",
-    "babel-types": "6.26.0",
+    "@babel/plugin-syntax-jsx": "7.0.0-beta.32",
+    "@babel/types": "7.0.0-beta.32",
     "convert-source-map": "1.5.1",
     "source-map": "0.6.1",
     "string-hash": "1.1.3",
@@ -66,19 +66,20 @@
     "stylis-rule-sheet": "0.0.7"
   },
   "devDependencies": {
+    "@babel/cli": "7.0.0-beta.32",
+    "@babel/core": "7.0.0-beta.32",
+    "@babel/plugin-transform-runtime": "7.0.0-beta.32",
+    "@babel/preset-es2015": "7.0.0-beta.32",
+    "@babel/preset-react": "7.0.0-beta.32",
+    "@babel/preset-stage-3": "7.0.0-beta.32",
+    "@babel/register": "7.0.0-beta.32",
+    "@babel/runtime": "7.0.0-beta.32",
     "ava": "^0.19.1",
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.0",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-minify": "^0.2.0",
-    "babel-preset-react": "^6.24.1",
-    "babel-preset-stage-3": "^6.24.1",
-    "babel-register": "^6.26.0",
+    "babel-preset-minify": "0.2.0",
     "benchmark": "^2.1.4",
     "eslint-config-prettier": "^2.9.0",
     "gulp": "^3.9.1",
-    "gulp-babel": "^7.0.0",
+    "gulp-babel": "8.0.0-beta.0",
     "gulp-benchmark": "^1.1.1",
     "human-size": "^1.1.0",
     "husky": "^0.14.3",

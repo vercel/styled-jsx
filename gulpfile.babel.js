@@ -5,7 +5,7 @@ import { gzipSync } from 'zlib'
 // Packages
 import gulp from 'gulp'
 import babel from 'gulp-babel'
-import { transformFile } from 'babel-core'
+import { transformFile } from '@babel/core'
 import size from 'human-size'
 import benchmark from 'gulp-benchmark'
 
@@ -41,7 +41,7 @@ gulp.task('runtime-size', async () => {
       transformFile(
         file,
         {
-          presets: ['babili']
+          presets: ['minify']
         },
         (err, data) => {
           if (err) {
