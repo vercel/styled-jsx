@@ -14,8 +14,7 @@
   ],
   "babel": {
     "presets": [
-      "env",
-      "react"
+      "env"
     ],
     "plugins": [
       "transform-object-rest-spread"
@@ -34,7 +33,15 @@
       "babel-register",
       "babel-polyfill"
     ],
-    "babel": "inherit"
+    "babel": {
+      "presets": [
+        "env",
+        "react"
+      ],
+      "plugins": [
+        "transform-object-rest-spread"
+      ]
+    }
   },
   "xo": {
     "envs": [
