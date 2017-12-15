@@ -1,3 +1,6 @@
+// eslint-disable-next-line import/no-unassigned-import
+import 'babel-polyfill'
+
 // Native
 import { join } from 'path'
 import { gzipSync } from 'zlib'
