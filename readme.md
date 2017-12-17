@@ -8,9 +8,37 @@
 Full, scoped and component-friendly CSS support for JSX (rendered on the server or the client).
 
 
- Code and docs are for v2 which we highly recommend you to try. Looking for styled-jsx v1? Switch to the [v1 branch](https://github.com/zeit/styled-jsx/tree/v1).
+Code and docs are for v2 which we highly recommend you to try. Looking for styled-jsx v1? Switch to the [v1 branch](https://github.com/zeit/styled-jsx/tree/v1).
 
-## Usage
+- [Getting started](#getting-started)
+- [Configuration options](#configuration-options)
+  * [`optimizeForSpeed`](#optimizeforspeed)
+  * [`sourceMaps`](#sourcemaps)
+  * [`vendorPrefixes`](#vendorprefixes)
+- [Features](#features)
+- [How It Works](#how-it-works)
+  * [Why It Works Like This](#why-it-works-like-this)
+- [Targeting The Root](#targeting-the-root)
+- [Keeping CSS in separate files](#keeping-css-in-separate-files)
+- [Styles outside of components](#styles-outside-of-components)
+- [Global styles](#global-styles)
+  * [One-off global selectors](#one-off-global-selectors)
+- [Dynamic styles](#dynamic-styles)
+  * [Via interpolated dynamic props](#via-interpolated-dynamic-props)
+  * [Via `className` toggling](#via-classname-toggling)
+  * [Via inline `style`](#via-inline-style)
+- [Constants](#constants)
+- [Server-Side Rendering](#server-side-rendering)
+  * [`styled-jsx/server`](#-styled-jsx-server)
+- [CSS Preprocessing via Plugins](#css-preprocessing-via-plugins)
+  * [Plugin options](#plugin-options)
+  * [Example plugins](#example-plugins)
+- [FAQ](#faq)
+  * [Warning: unknown `jsx` prop on &lt;style&gt; tag](#warning-unknown-jsx-prop-on-style-tag)
+  * [Styling third parties / child components from the parent](#styling-third-parties--child-components-from-the-parent)
+- [Syntax Highlighting](#syntax-highlighting)
+
+## Getting started
 
 Firstly, install the package:
 
@@ -47,7 +75,7 @@ export default () => (
 )
 ```
 
-## Configuration
+## Configuration options
 
 The following are optional settings for the babel plugin.
 
@@ -113,6 +141,26 @@ Unique classnames give us style encapsulation and `_JSXStyle` is heavily optimiz
 - Removing unused styles
 - Keeping track of styles for server-side rendering
 
+### Targeting The Root
+
+Notice that the outer `<div>` from the example above also gets a `jsx-123` classname. We do this so that
+you can target the "root" element, in the same manner that
+[`:host`](https://www.html5rocks.com/en/tutorials/webcomponents/shadowdom-201/#toc-style-host) works with Shadow DOM.
+
+If you want to target _only_ the host, we suggest you use a class:
+
+```jsx
+export default () => (
+  <div className="root">
+    <style jsx>{`
+      .root {
+        color: green;
+      }
+    `}</style>
+  </div>
+)
+```
+
 ### Keeping CSS in separate files
 
 Styles can be defined in separate JavaScript modules by tagging with `css` any template literal that contain CSS.
@@ -143,7 +191,9 @@ export default () => (
 
 Styles are automatically scoped but you can also be consumed as [globals](#global-styles).
 
-N.B. We support CommonJS exports but you can only export one string per module:
+N.B. Dynamic styles cannot be used in external styles.
+
+We also support CommonJS exports but you can only export one string per module:
 
 ```js
 module.exports = css`div { color: green; }`
@@ -152,25 +202,24 @@ module.exports = css`div { color: green; }`
 // module.exports = { styles: css`div { color: green; }` }
 ```
 
-### Targeting The Root
+### Styles outside of components
 
-Notice that the parent `<div>` from the example above also gets a `jsx-123` classname. We do this so that
-you can target the "root" element, in the same manner that
-[`:host`](https://www.html5rocks.com/en/tutorials/webcomponents/shadowdom-201/#toc-style-host) works with Shadow DOM.
-
-If you want to target _only_ the host, we suggest you use a class:
+The `css` tag from `styled-jsx/css` can be also used to define styles in your components files but outside of the component itself. This might help with keeping `render` methods smaller.
 
 ```jsx
+import css from 'styled-jsx/css'
+
 export default () => (
-  <div className="root">
-    <style jsx>{`
-      .root {
-        color: green;
-      }
-    `}</style>
+  <div>
+    <button>styled-jsx</button>
+    <style jsx>{button}</style>
   </div>
 )
+
+const button = css`button { color: hotpink; }`
 ```
+
+Like in externals styles `css` doesn't work with dynamic styles. If you have dynamic parts you might want to place them inline inside of your component using a regular `<style jsx>` element.
 
 ### Global styles
 
@@ -194,12 +243,11 @@ to use `dangerouslySetInnerHTML` to avoid escaping issues with CSS
 and take advantage of `styled-jsx`'s de-duping system to avoid
 the global styles being inserted multiple times.
 
-### Global selectors
+### One-off global selectors
 
-Sometimes it's useful to skip prefixing. We support `:global()`,
-inspired by [css-modules](https://github.com/css-modules/css-modules).
+Sometimes it's useful to skip selectors scoping. In order to get a one-off global selector we support `:global()`, inspired by [css-modules](https://github.com/css-modules/css-modules).
 
-This is very useful in order to, for example, generate an *unprefixed class* that
+This is very useful in order to, for example, generate a *global class* that
 you can pass to 3rd-party components. For example, to style
 `react-select` which supports passing a custom class via `optionClassName`:
 
@@ -528,6 +576,75 @@ The following plugins are proof of concepts/sample:
 * [styled-jsx-plugin-stylelint](https://github.com/giuseppeg/styled-jsx-plugin-stylelint)
 * [styled-jsx-plugin-less](https://github.com/erasmo-marin/styled-jsx-plugin-less)
 * [styled-jsx-plugin-stylus](https://github.com/omardelarosa/styled-jsx-plugin-stylus)
+
+## FAQ
+
+### Warning: unknown `jsx` prop on &lt;style&gt; tag
+
+If you get this warning it means that, for some reason, your styles were not compiled by styled-jsx.
+
+Please take a look at your setup and make sure that everything is correct and that the styled-jsx transformation is ran by Babel.
+
+### Styling third parties / child components from the parent
+
+When the component accepts a `className` (or ad-hoc) prop that you can use to style those components then you can generate scoped styles locally in the parent component and resolve them to get a `className` and the actual scoped styles like so:
+
+```jsx
+import Link from 'react-router-dom' // component to style
+
+// Generate a `scope` fragment and resolve it
+const scoped = resolveScopedStyles(
+  <scope>
+    <style jsx>{'.link { color: green }'}</style>
+  </scope>
+)
+
+// Your component that uses Link
+export default ({ children }) => (
+  <div>
+    {children}
+
+    {/* use the scoped className */}
+    <Link to="/about" className={`link ${scoped.className}`}>
+      About
+    </Link>
+
+    {/* apply the scoped styles */}
+    {scope.styles}
+  </div>
+)
+```
+
+`resolveScopedStyles` looks like this:
+
+```jsx
+function resolveScopedStyles(scope) {
+  return {
+    className: scope.props.className,
+    styles: scope.props.children
+  }
+}
+```
+
+When the component doesn't accept any `className` or doesn't expose any API to customize the component, then you only option is to use `:global()` styles:
+
+```jsx
+export default () => (
+  <div>
+    <ExternalComponent />
+
+    <style jsx>{`
+      /* "div" will be prefixed, but ".nested-element" won't */
+
+      div > :global(.nested-element) {
+        color: red
+      }
+    `}</style>
+  </div>
+)
+```
+
+Please keep in mind that `:global()` styles will affect the entire subtree, so in many cases you may want to be careful and use the children (direct descendant) selector `>`.
 
 ## Syntax Highlighting
 
