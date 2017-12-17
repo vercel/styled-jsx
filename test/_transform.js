@@ -1,5 +1,5 @@
 import path from 'path'
-import { transformFile } from 'babel-core'
+import { transformFile } from '@babel/core'
 
 export default (file, opts = {}) =>
   new Promise((resolve, reject) => {

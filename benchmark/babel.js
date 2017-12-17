@@ -1,7 +1,7 @@
 import {readFileSync} from 'fs'
 import {resolve} from 'path'
 import {Suite} from 'benchmark'
-import {transform as babel} from 'babel-core'
+import {transform as babel} from '@babel/core'
 
 import plugin from '../src/babel'
 
