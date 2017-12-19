@@ -187,12 +187,22 @@ export default function({ types: t }) {
             state.externalJsxId = null
           }
 
-          if (
-            !state.hasJSXStyle ||
-            !isStyledJsx(path) ||
-            state.ignoreClosing > 1
-          ) {
+          if (!state.hasJSXStyle || !isStyledJsx(path)) {
             return
+          }
+
+          if (state.ignoreClosing > 1) {
+            let styleTagSrc
+            try {
+              styleTagSrc = path.getSource()
+            } catch (err) {}
+            throw path.buildCodeFrameError(
+              'Detected nested style tag' +
+                (styleTagSrc ? `: \n\n${styleTagSrc}\n\n` : ' ') +
+                'styled-jsx only allows style tags ' +
+                'to be direct descendants (children) of the outermost ' +
+                'JSX element i.e. the subtree root.'
+            )
           }
 
           if (

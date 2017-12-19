@@ -35,17 +35,23 @@ test('(optimized) transpiles external stylesheets (CommonJS modules)', async t =
 })
 
 test('does not transpile non-styled-jsx tagged teplate literals', async t => {
-  const { code } = await transform('./fixtures/not-styled-jsx-tagged-templates.js')
+  const { code } = await transform(
+    './fixtures/not-styled-jsx-tagged-templates.js'
+  )
   t.snapshot(code)
 })
 
 test('throws when using `this.something` in external stylesheets', async t => {
-  const { message } = await t.throws(transform('./fixtures/styles-external-invalid.js'))
+  const { message } = await t.throws(
+    transform('./fixtures/styles-external-invalid.js')
+  )
   t.regex(message, /this\.props/)
 })
 
 test('throws when referring an undefined value in external stylesheets', async t => {
-  const { message } = await t.throws(transform('./fixtures/styles-external-invalid2.js'))
+  const { message } = await t.throws(
+    transform('./fixtures/styles-external-invalid2.js')
+  )
   t.regex(message, /props\.color/)
 })
 
@@ -55,7 +61,9 @@ test('use external stylesheets', async t => {
 })
 
 test('use external stylesheets (multi-line)', async t => {
-  const { code } = await transform('./fixtures/external-stylesheet-multi-line.js')
+  const { code } = await transform(
+    './fixtures/external-stylesheet-multi-line.js'
+  )
   t.snapshot(code)
 })
 

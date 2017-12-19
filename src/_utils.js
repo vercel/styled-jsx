@@ -473,9 +473,9 @@ export const combinePlugins = plugins => {
       const type = typeof p
       if (type !== 'function') {
         throw new Error(
-          `Expected plugin ${plugins[i]} to be a function but instead got ${
-            type
-          }`
+          `Expected plugin ${
+            plugins[i]
+          } to be a function but instead got ${type}`
         )
       }
       return {
