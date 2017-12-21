@@ -181,7 +181,6 @@ export default function({ types: t }) {
         },
         exit(path, state) {
           const isGlobal = isGlobalEl(path.node.openingElement)
-
           if (state.hasJSXStyle && !--state.ignoreClosing && !isGlobal) {
             state.hasJSXStyle = null
             state.className = null
@@ -190,6 +189,20 @@ export default function({ types: t }) {
 
           if (!state.hasJSXStyle || !isStyledJsx(path)) {
             return
+          }
+
+          if (state.ignoreClosing > 1) {
+            let styleTagSrc
+            try {
+              styleTagSrc = path.getSource()
+            } catch (err) {}
+            throw path.buildCodeFrameError(
+              'Detected nested style tag' +
+                (styleTagSrc ? `: \n\n${styleTagSrc}\n\n` : ' ') +
+                'styled-jsx only allows style tags ' +
+                'to be direct descendants (children) of the outermost ' +
+                'JSX element i.e. the subtree root.'
+            )
           }
 
           if (

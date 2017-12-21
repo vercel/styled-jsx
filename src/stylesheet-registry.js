@@ -2,13 +2,11 @@ import hashString from 'string-hash'
 import DefaultStyleSheet from './lib/stylesheet'
 
 export default class StyleSheetRegistry {
-  constructor(
-    {
-      styleSheet = null,
-      optimizeForSpeed = false,
-      isBrowser = typeof window !== 'undefined'
-    } = {}
-  ) {
+  constructor({
+    styleSheet = null,
+    optimizeForSpeed = false,
+    isBrowser = typeof window !== 'undefined'
+  } = {}) {
     this._sheet =
       styleSheet ||
       new DefaultStyleSheet({
@@ -35,12 +33,13 @@ export default class StyleSheetRegistry {
 
     if (this._isBrowser && !this._fromServer) {
       this._fromServer = this.selectFromServer()
-      this._instancesCounts = Object.keys(
-        this._fromServer
-      ).reduce((acc, tagName) => {
-        acc[tagName] = 0
-        return acc
-      }, {})
+      this._instancesCounts = Object.keys(this._fromServer).reduce(
+        (acc, tagName) => {
+          acc[tagName] = 0
+          return acc
+        },
+        {}
+      )
     }
 
     const { styleId, rules } = this.getIdAndRules(props)

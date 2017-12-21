@@ -84,7 +84,11 @@ test('can change optimizeForSpeed only when the stylesheet is empty', t => {
 // sheet.insertRule
 
 test('insertRule', t => {
-  const options = [{ optimizeForSpeed: true, isBrowser: true }, { optimizeForSpeed: false, isBrowser: true }, { optimizeForSpeed: true, isBrowser: false }]
+  const options = [
+    { optimizeForSpeed: true, isBrowser: true },
+    { optimizeForSpeed: false, isBrowser: true },
+    { optimizeForSpeed: true, isBrowser: false }
+  ]
 
   options.forEach(options => {
     const sheet = makeSheet(options)
@@ -131,7 +135,12 @@ test('insertRule - does not fail when the css is a String object', t => {
 // sheet.deleteRule
 
 test('deleteRule', t => {
-  const options = [{ optimizeForSpeed: true, isBrowser: true }, { optimizeForSpeed: false, isBrowser: true }, { optimizeForSpeed: true, isBrowser: false }, { optimizeForSpeed: false, isBrowser: false }]
+  const options = [
+    { optimizeForSpeed: true, isBrowser: true },
+    { optimizeForSpeed: false, isBrowser: true },
+    { optimizeForSpeed: true, isBrowser: false },
+    { optimizeForSpeed: false, isBrowser: false }
+  ]
 
   options.forEach(options => {
     const sheet = makeSheet(options)
@@ -161,7 +170,12 @@ test('deleteRule - does not throw when the rule at index does not exist', t => {
 // sheet.replaceRule
 
 test('replaceRule', t => {
-  const options = [{ optimizeForSpeed: true, isBrowser: true }, { optimizeForSpeed: false, isBrowser: true }, { optimizeForSpeed: true, isBrowser: false }, { optimizeForSpeed: false, isBrowser: false }]
+  const options = [
+    { optimizeForSpeed: true, isBrowser: true },
+    { optimizeForSpeed: false, isBrowser: true },
+    { optimizeForSpeed: true, isBrowser: false },
+    { optimizeForSpeed: false, isBrowser: false }
+  ]
 
   options.forEach(options => {
     const sheet = makeSheet(options)

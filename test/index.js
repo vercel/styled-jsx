@@ -82,6 +82,13 @@ test('works with css tagged template literals in the same file', async t => {
   t.snapshot(code)
 })
 
+test('does not transpile nested style tags', async t => {
+  const { message } = await t.throws(
+    transform('./fixtures/nested-style-tags.js')
+  )
+  t.regex(message, /detected nested style tag/i)
+})
+
 test('server rendering', t => {
   function App() {
     const color = 'green'
