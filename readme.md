@@ -610,7 +610,7 @@ export default ({ children }) => (
     </Link>
 
     {/* apply the scoped styles */}
-    {scope.styles}
+    {scoped.styles}
   </div>
 )
 ```
