@@ -524,7 +524,8 @@ export const processCss = (stylesInfo, options) => {
     vendorPrefixes,
     sourceMaps: useSourceMaps,
     isGlobal,
-    filename: fileInfo.filename
+    filename: fileInfo.filename,
+    sourceFileName: fileInfo.sourceFileName
   }
 
   let transformedCss
