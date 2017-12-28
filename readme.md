@@ -553,7 +553,6 @@ The `options` object has the following shape:
     vendorPrefixes: boolean,
     isGlobal: boolean,
     filename: ?string, // defined only when styled-jsx/babel is used via Babel CLI,
-    sourceFileName: string, // the original Javascript file the CSS block was in
     location: { // the original location of the CSS block in the JavaScript file
       start: {
         line: number,
