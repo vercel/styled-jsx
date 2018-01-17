@@ -706,13 +706,17 @@ const Button = ({ children }) => (
 }
 ```
 
-### [Visual Studio Code Extension](https://marketplace.visualstudio.com/items?itemName=blanu.vscode-styled-jsx)
+### Syntax Highlighting [Visual Studio Code Extension](https://marketplace.visualstudio.com/items?itemName=blanu.vscode-styled-jsx)
 Launch VS Code Quick Open (⌘+P), paste the following command, and press enter.
 ```
 ext install vscode-styled-jsx
 ```
-#### Autocomplete
-By now, this extension doesn't support autocomplete. However, you can install [ES6 Template Literal Editor](https://marketplace.visualstudio.com/items?itemName=plievone.vscode-template-literal-editor) extension to edit styles in another pane, and you will get full feature of css language service provided by VS Code.
+
+### Autocomplete [Visual Studio Code Extension](https://marketplace.visualstudio.com/items?itemName=AndrewRazumovsky.vscode-styled-jsx-languageserver)
+Launch VS Code Quick Open (⌘+P), paste the following command, and press enter.
+```
+ext install vscode-styled-jsx-languageserver
+```
 
 ### Vim
 
