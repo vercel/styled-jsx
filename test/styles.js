@@ -58,6 +58,20 @@ test("doesn't throw when using at-rules", t => {
       0% { opacity: 0 }
       100% { opacity: 1}
     }
+    `,
+    // Line with one space before @rule
+    `div { color: red; }
+ 
+     @media screen and (min-width: 480px) {
+       div { color: red; }
+     }
+     `,
+    // Line with one tab before @rule
+    `div { color: red; }
+	
+     @media screen and (min-width: 480px) {
+       div { color: red; }
+     }
     `
   ]
 
