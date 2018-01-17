@@ -22,14 +22,14 @@ bar.__scoped = ['div.jsx-546996693{font-size:3em;}'];
 bar.__scopedHash = '546996693';
 const a = [\`div{font-size:\${size}em;}\`];
 
-a.__hash = '1282571833';
-a.__scoped = [\`div.jsx-2741963512{font-size:\${size}em;}\`];
-a.__scopedHash = '2741963512';
+a.__hash = '1918380945';
+a.__scoped = [\`div.jsx-759117712{font-size:\${size}em;}\`];
+a.__scopedHash = '759117712';
 const b = [\`div{color:\${colors.green.light};}\`];
 
-b.__hash = '3466620163';
-b.__scoped = [\`div.jsx-3071343650{color:\${colors.green.light};}\`];
-b.__scopedHash = '3071343650';
+b.__hash = '758388080';
+b.__scoped = [\`div.jsx-2144106801{color:\${colors.green.light};}\`];
+b.__scopedHash = '2144106801';
 export const uh = bar;
 
 export const foo = [\`div{color:\${color};}\`];
@@ -38,9 +38,9 @@ foo.__hash = '3319550427';
 foo.__scoped = [\`div.jsx-3980805466{color:\${color};}\`];
 foo.__scopedHash = '3980805466';
 const _defaultExport = ['div{font-size:3em;}', \`p{color:\${color};}\`];
-_defaultExport.__hash = '14787253';
-_defaultExport.__scoped = ['div.jsx-602449652{font-size:3em;}', \`p.jsx-602449652{color:\${color};}\`];
-_defaultExport.__scopedHash = '602449652';
+_defaultExport.__hash = '39513534';
+_defaultExport.__scoped = ['div.jsx-1836411391{font-size:3em;}', \`p.jsx-1836411391{color:\${color};}\`];
+_defaultExport.__scopedHash = '1836411391';
 export default _defaultExport;"
 `;
 
@@ -100,14 +100,14 @@ bar.__scoped = 'div.jsx-546996693{font-size:3em;}';
 bar.__scopedHash = '546996693';
 const a = new String(\`div{font-size:\${size}em;}\`);
 
-a.__hash = '1282571833';
-a.__scoped = \`div.jsx-2741963512{font-size:\${size}em;}\`;
-a.__scopedHash = '2741963512';
+a.__hash = '1918380945';
+a.__scoped = \`div.jsx-759117712{font-size:\${size}em;}\`;
+a.__scopedHash = '759117712';
 const b = new String(\`div{color:\${colors.green.light};}\`);
 
-b.__hash = '3466620163';
-b.__scoped = \`div.jsx-3071343650{color:\${colors.green.light};}\`;
-b.__scopedHash = '3071343650';
+b.__hash = '758388080';
+b.__scoped = \`div.jsx-2144106801{color:\${colors.green.light};}\`;
+b.__scopedHash = '2144106801';
 export const uh = bar;
 
 export const foo = new String(\`div{color:\${color};}\`);
@@ -118,9 +118,9 @@ foo.__scopedHash = '3980805466';
 
 const _defaultExport = new String(\`div{font-size:3em;}p{color:\${color};}\`);
 
-_defaultExport.__hash = '14787253';
-_defaultExport.__scoped = \`div.jsx-602449652{font-size:3em;}p.jsx-602449652{color:\${color};}\`;
-_defaultExport.__scopedHash = '602449652';
+_defaultExport.__hash = '39513534';
+_defaultExport.__scoped = \`div.jsx-1836411391{font-size:3em;}p.jsx-1836411391{color:\${color};}\`;
+_defaultExport.__scopedHash = '1836411391';
 export default _defaultExport;"
 `;
 
