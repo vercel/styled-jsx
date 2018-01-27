@@ -6,12 +6,9 @@ const stylis = new Stylis()
 function disableNestingPlugin(...args) {
   let [context, , , parent = [], line, column] = args
   if (context === 2) {
-    parent = parent[0]
-    if (
-      typeof parent === 'string' &&
-      parent.trim().length > 0 &&
-      parent.charAt(0) !== '@'
-    ) {
+    // replace null characters and trim
+    parent = (parent[0] || '').replace(/\u0000/g, '').trim()
+    if (parent.length > 0 && parent.charAt(0) !== '@') {
       throw new Error(
         `Nesting detected at ${line}:${column}. ` +
           'Unfortunately nesting is not supported by styled-jsx.'
@@ -101,7 +98,9 @@ function transform(hash, styles, settings = {}) {
 
   stylis.set({
     prefix:
-      typeof settings.vendorPrefixes === 'boolean' ? settings.vendorPrefixes : true
+      typeof settings.vendorPrefixes === 'boolean'
+        ? settings.vendorPrefixes
+        : true
   })
 
   stylis(hash, styles)
