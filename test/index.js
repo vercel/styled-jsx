@@ -135,3 +135,9 @@ test('server rendering', t => {
   t.is(0, flush().length)
   t.is('', flushToHTML())
 })
+
+test('works with partial jsx (expressions)', async t => {
+  const {code} = await transform('./fixtures/partials.js')
+  const out = await read('./fixtures/partials.out.js')
+  t.is(code, out.trim())
+})
