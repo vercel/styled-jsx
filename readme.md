@@ -10,6 +10,8 @@ Full, scoped and component-friendly CSS support for JSX (rendered on the server 
 
 Code and docs are for v2 which we highly recommend you to try. Looking for styled-jsx v1? Switch to the [v1 branch](https://github.com/zeit/styled-jsx/tree/v1).
 
+For an overview about the **features** and **tradeoffs** of styled-jsx you may want to take a look at [this presentation](https://speakerdeck.com/giuseppe/styled-jsx).
+
 - [Getting started](#getting-started)
 - [Configuration options](#configuration-options)
   * [`optimizeForSpeed`](#optimizeforspeed)
