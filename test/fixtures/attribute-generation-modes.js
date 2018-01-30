@@ -3,19 +3,16 @@ import styles from './styles'
 const styles2 = require('./styles2')
 
 // external only
-export const Test1 = () =>
+export const Test1 = () => (
   <div>
     <p>external only</p>
-    <style jsx>
-      {styles}
-    </style>
-    <style jsx>
-      {styles2}
-    </style>
+    <style jsx>{styles}</style>
+    <style jsx>{styles2}</style>
   </div>
+)
 
 // external and static
-export const Test2 = () =>
+export const Test2 = () => (
   <div>
     <p>external and static</p>
     <style jsx>{`
@@ -23,13 +20,12 @@ export const Test2 = () =>
         color: red;
       }
     `}</style>
-    <style jsx>
-      {styles}
-    </style>
+    <style jsx>{styles}</style>
   </div>
+)
 
 // external and dynamic
-export const Test3 = ({ color }) =>
+export const Test3 = ({ color }) => (
   <div>
     <p>external and dynamic</p>
     <style jsx>{`
@@ -37,13 +33,12 @@ export const Test3 = ({ color }) =>
         color: ${color};
       }
     `}</style>
-    <style jsx>
-      {styles}
-    </style>
+    <style jsx>{styles}</style>
   </div>
+)
 
 // external, static and dynamic
-export const Test4 = ({ color }) =>
+export const Test4 = ({ color }) => (
   <div>
     <p>external, static and dynamic</p>
     <style jsx>{`
@@ -56,13 +51,12 @@ export const Test4 = ({ color }) =>
         color: ${color};
       }
     `}</style>
-    <style jsx>
-      {styles}
-    </style>
+    <style jsx>{styles}</style>
   </div>
+)
 
 // static only
-export const Test5 = () =>
+export const Test5 = () => (
   <div>
     <p>static only</p>
     <style jsx>{`
@@ -76,9 +70,10 @@ export const Test5 = () =>
       }
     `}</style>
   </div>
+)
 
 // static and dynamic
-export const Test6 = ({ color }) =>
+export const Test6 = ({ color }) => (
   <div>
     <p>static and dynamic</p>
     <style jsx>{`
@@ -92,9 +87,10 @@ export const Test6 = ({ color }) =>
       }
     `}</style>
   </div>
+)
 
 // dynamic only
-export const Test7 = ({ color }) =>
+export const Test7 = ({ color }) => (
   <div>
     <p>dynamic only</p>
     <style jsx>{`
@@ -103,3 +99,22 @@ export const Test7 = ({ color }) =>
       }
     `}</style>
   </div>
+)
+
+// dynamic with scoped variable
+export const Test8 = ({ color }) => {
+  if (color) {
+    const innerProps = { color }
+
+    return (
+      <div>
+        <p>dynamic with scoped variable</p>
+        <style jsx>{`
+          p {
+            color: ${innerProps.color};
+          }
+        `}</style>
+      </div>
+    )
+  }
+}

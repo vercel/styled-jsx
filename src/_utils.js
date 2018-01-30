@@ -129,11 +129,13 @@ export const validateExpressionVisitor = {
     }
   },
   Identifier(path, scope) {
-    if (t.isMemberExpression(path.parentPath)) {
+    const { name } = path.node
+
+    if (t.isMemberExpression(path.parentPath) && scope.hasOwnBinding(name)) {
       return
     }
-    const { name } = path.node
-    if (scope.hasOwnBinding(name)) {
+
+    if (scope.hasOwnBinding(name) || path.scope.hasOwnBinding(name)) {
       throw path.buildCodeFrameError(
         `Expected \`${name}\` ` +
           `to not come from the closest scope.\n` +
