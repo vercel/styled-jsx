@@ -53,6 +53,36 @@ export const Test6 = ({ color }) => <div className={'jsx-3190985107 ' + _JSXStyl
 export const Test7 = ({ color }) => <div className={_JSXStyle.dynamic([['1947484460', [color]]])}>
     <p className={_JSXStyle.dynamic([['1947484460', [color]]])}>dynamic only</p>
     <_JSXStyle styleId={\\"1947484460\\"} css={\`p.__jsx-style-dynamic-selector{color:\${color};}\`} dynamic={[color]} />
+  </div>;
+
+// dynamic with scoped compound variable
+export const Test8 = ({ color }) => {
+  if (color) {
+    const innerProps = { color };
+
+    return <div className={_JSXStyle.dynamic([['1791723528', [innerProps.color]]])}>
+        <p className={_JSXStyle.dynamic([['1791723528', [innerProps.color]]])}>dynamic with scoped compound variable</p>
+        <_JSXStyle styleId={\\"1791723528\\"} css={\`p.__jsx-style-dynamic-selector{color:\${innerProps.color};}\`} dynamic={[innerProps.color]} />
+      </div>;
+  }
+};
+
+// dynamic with compound variable
+export const Test9 = ({ color }) => {
+  const innerProps = { color };
+
+  return <div className={_JSXStyle.dynamic([['248922593', [innerProps.color]]])}>
+      <p className={_JSXStyle.dynamic([['248922593', [innerProps.color]]])}>dynamic with compound variable</p>
+      <_JSXStyle styleId={\\"248922593\\"} css={\`p.__jsx-style-dynamic-selector{color:\${innerProps.color};}\`} dynamic={[innerProps.color]} />
+    </div>;
+};
+
+const foo = 'red';
+
+// dynamic with constant variable
+export const Test10 = () => <div className={\\"jsx-461505126\\"}>
+    <p className={\\"jsx-461505126\\"}>dynamic with constant variable</p>
+    <_JSXStyle styleId={\\"461505126\\"} css={\`p.jsx-461505126{color:\${foo};}\`} />
   </div>;"
 `;
 
