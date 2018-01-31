@@ -238,7 +238,7 @@ export default function({ types: t }) {
               file: state.file,
               sourceFileName: state.file.opts.sourceFileName,
               sourceMaps,
-              filename: state.file.filename
+              filename: state.file.opts.filename
             },
             staticClassName: state.staticClassName,
             isGlobal,
