@@ -101,14 +101,14 @@ export const Test7 = ({ color }) => (
   </div>
 )
 
-// dynamic with scoped variable
+// dynamic with scoped compound variable
 export const Test8 = ({ color }) => {
   if (color) {
     const innerProps = { color }
 
     return (
       <div>
-        <p>dynamic with scoped variable</p>
+        <p>dynamic with scoped compound variable</p>
         <style jsx>{`
           p {
             color: ${innerProps.color};
@@ -118,3 +118,33 @@ export const Test8 = ({ color }) => {
     )
   }
 }
+
+// dynamic with compound variable
+export const Test9 = ({ color }) => {
+  const innerProps = { color }
+
+  return (
+    <div>
+      <p>dynamic with compound variable</p>
+      <style jsx>{`
+        p {
+          color: ${innerProps.color};
+        }
+      `}</style>
+    </div>
+  )
+}
+
+const foo = 'red'
+
+// dynamic with constant variable
+export const Test10 = () => (
+  <div>
+    <p>dynamic with constant variable</p>
+    <style jsx>{`
+      p {
+        color: ${foo};
+      }
+    `}</style>
+  </div>
+)
