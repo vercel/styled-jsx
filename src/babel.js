@@ -236,9 +236,10 @@ export default function({ types: t }) {
             ...state.styles.shift(),
             fileInfo: {
               file: state.file,
-              sourceFileName: state.file.opts.sourceFileName,
+              sourceFileName:
+                state.file.opts.sourceFileName || state.file.sourceFileName,
               sourceMaps,
-              filename: state.file.filename
+              filename: state.file.opts.filename || state.file.filename
             },
             staticClassName: state.staticClassName,
             isGlobal,

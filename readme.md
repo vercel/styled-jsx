@@ -554,7 +554,7 @@ The `options` object has the following shape:
     sourceMaps: boolean,
     vendorPrefixes: boolean,
     isGlobal: boolean,
-    filename: ?string, // defined only when styled-jsx/babel is used via Babel CLI,
+    filename: ?string, // defined only when the filename option is passed to Babel, such as when using Babel CLI or Webpack
     location: { // the original location of the CSS block in the JavaScript file
       start: {
         line: number,
