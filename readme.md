@@ -37,6 +37,7 @@ For an overview about the **features** and **tradeoffs** of styled-jsx you may w
   * [Example plugins](#example-plugins)
 - [FAQ](#faq)
   * [Warning: unknown `jsx` prop on &lt;style&gt; tag](#warning-unknown-jsx-prop-on-style-tag)
+  * [Can I return an array of components when using React 16?](#can-i-return-an-array-of-components-when-using-react-16)
   * [Styling third parties / child components from the parent](#styling-third-parties--child-components-from-the-parent)
 - [Syntax Highlighting](#syntax-highlighting)
 
@@ -583,9 +584,22 @@ The following plugins are proof of concepts/sample:
 
 ### Warning: unknown `jsx` prop on &lt;style&gt; tag
 
-If you get this warning it means that, for some reason, your styles were not compiled by styled-jsx.
+If you get this warning it means that your styles were not compiled by styled-jsx.
 
 Please take a look at your setup and make sure that everything is correct and that the styled-jsx transformation is ran by Babel.
+
+### Can I return an array of components when using React 16?
+
+No, this feature is not supported. However we support React Fragments, which are available in React `16.2.0` and above.
+
+```jsx
+const StyledImage = ({ src, alt = '' }) => (
+  <React.Fragment>
+   <img src={src} alt={alt} />
+   <style jsx>{`img { max-width: 100% }`}</style>
+  </React.Fragment>
+)
+```
 
 ### Styling third parties / child components from the parent
 
