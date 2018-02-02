@@ -19,7 +19,7 @@ const color = 'red';
 
 export default (() => <div className={'jsx-3382438999 ' + \`jsx-\${styles.__scopedHash}\`}>
     <p className={'jsx-3382438999 ' + \`jsx-\${styles.__scopedHash}\`}>test</p>
-    <_JSXStyle styleId={\\"3382438999\\"} css={\\".test.jsx-3382438999{content:\\\\\\"{\\\\\\"foo\\\\\\":false,\\\\\\"babel\\\\\\":{\\\\\\"location\\\\\\":{\\\\\\"start\\\\\\":{\\\\\\"line\\\\\\":7,\\\\\\"column\\\\\\":16},\\\\\\"end\\\\\\":{\\\\\\"line\\\\\\":11,\\\\\\"column\\\\\\":5}},\\\\\\"vendorPrefixes\\\\\\":false,\\\\\\"sourceMaps\\\\\\":false,\\\\\\"isGlobal\\\\\\":false,\\\\\\"filename\\\\\\":\\\\\\"/Users/giuseppe/code/styled-jsx/test/fixtures/with-plugins.js\\\\\\"}}\\\\\\";}\\"} />
+    <_JSXStyle styleId={\\"3382438999\\"} css={\\".test.jsx-3382438999{content:\\\\\\"{\\\\\\"foo\\\\\\":false,\\\\\\"babel\\\\\\":{\\\\\\"location\\\\\\":{\\\\\\"start\\\\\\":{\\\\\\"line\\\\\\":7,\\\\\\"column\\\\\\":16},\\\\\\"end\\\\\\":{\\\\\\"line\\\\\\":11,\\\\\\"column\\\\\\":5}},\\\\\\"vendorPrefixes\\\\\\":false,\\\\\\"sourceMaps\\\\\\":false,\\\\\\"isGlobal\\\\\\":false}}\\\\\\";}\\"} />
     <_JSXStyle styleId={styles.__scopedHash} css={styles.__scoped} />
   </div>);"
 `;
