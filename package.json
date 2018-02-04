@@ -53,6 +53,7 @@
     "*.js": [
       "npm run lint",
       "prettier --single-quote --no-semi --write",
+      "npm test",
       "git add"
     ]
   },
