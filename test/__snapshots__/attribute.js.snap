@@ -83,7 +83,17 @@ const foo = 'red';
 export const Test10 = () => <div className={\\"jsx-461505126\\"}>
     <p className={\\"jsx-461505126\\"}>dynamic with constant variable</p>
     <_JSXStyle styleId={\\"461505126\\"} css={\`p.jsx-461505126{color:\${foo};}\`} />
-  </div>;"
+  </div>;
+
+// dynamic with complex scope
+export const Test11 = ({ color }) => {
+  const items = Array.from({ length: 5 }).map((item, i) => <li key={i} className={_JSXStyle.dynamic([['2172653867', [color]]]) + ' ' + 'item'}>
+      <_JSXStyle styleId={\\"2172653867\\"} css={\`.item.__jsx-style-dynamic-selector{color:\${color};}\`} dynamic={[color]} />
+      Item #{i + 1}
+    </li>);
+
+  return <ul className=\\"items\\">{items}</ul>;
+};"
 `;
 
 exports[`rewrites className 1`] = `
