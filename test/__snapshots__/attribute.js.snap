@@ -92,9 +92,7 @@ export const Test11 = ({ color }) => {
       Item #{i + 1}
     </li>);
 
-  return <ul className=\\"items\\">
-      {items}
-    </ul>;
+  return <ul className=\\"items\\">{items}</ul>;
 };"
 `;
 
