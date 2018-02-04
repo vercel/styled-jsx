@@ -135,7 +135,19 @@ export const validateExpressionVisitor = {
       return
     }
 
-    if (scope.hasOwnBinding(name) || path.scope.hasOwnBinding(name)) {
+    let targetScope = path.scope
+    let isDynamicBinding = false
+
+    while (targetScope) {
+      if (targetScope.hasOwnBinding(name)) {
+        const binding = targetScope.bindings[name]
+        isDynamicBinding = binding.scope.parent !== null
+        break
+      }
+      targetScope = targetScope.parent
+    }
+
+    if (isDynamicBinding) {
       throw path.buildCodeFrameError(
         `Expected \`${name}\` ` +
           `to not come from the closest scope.\n` +
