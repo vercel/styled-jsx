@@ -148,3 +148,19 @@ export const Test10 = () => (
     `}</style>
   </div>
 )
+
+// dynamic with complex scope
+export const Test11 = ({ color }) => {
+  const items = Array.from({ length: 5 }).map((item, i) => (
+    <li className="item" key={i}>
+      <style jsx>{`
+        .item {
+          color: ${color};
+        }
+      `}</style>
+      Item #{i + 1}
+    </li>
+  ))
+
+  return <ul className="items">{items}</ul>
+}
