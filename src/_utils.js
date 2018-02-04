@@ -138,10 +138,15 @@ export const validateExpressionVisitor = {
     let targetScope = path.scope
     let isDynamicBinding = false
 
+    // Traversing scope chain in order to find current variable.
+    // If variable has no parent scope and it's `const` then we can interp. it
+    // as static in order to optimize styles.
+    // `let` and `var` can be changed during runtime.
     while (targetScope) {
       if (targetScope.hasOwnBinding(name)) {
         const binding = targetScope.bindings[name]
-        isDynamicBinding = binding.scope.parent !== null
+        isDynamicBinding =
+          binding.scope.parent !== null || binding.kind !== 'const'
         break
       }
       targetScope = targetScope.parent
