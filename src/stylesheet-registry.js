@@ -1,6 +1,7 @@
 import hashString from 'string-hash'
 import DefaultStyleSheet from './lib/stylesheet'
 
+const sanitize = rule => rule.replace(/\/style/g, '\\/style')
 export default class StyleSheetRegistry {
   constructor({
     styleSheet = null,
@@ -13,7 +14,13 @@ export default class StyleSheetRegistry {
         name: 'styled-jsx',
         optimizeForSpeed
       })
+
     this._sheet.inject()
+    if (styleSheet && typeof optimizeForSpeed === 'boolean') {
+      this._sheet.setOptimizeForSpeed(optimizeForSpeed)
+      this._optimizeForSpeed = this._sheet.isOptimizeForSpeed()
+    }
+
     this._isBrowser = isBrowser
 
     this._fromServer = undefined
@@ -146,6 +153,12 @@ export default class StyleSheetRegistry {
   ) {
     const cache = {}
     return function(id, css) {
+      // Sanitize SSR-ed and client side (style tags) CSS.
+      // When using optimize for speed we don't need to sanitize
+      // because we are not inserting markup in the DOM.
+      if (!this._isBrowser || !this._optimizeForSpeed) {
+        css = sanitize(css)
+      }
       const idcss = id + css
       if (!cache[idcss]) {
         cache[idcss] = css.replace(selectoPlaceholderRegexp, id)
