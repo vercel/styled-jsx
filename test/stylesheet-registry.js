@@ -104,25 +104,6 @@ test('add - sanitizes dynamic CSS on the server', t => {
   ])
 })
 
-test('add - sanitizes dynamic CSS on the client when optimizeForSpeed is false', t => {
-  const registry = makeRegistry({ optimizeForSpeed: false, isBrowser: true })
-
-  registry.add({
-    styleId: '123',
-    css: [
-      'div.__jsx-style-dynamic-selector { color: red</style><script>alert("howdy")</script> }'
-    ],
-    dynamic: ['red</style><script>alert("howdy")</script>']
-  })
-
-  t.deepEqual(registry.cssRules(), [
-    [
-      'jsx-1871671996',
-      'div.jsx-1871671996 { color: red<\\/style><script>alert("howdy")</script> }'
-    ]
-  ])
-})
-
 // registry.remove
 
 test('remove', t => {

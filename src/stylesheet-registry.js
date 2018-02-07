@@ -153,10 +153,10 @@ export default class StyleSheetRegistry {
   ) {
     const cache = {}
     return function(id, css) {
-      // Sanitize SSR-ed and client side (style tags) CSS.
-      // When using optimize for speed we don't need to sanitize
-      // because we are not inserting markup in the DOM.
-      if (!this._isBrowser || !this._optimizeForSpeed) {
+      // Sanitize SSR-ed CSS.
+      // Client side code doesn't need to be sanitized since we use
+      // document.createTextNode (dev) and the CSSOM api sheet.insertRule (prod).
+      if (!this._isBrowser) {
         css = sanitize(css)
       }
       const idcss = id + css
