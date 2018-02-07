@@ -5,7 +5,7 @@ import test from 'ava'
 import StyleSheetRegistry from '../src/stylesheet-registry'
 import makeSheet, { invalidRules } from './stylesheet'
 
-function makeRegistry(options) {
+function makeRegistry(options = { optimizeForSpeed: true, isBrowser: true }) {
   const registry = new StyleSheetRegistry({
     styleSheet: makeSheet(options),
     ...options
@@ -82,6 +82,25 @@ test('add - filters out invalid rules (index `-1`)', t => {
   t.deepEqual(registry.cssRules(), [
     ['jsx-123', 'div { color: red }'],
     ['jsx-678', 'div { color: red }']
+  ])
+})
+
+test('add - sanitizes dynamic CSS on the server', t => {
+  const registry = makeRegistry({ optimizeForSpeed: false, isBrowser: false })
+
+  registry.add({
+    styleId: '123',
+    css: [
+      'div.__jsx-style-dynamic-selector { color: red</style><script>alert("howdy")</script> }'
+    ],
+    dynamic: ['red</style><script>alert("howdy")</script>']
+  })
+
+  t.deepEqual(registry.cssRules(), [
+    [
+      'jsx-1871671996',
+      'div.jsx-1871671996 { color: red<\\/style><script>alert("howdy")</script> }'
+    ]
   ])
 })
 
@@ -196,7 +215,9 @@ test('createComputeId', t => {
 // createComputeSelector
 
 test('createComputeSelector', t => {
-  const computeSelector = utilRegistry.createComputeSelector()
+  const computeSelector = utilRegistry
+    .createComputeSelector()
+    .bind(utilRegistry)
 
   t.is(
     computeSelector(
