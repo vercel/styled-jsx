@@ -39,6 +39,7 @@ For an overview about the **features** and **tradeoffs** of styled-jsx you may w
   * [Warning: unknown `jsx` prop on &lt;style&gt; tag](#warning-unknown-jsx-prop-on-style-tag)
   * [Can I return an array of components when using React 16?](#can-i-return-an-array-of-components-when-using-react-16)
   * [Styling third parties / child components from the parent](#styling-third-parties--child-components-from-the-parent)
+  * [Some styles are missing in production](https://github.com/zeit/styled-jsx/issues/319#issuecomment-349239326)
 - [Syntax Highlighting](#syntax-highlighting)
 
 ## Getting started
