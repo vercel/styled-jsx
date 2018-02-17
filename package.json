@@ -93,5 +93,11 @@
   },
   "peerDependencies": {
     "react": "15.x.x || 16.x.x"
-  }
+  },
+  "keywords": [
+    "babel-plugin",
+    "zeit",
+    "css-in-js",
+    "css"
+  ]
 }
