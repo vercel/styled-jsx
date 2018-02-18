@@ -5426,9 +5426,9 @@ stylis-rule-sheet@0.0.8:
   version "0.0.8"
   resolved "https://registry.yarnpkg.com/stylis-rule-sheet/-/stylis-rule-sheet-0.0.8.tgz#b0d0a126c945b1f3047447a3aae0647013e8d166"
 
-stylis@3.4.9:
-  version "3.4.9"
-  resolved "https://registry.yarnpkg.com/stylis/-/stylis-3.4.9.tgz#2e1403c06264bde8dbf1eb8fd82b2cfd1c4b31cc"
+stylis@3.4.10:
+  version "3.4.10"
+  resolved "https://registry.npmjs.org/stylis/-/stylis-3.4.10.tgz#a135cab4b9ff208e327fbb5a6fde3fa991c638ee"
 
 supports-color@^2.0.0:
   version "2.0.0"
