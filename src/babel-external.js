@@ -138,17 +138,41 @@ export const visitor = {
 
     const taggedTemplateExpressions = binding.referencePaths
       .map(ref => ref.parentPath)
-      .filter(path => path.isTaggedTemplateExpression())
+      .reduce((result, path) => {
+        let taggedTemplateExpression
+        if (path.isTaggedTemplateExpression()) {
+          taggedTemplateExpression = path
+        } else if (path.parentPath && path.isMemberExpression() && path.parentPath.isTaggedTemplateExpression()) {
+          taggedTemplateExpression = path.parentPath
+        } else {
+          return result
+        }
 
-    if (taggedTemplateExpressions.length === 0) {
+        const tag = taggedTemplateExpression.get('tag')
+        const id = tag.isIdentifier() ? tag.node.name : tag.get('property').node.name
+
+        if (result[id]) {
+          result[id].push(taggedTemplateExpression)
+        } else {
+          result.scoped.push(taggedTemplateExpression)
+        }
+        return result
+      }, {
+        scoped: [],
+        global: [],
+        resolve: [],
+      })
+
+    if (Object.values(taggedTemplateExpressions).every(a => a.length === 0)) {
       return
     }
 
     const { vendorPrefix, sourceMaps } = state.opts
 
-    taggedTemplateExpressions.forEach(path => {
+    Object.keys(taggedTemplateExpressions).forEach(type => {
       processTaggedTemplateExpression({
-        path,
+        type,
+        path: taggedTemplateExpressions[type],
         fileInfo: {
           file: state.file,
           sourceFileName: state.file.opts.sourceFileName,
