@@ -51,14 +51,17 @@ function processTaggedTemplateExpression({
   )
 
   if (type === 'resolve') {
-    const {hash, css, expressions} = styles
+    const { hash, css, expressions } = styles
     path.replaceWith(
       // {
       //   styles: <_JSXStyle ... />,
       //   className: 'jsx-123'
       // }
       t.objectExpression([
-        t.objectProperty(t.identifier('styles'), makeStyledJsxTag(hash, css, expressions)),
+        t.objectProperty(
+          t.identifier('styles'),
+          makeStyledJsxTag(hash, css, expressions)
+        ),
         t.objectProperty(t.identifier('className'), className)
       ])
     )

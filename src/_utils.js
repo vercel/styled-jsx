@@ -322,8 +322,8 @@ export const computeClassNames = (styles, externalJsxId) => {
     // Arguments
     [
       t.arrayExpression(
-        hashes.dynamic.map(
-          styles => t.arrayExpression([
+        hashes.dynamic.map(styles =>
+          t.arrayExpression([
             t.stringLiteral(hashString(styles.hash + staticClassName)),
             t.arrayExpression(styles.expressions)
           ])

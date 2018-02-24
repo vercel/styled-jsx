@@ -38,7 +38,7 @@ const b = resolve`
   a { color: red }
 `
 
-const dynamic = (colors) => {
+const dynamic = colors => {
   const b = resolve`
     div {
       color: ${colors.green.light};
