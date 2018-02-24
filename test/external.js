@@ -10,9 +10,8 @@ const transform = (file, opts = {}) =>
     plugins: [[plugin, opts]]
   })
 
-test.only('transpiles external stylesheets', async t => {
+test('transpiles external stylesheets', async t => {
   const { code } = await transform('./fixtures/styles.js')
-  console.log(code)
   t.snapshot(code)
 })
 

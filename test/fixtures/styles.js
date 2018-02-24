@@ -1,4 +1,4 @@
-import css from 'styled-jsx/css'
+import css, { resolve, global } from 'styled-jsx/css'
 import colors, { size } from './constants'
 const color = 'red'
 
@@ -8,15 +8,15 @@ const bar = css`
   }
 `
 
-const a = css`
+const baz = css.global`
   div {
-    font-size: ${size}em;
+    font-size: 3em;
   }
 `
 
-const b = css`
+const a = global`
   div {
-    color: ${colors.green.light};
+    font-size: ${size}em;
   }
 `
 
@@ -24,7 +24,30 @@ export const uh = bar
 
 export const foo = css`div { color: ${color}}`
 
-export default css`
+css.resolve`
+  div {
+    color: ${colors.green.light};
+  }
+  a { color: red }
+`
+
+const b = resolve`
+  div {
+    color: ${colors.green.light};
+  }
+  a { color: red }
+`
+
+const dynamic = (colors) => {
+  const b = resolve`
+    div {
+      color: ${colors.green.light};
+    }
+    a { color: red }
+  `
+}
+
+export default css.resolve`
   div {
     font-size: 3em;
   }

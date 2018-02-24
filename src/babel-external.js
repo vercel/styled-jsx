@@ -6,12 +6,16 @@ import {
   cssToBabelType,
   validateExternalExpressions,
   combinePlugins,
-  booleanOption
+  booleanOption,
+  getScope,
+  computeClassNames,
+  makeStyledJsxTag
 } from './_utils'
 
 const isModuleExports = t.buildMatchMemberExpression('module.exports')
 
 function processTaggedTemplateExpression({
+  type,
   path,
   fileInfo,
   splitRules,
@@ -19,35 +23,47 @@ function processTaggedTemplateExpression({
   vendorPrefix
 }) {
   const templateLiteral = path.get('quasi')
+  let scope
 
-  // Check whether there are undefined references or references to this.something (e.g. props or state)
-  validateExternalExpressions(templateLiteral)
+  // Check whether there are undefined references or
+  // references to this.something (e.g. props or state).
+  // We allow dynamic styles only when resolving styles.
+  if (type !== 'resolve') {
+    validateExternalExpressions(templateLiteral)
+  } else if (!path.scope.path.isProgram()) {
+    scope = getScope(path)
+  }
 
-  const stylesInfo = getJSXStyleInfo(templateLiteral)
+  const stylesInfo = getJSXStyleInfo(templateLiteral, scope)
 
-  const globalStyles = processCss(
+  const { staticClassName, className } = computeClassNames([stylesInfo])
+
+  const styles = processCss(
     {
       ...stylesInfo,
-      hash: `${stylesInfo.hash}0`,
+      staticClassName,
       fileInfo,
-      isGlobal: true,
+      isGlobal: type === 'global',
       plugins,
       vendorPrefix
     },
     { splitRules }
   )
 
-  const scopedStyles = processCss(
-    {
-      ...stylesInfo,
-      hash: `${stylesInfo.hash}1`,
-      fileInfo,
-      isGlobal: false,
-      plugins,
-      vendorPrefix
-    },
-    { splitRules }
-  )
+  if (type === 'resolve') {
+    const {hash, css, expressions} = styles
+    path.replaceWith(
+      // {
+      //   styles: <_JSXStyle ... />,
+      //   className: 'jsx-123'
+      // }
+      t.objectExpression([
+        t.objectProperty(t.identifier('styles'), makeStyledJsxTag(hash, css, expressions)),
+        t.objectProperty(t.identifier('className'), className)
+      ])
+    )
+    return
+  }
 
   const id = path.parentPath.node.id
   const baseExportName = id ? id.name : 'default'
@@ -65,13 +81,10 @@ function processTaggedTemplateExpression({
     parentPath = parentPath.parentPath
   }
 
-  const hashesAndScoped = {
-    hash: globalStyles.hash,
-    scoped: cssToBabelType(scopedStyles.css),
-    scopedHash: scopedStyles.hash
-  }
-
-  const globalCss = cssToBabelType(globalStyles.css)
+  const css = cssToBabelType(styles.css)
+  const newPath = t.isArrayExpression(css)
+    ? css
+    : t.newExpression(t.identifier('String'), [css])
 
   // default exports
 
@@ -81,110 +94,126 @@ function processTaggedTemplateExpression({
     )
     parentPath.insertBefore(
       t.variableDeclaration('const', [
-        t.variableDeclarator(
-          defaultExportIdentifier,
-          t.isArrayExpression(globalCss)
-            ? globalCss
-            : t.newExpression(t.identifier('String'), [globalCss])
-        )
+        t.variableDeclarator(defaultExportIdentifier, newPath)
       ])
     )
-    parentPath.insertBefore(
-      makeHashesAndScopedCssPaths(defaultExportIdentifier, hashesAndScoped)
-    )
+    parentPath.insertBefore(addHash(defaultExportIdentifier, styles.hash))
     path.replaceWith(defaultExportIdentifier)
     return
   }
 
-  // named exports
+  // local and named exports
 
-  parentPath.insertAfter(
-    makeHashesAndScopedCssPaths(t.identifier(baseExportName), hashesAndScoped)
-  )
-  path.replaceWith(
-    t.isArrayExpression(globalCss)
-      ? globalCss
-      : t.newExpression(t.identifier('String'), [globalCss])
-  )
+  parentPath.insertAfter(addHash(baseExportName, styles.hash))
+  path.replaceWith(newPath)
 }
 
-function makeHashesAndScopedCssPaths(exportIdentifier, data) {
-  return Object.keys(data).map(key => {
-    const value =
-      typeof data[key] === 'string' ? t.stringLiteral(data[key]) : data[key]
-
-    return t.expressionStatement(
-      t.assignmentExpression(
-        '=',
-        t.memberExpression(exportIdentifier, t.identifier(`__${key}`)),
-        value
-      )
+function addHash(exportIdentifier, hash) {
+  const value = typeof hash === 'string' ? t.stringLiteral(hash) : hash
+  return t.expressionStatement(
+    t.assignmentExpression(
+      '=',
+      t.memberExpression(
+        t.identifier(exportIdentifier),
+        t.identifier('__hash')
+      ),
+      value
     )
-  })
+  )
 }
 
 export const visitor = {
   ImportDeclaration(path, state) {
+    // import css from 'styled-jsx/css'
     if (path.node.source.value !== 'styled-jsx/css') {
       return
     }
 
-    const tagName = path.node.specifiers[0].local.name
-    const binding = path.scope.getBinding(tagName)
+    // Find all the imported specifiers.
+    // e.g import css, { global, resolve } from 'styled-jsx/css'
+    // -> ['css', 'global', 'resolve']
+    const specifiersNames = path.node.specifiers.map(
+      specifier => specifier.local.name
+    )
+    specifiersNames.forEach(tagName => {
+      // Get all the reference paths i.e. the places that use the tagName above
+      // eg.
+      // css`div { color: red }`
+      // css.global`div { color: red }`
+      // global`div { color: red `
+      const binding = path.scope.getBinding(tagName)
 
-    if (!binding || !Array.isArray(binding.referencePaths)) {
-      return
-    }
+      if (!binding || !Array.isArray(binding.referencePaths)) {
+        return
+      }
 
-    const taggedTemplateExpressions = binding.referencePaths
-      .map(ref => ref.parentPath)
-      .reduce((result, path) => {
-        let taggedTemplateExpression
-        if (path.isTaggedTemplateExpression()) {
-          taggedTemplateExpression = path
-        } else if (path.parentPath && path.isMemberExpression() && path.parentPath.isTaggedTemplateExpression()) {
-          taggedTemplateExpression = path.parentPath
-        } else {
-          return result
-        }
+      // Produces an object containing all the TaggedTemplateExpression paths detected.
+      // The object contains { scoped, global, resolve }
+      const taggedTemplateExpressions = binding.referencePaths
+        .map(ref => ref.parentPath)
+        .reduce(
+          (result, path) => {
+            let taggedTemplateExpression
+            if (path.isTaggedTemplateExpression()) {
+              // css`` global`` resolve``
+              taggedTemplateExpression = path
+            } else if (
+              path.parentPath &&
+              path.isMemberExpression() &&
+              path.parentPath.isTaggedTemplateExpression()
+            ) {
+              // This part is for css.global`` or css.resolve``
+              // using the default import css
+              taggedTemplateExpression = path.parentPath
+            } else {
+              return result
+            }
 
-        const tag = taggedTemplateExpression.get('tag')
-        const id = tag.isIdentifier() ? tag.node.name : tag.get('property').node.name
+            const tag = taggedTemplateExpression.get('tag')
+            const id = tag.isIdentifier()
+              ? tag.node.name
+              : tag.get('property').node.name
 
-        if (result[id]) {
-          result[id].push(taggedTemplateExpression)
-        } else {
-          result.scoped.push(taggedTemplateExpression)
-        }
-        return result
-      }, {
-        scoped: [],
-        global: [],
-        resolve: [],
-      })
+            if (result[id]) {
+              result[id].push(taggedTemplateExpression)
+            } else {
+              result.scoped.push(taggedTemplateExpression)
+            }
+            return result
+          },
+          {
+            scoped: [],
+            global: [],
+            resolve: []
+          }
+        )
 
-    if (Object.values(taggedTemplateExpressions).every(a => a.length === 0)) {
-      return
-    }
+      if (Object.values(taggedTemplateExpressions).every(a => a.length === 0)) {
+        return
+      }
 
-    const { vendorPrefix, sourceMaps } = state.opts
+      const { vendorPrefix, sourceMaps } = state.opts
 
-    Object.keys(taggedTemplateExpressions).forEach(type => {
-      processTaggedTemplateExpression({
-        type,
-        path: taggedTemplateExpressions[type],
-        fileInfo: {
-          file: state.file,
-          sourceFileName: state.file.opts.sourceFileName,
-          sourceMaps
-        },
-        splitRules:
-          typeof state.opts.optimizeForSpeed === 'boolean'
-            ? state.opts.optimizeForSpeed
-            : process.env.NODE_ENV === 'production',
-        plugins: state.plugins,
-        vendorPrefix
-      })
+      Object.keys(taggedTemplateExpressions).forEach(type =>
+        taggedTemplateExpressions[type].forEach(path =>
+          // Process each css block
+          processTaggedTemplateExpression({
+            type,
+            path,
+            fileInfo: {
+              file: state.file,
+              sourceFileName: state.file.opts.sourceFileName,
+              sourceMaps
+            },
+            splitRules:
+              typeof state.opts.optimizeForSpeed === 'boolean'
+                ? state.opts.optimizeForSpeed
+                : process.env.NODE_ENV === 'production',
+            plugins: state.plugins,
+            vendorPrefix
+          })
+        )
+      )
     })
 
     // Finally remove the import

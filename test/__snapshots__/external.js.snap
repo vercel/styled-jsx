@@ -15,33 +15,41 @@ exports[`(optimized) transpiles external stylesheets 1`] = `
 import colors, { size } from './constants';
 const color = 'red';
 
-const bar = ['div{font-size:3em;}'];
+const bar = ['div.jsx-2141779268{font-size:3em;}'];
 
-bar.__hash = '3161421268';
-bar.__scoped = ['div.jsx-546996693{font-size:3em;}'];
-bar.__scopedHash = '546996693';
+bar.__hash = '2141779268';
+const baz = ['div{font-size:3em;}'];
+
+baz.__hash = '2141779268';
 const a = [\`div{font-size:\${size}em;}\`];
 
-a.__hash = '1282571833';
-a.__scoped = [\`div.jsx-2741963512{font-size:\${size}em;}\`];
-a.__scopedHash = '2741963512';
-const b = [\`div{color:\${colors.green.light};}\`];
-
-b.__hash = '3466620163';
-b.__scoped = [\`div.jsx-3071343650{color:\${colors.green.light};}\`];
-b.__scopedHash = '3071343650';
+a.__hash = '262929833';
 export const uh = bar;
 
-export const foo = [\`div{color:\${color};}\`];
+export const foo = [\`div.jsx-2299908427{color:\${color};}\`];
 
-foo.__hash = '3319550427';
-foo.__scoped = [\`div.jsx-3980805466{color:\${color};}\`];
-foo.__scopedHash = '3980805466';
-const _defaultExport = ['div{font-size:3em;}', \`p{color:\${color};}\`];
-_defaultExport.__hash = '14787253';
-_defaultExport.__scoped = ['div.jsx-602449652{font-size:3em;}', \`p.jsx-602449652{color:\${color};}\`];
-_defaultExport.__scopedHash = '602449652';
-export default _defaultExport;"
+foo.__hash = '2299908427';
+({
+  styles: <_JSXStyle styleId={\\"1329679275\\"} css={[\`div.jsx-1329679275{color:\${colors.green.light};}\`, 'a.jsx-1329679275{color:red;}']} />,
+  className: 'jsx-1329679275'
+});
+
+const b = {
+  styles: <_JSXStyle styleId={\\"1329679275\\"} css={[\`div.jsx-1329679275{color:\${colors.green.light};}\`, 'a.jsx-1329679275{color:red;}']} />,
+  className: 'jsx-1329679275'
+};
+
+const dynamic = colors => {
+  const b = {
+    styles: <_JSXStyle styleId={\\"3325296745\\"} css={[\`div.__jsx-style-dynamic-selector{color:\${colors.green.light};}\`, 'a.__jsx-style-dynamic-selector{color:red;}']} dynamic={[colors.green.light]} />,
+    className: _JSXStyle.dynamic([['3325296745', [colors.green.light]]])
+  };
+};
+
+export default {
+  styles: <_JSXStyle styleId={\\"3290112549\\"} css={['div.jsx-3290112549{font-size:3em;}', \`p.jsx-3290112549{color:\${color};}\`]} />,
+  className: 'jsx-3290112549'
+};"
 `;
 
 exports[`does not transpile non-styled-jsx tagged teplate literals 1`] = `
@@ -93,35 +101,41 @@ exports[`transpiles external stylesheets 1`] = `
 import colors, { size } from './constants';
 const color = 'red';
 
-const bar = new String('div{font-size:3em;}');
+const bar = new String('div.jsx-2141779268{font-size:3em;}');
 
-bar.__hash = '3161421268';
-bar.__scoped = 'div.jsx-546996693{font-size:3em;}';
-bar.__scopedHash = '546996693';
+bar.__hash = '2141779268';
+const baz = new String('div{font-size:3em;}');
+
+baz.__hash = '2141779268';
 const a = new String(\`div{font-size:\${size}em;}\`);
 
-a.__hash = '1282571833';
-a.__scoped = \`div.jsx-2741963512{font-size:\${size}em;}\`;
-a.__scopedHash = '2741963512';
-const b = new String(\`div{color:\${colors.green.light};}\`);
-
-b.__hash = '3466620163';
-b.__scoped = \`div.jsx-3071343650{color:\${colors.green.light};}\`;
-b.__scopedHash = '3071343650';
+a.__hash = '262929833';
 export const uh = bar;
 
-export const foo = new String(\`div{color:\${color};}\`);
+export const foo = new String(\`div.jsx-2299908427{color:\${color};}\`);
 
-foo.__hash = '3319550427';
-foo.__scoped = \`div.jsx-3980805466{color:\${color};}\`;
-foo.__scopedHash = '3980805466';
+foo.__hash = '2299908427';
+({
+  styles: <_JSXStyle styleId={\\"1329679275\\"} css={\`div.jsx-1329679275{color:\${colors.green.light};}a.jsx-1329679275{color:red;}\`} />,
+  className: 'jsx-1329679275'
+});
 
-const _defaultExport = new String(\`div{font-size:3em;}p{color:\${color};}\`);
+const b = {
+  styles: <_JSXStyle styleId={\\"1329679275\\"} css={\`div.jsx-1329679275{color:\${colors.green.light};}a.jsx-1329679275{color:red;}\`} />,
+  className: 'jsx-1329679275'
+};
 
-_defaultExport.__hash = '14787253';
-_defaultExport.__scoped = \`div.jsx-602449652{font-size:3em;}p.jsx-602449652{color:\${color};}\`;
-_defaultExport.__scopedHash = '602449652';
-export default _defaultExport;"
+const dynamic = colors => {
+  const b = {
+    styles: <_JSXStyle styleId={\\"3325296745\\"} css={\`div.__jsx-style-dynamic-selector{color:\${colors.green.light};}a.__jsx-style-dynamic-selector{color:red;}\`} dynamic={[colors.green.light]} />,
+    className: _JSXStyle.dynamic([['3325296745', [colors.green.light]]])
+  };
+};
+
+export default {
+  styles: <_JSXStyle styleId={\\"3290112549\\"} css={\`div.jsx-3290112549{font-size:3em;}p.jsx-3290112549{color:\${color};}\`} />,
+  className: 'jsx-3290112549'
+};"
 `;
 
 exports[`use external stylesheets (global only) 1`] = `
