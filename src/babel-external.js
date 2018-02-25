@@ -1,5 +1,7 @@
 import * as t from 'babel-types'
 
+import { STYLE_COMPONENT } from './_constants'
+
 import {
   getJSXStyleInfo,
   processCss,
@@ -9,7 +11,8 @@ import {
   booleanOption,
   getScope,
   computeClassNames,
-  makeStyledJsxTag
+  makeStyledJsxTag,
+  createReactComponentImportDeclaration
 } from './_utils'
 
 const isModuleExports = t.buildMatchMemberExpression('module.exports')
@@ -100,6 +103,7 @@ function processTaggedTemplateExpression({
         t.variableDeclarator(defaultExportIdentifier, newPath)
       ])
     )
+
     parentPath.insertBefore(addHash(defaultExportIdentifier, styles.hash))
     path.replaceWith(defaultExportIdentifier)
     return
@@ -107,7 +111,7 @@ function processTaggedTemplateExpression({
 
   // local and named exports
 
-  parentPath.insertAfter(addHash(baseExportName, styles.hash))
+  parentPath.insertAfter(addHash(t.identifier(baseExportName), styles.hash))
   path.replaceWith(newPath)
 }
 
@@ -116,10 +120,7 @@ function addHash(exportIdentifier, hash) {
   return t.expressionStatement(
     t.assignmentExpression(
       '=',
-      t.memberExpression(
-        t.identifier(exportIdentifier),
-        t.identifier('__hash')
-      ),
+      t.memberExpression(exportIdentifier, t.identifier('__hash')),
       value
     )
   )
@@ -217,6 +218,18 @@ export const visitor = {
           })
         )
       )
+
+      // When using the `resolve` helper we need to add an import
+      // for the _JSXStyle component `styled-jsx/style`
+      if (
+        taggedTemplateExpressions.resolve.length > 0 &&
+        !state.hasInjectedJSXStyle &&
+        !path.scope.hasBinding(STYLE_COMPONENT)
+      ) {
+        state.hasInjectedJSXStyle = true
+        const importDeclaration = createReactComponentImportDeclaration()
+        path.scope.path.node.body.unshift(importDeclaration)
+      }
     })
 
     // Finally remove the import

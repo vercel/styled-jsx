@@ -1,17 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`(optimized) transpiles external stylesheets (CommonJS modules) 1`] = `
-"const _defaultExport = ['div{font-size:3em;}'];
-_defaultExport.__hash = '761548770';
-_defaultExport.__scoped = ['div.jsx-3720287939{font-size:3em;}'];
-_defaultExport.__scopedHash = '3720287939';
+"const _defaultExport = ['div.jsx-2292456818{font-size:3em;}'];
+_defaultExport.__hash = '2292456818';
 
 
 module.exports = _defaultExport;"
 `;
 
 exports[`(optimized) transpiles external stylesheets 1`] = `
-"
+"import _JSXStyle from 'styled-jsx/style';
+
 import colors, { size } from './constants';
 const color = 'red';
 
@@ -21,9 +20,9 @@ bar.__hash = '2141779268';
 const baz = ['div{font-size:3em;}'];
 
 baz.__hash = '2141779268';
+a.__hash = '262929833';
 const a = [\`div{font-size:\${size}em;}\`];
 
-a.__hash = '262929833';
 export const uh = bar;
 
 export const foo = [\`div.jsx-2299908427{color:\${color};}\`];
@@ -86,18 +85,17 @@ export const Component = () => <AnotherTitle>My page</AnotherTitle>;"
 `;
 
 exports[`transpiles external stylesheets (CommonJS modules) 1`] = `
-"const _defaultExport = new String('div{font-size:3em;}');
+"const _defaultExport = new String('div.jsx-2292456818{font-size:3em;}');
 
-_defaultExport.__hash = '761548770';
-_defaultExport.__scoped = 'div.jsx-3720287939{font-size:3em;}';
-_defaultExport.__scopedHash = '3720287939';
+_defaultExport.__hash = '2292456818';
 
 
 module.exports = _defaultExport;"
 `;
 
 exports[`transpiles external stylesheets 1`] = `
-"
+"import _JSXStyle from 'styled-jsx/style';
+
 import colors, { size } from './constants';
 const color = 'red';
 
@@ -107,9 +105,9 @@ bar.__hash = '2141779268';
 const baz = new String('div{font-size:3em;}');
 
 baz.__hash = '2141779268';
+a.__hash = '262929833';
 const a = new String(\`div{font-size:\${size}em;}\`);
 
-a.__hash = '262929833';
 export const uh = bar;
 
 export const foo = new String(\`div.jsx-2299908427{color:\${color};}\`);

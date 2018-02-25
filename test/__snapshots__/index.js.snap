@@ -90,11 +90,9 @@ export default (({ children }) => <div className={\`jsx-\${styles.__scopedHash}\
     <_JSXStyle styleId={styles.__scopedHash} css={styles.__scoped} />
   </div>);
 
-const styles = new String('p{color:red;}');
+const styles = new String('p.jsx-2587355013{color:red;}');
 
-styles.__hash = '3606997013';
-styles.__scoped = 'p.jsx-232666004{color:red;}';
-styles.__scopedHash = '232666004';
+styles.__hash = '2587355013';
 class Test extends React.Component {
   render() {
     return <div className={\`jsx-\${styles.__scopedHash}\`}>

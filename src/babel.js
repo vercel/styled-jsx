@@ -14,7 +14,8 @@ import {
   getScope,
   processCss,
   combinePlugins,
-  booleanOption
+  booleanOption,
+  createReactComponentImportDeclaration
 } from './_utils'
 
 import { STYLE_COMPONENT } from './_constants'
@@ -284,15 +285,17 @@ export default function({ types: t }) {
           }
         },
         exit({ node, scope }, state) {
-          if (!(state.file.hasJSXStyle && !scope.hasBinding(STYLE_COMPONENT))) {
+          if (
+            !(
+              state.file.hasJSXStyle &&
+              !state.hasInjectedJSXStyle &&
+              !scope.hasBinding(STYLE_COMPONENT)
+            )
+          ) {
             return
           }
-
-          const importDeclaration = t.importDeclaration(
-            [t.importDefaultSpecifier(t.identifier(STYLE_COMPONENT))],
-            t.stringLiteral('styled-jsx/style')
-          )
-
+          state.hasInjectedJSXStyle = true
+          const importDeclaration = createReactComponentImportDeclaration()
           node.body.unshift(importDeclaration)
         }
       },
