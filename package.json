@@ -71,6 +71,7 @@
     ]
   },
   "dependencies": {
+    "babel-plugin-macros": "2.2.0",
     "babel-plugin-syntax-jsx": "6.18.0",
     "babel-types": "6.26.0",
     "convert-source-map": "1.5.1",
@@ -104,7 +105,7 @@
     "react": "15.x.x || 16.x.x"
   },
   "keywords": [
-    "babel-plugin",
+    "babel-plugin-macros",
     "zeit",
     "css-in-js",
     "css"

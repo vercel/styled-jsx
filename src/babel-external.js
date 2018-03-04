@@ -7,17 +7,16 @@ import {
   processCss,
   cssToBabelType,
   validateExternalExpressions,
-  combinePlugins,
-  booleanOption,
   getScope,
   computeClassNames,
   makeStyledJsxTag,
-  createReactComponentImportDeclaration
+  createReactComponentImportDeclaration,
+  setStateOptions
 } from './_utils'
 
 const isModuleExports = t.buildMatchMemberExpression('module.exports')
 
-function processTaggedTemplateExpression({
+export function processTaggedTemplateExpression({
   type,
   path,
   fileInfo,
@@ -240,25 +239,7 @@ export const visitor = {
 export default function() {
   return {
     Program(path, state) {
-      const vendorPrefix = booleanOption([
-        state.opts.vendorPrefix,
-        state.file.opts.vendorPrefix
-      ])
-      state.opts.vendorPrefix =
-        typeof vendorPrefix === 'boolean' ? vendorPrefix : true
-      const sourceMaps = booleanOption([
-        state.opts.sourceMaps,
-        state.file.opts.sourceMaps
-      ])
-      state.opts.sourceMaps = Boolean(sourceMaps)
-
-      if (!state.plugins) {
-        const { sourceMaps, vendorPrefix } = state.opts
-        state.plugins = combinePlugins(state.opts.plugins, {
-          sourceMaps: sourceMaps || state.file.opts.sourceMaps,
-          vendorPrefix: typeof vendorPrefix === 'boolean' ? vendorPrefix : true
-        })
-      }
+      setStateOptions(state)
     },
     ...visitor
   }
