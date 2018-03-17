@@ -6,9 +6,11 @@ const styleSheetRegistry = new StyleSheetRegistry()
 export default class JSXStyle extends Component {
   static dynamic(info) {
     return info
-      .map(tagInfo =>
-        styleSheetRegistry.computeId(tagInfo.baseId, tagInfo.props)
-      )
+      .map(tagInfo => {
+        const baseId = tagInfo[0]
+        const props = tagInfo[1]
+        return styleSheetRegistry.computeId(baseId, props)
+      })
       .join(' ')
   }
 
