@@ -12,21 +12,29 @@
     "style.js",
     "css.js"
   ],
+  "scripts": {
+    "dev": "babel --watch src --out-dir dist",
+    "build": "NODE_ENV=production babel src --out-dir dist",
+    "prepublish": "npm run build",
+    "test": "npm run lint && ava",
+    "lint": "xo",
+    "format": "prettier --single-quote --no-semi --write *.js {src,test}/*.js",
+    "precommit": "xo --quiet && ava && lint-staged"
+  },
   "babel": {
     "presets": [
       "env"
     ],
     "plugins": [
       "transform-object-rest-spread"
-    ]
-  },
-  "scripts": {
-    "dev": "gulp",
-    "prepublish": "gulp transpile",
-    "test": "npm run lint && ava",
-    "lint": "xo",
-    "format": "prettier --single-quote --no-semi --write *.js {src,test}/*.js",
-    "precommit": "xo --quiet && ava && lint-staged"
+    ],
+    "env": {
+      "production": {
+        "presets": [
+          "minify"
+        ]
+      }
+    }
   },
   "ava": {
     "require": [
@@ -79,13 +87,11 @@
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.6.1",
+    "babel-preset-minify": "0.3.0",
     "babel-preset-react": "^6.24.1",
     "babel-register": "^6.26.0",
     "benchmark": "^2.1.4",
     "eslint-config-prettier": "^2.9.0",
-    "gulp": "^3.9.1",
-    "gulp-babel": "^7.0.0",
-    "gulp-benchmark": "^1.1.1",
     "human-size": "^1.1.0",
     "husky": "^0.14.3",
     "lint-staged": "^5.0.0",
