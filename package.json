@@ -13,8 +13,8 @@
     "css.js"
   ],
   "scripts": {
-    "dev": "babel --watch src --out-dir dist",
-    "build": "NODE_ENV=production babel src --out-dir dist",
+    "dev": "npm run build -- --watch",
+    "build": "babel src --out-dir dist",
     "prepublish": "npm run build",
     "test": "npm run lint && ava",
     "lint": "xo",
@@ -27,19 +27,11 @@
     ],
     "plugins": [
       "transform-object-rest-spread"
-    ],
-    "env": {
-      "production": {
-        "presets": [
-          "minify"
-        ]
-      }
-    }
+    ]
   },
   "ava": {
     "require": [
-      "babel-register",
-      "babel-polyfill"
+      "babel-register"
     ],
     "babel": {
       "presets": [
@@ -47,7 +39,11 @@
         "react"
       ],
       "plugins": [
-        "transform-object-rest-spread"
+        "transform-object-rest-spread",
+        ["transform-runtime", {
+          "polyfill": false,
+          "regenerator": true
+        }]
       ]
     }
   },
@@ -85,9 +81,8 @@
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-polyfill": "^6.26.0",
+    "babel-plugin-transform-runtime": "6.23.0",
     "babel-preset-env": "^1.6.1",
-    "babel-preset-minify": "0.3.0",
     "babel-preset-react": "^6.24.1",
     "babel-register": "^6.26.0",
     "benchmark": "^2.1.4",
