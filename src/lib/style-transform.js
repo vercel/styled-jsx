@@ -7,6 +7,7 @@ function disableNestingPlugin(...args) {
   let [context, , , parent = [], line, column] = args
   if (context === 2) {
     // replace null characters and trim
+    // eslint-disable-next-line no-control-regex
     parent = (parent[0] || '').replace(/\u0000/g, '').trim()
     if (parent.length > 0 && parent.charAt(0) !== '@') {
       throw new Error(

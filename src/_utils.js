@@ -392,7 +392,9 @@ export const templateLiteralFromPreprocessedCss = (css, expressions) => {
 export const cssToBabelType = css => {
   if (typeof css === 'string') {
     return t.stringLiteral(css)
-  } else if (Array.isArray(css)) {
+  }
+
+  if (Array.isArray(css)) {
     return t.arrayExpression(css)
   }
 

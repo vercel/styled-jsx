@@ -40,10 +40,13 @@
       ],
       "plugins": [
         "transform-object-rest-spread",
-        ["transform-runtime", {
-          "polyfill": false,
-          "regenerator": true
-        }]
+        [
+          "transform-runtime",
+          {
+            "polyfill": false,
+            "regenerator": true
+          }
+        ]
       ]
     }
   },
@@ -89,13 +92,13 @@
     "eslint-config-prettier": "^2.9.0",
     "human-size": "^1.1.0",
     "husky": "^0.14.3",
-    "lint-staged": "^5.0.0",
+    "lint-staged": "7.0.0",
     "mz": "^2.7.0",
     "prettier": "^1.5.2",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-jsdom": "^2.0.5",
-    "xo": "^0.18.2"
+    "xo": "0.20.3"
   },
   "peerDependencies": {
     "react": "15.x.x || 16.x.x"
