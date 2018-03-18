@@ -20,17 +20,15 @@ export default (file, opts = {}) =>
 
 export const transformSource = (src, opts = {}) =>
   new Promise((resolve, reject) => {
-    transform(
-      src,
-      {
-        babelrc: false,
-        ...opts
-      },
-      (err, data) => {
-        if (err) {
-          return reject(err)
-        }
-        resolve(data)
-      }
-    )
+    try {
+      resolve(
+        // In Babel 7 this will be async
+        transform(src, {
+          babelrc: false,
+          ...opts
+        })
+      )
+    } catch (err) {
+      reject(err)
+    }
   })

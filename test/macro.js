@@ -35,6 +35,30 @@ test('throws when using the default export directly', async t => {
   t.regex(message, /can't use default import directly/i)
 })
 
+test('throws when using the default export directly and it is not called css', async t => {
+  const { message } = await t.throws(
+    transformSource(`
+    import foo from './src/macro'
+
+    foo\`div { color: red }\`
+  `)
+  )
+
+  t.regex(message, /can't use default import directly/i)
+})
+
+test('throws when using the default export directly and it is not called resolve', async t => {
+  const { message } = await t.throws(
+    transformSource(`
+    import resolve from './src/macro'
+
+    resolve\`div { color: red }\`
+  `)
+  )
+
+  t.regex(message, /can't use default import directly/i)
+})
+
 test('throws when using an invalid method from the default export', async t => {
   const { message } = await t.throws(
     transformSource(`
