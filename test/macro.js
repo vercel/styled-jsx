@@ -103,3 +103,14 @@ test('can alias the named import', async t => {
   `)
   t.snapshot(code)
 })
+
+test('injects JSXStyle for nested scope', async t => {
+  const { code } = await transformSource(`
+    import { resolve } from './src/macro'
+
+    function test() {
+      resolve\`div { color: red }\`
+    }
+  `)
+  t.snapshot(code)
+})

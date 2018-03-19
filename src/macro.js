@@ -1,6 +1,10 @@
 import { createMacro, MacroError } from 'babel-plugin-macros'
 import { processTaggedTemplateExpression } from './babel-external'
-import { setStateOptions } from './_utils'
+import {
+  setStateOptions,
+  createReactComponentImportDeclaration
+} from './_utils'
+import { STYLE_COMPONENT } from './_constants'
 
 export default createMacro(styledJsxMacro)
 
@@ -94,6 +98,15 @@ function styledJsxMacro({ references, state }) {
         plugins: state.plugins,
         vendorPrefix: state.opts.vendorPrefixes
       })
+
+      if (
+        !state.hasInjectedJSXStyle &&
+        !path.scope.hasBinding(STYLE_COMPONENT)
+      ) {
+        state.hasInjectedJSXStyle = true
+        const importDeclaration = createReactComponentImportDeclaration()
+        path.findParent(p => p.isProgram()).node.body.unshift(importDeclaration)
+      }
     })
   })
 

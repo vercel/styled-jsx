@@ -1,7 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`can alias the named import 1`] = `
-"
+"import _JSXStyle from 'styled-jsx/style';
+
 
 ({
     styles: <_JSXStyle styleId={\\"2886504620\\"} css={\\"div.jsx-2886504620{color:red;}\\"} />,
@@ -9,8 +10,21 @@ exports[`can alias the named import 1`] = `
 });"
 `;
 
+exports[`injects JSXStyle for nested scope 1`] = `
+"import _JSXStyle from 'styled-jsx/style';
+
+
+function test() {
+  ({
+    styles: <_JSXStyle styleId={\\"2886504620\\"} css={\\"div.jsx-2886504620{color:red;}\\"} />,
+    className: 'jsx-2886504620'
+  });
+}"
+`;
+
 exports[`transpiles correctly 1`] = `
-"
+"import _JSXStyle from 'styled-jsx/style';
+
 
 const { className, styles } = {
   styles: <_JSXStyle styleId={\\"2052294191\\"} css={\\"div.jsx-2052294191{color:red;}\\"} />,
