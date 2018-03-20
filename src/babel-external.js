@@ -191,14 +191,13 @@ export const visitor = {
           }
         )
 
-      if (Object.values(taggedTemplateExpressions).every(a => a.length === 0)) {
-        return
-      }
+      let hasJSXStyle = false
 
       const { vendorPrefix, sourceMaps } = state.opts
 
       Object.keys(taggedTemplateExpressions).forEach(type =>
-        taggedTemplateExpressions[type].forEach(path =>
+        taggedTemplateExpressions[type].forEach(path => {
+          hasJSXStyle = true
           // Process each css block
           processTaggedTemplateExpression({
             type,
@@ -215,12 +214,13 @@ export const visitor = {
             plugins: state.plugins,
             vendorPrefix
           })
-        )
+        })
       )
 
       // When using the `resolve` helper we need to add an import
       // for the _JSXStyle component `styled-jsx/style`
       if (
+        hasJSXStyle &&
         taggedTemplateExpressions.resolve.length > 0 &&
         !state.hasInjectedJSXStyle &&
         !path.scope.hasBinding(STYLE_COMPONENT)
