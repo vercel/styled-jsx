@@ -84,6 +84,18 @@ const AnotherTitle = Title.extend\`color: blue;\`;
 export const Component = () => <AnotherTitle>My page</AnotherTitle>;"
 `;
 
+exports[`injects JSXStyle for nested scope 1`] = `
+"import _JSXStyle from 'styled-jsx/style';
+
+
+function test() {
+  ({
+    styles: <_JSXStyle styleId={\\"2886504620\\"} css={\\"div.jsx-2886504620{color:red;}\\"} />,
+    className: 'jsx-2886504620'
+  });
+}"
+`;
+
 exports[`transpiles external stylesheets (CommonJS modules) 1`] = `
 "const _defaultExport = new String('div.jsx-2292456818{font-size:3em;}');
 
