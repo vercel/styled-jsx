@@ -8,7 +8,7 @@
 Full, scoped and component-friendly CSS support for JSX (rendered on the server or the client).
 
 
-Code and docs are for v2 which we highly recommend you to try. Looking for styled-jsx v1? Switch to the [v1 branch](https://github.com/zeit/styled-jsx/tree/v1).
+Code and docs are for v3 which we highly recommend you to try. Looking for styled-jsx v2? Switch to the [v2 branch](https://github.com/zeit/styled-jsx/tree/v2).
 
 For an overview about the **features** and **tradeoffs** of styled-jsx you may want to take a look at [this presentation](https://speakerdeck.com/giuseppe/styled-jsx).
 
@@ -21,8 +21,6 @@ For an overview about the **features** and **tradeoffs** of styled-jsx you may w
 - [How It Works](#how-it-works)
   * [Why It Works Like This](#why-it-works-like-this)
 - [Targeting The Root](#targeting-the-root)
-- [Keeping CSS in separate files](#keeping-css-in-separate-files)
-- [Styles outside of components](#styles-outside-of-components)
 - [Global styles](#global-styles)
   * [One-off global selectors](#one-off-global-selectors)
 - [Dynamic styles](#dynamic-styles)
@@ -32,6 +30,10 @@ For an overview about the **features** and **tradeoffs** of styled-jsx you may w
 - [Constants](#constants)
 - [Server-Side Rendering](#server-side-rendering)
   * [`styled-jsx/server`](#-styled-jsx-server)
+- [External CSS and styles outside of the component](#external-css-and-styles-outside-of-the-component)
+  * [External styles](#external-styles)
+  * [Styles outside of components](#styles-outside-of-components)
+  * [The `resolve` tag](#the-resolve-tag)
 - [CSS Preprocessing via Plugins](#css-preprocessing-via-plugins)
   * [Plugin options](#plugin-options)
   * [Example plugins](#example-plugins)
@@ -129,9 +131,9 @@ The example above transpiles to the following:
 import _JSXStyle from 'styled-jsx/style'
 
 export default () => (
-  <div className='jsx-123'>
-    <p className='jsx-123'>only this paragraph will get the style :)</p>
-    <_JSXStyle styleId='123' css={`p.jsx-123 {color: red;}`} />
+  <div className="jsx-123">
+    <p className="jsx-123">only this paragraph will get the style :)</p>
+    <_JSXStyle styleId="123" css={`p.jsx-123 {color: red;}`} />
   </div>
 )
 ```
@@ -164,66 +166,6 @@ export default () => (
   </div>
 )
 ```
-
-### Keeping CSS in separate files
-
-Styles can be defined in separate JavaScript modules by tagging with `css` any template literal that contain CSS.
-
-`css` must be imported from `styled-jsx/css`:
-
-```js
-/* styles.js */
-import css from 'styled-jsx/css'
-
-export const button = css`button { color: hotpink; }`
-export default css`div { color: green; }`
-```
-
-imported as regular strings:
-
-```jsx
-import styles, { button } from './styles'
-
-export default () => (
-  <div>
-    <button>styled-jsx</button>
-    <style jsx>{styles}</style>
-    <style jsx>{button}</style>
-  </div>
-)
-```
-
-Styles are automatically scoped but you can also be consumed as [globals](#global-styles).
-
-N.B. Dynamic styles cannot be used in external styles.
-
-We also support CommonJS exports but you can only export one string per module:
-
-```js
-module.exports = css`div { color: green; }`
-
-// the following won't work
-// module.exports = { styles: css`div { color: green; }` }
-```
-
-### Styles outside of components
-
-The `css` tag from `styled-jsx/css` can be also used to define styles in your components files but outside of the component itself. This might help with keeping `render` methods smaller.
-
-```jsx
-import css from 'styled-jsx/css'
-
-export default () => (
-  <div>
-    <button>styled-jsx</button>
-    <style jsx>{button}</style>
-  </div>
-)
-
-const button = css`button { color: hotpink; }`
-```
-
-Like in externals styles `css` doesn't work with dynamic styles. If you have dynamic parts you might want to place them inline inside of your component using a regular `<style jsx>` element.
 
 ### Global styles
 
@@ -444,6 +386,161 @@ It's **paramount** that you use one of these two functions so that
 the generated styles can be diffed when the client loads and
 duplicate styles are avoided.
 
+### External CSS and styles outside of the component
+
+In styled-jsx styles can be defined outside of the component's render method or in separate JavaScript modules using the `styled-jsx/css` library. `styled-jsx/css` exports three tags that can be used to tag your styles:
+
+* `css`, the default export, to define scoped styles.
+* `css.global` to define global styles.
+* `css.resolve` to define scoped styles that resolve to the scoped `className` and a `styles` element.
+
+#### External styles
+
+In an external file:
+
+```js
+/* styles.js */
+import css from 'styled-jsx/css'
+
+// Scoped styles
+export const button = css`button { color: hotpink; }`
+
+// Global styles
+export const body = css.global`body { margin: 0; }`
+
+// Resolved styles
+export const link = css.resolve`a { color: green; }`
+// link.className -> scoped className to apply to `a` elements e.g. jsx-123
+// link.styles -> styles element to render inside of your component
+
+// Works also with default exports
+export default css`div { color: green; }`
+```
+
+You can then import and use those styles:
+
+```jsx
+import styles, { button, body } from './styles'
+
+export default () => (
+  <div>
+    <button>styled-jsx</button>
+    <style jsx>{styles}</style>
+    <style jsx>{button}</style>
+    <style jsx global>{body}</style>
+  </div>
+)
+```
+
+N.B. All the tags except for [`resolve`](#the-resolve-tag) don't support dynamic styles.
+
+`resolve` and `global` can also be imported individually:
+
+```js
+import { resolve } from 'styled-jsx/css'
+import { global } from 'styled-jsx/css'
+```
+
+If you use Prettier we recommend you to use the default `css` export syntax since the tool doesn't support named imports.
+
+#### Styles outside of components
+
+The `css` tag from `styled-jsx/css` can be also used to define styles in your components files but outside of the component itself. This might help with keeping `render` methods smaller.
+
+```jsx
+import css from 'styled-jsx/css'
+
+export default () => (
+  <div>
+    <button>styled-jsx</button>
+    <style jsx>{button}</style>
+  </div>
+)
+
+const button = css`button { color: hotpink; }`
+```
+
+Like in externals styles `css` doesn't work with dynamic styles. If you have dynamic parts you might want to place them inline inside of your component using a regular `<style jsx>` element.
+
+#### The `resolve` tag
+
+The `resolve` tag from `styled-jsx/css` can be used when you need to scope some CSS and want back the generated scoped `className` and `styles`. This is usually the case when you want to style nested components from the parent.
+
+```jsx
+import React from 'react'
+import Link from 'some-library'
+
+import css from 'styled-jsx/css'
+
+const { className, styles } = css.resolve`
+  a { color: green }
+`
+
+export default () => (
+  <div>
+    {/* use the className */}
+    <Link className={className}>About</Link>
+    {/* render the styles for it */}
+    {styles}
+    <style jsx>{`div { border: 5px solid green }`}</style>
+  </div>
+)
+```
+
+The `resolve` tag also supports dynamic styles:
+
+```jsx
+import React from 'react'
+import css from 'styled-jsx/css'
+
+function getLinkStyles(color) {
+  return css.resolve`
+    a { color: ${color} }
+  `
+}
+
+export default (props) => {
+  const { className, styles } = getLinkStyles(props.theme.color)
+
+  return (
+    <div>
+      <Link className={className}>About</Link>
+      {styles}
+    </div>
+  )
+}
+```
+
+#### Using `resolve` as a babel macro
+
+The `resolve` tag can be used as a Babel macro thanks to the [`babel-plugin-macros`](https://github.com/kentcdodds/babel-plugin-macros) system.
+
+```bash
+npm i --save styled-jsx
+npm i --save-dev babel-plugin-macros
+```
+
+Next add `babel-plugin-macros` to your babel configuration:
+
+```json
+{
+  "plugins": [
+    "babel-plugin-macros"
+  ]
+}
+```
+
+You can then start to use `resolve` by importing it from `styled-jsx/macro`.
+
+```jsx
+import css, { resolve } from 'styled-jsx/macro'
+
+const stylesInfo = css.resolve`a { color: green; }`
+const stylesInfo2 = resolve`a { color: green; }`
+```
+
+**Create React App** comes with `babel-plugin-macros` pre-installed so you just need to install `styled-jsx` and you can start to use `resolve right away.
+
 ## CSS Preprocessing via Plugins
 
 Styles can be preprocessed via plugins.
@@ -604,44 +701,7 @@ const StyledImage = ({ src, alt = '' }) => (
 
 ### Styling third parties / child components from the parent
 
-When the component accepts a `className` (or ad-hoc) prop that you can use to style those components then you can generate scoped styles locally in the parent component and resolve them to get a `className` and the actual scoped styles like so:
-
-```jsx
-import Link from 'react-router-dom' // component to style
-
-// Generate a `scope` fragment and resolve it
-const scoped = resolveScopedStyles(
-  <scope>
-    <style jsx>{'.link { color: green }'}</style>
-  </scope>
-)
-
-// Your component that uses Link
-export default ({ children }) => (
-  <div>
-    {children}
-
-    {/* use the scoped className */}
-    <Link to="/about" className={`link ${scoped.className}`}>
-      About
-    </Link>
-
-    {/* apply the scoped styles */}
-    {scoped.styles}
-  </div>
-)
-```
-
-`resolveScopedStyles` looks like this:
-
-```jsx
-function resolveScopedStyles(scope) {
-  return {
-    className: scope.props.className,
-    styles: scope.props.children
-  }
-}
-```
+When the component accepts a `className` (or ad-hoc) prop as a way to allow customizations then you can use [the `resolve` tag from `styled-jsx/css`](#the-resolve-tag).
 
 When the component doesn't accept any `className` or doesn't expose any API to customize the component, then you only option is to use `:global()` styles:
 
