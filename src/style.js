@@ -7,7 +7,8 @@ export default class JSXStyle extends Component {
   static dynamic(info) {
     return info
       .map(tagInfo => {
-        const [baseId, props] = tagInfo
+        const baseId = tagInfo[0]
+        const props = tagInfo[1]
         return styleSheetRegistry.computeId(baseId, props)
       })
       .join(' ')
@@ -39,5 +40,5 @@ export default class JSXStyle extends Component {
 export function flush() {
   const cssRules = styleSheetRegistry.cssRules()
   styleSheetRegistry.flush()
-  return new Map(cssRules)
+  return cssRules
 }
