@@ -611,3 +611,30 @@ export const booleanOption = opts => {
   })
   return ret
 }
+
+export const createReactComponentImportDeclaration = () =>
+  t.importDeclaration(
+    [t.importDefaultSpecifier(t.identifier(STYLE_COMPONENT))],
+    t.stringLiteral('styled-jsx/style')
+  )
+
+export const setStateOptions = state => {
+  const vendorPrefixes = booleanOption([
+    state.opts.vendorPrefixes,
+    state.file.opts.vendorPrefixes
+  ])
+  state.opts.vendorPrefixes =
+    typeof vendorPrefixes === 'boolean' ? vendorPrefixes : true
+  const sourceMaps = booleanOption([
+    state.opts.sourceMaps,
+    state.file.opts.sourceMaps
+  ])
+  state.opts.sourceMaps = Boolean(sourceMaps)
+
+  if (!state.plugins) {
+    state.plugins = combinePlugins(state.opts.plugins, {
+      sourceMaps: state.opts.sourceMaps,
+      vendorPrefixes: state.opts.vendorPrefixes
+    })
+  }
+}

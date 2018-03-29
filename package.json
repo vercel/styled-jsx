@@ -83,6 +83,7 @@
     "ava": "^0.19.1",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
+    "babel-plugin-macros": "2.2.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-plugin-transform-runtime": "6.23.0",
     "babel-preset-env": "^1.6.1",
@@ -104,7 +105,7 @@
     "react": "15.x.x || 16.x.x"
   },
   "keywords": [
-    "babel-plugin",
+    "babel-plugin-macros",
     "zeit",
     "css-in-js",
     "css"

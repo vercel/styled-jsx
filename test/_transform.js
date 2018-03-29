@@ -1,5 +1,5 @@
 import path from 'path'
-import { transformFile } from 'babel-core'
+import { transformFile, transform } from 'babel-core'
 
 export default (file, opts = {}) =>
   new Promise((resolve, reject) => {
@@ -16,4 +16,19 @@ export default (file, opts = {}) =>
         resolve(data)
       }
     )
+  })
+
+export const transformSource = (src, opts = {}) =>
+  new Promise((resolve, reject) => {
+    try {
+      resolve(
+        // In Babel 7 this will be async
+        transform(src, {
+          babelrc: false,
+          ...opts
+        })
+      )
+    } catch (err) {
+      reject(err)
+    }
   })

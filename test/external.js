@@ -3,11 +3,17 @@ import test from 'ava'
 
 // Ours
 import plugin from '../src/babel'
-import _transform from './_transform'
+import _transform, { transformSource as _transformSource } from './_transform'
 
 const transform = (file, opts = {}) =>
   _transform(file, {
     plugins: [[plugin, opts]]
+  })
+
+const transformSource = (src, opts = {}) =>
+  _transformSource(src.trim(), {
+    plugins: [[plugin, opts]],
+    ...opts
   })
 
 test('transpiles external stylesheets', async t => {
@@ -69,5 +75,16 @@ test('use external stylesheets (multi-line)', async t => {
 
 test('use external stylesheets (global only)', async t => {
   const { code } = await transform('./fixtures/external-stylesheet-global.js')
+  t.snapshot(code)
+})
+
+test('injects JSXStyle for nested scope', async t => {
+  const { code } = await transformSource(`
+    import css from 'styled-jsx/css'
+
+    function test() {
+      css.resolve\`div { color: red }\`
+    }
+  `)
   t.snapshot(code)
 })
