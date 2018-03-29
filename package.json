@@ -71,7 +71,6 @@
     ]
   },
   "dependencies": {
-    "babel-plugin-macros": "2.2.0",
     "babel-plugin-syntax-jsx": "6.18.0",
     "babel-types": "6.26.0",
     "convert-source-map": "1.5.1",
@@ -84,6 +83,7 @@
     "ava": "^0.19.1",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
+    "babel-plugin-macros": "2.2.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-plugin-transform-runtime": "6.23.0",
     "babel-preset-env": "^1.6.1",
