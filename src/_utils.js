@@ -221,6 +221,70 @@ export const validateExternalExpressions = path => {
   }
 }
 
+function stripComments(str) {
+  return str.replace(/\/\*[^]*?\*\//g, '').replace(/\/\/.*/g, '')
+}
+
+function getPlaceholderType(quasis, index) {
+  const prev = quasis[index - 1]
+    ? stripComments(quasis[index - 1].value.cooked)
+        .trim()
+        .slice(-1)
+    : ''
+  const current = stripComments(quasis[index].value.cooked)
+    .trim()
+    .slice(-1)
+  const next = stripComments(quasis[index + 1].value.cooked)
+    .trim()
+    .charAt(0)
+
+  /* eslint-disable no-fallthrough */
+  switch (current) {
+    case ':':
+      return 'VALUE'
+    case '':
+      if (prev === ';') {
+        return 'DECLARATION'
+      }
+      if (prev === ':' || next === ';') {
+        return 'VALUE'
+      }
+    case '}':
+    case ',':
+      if (next === ',' || next === '{') {
+        return 'SELECTOR'
+      }
+    case '.':
+    case '#':
+    case ']':
+      return 'SELECTOR'
+    case ';':
+      if (next === ':') {
+        return 'PROPERTY'
+      }
+      return 'DECLARATION'
+    case '(':
+      return 'MEDIA'
+    case '{':
+      if (next === ':') {
+        return 'PROPERTY'
+      }
+      if (prev === '(' && (next !== ';' && next !== '}')) {
+        return 'SELECTOR'
+      }
+      return 'DECLARATION'
+    default:
+      if (prev === ':' || prev === ';' || next === ';') {
+        return 'VALUE'
+      }
+      if (next === '{' || next === ',' || prev === ',') {
+        return 'SELECTOR'
+      }
+      return 'UNKNOWN'
+  }
+  /* eslint-enable no-fallthrough */
+}
+
 export const getJSXStyleInfo = (expr, scope) => {
   const { node } = expr
   const location = node.loc
@@ -258,7 +322,7 @@ export const getJSXStyleInfo = (expr, scope) => {
   // e.g.
   // p { color: ${myConstant}; }
   // becomes
-  // p { color: %%styled-jsx-placeholder-${id}%%; }
+  // p { color: %%styled-jsx-placeholder-TYPE-${id}%%; }
 
   const { quasis, expressions } = node
   const hash = hashString(expr.getSource().slice(1, -1))
@@ -266,7 +330,12 @@ export const getJSXStyleInfo = (expr, scope) => {
   const css = quasis.reduce(
     (css, quasi, index) =>
       `${css}${quasi.value.cooked}${
-        quasis.length === index + 1 ? '' : `%%styled-jsx-placeholder-${index}%%`
+        quasis.length === index + 1
+          ? ''
+          : `%%styled-jsx-placeholder-${getPlaceholderType(
+              quasis,
+              index
+            )}-${index}%%`
       }`,
     ''
   )
@@ -359,7 +428,7 @@ export const computeClassNames = (styles, externalJsxId) => {
 export const templateLiteralFromPreprocessedCss = (css, expressions) => {
   const quasis = []
   const finalExpressions = []
-  const parts = css.split(/(?:%%styled-jsx-placeholder-(\d+)%%)/g)
+  const parts = css.split(/(?:%%styled-jsx-placeholder-(?:[^-]+-)(\d+)%%)/g)
 
   if (parts.length === 1) {
     return t.stringLiteral(css)

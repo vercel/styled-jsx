@@ -3,7 +3,7 @@ import test from 'ava'
 
 // Ours
 import babelPlugin from '../src/babel'
-import { combinePlugins } from '../src/_utils'
+import { combinePlugins, getJSXStyleInfo } from '../src/_utils'
 import _transform from './_transform'
 import testPlugin1 from './fixtures/plugins/plugin'
 import testPlugin2 from './fixtures/plugins/another-plugin'
@@ -106,3 +106,26 @@ test('combinePlugins throws if passing an option called `babel`', t => {
     combinePlugins([['test', { babel: true }]])
   })
 })
+
+const transformExpressions = src =>
+  _transform(src.trim(), {
+    plugins: [transformExpressionsPlugin]
+  })
+
+test('detects placeholders type', async t => {
+  const { code } = await transformExpressions(
+    './fixtures/expressions-permutations.js'
+  )
+  t.snapshot(code.replace(/\\n/g, '\n'))
+})
+
+function transformExpressionsPlugin({ types: t }) {
+  return {
+    visitor: {
+      TemplateLiteral(path) {
+        const { css } = getJSXStyleInfo(path)
+        path.replaceWith(t.stringLiteral(css))
+      }
+    }
+  }
+}
