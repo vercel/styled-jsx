@@ -9,7 +9,7 @@ import { transformFile } from 'babel-core'
 import size from 'human-size'
 import benchmark from 'gulp-benchmark'
 
-gulp.task('transpile', () => {
+gulp.task('transpile', async () => {
   gulp
     .src('src/**/*.js')
     .pipe(babel())
@@ -70,4 +70,4 @@ gulp.task('watch', () => {
   gulp.watch('benchmark/*.js', ['benchmark'])
 })
 
-gulp.task('default', ['transpile', 'watch'])
+gulp.task('default', gulp.series('transpile', 'watch'))

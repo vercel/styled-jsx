@@ -79,7 +79,7 @@
     "babel-register": "^6.26.0",
     "benchmark": "^2.1.4",
     "eslint-config-prettier": "^2.9.0",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.0",
     "gulp-babel": "^7.0.0",
     "gulp-benchmark": "^1.1.1",
     "human-size": "^1.1.0",
