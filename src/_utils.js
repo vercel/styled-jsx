@@ -485,6 +485,8 @@ export const combinePlugins = plugins => {
         }
       }
 
+      log('Loading plugin from path: ' + plugin)
+
       // eslint-disable-next-line import/no-dynamic-require
       let p = require(plugin)
       if (p.default) {
@@ -637,4 +639,8 @@ export const setStateOptions = state => {
       vendorPrefixes: state.opts.vendorPrefixes
     })
   }
+}
+
+export function log(message) {
+  console.log('[styled-jsx] ' + message)
 }
