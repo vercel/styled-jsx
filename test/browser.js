@@ -18,16 +18,19 @@ test('Renders styles and updates them', t => {
         css: 'div { font-size: 10px }'
       }
     }
+
     getStyles() {
       return [].slice
         .call(document.querySelectorAll('style'))
         .map(s => s.textContent)
         .join('\n')
     }
+
     getExpectedStyles() {
       const { styleId, css } = this.state
       return ['/*123*/div { color: red }', `/*${styleId}*/${css}`].join('\n')
     }
+
     componentDidMount() {
       t.is(
         this.getStyles(),
@@ -40,6 +43,7 @@ test('Renders styles and updates them', t => {
         css: 'div { font-size: 30px }'
       })
     }
+
     componentDidUpdate() {
       t.is(
         this.getStyles(),
@@ -47,6 +51,7 @@ test('Renders styles and updates them', t => {
         'styles not updated correctly'
       )
     }
+
     render() {
       const { styleId, css } = this.state
       return (

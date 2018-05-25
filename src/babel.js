@@ -13,8 +13,8 @@ import {
   addClassName,
   getScope,
   processCss,
-  combinePlugins,
-  booleanOption
+  createReactComponentImportDeclaration,
+  setStateOptions
 } from './_utils'
 
 import { STYLE_COMPONENT } from './_constants'
@@ -264,35 +264,20 @@ export default function({ types: t }) {
           state.ignoreClosing = null
           state.file.hasJSXStyle = false
 
-          const vendorPrefixes = booleanOption([
-            state.opts.vendorPrefixes,
-            state.file.opts.vendorPrefixes
-          ])
-          state.opts.vendorPrefixes =
-            typeof vendorPrefixes === 'boolean' ? vendorPrefixes : true
-          const sourceMaps = booleanOption([
-            state.opts.sourceMaps,
-            state.file.opts.sourceMaps
-          ])
-          state.opts.sourceMaps = Boolean(sourceMaps)
-
-          if (!state.plugins) {
-            state.plugins = combinePlugins(state.opts.plugins, {
-              sourceMaps: state.opts.sourceMaps,
-              vendorPrefixes: state.opts.vendorPrefixes
-            })
-          }
+          setStateOptions(state)
         },
         exit({ node, scope }, state) {
-          if (!(state.file.hasJSXStyle && !scope.hasBinding(STYLE_COMPONENT))) {
+          if (
+            !(
+              state.file.hasJSXStyle &&
+              !state.hasInjectedJSXStyle &&
+              !scope.hasBinding(STYLE_COMPONENT)
+            )
+          ) {
             return
           }
-
-          const importDeclaration = t.importDeclaration(
-            [t.importDefaultSpecifier(t.identifier(STYLE_COMPONENT))],
-            t.stringLiteral('styled-jsx/style')
-          )
-
+          state.hasInjectedJSXStyle = true
+          const importDeclaration = createReactComponentImportDeclaration()
           node.body.unshift(importDeclaration)
         }
       },

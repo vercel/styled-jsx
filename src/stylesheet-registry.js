@@ -1,7 +1,7 @@
 import hashString from 'string-hash'
 import DefaultStyleSheet from './lib/stylesheet'
 
-const sanitize = rule => rule.replace(/\/style/ig, '\\/style')
+const sanitize = rule => rule.replace(/\/style/gi, '\\/style')
 export default class StyleSheetRegistry {
   constructor({
     styleSheet = null,

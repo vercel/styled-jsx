@@ -392,7 +392,9 @@ export const templateLiteralFromPreprocessedCss = (css, expressions) => {
 export const cssToBabelType = css => {
   if (typeof css === 'string') {
     return t.stringLiteral(css)
-  } else if (Array.isArray(css)) {
+  }
+
+  if (Array.isArray(css)) {
     return t.arrayExpression(css)
   }
 
@@ -482,6 +484,8 @@ export const combinePlugins = plugins => {
           `)
         }
       }
+
+      log('Loading plugin from path: ' + plugin)
 
       // eslint-disable-next-line import/no-dynamic-require
       let p = require(plugin)
@@ -608,4 +612,35 @@ export const booleanOption = opts => {
     return false
   })
   return ret
+}
+
+export const createReactComponentImportDeclaration = () =>
+  t.importDeclaration(
+    [t.importDefaultSpecifier(t.identifier(STYLE_COMPONENT))],
+    t.stringLiteral('styled-jsx/style')
+  )
+
+export const setStateOptions = state => {
+  const vendorPrefixes = booleanOption([
+    state.opts.vendorPrefixes,
+    state.file.opts.vendorPrefixes
+  ])
+  state.opts.vendorPrefixes =
+    typeof vendorPrefixes === 'boolean' ? vendorPrefixes : true
+  const sourceMaps = booleanOption([
+    state.opts.sourceMaps,
+    state.file.opts.sourceMaps
+  ])
+  state.opts.sourceMaps = Boolean(sourceMaps)
+
+  if (!state.plugins) {
+    state.plugins = combinePlugins(state.opts.plugins, {
+      sourceMaps: state.opts.sourceMaps,
+      vendorPrefixes: state.opts.vendorPrefixes
+    })
+  }
+}
+
+export function log(message) {
+  console.log('[styled-jsx] ' + message)
 }
