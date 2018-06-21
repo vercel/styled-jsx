@@ -34,6 +34,13 @@ export default () => (
     <div {...props} {...rest} />
     <div {...props} data-foo {...rest} />
     <div {...props} className={'test'} data-foo {...rest} />
+    <div className="\n\x21" />
+    <div
+      className="
+        test
+        test
+    "
+    />
     <style jsx>{'div { color: red }'}</style>
   </div>
 )
