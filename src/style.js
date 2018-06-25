@@ -4,6 +4,11 @@ import StyleSheetRegistry from './stylesheet-registry'
 const styleSheetRegistry = new StyleSheetRegistry()
 
 export default class JSXStyle extends Component {
+  constructor(props) {
+    super(props)
+    styleSheetRegistry.add(this.props)
+  }
+
   static dynamic(info) {
     return info
       .map(tagInfo => {
@@ -11,10 +16,6 @@ export default class JSXStyle extends Component {
         return styleSheetRegistry.computeId(baseId, props)
       })
       .join(' ')
-  }
-
-  componentWillMount() {
-    styleSheetRegistry.add(this.props)
   }
 
   shouldComponentUpdate(nextProps) {
