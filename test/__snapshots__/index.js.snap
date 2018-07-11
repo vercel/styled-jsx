@@ -108,7 +108,7 @@ exports[`works with dynamic element 1`] = `
 export default (({ level = 1 }) => {
   const Element = \`h\${level}\`;
 
-  return <Element styled-jsx className={\\"jsx-1253978709\\" + \\" \\" + \\"root\\"}>
+  return <Element className={\\"jsx-1253978709\\" + \\" \\" + \\"root\\"}>
       <p className={\\"jsx-1253978709\\"}>dynamic element</p>
       <_JSXStyle styleId={\\"1253978709\\"} css={\\".root.jsx-1253978709{background:red;}\\"} />
     </Element>;

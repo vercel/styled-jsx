@@ -41,11 +41,16 @@ export default function({ types: t }) {
           state.ignoreClosing = 0
         }
 
+        const tag = path.get('name')
+
         if (
           name &&
           name !== 'style' &&
           name !== STYLE_COMPONENT &&
           (name.charAt(0) !== name.charAt(0).toUpperCase() ||
+            Object.values(path.scope.bindings).some(binding =>
+              binding.referencePaths.some(r => r === tag)
+            ) ||
             (attributes &&
               Object.values(attributes).some(
                 ({ name, type }) =>
