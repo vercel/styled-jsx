@@ -26,7 +26,6 @@ export default function({ types: t }) {
       JSXOpeningElement(path, state) {
         const el = path.node
         const { name } = el.name || {}
-        const { attributes } = el || {}
 
         if (!state.hasJSXStyle) {
           return
@@ -50,12 +49,7 @@ export default function({ types: t }) {
           (name.charAt(0) !== name.charAt(0).toUpperCase() ||
             Object.values(path.scope.bindings).some(binding =>
               binding.referencePaths.some(r => r === tag)
-            ) ||
-            (attributes &&
-              Object.values(attributes).some(
-                ({ name, type }) =>
-                  type === 'JSXAttribute' && name.name === 'styled-jsx'
-              )))
+            ))
         ) {
           if (state.className) {
             addClassName(path, state.className)

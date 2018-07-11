@@ -12,3 +12,32 @@ export default ({ level = 1 }) => {
     </Element>
   )
 }
+
+export const TestLowerCase = ({ level = 1 }) => {
+  const element = `h${level}`
+
+  return (
+    <element className="root">
+      <p>dynamic element</p>
+      <style jsx>{`
+        .root {
+          background: red;
+        }
+      `}</style>
+    </element>
+  )
+}
+
+const Element2 = 'div'
+export const Test2 = () => {
+  return (
+    <Element2 className="root">
+      <p>dynamic element</p>
+      <style jsx>{`
+        .root {
+          background: red;
+        }
+      `}</style>
+    </Element2>
+  )
+}

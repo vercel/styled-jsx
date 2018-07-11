@@ -87,6 +87,11 @@ test('works with dynamic element', async t => {
   t.snapshot(code)
 })
 
+test('works with dynamic element in class', async t => {
+  const { code } = await transform('./fixtures/dynamic-element-class.js')
+  t.snapshot(code)
+})
+
 test('does not transpile nested style tags', async t => {
   const { message } = await t.throws(
     transform('./fixtures/nested-style-tags.js')
