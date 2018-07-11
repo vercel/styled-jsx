@@ -1,3 +1,5 @@
+const Element = 'div'
+
 export default () => (
   <div>
     <div className="test" {...test.test} />
@@ -34,6 +36,9 @@ export default () => (
     <div {...props} {...rest} />
     <div {...props} data-foo {...rest} />
     <div {...props} className={'test'} data-foo {...rest} />
+    <Element styled-jsx />
+    <Element styled-jsx className="test" />
+    <Element styled-jsx {...props} />
     <style jsx>{'div { color: red }'}</style>
   </div>
 )

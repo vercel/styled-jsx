@@ -100,6 +100,8 @@ exports[`rewrites className 1`] = `
 "var _this = this;
 
 import _JSXStyle from \\"styled-jsx/style\\";
+const Element = 'div';
+
 export default (() => <div className={\\"jsx-2886504620\\"}>
     <div {...test.test} className={\\"jsx-2886504620\\" + \\" \\" + (test.test.className != null && test.test.className || \\"test\\")} />
     <div {...test.test.test} className={\\"jsx-2886504620\\" + \\" \\" + (test.test.test.className != null && test.test.test.className || \\"test\\")} />
@@ -135,6 +137,9 @@ export default (() => <div className={\\"jsx-2886504620\\"}>
     <div {...props} {...rest} className={\\"jsx-2886504620\\" + \\" \\" + (rest.className != null && rest.className || props.className != null && props.className || \\"\\")} />
     <div {...props} data-foo {...rest} className={\\"jsx-2886504620\\" + \\" \\" + (rest.className != null && rest.className || props.className != null && props.className || \\"\\")} />
     <div {...props} data-foo {...rest} className={\\"jsx-2886504620\\" + \\" \\" + (rest.className != null && rest.className || 'test')} />
+    <Element styled-jsx className={\\"jsx-2886504620\\"} />
+    <Element styled-jsx className={\\"jsx-2886504620\\" + \\" \\" + \\"test\\"} />
+    <Element styled-jsx {...props} className={\\"jsx-2886504620\\" + \\" \\" + (props.className != null && props.className || \\"\\")} />
     <_JSXStyle styleId={\\"2886504620\\"} css={\\"div.jsx-2886504620{color:red;}\\"} />
   </div>);"
 `;
