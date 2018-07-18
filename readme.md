@@ -42,6 +42,7 @@ For an overview about the **features** and **tradeoffs** of styled-jsx you may w
   * [Can I return an array of components when using React 16?](#can-i-return-an-array-of-components-when-using-react-16)
   * [Styling third parties / child components from the parent](#styling-third-parties--child-components-from-the-parent)
   * [Some styles are missing in production](https://github.com/zeit/styled-jsx/issues/319#issuecomment-349239326)
+  * [Build a component library with styled-jsx](#build-a-component-library-with-styled-jsx)
 - [Syntax Highlighting](#syntax-highlighting)
 
 ## Getting started
@@ -722,6 +723,10 @@ export default () => (
 ```
 
 Please keep in mind that `:global()` styles will affect the entire subtree, so in many cases you may want to be careful and use the children (direct descendant) selector `>`.
+
+### Build a component library with styled-jsx
+
+There's an [article](https://medium.com/@tomaszmularczyk89/guide-to-building-a-react-components-library-with-rollup-and-styled-jsx-694ec66bd2) explaining how to bundle React components with Rollup and styled-jsx as an external dependency.
 
 ## Syntax Highlighting
 
