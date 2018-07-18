@@ -5,10 +5,10 @@ exports[`applies plugins 1`] = `
 import styles from './styles';
 const color = 'red';
 
-export default (() => <div className={'jsx-3382438999 ' + \`jsx-\${styles.__scopedHash}\`}>
-    <p className={'jsx-3382438999 ' + \`jsx-\${styles.__scopedHash}\`}>test</p>
+export default (() => <div className={'jsx-3382438999 ' + \`jsx-\${styles.__hash}\`}>
+    <p className={'jsx-3382438999 ' + \`jsx-\${styles.__hash}\`}>test</p>
     <_JSXStyle styleId={\\"3382438999\\"} css={\`span.\${color}.jsx-3382438999{color:\${otherColor};}\`} />
-    <_JSXStyle styleId={styles.__scopedHash} css={styles.__scoped} />
+    <_JSXStyle styleId={styles.__hash} css={styles} />
   </div>);"
 `;
 
@@ -17,9 +17,9 @@ exports[`passes options to plugins 1`] = `
 import styles from './styles';
 const color = 'red';
 
-export default (() => <div className={'jsx-3382438999 ' + \`jsx-\${styles.__scopedHash}\`}>
-    <p className={'jsx-3382438999 ' + \`jsx-\${styles.__scopedHash}\`}>test</p>
+export default (() => <div className={'jsx-3382438999 ' + \`jsx-\${styles.__hash}\`}>
+    <p className={'jsx-3382438999 ' + \`jsx-\${styles.__hash}\`}>test</p>
     <_JSXStyle styleId={\\"3382438999\\"} css={\\".test.jsx-3382438999{content:\\\\\\"{\\\\\\"foo\\\\\\":false,\\\\\\"babel\\\\\\":{\\\\\\"location\\\\\\":{\\\\\\"start\\\\\\":{\\\\\\"line\\\\\\":7,\\\\\\"column\\\\\\":16},\\\\\\"end\\\\\\":{\\\\\\"line\\\\\\":11,\\\\\\"column\\\\\\":5}},\\\\\\"vendorPrefixes\\\\\\":false,\\\\\\"sourceMaps\\\\\\":false,\\\\\\"isGlobal\\\\\\":false}}\\\\\\";}\\"} />
-    <_JSXStyle styleId={styles.__scopedHash} css={styles.__scoped} />
+    <_JSXStyle styleId={styles.__hash} css={styles} />
   </div>);"
 `;
