@@ -100,41 +100,47 @@ exports[`rewrites className 1`] = `
 "var _this = this;
 
 import _JSXStyle from \\"styled-jsx/style\\";
-export default (() => <div className={\\"jsx-2886504620\\"}>
-    <div {...test.test} className={\\"jsx-2886504620\\" + \\" \\" + (test.test.className != null && test.test.className || \\"test\\")} />
-    <div {...test.test.test} className={\\"jsx-2886504620\\" + \\" \\" + (test.test.test.className != null && test.test.test.className || \\"test\\")} />
-    <div {..._this.test.test} className={\\"jsx-2886504620\\" + \\" \\" + (_this.test.test.className != null && _this.test.test.className || \\"test\\")} />
-    <div data-test=\\"test\\" className={\\"jsx-2886504620\\"} />
-    <div className={\\"jsx-2886504620\\" + \\" \\" + \\"test\\"} />
-    <div className={\\"jsx-2886504620\\" + \\" \\" + 'test'} />
-    <div className={\\"jsx-2886504620\\" + \\" \\" + \`test\`} />
-    <div className={\\"jsx-2886504620\\" + \\" \\" + \`test\${true ? ' test2' : ''}\`} />
-    <div className={\\"jsx-2886504620\\" + \\" \\" + ('test ' + test || \\"\\")} />
-    <div className={\\"jsx-2886504620\\" + \\" \\" + (['test', 'test2'].join(' ') || \\"\\")} />
-    <div className={\\"jsx-2886504620\\" + \\" \\" + (true && 'test' || \\"\\")} />
-    <div className={\\"jsx-2886504620\\" + \\" \\" + ((test ? 'test' : null) || \\"\\")} />
-    <div className={\\"jsx-2886504620\\" + \\" \\" + (test || \\"\\")} />
-    <div className={\\"jsx-2886504620\\" + \\" \\" + (test && 'test' || \\"\\")} />
-    <div className={\\"jsx-2886504620\\" + \\" \\" + (test && test('test') || \\"\\")} />
-    <div className={\\"jsx-2886504620\\" + \\" \\" + (undefined || \\"\\")} />
-    <div className={\\"jsx-2886504620\\" + \\" \\" + (null || \\"\\")} />
-    <div className={\\"jsx-2886504620\\" + \\" \\" + (false || \\"\\")} />
-    <div data-test className={\\"jsx-2886504620\\" + \\" \\" + 'test'} />
-    <div data-test className={\\"jsx-2886504620\\" + \\" \\" + 'test'} />
-    <div data-test=\\"test\\" className={\\"jsx-2886504620\\" + \\" \\" + 'test'} />
-    <div {...props} className={\\"jsx-2886504620\\" + \\" \\" + (props.className != null && props.className || 'test')} />
-    <div {...props} {...rest} className={\\"jsx-2886504620\\" + \\" \\" + (rest.className != null && rest.className || props.className != null && props.className || 'test')} />
-    <div {...props} className={\\"jsx-2886504620\\" + \\" \\" + (props.className != null && props.className || \`test \${test ? 'test' : ''}\`)} />
-    <div {...props} className={\\"jsx-2886504620\\" + \\" \\" + (props.className != null && props.className || test && test('test') || \\"\\")} />
-    <div {...props} className={\\"jsx-2886504620\\" + \\" \\" + (props.className != null && props.className || test && test('test') && 'test' || \\"\\")} />
-    <div {...props} className={\\"jsx-2886504620\\" + \\" \\" + (props.className != null && props.className || test && test('test') && test2('test') || \\"\\")} />
-    <div {...props} className={\\"jsx-2886504620\\" + \\" \\" + 'test'} />
-    <div {...props} {...rest} className={\\"jsx-2886504620\\" + \\" \\" + 'test'} />
-    <div {...props} {...rest} className={\\"jsx-2886504620\\" + \\" \\" + (rest.className != null && rest.className || 'test')} />
-    <div {...props} className={\\"jsx-2886504620\\" + \\" \\" + (props.className != null && props.className || \\"\\")} />
-    <div {...props} {...rest} className={\\"jsx-2886504620\\" + \\" \\" + (rest.className != null && rest.className || props.className != null && props.className || \\"\\")} />
-    <div {...props} data-foo {...rest} className={\\"jsx-2886504620\\" + \\" \\" + (rest.className != null && rest.className || props.className != null && props.className || \\"\\")} />
-    <div {...props} data-foo {...rest} className={\\"jsx-2886504620\\" + \\" \\" + (rest.className != null && rest.className || 'test')} />
-    <_JSXStyle styleId={\\"2886504620\\"} css={\\"div.jsx-2886504620{color:red;}\\"} />
-  </div>);"
+export default (() => {
+  const Element = 'div';
+  return <div className={\\"jsx-2886504620\\"}>
+      <div {...test.test} className={\\"jsx-2886504620\\" + \\" \\" + (test.test.className != null && test.test.className || \\"test\\")} />
+      <div {...test.test.test} className={\\"jsx-2886504620\\" + \\" \\" + (test.test.test.className != null && test.test.test.className || \\"test\\")} />
+      <div {..._this.test.test} className={\\"jsx-2886504620\\" + \\" \\" + (_this.test.test.className != null && _this.test.test.className || \\"test\\")} />
+      <div data-test=\\"test\\" className={\\"jsx-2886504620\\"} />
+      <div className={\\"jsx-2886504620\\" + \\" \\" + \\"test\\"} />
+      <div className={\\"jsx-2886504620\\" + \\" \\" + 'test'} />
+      <div className={\\"jsx-2886504620\\" + \\" \\" + \`test\`} />
+      <div className={\\"jsx-2886504620\\" + \\" \\" + \`test\${true ? ' test2' : ''}\`} />
+      <div className={\\"jsx-2886504620\\" + \\" \\" + ('test ' + test || \\"\\")} />
+      <div className={\\"jsx-2886504620\\" + \\" \\" + (['test', 'test2'].join(' ') || \\"\\")} />
+      <div className={\\"jsx-2886504620\\" + \\" \\" + (true && 'test' || \\"\\")} />
+      <div className={\\"jsx-2886504620\\" + \\" \\" + ((test ? 'test' : null) || \\"\\")} />
+      <div className={\\"jsx-2886504620\\" + \\" \\" + (test || \\"\\")} />
+      <div className={\\"jsx-2886504620\\" + \\" \\" + (test && 'test' || \\"\\")} />
+      <div className={\\"jsx-2886504620\\" + \\" \\" + (test && test('test') || \\"\\")} />
+      <div className={\\"jsx-2886504620\\" + \\" \\" + (undefined || \\"\\")} />
+      <div className={\\"jsx-2886504620\\" + \\" \\" + (null || \\"\\")} />
+      <div className={\\"jsx-2886504620\\" + \\" \\" + (false || \\"\\")} />
+      <div data-test className={\\"jsx-2886504620\\" + \\" \\" + 'test'} />
+      <div data-test className={\\"jsx-2886504620\\" + \\" \\" + 'test'} />
+      <div data-test=\\"test\\" className={\\"jsx-2886504620\\" + \\" \\" + 'test'} />
+      <div {...props} className={\\"jsx-2886504620\\" + \\" \\" + (props.className != null && props.className || 'test')} />
+      <div {...props} {...rest} className={\\"jsx-2886504620\\" + \\" \\" + (rest.className != null && rest.className || props.className != null && props.className || 'test')} />
+      <div {...props} className={\\"jsx-2886504620\\" + \\" \\" + (props.className != null && props.className || \`test \${test ? 'test' : ''}\`)} />
+      <div {...props} className={\\"jsx-2886504620\\" + \\" \\" + (props.className != null && props.className || test && test('test') || \\"\\")} />
+      <div {...props} className={\\"jsx-2886504620\\" + \\" \\" + (props.className != null && props.className || test && test('test') && 'test' || \\"\\")} />
+      <div {...props} className={\\"jsx-2886504620\\" + \\" \\" + (props.className != null && props.className || test && test('test') && test2('test') || \\"\\")} />
+      <div {...props} className={\\"jsx-2886504620\\" + \\" \\" + 'test'} />
+      <div {...props} {...rest} className={\\"jsx-2886504620\\" + \\" \\" + 'test'} />
+      <div {...props} {...rest} className={\\"jsx-2886504620\\" + \\" \\" + (rest.className != null && rest.className || 'test')} />
+      <div {...props} className={\\"jsx-2886504620\\" + \\" \\" + (props.className != null && props.className || \\"\\")} />
+      <div {...props} {...rest} className={\\"jsx-2886504620\\" + \\" \\" + (rest.className != null && rest.className || props.className != null && props.className || \\"\\")} />
+      <div {...props} data-foo {...rest} className={\\"jsx-2886504620\\" + \\" \\" + (rest.className != null && rest.className || props.className != null && props.className || \\"\\")} />
+      <div {...props} data-foo {...rest} className={\\"jsx-2886504620\\" + \\" \\" + (rest.className != null && rest.className || 'test')} />
+      <Element className={\\"jsx-2886504620\\"} />
+      <Element className={\\"jsx-2886504620\\" + \\" \\" + \\"test\\"} />
+      <Element {...props} className={\\"jsx-2886504620\\" + \\" \\" + (props.className != null && props.className || \\"\\")} />
+      <_JSXStyle styleId={\\"2886504620\\"} css={\\"div.jsx-2886504620{color:red;}\\"} />
+    </div>;
+});"
 `;

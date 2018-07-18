@@ -148,6 +148,20 @@ export default {
 };"
 `;
 
+exports[`use external stylesheet and dynamic element 1`] = `
+"import _JSXStyle from \\"styled-jsx/style\\";
+import styles from './styles2';
+
+export default (({ level = 1 }) => {
+  const Element = \`h\${level}\`;
+
+  return <Element className={\`jsx-\${styles.__scopedHash}\` + \\" \\" + \\"root\\"}>
+      <p className={\`jsx-\${styles.__scopedHash}\`}>dynamic element</p>
+      <_JSXStyle styleId={styles.__scopedHash} css={styles.__scoped} />
+    </Element>;
+});"
+`;
+
 exports[`use external stylesheets (global only) 1`] = `
 "import _JSXStyle from 'styled-jsx/style';
 import styles, { foo as styles3 } from './styles';

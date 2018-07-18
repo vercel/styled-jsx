@@ -103,6 +103,59 @@ class Test extends React.Component {
 }"
 `;
 
+exports[`works with dynamic element 1`] = `
+"import _JSXStyle from \\"styled-jsx/style\\";
+export default (({ level = 1 }) => {
+  const Element = \`h\${level}\`;
+
+  return <Element className={\\"jsx-1253978709\\" + \\" \\" + \\"root\\"}>
+      <p className={\\"jsx-1253978709\\"}>dynamic element</p>
+      <_JSXStyle styleId={\\"1253978709\\"} css={\\".root.jsx-1253978709{background:red;}\\"} />
+    </Element>;
+});
+
+export const TestLowerCase = ({ level = 1 }) => {
+  const element = \`h\${level}\`;
+
+  return <element className={\\"jsx-1253978709\\" + \\" \\" + \\"root\\"}>
+      <p className={\\"jsx-1253978709\\"}>dynamic element</p>
+      <_JSXStyle styleId={\\"1253978709\\"} css={\\".root.jsx-1253978709{background:red;}\\"} />
+    </element>;
+};
+
+const Element2 = 'div';
+export const Test2 = () => {
+  return <Element2 className=\\"root\\">
+      <p className={\\"jsx-1253978709\\"}>dynamic element</p>
+      <_JSXStyle styleId={\\"1253978709\\"} css={\\".root.jsx-1253978709{background:red;}\\"} />
+    </Element2>;
+};"
+`;
+
+exports[`works with dynamic element in class 1`] = `
+"import _JSXStyle from 'styled-jsx/style';
+export default class {
+  render() {
+    const Element = 'div';
+
+    return <Element className={'jsx-1800172487' + ' ' + 'root'}>
+        <p className={\\"jsx-1800172487\\"}>dynamic element</p>
+        <_JSXStyle styleId={\\"1800172487\\"} css={\\".root.jsx-1800172487{background:red;}\\"} />
+      </Element>;
+  }
+}
+
+const Element2 = 'div';
+export const Test2 = class {
+  render() {
+    return <Element2 className=\\"root\\">
+        <p className={\\"jsx-1800172487\\"}>dynamic element</p>
+        <_JSXStyle styleId={\\"1800172487\\"} css={\\".root.jsx-1800172487{background:red;}\\"} />
+      </Element2>;
+  }
+};"
+`;
+
 exports[`works with expressions in template literals 1`] = `
 "import _JSXStyle from 'styled-jsx/style';
 const darken = c => c;
