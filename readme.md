@@ -559,6 +559,8 @@ export default () => (
 )
 ```
 
+To consume the styles in your component you can import them from your CSS file and render them using a `<style jsx>` tag. Remember to add the `global` prop if you want your styles to be global.
+
 To use this feature you need to register the loader in your webpack config file, before `babel-loader` which will then transpile the styles via `styled-jsx/babel`
 
 ```js
@@ -577,7 +579,7 @@ config: {
 }
 ```
 
-The plugin accepts a `type` option to configure whether the styles should be `scoped`, `global` or `resolve` (see below). By default its values is set to `scoped`. `type` can also be a `function` which takes the file name that is being transpiled and must return a valid type.
+The plugin accepts a `type` option to configure whether the styles should be `scoped`, `global` or `resolve` (see above). By default its values is set to `scoped`. `type` can also be a `function` which takes the file name that is being transpiled and must return a valid type.
 
 ```js
 type validTypes = 'scoped' | 'global' | 'resolve'
