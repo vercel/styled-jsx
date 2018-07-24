@@ -155,9 +155,9 @@ import styles from './styles2';
 export default (({ level = 1 }) => {
   const Element = \`h\${level}\`;
 
-  return <Element className={\`jsx-\${styles.__scopedHash}\` + \\" \\" + \\"root\\"}>
-      <p className={\`jsx-\${styles.__scopedHash}\`}>dynamic element</p>
-      <_JSXStyle styleId={styles.__scopedHash} css={styles.__scoped} />
+  return <Element className={\`jsx-\${styles.__hash}\` + \\" \\" + \\"root\\"}>
+      <p className={\`jsx-\${styles.__hash}\`}>dynamic element</p>
+      <_JSXStyle styleId={styles.__hash} css={styles} />
     </Element>;
 });"
 `;
@@ -182,9 +182,9 @@ exports[`use external stylesheets (multi-line) 1`] = `
 "import _JSXStyle from 'styled-jsx/style';
 import styles from './styles';
 
-export default (() => <div className={\`jsx-\${styles.__scopedHash}\`}>
-    <p className={\`jsx-\${styles.__scopedHash}\`}>test</p>
-    <_JSXStyle styleId={styles.__scopedHash} css={styles.__scoped} />
+export default (() => <div className={\`jsx-\${styles.__hash}\`}>
+    <p className={\`jsx-\${styles.__hash}\`}>test</p>
+    <_JSXStyle styleId={styles.__hash} css={styles} />
   </div>);"
 `;
 
@@ -194,21 +194,21 @@ import styles from './styles';
 const styles2 = require('./styles2');
 import { foo as styles3 } from './styles';
 
-export default (() => <div className={'jsx-1646697228 ' + \`jsx-\${styles3.__scopedHash} jsx-\${styles.__scopedHash}\`}>
-    <p className={'jsx-1646697228 ' + \`jsx-\${styles3.__scopedHash} jsx-\${styles.__scopedHash}\` + ' ' + 'foo'}>test</p>
-    <p className={'jsx-1646697228 ' + \`jsx-\${styles3.__scopedHash} jsx-\${styles.__scopedHash}\`}>woot</p>
+export default (() => <div className={'jsx-1646697228 ' + \`jsx-\${styles3.__hash} jsx-\${styles.__hash}\`}>
+    <p className={'jsx-1646697228 ' + \`jsx-\${styles3.__hash} jsx-\${styles.__hash}\` + ' ' + 'foo'}>test</p>
+    <p className={'jsx-1646697228 ' + \`jsx-\${styles3.__hash} jsx-\${styles.__hash}\`}>woot</p>
     <_JSXStyle styleId={styles2.__hash} css={styles2} />
-    <_JSXStyle styleId={styles3.__scopedHash} css={styles3.__scoped} />
-    <div className={'jsx-1646697228 ' + \`jsx-\${styles3.__scopedHash} jsx-\${styles.__scopedHash}\`}>woot</div>
+    <_JSXStyle styleId={styles3.__hash} css={styles3} />
+    <div className={'jsx-1646697228 ' + \`jsx-\${styles3.__hash} jsx-\${styles.__hash}\`}>woot</div>
     <_JSXStyle styleId={\\"1646697228\\"} css={\\"p.jsx-1646697228{color:red;}div.jsx-1646697228{color:green;}\\"} />
-    <_JSXStyle styleId={styles.__scopedHash} css={styles.__scoped} />
+    <_JSXStyle styleId={styles.__hash} css={styles} />
   </div>);
 
-export const Test = () => <div className={'jsx-1646697228 ' + \`jsx-\${styles3.__scopedHash}\`}>
-    <p className={'jsx-1646697228 ' + \`jsx-\${styles3.__scopedHash}\` + ' ' + 'foo'}>test</p>
-    <p className={'jsx-1646697228 ' + \`jsx-\${styles3.__scopedHash}\`}>woot</p>
-    <_JSXStyle styleId={styles3.__scopedHash} css={styles3.__scoped} />
-    <div className={'jsx-1646697228 ' + \`jsx-\${styles3.__scopedHash}\`}>woot</div>
+export const Test = () => <div className={'jsx-1646697228 ' + \`jsx-\${styles3.__hash}\`}>
+    <p className={'jsx-1646697228 ' + \`jsx-\${styles3.__hash}\` + ' ' + 'foo'}>test</p>
+    <p className={'jsx-1646697228 ' + \`jsx-\${styles3.__hash}\`}>woot</p>
+    <_JSXStyle styleId={styles3.__hash} css={styles3} />
+    <div className={'jsx-1646697228 ' + \`jsx-\${styles3.__hash}\`}>woot</div>
     <_JSXStyle styleId={\\"1646697228\\"} css={\\"p.jsx-1646697228{color:red;}div.jsx-1646697228{color:green;}\\"} />
   </div>;"
 `;
