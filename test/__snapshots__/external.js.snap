@@ -51,6 +51,22 @@ export default {
 };"
 `;
 
+exports[`Makes sure that style nodes are not re-used 1`] = `
+"\\"use strict\\";
+
+var _style = _interopRequireDefault(require(\\"styled-jsx/style\\"));
+
+var _App = _interopRequireDefault(require(\\"./App.styles\\"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function Test() {
+  return <div>
+        <_style.default styleId={_App.default.__hash} css={_App.default} />
+      </div>;
+}"
+`;
+
 exports[`does not transpile non-styled-jsx tagged teplate literals 1`] = `
 "import css from 'hell';
 
