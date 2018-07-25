@@ -3,6 +3,23 @@ import StyleSheetRegistry from './stylesheet-registry'
 
 const styleSheetRegistry = new StyleSheetRegistry()
 
+const schedule = typeof requestAnimationFrame === 'undefined' ? setTimeout : requestAnimationFrame
+function remove(props) {
+  const remove = () => {
+    styleSheetRegistry.remove(props)
+  }
+  if (typeof requestIdleCallback === 'undefined') {
+    setTimeout(remove, 300)
+  } else {
+    requestIdleCallback(
+      () => {
+        schedule(remove)
+      },
+      { timeout: 1000 }
+    )
+  }
+}
+
 export default class JSXStyle extends Component {
   static dynamic(info) {
     return info
@@ -25,11 +42,12 @@ export default class JSXStyle extends Component {
   // To avoid FOUC, we process new changes
   // on `componentWillUpdate` rather than `componentDidUpdate`.
   componentWillUpdate(nextProps) {
-    styleSheetRegistry.update(this.props, nextProps)
+    styleSheetRegistry.add(nextProps)
+    remove(this.props)
   }
 
   componentWillUnmount() {
-    styleSheetRegistry.remove(this.props)
+    remove(this.props)
   }
 
   render() {
