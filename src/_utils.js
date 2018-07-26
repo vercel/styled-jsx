@@ -398,7 +398,7 @@ export const cssToBabelType = css => {
     return t.arrayExpression(css)
   }
 
-  return css
+  return t.cloneDeep(css)
 }
 
 export const makeStyledJsxTag = (id, transformedCss, expressions = []) => {
