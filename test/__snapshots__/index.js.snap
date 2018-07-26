@@ -85,9 +85,9 @@ exports[`works with css tagged template literals in the same file 1`] = `
 "import _JSXStyle from 'styled-jsx/style';
 
 
-export default (({ children }) => <div className={\`jsx-\${styles.__scopedHash}\`}>
-    <p className={\`jsx-\${styles.__scopedHash}\`}>{children}</p>
-    <_JSXStyle styleId={styles.__scopedHash} css={styles.__scoped} />
+export default (({ children }) => <div className={\`jsx-\${styles.__hash}\`}>
+    <p className={\`jsx-\${styles.__hash}\`}>{children}</p>
+    <_JSXStyle styleId={styles.__hash} css={styles} />
   </div>);
 
 const styles = new String('p.jsx-2587355013{color:red;}');
@@ -95,9 +95,9 @@ const styles = new String('p.jsx-2587355013{color:red;}');
 styles.__hash = '2587355013';
 class Test extends React.Component {
   render() {
-    return <div className={\`jsx-\${styles.__scopedHash}\`}>
-        <p className={\`jsx-\${styles.__scopedHash}\`}>{this.props.children}</p>
-        <_JSXStyle styleId={styles.__scopedHash} css={styles.__scoped} />
+    return <div className={\`jsx-\${styles.__hash}\`}>
+        <p className={\`jsx-\${styles.__hash}\`}>{this.props.children}</p>
+        <_JSXStyle styleId={styles.__hash} css={styles} />
       </div>;
   }
 }"

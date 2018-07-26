@@ -113,7 +113,7 @@ export default function({ types: t }) {
                 state.externalStyles.push([
                   t.memberExpression(
                     externalStylesIdentifier,
-                    t.identifier(isGlobal ? '__hash' : '__scopedHash')
+                    t.identifier('__hash')
                   ),
                   externalStylesIdentifier,
                   isGlobal
@@ -220,19 +220,9 @@ export default function({ types: t }) {
               return expression && expression.isIdentifier()
             }).length === 1
           ) {
-            const [id, css, isGlobal] = state.externalStyles.shift()
+            const [id, css] = state.externalStyles.shift()
 
-            path.replaceWith(
-              makeStyledJsxTag(
-                id,
-                isGlobal
-                  ? css
-                  : t.memberExpression(
-                      t.identifier(css.name),
-                      t.identifier('__scoped')
-                    )
-              )
-            )
+            path.replaceWith(makeStyledJsxTag(id, css))
             return
           }
 
