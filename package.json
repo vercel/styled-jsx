@@ -80,6 +80,8 @@
     "stylis-rule-sheet": "0.0.8"
   },
   "devDependencies": {
+    "@babel/core": "7.0.0-beta.54",
+    "@babel/plugin-transform-modules-commonjs": "7.0.0-beta.54",
     "ava": "^0.19.1",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
