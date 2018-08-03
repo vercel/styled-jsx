@@ -81,6 +81,8 @@
     "stylis-rule-sheet": "0.0.8"
   },
   "devDependencies": {
+    "@babel/core": "7.0.0-beta.54",
+    "@babel/plugin-transform-modules-commonjs": "7.0.0-beta.54",
     "ava": "^0.19.1",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
@@ -97,9 +99,8 @@
     "lint-staged": "7.0.0",
     "mz": "^2.7.0",
     "prettier": "^1.5.2",
-    "react": "^15.6.1",
-    "react-dom": "^15.6.1",
-    "react-jsdom": "^2.0.5",
+    "react": "^16.4.0",
+    "react-dom": "^16.4.0",
     "xo": "0.20.3"
   },
   "peerDependencies": {

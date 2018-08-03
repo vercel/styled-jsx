@@ -4,6 +4,15 @@ import StyleSheetRegistry from './stylesheet-registry'
 const styleSheetRegistry = new StyleSheetRegistry()
 
 export default class JSXStyle extends Component {
+  constructor(props) {
+    super(props)
+
+    // SeverSideRendering only
+    if (typeof window === 'undefined') {
+      styleSheetRegistry.add(this.props)
+    }
+  }
+
   static dynamic(info) {
     return info
       .map(tagInfo => {
@@ -14,7 +23,7 @@ export default class JSXStyle extends Component {
       .join(' ')
   }
 
-  componentWillMount() {
+  componentDidMount() {
     styleSheetRegistry.add(this.props)
   }
 
@@ -22,10 +31,8 @@ export default class JSXStyle extends Component {
     return this.props.css !== nextProps.css
   }
 
-  // To avoid FOUC, we process new changes
-  // on `componentWillUpdate` rather than `componentDidUpdate`.
-  componentWillUpdate(nextProps) {
-    styleSheetRegistry.update(this.props, nextProps)
+  componentDidUpdate(prevProps) {
+    styleSheetRegistry.update(prevProps, this.props)
   }
 
   componentWillUnmount() {

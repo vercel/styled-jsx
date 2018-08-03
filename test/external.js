@@ -1,5 +1,6 @@
 // Packages
 import test from 'ava'
+import { transform as transform7 } from '@babel/core'
 
 // Ours
 import plugin from '../src/babel'
@@ -91,5 +92,25 @@ test('injects JSXStyle for nested scope', async t => {
 
 test('use external stylesheet and dynamic element', async t => {
   const { code } = await transform('./fixtures/dynamic-element-external.js')
+  t.snapshot(code)
+})
+
+test('Makes sure that style nodes are not re-used', async t => {
+  const { code } = await transform7(
+    `
+    import styles from './App.styles';
+
+    function Test() {
+      return <div>
+        <style jsx global>{styles}</style>
+      </div>
+    }
+      `,
+    {
+      babelrc: false,
+      plugins: [plugin, '@babel/plugin-transform-modules-commonjs']
+    }
+  )
+
   t.snapshot(code)
 })
