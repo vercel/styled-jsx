@@ -1,1 +1,3 @@
-module.exports = require('./dist/webpack')
+module.exports = {
+  loader: require.resolve('./dist/webpack')
+}

@@ -569,7 +569,7 @@ config: {
     rules: [
       test: /\.css$/,
       use: [{
-        loader: 'styled-jsx/webpack',
+        loader: require('styled-jsx/webpack').loader,
         options: {
           type: 'scoped'
         }
@@ -611,7 +611,7 @@ module.exports = {
       use: [
         defaultLoaders.babel,
         {
-          loader: 'styled-jsx/webpack',
+          loader: require('styled-jsx/webpack').loader,
           options: {
             type: 'scoped'
           }
