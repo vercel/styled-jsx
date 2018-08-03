@@ -34,6 +34,7 @@ For an overview about the **features** and **tradeoffs** of styled-jsx you may w
   * [External styles](#external-styles)
   * [Styles outside of components](#styles-outside-of-components)
   * [The `resolve` tag](#the-resolve-tag)
+  * [Styles in regular CSS files](#styles-in-regular-css-files)
 - [CSS Preprocessing via Plugins](#css-preprocessing-via-plugins)
   * [Plugin options](#plugin-options)
   * [Example plugins](#example-plugins)
@@ -541,6 +542,87 @@ const stylesInfo2 = resolve`a { color: green; }`
 ```
 
 **Create React App** comes with `babel-plugin-macros` pre-installed so you just need to install `styled-jsx` and you can start to use `resolve right away.
+
+
+#### Styles in regular CSS files
+
+styled-jsx v3 comes with a webpack loader that lets you write styles in regular `css` files and consume them in React.
+
+```js
+import styles from '../components/button/styles.css'
+
+export default () => (
+  <div>
+    <button>styled-jsx</button>
+    <style jsx>{styles}</style>
+  </div>
+)
+```
+
+To consume the styles in your component you can import them from your CSS file and render them using a `<style jsx>` tag. Remember to add the `global` prop if you want your styles to be global.
+
+To use this feature you need to register the loader in your webpack config file, before `babel-loader` which will then transpile the styles via `styled-jsx/babel`
+
+```js
+config: {
+  module: {
+    rules: [
+      test: /\.css$/,
+      use: [{
+        loader: require('styled-jsx/webpack').loader,
+        options: {
+          type: 'scoped'
+        }
+      }]
+    ]
+  }
+}
+```
+
+The plugin accepts a `type` option to configure whether the styles should be `scoped`, `global` or `resolve` (see above). By default its values is set to `scoped`. `type` can also be a `function` which takes the file name that is being transpiled and must return a valid type.
+
+```js
+type validTypes = 'scoped' | 'global' | 'resolve'
+type fileName = string
+type Options = {|
+  type: validTypes | (fileName) => validTypes
+|}
+```
+
+The type can also be set per individual CSS file via CSS comment:
+
+```css
+/* @styled-jsx=scoped */
+
+button { color: red }
+```
+
+The CSS comment option will override the one in the webpack configuration only for this specific file.
+
+##### Next.js
+
+Example of `next.config.js` to integrate `styled-jsx/webpack`:
+
+```js
+module.exports = {
+  webpack: (config, { defaultLoaders }) => {
+    config.module.rules.push({
+      test: /\.css$/,
+      use: [
+        defaultLoaders.babel,
+        {
+          loader: require('styled-jsx/webpack').loader,
+          options: {
+            type: 'scoped'
+          }
+        }
+      ]
+    })
+
+    return config
+  }
+}
+```
 
 ## CSS Preprocessing via Plugins
 
