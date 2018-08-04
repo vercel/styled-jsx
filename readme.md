@@ -7,10 +7,7 @@
 
 Full, scoped and component-friendly CSS support for JSX (rendered on the server or the client).
 
-
 Code and docs are for v3 which we highly recommend you to try. Looking for styled-jsx v2? Switch to the [v2 branch](https://github.com/zeit/styled-jsx/tree/v2).
-
-For an overview about the **features** and **tradeoffs** of styled-jsx you may want to take a look at [this presentation](https://speakerdeck.com/giuseppe/styled-jsx).
 
 - [Getting started](#getting-started)
 - [Configuration options](#configuration-options)
@@ -122,8 +119,8 @@ Turn on/off automatic vendor prefixing (default: `true`)
 - High-performance runtime-CSS-injection when not server-rendering
 - Future-proof: Equivalent to server-renderable "Shadow CSS"
 - Source maps support
-- Dynamic styles and themes support \***new**
-- CSS Preprocessing via Plugins \***new**
+- Dynamic styles and themes support
+- CSS Preprocessing via Plugins
 
 ## How It Works
 
