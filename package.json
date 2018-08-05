@@ -10,7 +10,10 @@
     "server.js",
     "babel.js",
     "style.js",
-    "css.js"
+    "macro.js",
+    "css.js",
+    "webpack.js",
+    "license.md"
   ],
   "scripts": {
     "dev": "npm run build -- --watch",
