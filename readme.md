@@ -820,7 +820,7 @@ The [`language-babel`](https://github.com/gandm/language-babel) package for the 
 After [installing the package](https://github.com/gandm/language-babel#installation) add the code below to the appropriate settings entry. In a few moments you should be blessed with proper CSS syntax highlighting. ([source](https://github.com/gandm/language-babel/issues/324))
 
 ```
-"(?<=<style jsx>{)|(?<=<style jsx global>{)":source.css.styled
+"(?<=<style jsx>{)|(?<=<style jsx global>{)|(?<=css)":source.css.styled
 ```
 
 ![babel-language settings entry](https://cloud.githubusercontent.com/assets/2313237/22627258/6c97cb68-ebb7-11e6-82e1-60205f8b31e7.png)
