@@ -783,7 +783,7 @@ const StyledImage = ({ src, alt = '' }) => (
 
 When the component accepts a `className` (or ad-hoc) prop as a way to allow customizations then you can use [the `resolve` tag from `styled-jsx/css`](#the-resolve-tag).
 
-When the component doesn't accept any `className` or doesn't expose any API to customize the component, then you only option is to use `:global()` styles:
+When the component doesn't accept any `className` or doesn't expose any API to customize the component, then your only option is to use `:global()` styles:
 
 ```jsx
 export default () => (
