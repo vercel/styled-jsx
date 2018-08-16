@@ -62,10 +62,8 @@ export default class StyleSheetRegistry {
       // Filter out invalid rules
       .filter(index => index !== -1)
 
-    if (indices.length > 0) {
-      this._indices[styleId] = indices
-      this._instancesCounts[styleId] = 1
-    }
+    this._indices[styleId] = indices
+    this._instancesCounts[styleId] = 1
   }
 
   remove(props) {
