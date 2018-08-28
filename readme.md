@@ -391,9 +391,9 @@ Strict CSP is supported. You must pass a nonce as a parameter to either `flush(n
 
 You should generate a nonce per request.
 ```jsx
-import uuidv4 from 'uuid/v4'
+import nanoid from 'nanoid'
 
-const nonce = new Buffer(uuidv4()).toString('base64') //ex: N2M0MDhkN2EtMmRkYi00MTExLWFhM2YtNDhkNTc4NGJhMjA3
+const nonce = Buffer.from(nanoid()).toString('base64') //ex: N2M0MDhkN2EtMmRkYi00MTExLWFhM2YtNDhkNTc4NGJhMjA3
 ```
 
 Your CSP policy must have this same nonce as well.
