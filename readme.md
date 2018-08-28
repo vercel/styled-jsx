@@ -385,6 +385,20 @@ It's **paramount** that you use one of these two functions so that
 the generated styles can be diffed when the client loads and
 duplicate styles are avoided.
 
+### Content Security Policy
+
+Strict CSP is supported. You must pass a nonce as a parameter to either `flush(nonce)` or `flushToHTML(nonce)` **and** set a `<meta property="csp-nonce" content="nonce">` tag.
+
+You should generate a nonce per request.
+```jsx
+import uuidv4 from 'uuid/v4'
+
+const nonce = new Buffer(uuidv4()).toString('base64') //ex: N2M0MDhkN2EtMmRkYi00MTExLWFhM2YtNDhkNTc4NGJhMjA3
+```
+
+Your CSP policy must have this same nonce as well.
+`Content-Security-Policy: default-src 'self'; style-src 'self' 'nonce-N2M0MDhkN2EtMmRkYi00MTExLWFhM2YtNDhkNTc4NGJhMjA3';`
+
 ### External CSS and styles outside of the component
 
 In styled-jsx styles can be defined outside of the component's render method or in separate JavaScript modules using the `styled-jsx/css` library. `styled-jsx/css` exports three tags that can be used to tag your styles:

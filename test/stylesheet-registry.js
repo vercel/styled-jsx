@@ -104,6 +104,26 @@ test('add - sanitizes dynamic CSS on the server', t => {
   ])
 })
 
+test('add - nonce is properly fetched from meta tag', t => {
+  // We need to stub a document in order to simulate the meta tag
+  global.document = {
+    querySelector(query) {
+      t.is(query, 'meta[property="csp-nonce"]')
+      return {
+        getAttribute(attr) {
+          t.is(attr, 'content')
+          return 'test-nonce'
+        }
+      }
+    }
+  }
+
+  const registry = makeRegistry()
+  registry.add({ styleId: '123', css: [cssRule] })
+
+  t.is(registry._sheet._nonce, 'test-nonce')
+})
+
 // registry.remove
 
 test('remove', t => {
