@@ -175,20 +175,20 @@ test('server rendering with nonce', t => {
   // Render using react
   ReactDOM.renderToString(React.createElement(App))
   const html = ReactDOM.renderToStaticMarkup(
-    React.createElement('head', null, flush('test-nonce'))
+    React.createElement('head', null, flush({ nonce: 'test-nonce' }))
   )
 
   t.is(html, `<head>${expected}</head>`)
 
   // Assert that memory is empty
-  t.is(0, flush('test-nonce').length)
-  t.is('', flushToHTML('test-nonce'))
+  t.is(0, flush({ nonce: 'test-nonce' }).length)
+  t.is('', flushToHTML({ nonce: 'test-nonce' }))
 
   // Render to html again
   ReactDOM.renderToString(React.createElement(App))
-  t.is(expected, flushToHTML('test-nonce'))
+  t.is(expected, flushToHTML({ nonce: 'test-nonce' }))
 
   // Assert that memory is empty
-  t.is(0, flush('test-nonce').length)
-  t.is('', flushToHTML('test-nonce'))
+  t.is(0, flush({ nonce: 'test-nonce' }).length)
+  t.is('', flushToHTML({ nonce: 'test-nonce' }))
 })

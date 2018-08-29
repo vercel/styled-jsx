@@ -387,16 +387,18 @@ duplicate styles are avoided.
 
 ### Content Security Policy
 
-Strict CSP is supported. You must pass a nonce as a parameter to either `flush(nonce)` or `flushToHTML(nonce)` **and** set a `<meta property="csp-nonce" content="nonce">` tag.
+Strict [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) is supported. 
 
-You should generate a nonce per request.
-```jsx
+You should generate a nonce **per request**.
+```js
 import nanoid from 'nanoid'
 
 const nonce = Buffer.from(nanoid()).toString('base64') //ex: N2M0MDhkN2EtMmRkYi00MTExLWFhM2YtNDhkNTc4NGJhMjA3
 ```
 
-Your CSP policy must have this same nonce as well.
+You must then pass a nonce to either `flush({ nonce })` or `flushToHTML({ nonce })` **and** set a `<meta property="csp-nonce" content={nonce} />` tag.
+
+Your CSP policy must share the same nonce as well (the header nonce needs to match the html nonce and remain unpredictable).
 `Content-Security-Policy: default-src 'self'; style-src 'self' 'nonce-N2M0MDhkN2EtMmRkYi00MTExLWFhM2YtNDhkNTc4NGJhMjA3';`
 
 ### External CSS and styles outside of the component
