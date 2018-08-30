@@ -105,6 +105,7 @@ test('add - sanitizes dynamic CSS on the server', t => {
 })
 
 test('add - nonce is properly fetched from meta tag', t => {
+  const originalDocument = global.document
   // We need to stub a document in order to simulate the meta tag
   global.document = {
     querySelector(query) {
@@ -122,6 +123,8 @@ test('add - nonce is properly fetched from meta tag', t => {
   registry.add({ styleId: '123', css: [cssRule] })
 
   t.is(registry._sheet._nonce, 'test-nonce')
+
+  global.document = originalDocument
 })
 
 // registry.remove
