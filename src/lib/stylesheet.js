@@ -29,7 +29,7 @@ export default class StyleSheet {
     this._rulesCount = 0
 
     const node =
-      typeof document === 'object' &&
+      this._isBrowser &&
       document.querySelector('meta[property="csp-nonce"]')
     this._nonce = node ? node.getAttribute('content') : null
   }
