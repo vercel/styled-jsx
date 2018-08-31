@@ -29,12 +29,11 @@ export default class StyleSheet {
     this._rulesCount = 0
 
     const node =
-      this._isBrowser &&
-      document.querySelector('meta[property="csp-nonce"]')
+      this._isBrowser && document.querySelector('meta[property="csp-nonce"]')
     this._nonce = node ? node.getAttribute('content') : null
   }
 
-  setOptimizeForSpeed(bool, options = { flush: {} }) {
+  setOptimizeForSpeed(bool) {
     invariant(
       typeof bool === 'boolean',
       '`setOptimizeForSpeed` accepts a boolean'
@@ -44,7 +43,7 @@ export default class StyleSheet {
       this._rulesCount === 0,
       'optimizeForSpeed cannot be when rules have already been inserted'
     )
-    this.flush(options.flush)
+    this.flush()
     this._optimizeForSpeed = bool
     this.inject()
   }
@@ -53,7 +52,7 @@ export default class StyleSheet {
     return this._optimizeForSpeed
   }
 
-  inject(options = { flush: {} }) {
+  inject() {
     invariant(!this._injected, 'sheet already injected')
     this._injected = true
     if (this._isBrowser && this._optimizeForSpeed) {
@@ -65,7 +64,7 @@ export default class StyleSheet {
             'StyleSheet: optimizeForSpeed mode not supported falling back to standard mode.'
           ) // eslint-disable-line no-console
         }
-        this.flush(options.flush)
+        this.flush()
         this._injected = true
       }
       return

@@ -94,8 +94,8 @@ export default class StyleSheetRegistry {
     this.remove(props)
   }
 
-  flush(options = {}) {
-    this._sheet.flush(options)
+  flush() {
+    this._sheet.flush()
     this._sheet.inject()
     this._fromServer = undefined
     this._indices = {}
