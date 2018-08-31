@@ -1,18 +1,9 @@
-import { Component } from 'react'
+import { PureComponent } from 'react'
 import StyleSheetRegistry from './stylesheet-registry'
 
 const styleSheetRegistry = new StyleSheetRegistry()
 
-export default class JSXStyle extends Component {
-  constructor(props) {
-    super(props)
-
-    // SeverSideRendering only
-    if (typeof window === 'undefined') {
-      styleSheetRegistry.add(this.props)
-    }
-  }
-
+export default class JSXStyle extends PureComponent {
   static dynamic(info) {
     return info
       .map(tagInfo => {
@@ -21,14 +12,6 @@ export default class JSXStyle extends Component {
         return styleSheetRegistry.computeId(baseId, props)
       })
       .join(' ')
-  }
-
-  componentDidMount() {
-    styleSheetRegistry.add(this.props)
-  }
-
-  shouldComponentUpdate(nextProps) {
-    return this.props.css !== nextProps.css
   }
 
   componentDidUpdate(prevProps) {
@@ -40,6 +23,7 @@ export default class JSXStyle extends Component {
   }
 
   render() {
+    styleSheetRegistry.add(this.props)
     return null
   }
 }
