@@ -7,13 +7,11 @@ const isProd = process.env && process.env.NODE_ENV === 'production'
 const isString = o => Object.prototype.toString.call(o) === '[object String]'
 
 export default class StyleSheet {
-  constructor(
-    {
-      name = 'stylesheet',
-      optimizeForSpeed = isProd,
-      isBrowser = typeof window !== 'undefined'
-    } = {}
-  ) {
+  constructor({
+    name = 'stylesheet',
+    optimizeForSpeed = isProd,
+    isBrowser = typeof window !== 'undefined'
+  } = {}) {
     invariant(isString(name), '`name` must be a string')
     this._name = name
     this._deletedRulePlaceholder = `#${name}-deleted-rule____{}`
@@ -29,6 +27,10 @@ export default class StyleSheet {
     this._tags = []
     this._injected = false
     this._rulesCount = 0
+
+    const node =
+      this._isBrowser && document.querySelector('meta[property="csp-nonce"]')
+    this._nonce = node ? node.getAttribute('content') : null
   }
 
   setOptimizeForSpeed(bool) {
@@ -225,6 +227,7 @@ export default class StyleSheet {
       )
     }
     const tag = document.createElement('style')
+    if (this._nonce) tag.setAttribute('nonce', this._nonce)
     tag.type = 'text/css'
     tag.setAttribute(`data-${name}`, '')
     if (cssString) {

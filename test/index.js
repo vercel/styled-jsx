@@ -145,3 +145,50 @@ test('server rendering', t => {
   t.is(0, flush().length)
   t.is('', flushToHTML())
 })
+
+test('server rendering with nonce', t => {
+  function App() {
+    const color = 'green'
+    return React.createElement(
+      'div',
+      null,
+      React.createElement(JSXStyle, {
+        css: 'p { color: red }',
+        styleId: 1
+      }),
+      React.createElement(JSXStyle, {
+        css: 'div { color: blue }',
+        styleId: 2
+      }),
+      React.createElement(JSXStyle, {
+        css: `div { color: ${color} }`,
+        styleId: 3
+      })
+    )
+  }
+  // Expected CSS
+  const expected =
+    '<style id="__jsx-1" nonce="test-nonce">p { color: red }</style>' +
+    '<style id="__jsx-2" nonce="test-nonce">div { color: blue }</style>' +
+    '<style id="__jsx-3" nonce="test-nonce">div { color: green }</style>'
+
+  // Render using react
+  ReactDOM.renderToString(React.createElement(App))
+  const html = ReactDOM.renderToStaticMarkup(
+    React.createElement('head', null, flush({ nonce: 'test-nonce' }))
+  )
+
+  t.is(html, `<head>${expected}</head>`)
+
+  // Assert that memory is empty
+  t.is(0, flush({ nonce: 'test-nonce' }).length)
+  t.is('', flushToHTML({ nonce: 'test-nonce' }))
+
+  // Render to html again
+  ReactDOM.renderToString(React.createElement(App))
+  t.is(expected, flushToHTML({ nonce: 'test-nonce' }))
+
+  // Assert that memory is empty
+  t.is(0, flush({ nonce: 'test-nonce' }).length)
+  t.is('', flushToHTML({ nonce: 'test-nonce' }))
+})
