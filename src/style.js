@@ -9,7 +9,7 @@ export default class JSXStyle extends Component {
 
     // SeverSideRendering only
     if (typeof window === 'undefined') {
-      styleSheetRegistry.add(this.props)
+      styleSheetRegistry.add(props)
     }
   }
 
