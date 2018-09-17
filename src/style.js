@@ -4,6 +4,15 @@ import StyleSheetRegistry from './stylesheet-registry'
 const styleSheetRegistry = new StyleSheetRegistry()
 
 export default class JSXStyle extends Component {
+  constructor(props) {
+    super(props)
+
+    // SeverSideRendering only
+    if (typeof window === 'undefined') {
+      styleSheetRegistry.add(this.props)
+    }
+  }
+
   static dynamic(info) {
     return info
       .map(tagInfo => {
@@ -14,32 +23,23 @@ export default class JSXStyle extends Component {
       .join(' ')
   }
 
-  // probably faster than PureComponent (shallowEqual)
+  componentDidMount() {
+    styleSheetRegistry.add(this.props)
+  }
+
   shouldComponentUpdate(nextProps) {
-    return (
-      this.props.styleId !== nextProps.styleId ||
-      // We do this check because `dynamic` is an array of strings or undefined.
-      // These are the computed values for dynamic styles.
-      String(this.props.dynamic) !== String(nextProps.dynamic)
-    )
+    return this.props.css !== nextProps.css
   }
 
-  // Remove styles in advance.
-  getSnapshotBeforeUpdate(prevProps) {
-    styleSheetRegistry.remove(prevProps)
-    return null
+  componentDidUpdate(prevProps) {
+    styleSheetRegistry.update(prevProps, this.props)
   }
-
-  // Including this otherwise React complains that getSnapshotBeforeUpdate
-  // is used without componentDidMount.
-  componentDidUpdate() {}
 
   componentWillUnmount() {
     styleSheetRegistry.remove(this.props)
   }
 
   render() {
-    styleSheetRegistry.add(this.props)
     return null
   }
 }
