@@ -3,6 +3,7 @@ import test from 'ava'
 
 // Ours
 import babelPlugin from '../src/babel'
+import babelTestPlugin from '../src/babel-test'
 import { combinePlugins } from '../src/_utils'
 import _transform from './_transform'
 import testPlugin1 from './fixtures/plugins/plugin'
@@ -76,6 +77,14 @@ test('combinePlugins applies plugins left to right', t => {
 
 test('applies plugins', async t => {
   const { code } = await transform('./fixtures/with-plugins.js')
+  t.snapshot(code)
+})
+
+test('babel-test plugin strips jsx attribute', async t => {
+  const { code } = await transform('./fixtures/with-plugins.js', {
+    plugins: [babelTestPlugin]
+  })
+
   t.snapshot(code)
 })
 

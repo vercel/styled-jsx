@@ -35,6 +35,7 @@ Code and docs are for v3 which we highly recommend you to try. Looking for style
 - [CSS Preprocessing via Plugins](#css-preprocessing-via-plugins)
   * [Plugin options](#plugin-options)
   * [Example plugins](#example-plugins)
+- [Rendering in tests](#rendering-in-tests)
 - [FAQ](#faq)
   * [Warning: unknown `jsx` prop on &lt;style&gt; tag](#warning-unknown-jsx-prop-on-style-tag)
   * [Can I return an array of components when using React 16?](#can-i-return-an-array-of-components-when-using-react-16)
@@ -88,7 +89,7 @@ The following are optional settings for the babel plugin.
 
 Blazing fast and optimized CSS rules injection system based on the CSSOM APIs.
 
-```
+```json
 {
   "plugins": [
     ["styled-jsx/babel", { "optimizeForSpeed": true }]
@@ -773,6 +774,38 @@ The following plugins are proof of concepts/sample:
 * [styled-jsx-plugin-stylelint](https://github.com/giuseppeg/styled-jsx-plugin-stylelint)
 * [styled-jsx-plugin-less](https://github.com/erasmo-marin/styled-jsx-plugin-less)
 * [styled-jsx-plugin-stylus](https://github.com/omardelarosa/styled-jsx-plugin-stylus)
+
+
+## Rendering in tests
+
+If you're using a tool such as Enzyme, you might want to avoid compiling your styles in test renders. In general, styled-jsx artifacts like `jsx-123` classnames and vendor prefixing are not direct concerns of your component, and they generate a lot of snapshot noise.
+
+One option is to exclude the `styled-jsx/babel` plugin from the `test` environment using `env` in your Babel config (see [Config Merging options](https://babeljs.io/docs/en/options#config-merging-options)).
+
+But this can cause noise in your terminal output when rendering:
+
+```
+   console.error node_modules/react-dom/cjs/react-dom.development.js:527
+      Warning: Received `true` for a non-boolean attribute `jsx`.
+```
+
+The `styled-jsx/babel-test` solves this problem. It simply strips `jsx` attributes from all `<style>` tags. Be sure to target each environment with the appropriate plugin:
+
+```json
+{
+  "env": {
+    "production": {
+      "plugins": ["styled-jsx/babel"]
+    },
+    "development": {
+      "plugins": ["styled-jsx/babel"]
+    },
+    "test": {
+      "plugins": ["styled-jsx/babel-test"]
+    }
+  }
+}
+```
 
 ## FAQ
 
