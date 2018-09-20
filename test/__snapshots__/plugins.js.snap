@@ -12,6 +12,21 @@ export default (() => <div className={'jsx-3382438999 ' + \`jsx-\${styles.__hash
   </div>);"
 `;
 
+exports[`babel-test plugin strips jsx attribute 1`] = `
+"import styles from './styles';
+const color = 'red';
+
+export default (() => <div>
+    <p>test</p>
+    <style>{\`
+      div.\${color} {
+        color: \${otherColor};
+      }
+    \`}</style>
+    <style>{styles}</style>
+  </div>);"
+`;
+
 exports[`passes options to plugins 1`] = `
 "import _JSXStyle from 'styled-jsx/style';
 import styles from './styles';
