@@ -61,7 +61,8 @@
     ],
     "extends": "prettier",
     "ignores": [
-      "lib/style-transform.js"
+      "lib/style-transform.js",
+      "babel-test.js"
     ],
     "rules": {
       "capitalized-comments": 0,
