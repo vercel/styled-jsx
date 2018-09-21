@@ -62,10 +62,8 @@ export default class StyleSheetRegistry {
       // Filter out invalid rules
       .filter(index => index !== -1)
 
-    if (indices.length > 0) {
-      this._indices[styleId] = indices
-      this._instancesCounts[styleId] = 1
-    }
+    this._indices[styleId] = indices
+    this._instancesCounts[styleId] = 1
   }
 
   remove(props) {
@@ -115,10 +113,15 @@ export default class StyleSheetRegistry {
     const cssRules = this._sheet.cssRules()
 
     return fromServer.concat(
-      Object.keys(this._indices).map(styleId => [
-        styleId,
-        this._indices[styleId].map(index => cssRules[index].cssText).join('\n')
-      ])
+      Object.keys(this._indices)
+        .map(styleId => [
+          styleId,
+          this._indices[styleId]
+            .map(index => cssRules[index].cssText)
+            .join('\n')
+        ])
+        // filter out empty rules
+        .filter(rule => Boolean(rule[1]))
     )
   }
 

@@ -92,6 +92,23 @@ test(
   })
 )
 
+test(
+  'it does not throw when inserting an invalid rule',
+  withMock(withMockDocument, t => {
+    const registry = makeRegistry()
+
+    // Insert a valid rule
+    registry.add({ styleId: '123', css: [cssRule] })
+
+    t.notThrows(() => {
+      // Insert an invalid rule
+      registry.add({ styleId: '456', css: [invalidRules[0]] })
+    })
+
+    t.deepEqual(registry.cssRules(), [['jsx-123', 'div { color: red }']])
+  })
+)
+
 test('add - sanitizes dynamic CSS on the server', t => {
   const registry = makeRegistry({ optimizeForSpeed: false, isBrowser: false })
 
