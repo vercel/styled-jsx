@@ -12,7 +12,10 @@ export default function() {
           return
         }
 
-        el.attributes = el.attributes.filter(a => a.name.name !== 'jsx')
+        el.attributes = el.attributes.filter(a => {
+          const name = a.name.name
+          return name !== 'jsx' && name !== 'global'
+        })
       }
     }
   }
