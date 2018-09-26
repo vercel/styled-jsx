@@ -4,6 +4,11 @@ import StyleSheetRegistry from './stylesheet-registry'
 const styleSheetRegistry = new StyleSheetRegistry()
 
 export default class JSXStyle extends Component {
+  constructor(props) {
+    super(props)
+    this.prevProps = {}
+  }
+
   static dynamic(info) {
     return info
       .map(tagInfo => {
@@ -15,31 +20,30 @@ export default class JSXStyle extends Component {
   }
 
   // probably faster than PureComponent (shallowEqual)
-  shouldComponentUpdate(nextProps) {
+  shouldComponentUpdate(otherProps) {
     return (
-      this.props.styleId !== nextProps.styleId ||
+      this.props.styleId !== otherProps.styleId ||
       // We do this check because `dynamic` is an array of strings or undefined.
       // These are the computed values for dynamic styles.
-      String(this.props.dynamic) !== String(nextProps.dynamic)
+      String(this.props.dynamic) !== String(otherProps.dynamic)
     )
   }
-
-  // Remove styles in advance.
-  getSnapshotBeforeUpdate(prevProps) {
-    styleSheetRegistry.remove(prevProps)
-    return null
-  }
-
-  // Including this otherwise React complains that getSnapshotBeforeUpdate
-  // is used without componentDidMount.
-  componentDidUpdate() {}
 
   componentWillUnmount() {
     styleSheetRegistry.remove(this.props)
   }
 
   render() {
-    styleSheetRegistry.add(this.props)
+    // This is a workaround to make the side effect async safe in the "render" phase.
+    // See https://github.com/zeit/styled-jsx/pull/484
+    if (this.shouldComponentUpdate(this.prevProps)) {
+      // Updates
+      if (this.prevProps.styleId) {
+        styleSheetRegistry.remove(this.prevProps)
+      }
+      styleSheetRegistry.add(this.props)
+      this.prevProps = this.props
+    }
     return null
   }
 }
