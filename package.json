@@ -81,6 +81,7 @@
     "babel-plugin-syntax-jsx": "6.18.0",
     "babel-types": "6.26.0",
     "convert-source-map": "1.5.1",
+    "debug": "4.0.1",
     "loader-utils": "1.1.0",
     "source-map": "0.7.3",
     "string-hash": "1.1.3",

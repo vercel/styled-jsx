@@ -1,3 +1,4 @@
+import debug from 'debug'
 import * as t from 'babel-types'
 import _hashString from 'string-hash'
 import { SourceMapGenerator } from 'source-map'
@@ -13,6 +14,7 @@ import {
   STYLE_COMPONENT_DYNAMIC
 } from './_constants'
 
+const log = debug('styled-jsx')
 const concat = (a, b) => t.binaryExpression('+', a, b)
 const and = (a, b) => t.logicalExpression('&&', a, b)
 const or = (a, b) => t.logicalExpression('||', a, b)
@@ -639,8 +641,4 @@ export const setStateOptions = state => {
       vendorPrefixes: state.opts.vendorPrefixes
     })
   }
-}
-
-export function log(message) {
-  console.log('[styled-jsx] ' + message)
 }

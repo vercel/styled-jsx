@@ -776,6 +776,10 @@ The following plugins are proof of concepts/sample:
 * [styled-jsx-plugin-stylus](https://github.com/omardelarosa/styled-jsx-plugin-stylus)
 
 
+#### Debugging plugins
+
+Use `DEBUG=styled-jsx ./my-build-script` to log plugin usage.
+
 ## Rendering in tests
 
 If you're using a tool such as Enzyme, you might want to avoid compiling your styles in test renders. In general, styled-jsx artifacts like `jsx-123` classnames and vendor prefixing are not direct concerns of your component, and they generate a lot of snapshot noise.
