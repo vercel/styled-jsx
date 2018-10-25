@@ -642,5 +642,5 @@ export const setStateOptions = state => {
 }
 
 export function log(message) {
-  console.log('[styled-jsx] ' + message)
+  process.env.NODE_ENV === 'development' && console.log('[styled-jsx] ' + message)
 }
