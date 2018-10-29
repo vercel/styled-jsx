@@ -22,7 +22,7 @@ export function processTaggedTemplateExpression({
   fileInfo,
   splitRules,
   plugins,
-  vendorPrefix
+  vendorPrefixes
 }) {
   const templateLiteral = path.get('quasi')
   let scope
@@ -47,7 +47,7 @@ export function processTaggedTemplateExpression({
       fileInfo,
       isGlobal: type === 'global',
       plugins,
-      vendorPrefix
+      vendorPrefixes
     },
     { splitRules }
   )
@@ -193,7 +193,7 @@ export const visitor = {
 
       let hasJSXStyle = false
 
-      const { vendorPrefix, sourceMaps } = state.opts
+      const { vendorPrefixes, sourceMaps } = state.opts
 
       Object.keys(taggedTemplateExpressions).forEach(type =>
         taggedTemplateExpressions[type].forEach(path => {
@@ -212,7 +212,7 @@ export const visitor = {
                 ? state.opts.optimizeForSpeed
                 : process.env.NODE_ENV === 'production',
             plugins: state.plugins,
-            vendorPrefix
+            vendorPrefixes
           })
         })
       )

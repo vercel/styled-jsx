@@ -96,7 +96,7 @@ function styledJsxMacro({ references, state }) {
             ? state.opts.optimizeForSpeed
             : process.env.NODE_ENV === 'production',
         plugins: state.plugins,
-        vendorPrefix: state.opts.vendorPrefixes
+        vendorPrefixes: state.opts.vendorPrefixes
       })
 
       if (
