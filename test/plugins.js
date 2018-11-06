@@ -115,3 +115,17 @@ test('combinePlugins throws if passing an option called `babel`', t => {
     combinePlugins([['test', { babel: true }]])
   })
 })
+
+test('combinePlugins memoizes calls', t => {
+  const v1 = combinePlugins([require.resolve('./fixtures/plugins/plugin')])
+  const v2 = combinePlugins([require.resolve('./fixtures/plugins/plugin')])
+
+  t.is(v1('test div'), v2('test div'))
+
+  const v3 = combinePlugins([
+    require.resolve('./fixtures/plugins/plugin'),
+    require.resolve('./fixtures/plugins/another-plugin')
+  ])
+
+  t.not(v2('test div'), v3('test div'))
+})
