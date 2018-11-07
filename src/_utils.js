@@ -457,9 +457,19 @@ export const addSourceMaps = (code, generator, filename) => {
   return [code].concat(sourceMaps).join('\n')
 }
 
+const combinedPluginsCache = {
+  plugins: null,
+  combined: null
+}
 export const combinePlugins = plugins => {
   if (!plugins) {
     return css => css
+  }
+
+  const pluginsToString = JSON.stringify(plugins)
+
+  if (combinedPluginsCache.plugins === pluginsToString) {
+    return combinedPluginsCache.combined
   }
 
   if (
@@ -471,7 +481,8 @@ export const combinePlugins = plugins => {
     )
   }
 
-  return plugins
+  combinedPluginsCache.plugins = pluginsToString
+  combinedPluginsCache.combined = plugins
     .map((plugin, i) => {
       let options = {}
       if (Array.isArray(plugin)) {
@@ -514,6 +525,8 @@ export const combinePlugins = plugins => {
         }),
       null
     )
+
+  return combinedPluginsCache.combined
 }
 
 const getPrefix = (isDynamic, id) =>
