@@ -922,7 +922,7 @@ Launch VS Code Quick Open (⌘+P), paste the following command, and press enter.
 ext install vscode-styled-jsx
 ```
 
-If you use Stylus instead of plain CSS, install [vscode-styled-jsx-stylus](https://marketplace.visualstudio.com/items?itemName=samuelroy.vscode-styled-jsx-stylus) or paste the command below. Autocomplete works out of the box.
+If you use Stylus instead of plain CSS, install [vscode-styled-jsx-stylus](https://marketplace.visualstudio.com/items?itemName=samuelroy.vscode-styled-jsx-stylus) or paste the command below.
 ```
 ext install vscode-styled-jsx-stylus
 ```
