@@ -5,7 +5,7 @@ const types = ['scoped', 'global', 'resolve']
 module.exports = function(content) {
   if (this.cacheable) this.cacheable()
   this.addDependency(this.resourcePath)
-  const options = loaderUtils.getOptions(this) || {}
+  const options = Object.assign({}, loaderUtils.getOptions(this))
 
   if (!options.type) {
     options.type = 'scoped'
