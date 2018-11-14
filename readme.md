@@ -26,7 +26,7 @@ Code and docs are for v3 which we highly recommend you to try. Looking for style
   * [Via inline `style`](#via-inline-style)
 - [Constants](#constants)
 - [Server-Side Rendering](#server-side-rendering)
-  * [`styled-jsx/server`](#-styled-jsx-server)
+  * [`styled-jsx/server`](#styled-jsxserver)
 - [External CSS and styles outside of the component](#external-css-and-styles-outside-of-the-component)
   * [External styles](#external-styles)
   * [Styles outside of components](#styles-outside-of-components)
