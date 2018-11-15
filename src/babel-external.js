@@ -204,8 +204,10 @@ export const visitor = {
             path,
             fileInfo: {
               file: state.file,
-              sourceFileName: state.file.opts.sourceFileName,
-              sourceMaps
+              sourceFileName:
+                state.file.opts.sourceFileName || state.file.sourceFileName,
+              sourceMaps,
+              filename: state.file.opts.filename || state.file.filename
             },
             splitRules:
               typeof state.opts.optimizeForSpeed === 'boolean'
