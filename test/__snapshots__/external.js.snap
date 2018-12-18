@@ -29,24 +29,24 @@ export const foo = [\`div.jsx-2299908427{color:\${color};}\`];
 
 foo.__hash = '2299908427';
 ({
-  styles: <_JSXStyle styleId={\\"1329679275\\"} css={[\`div.jsx-1329679275{color:\${colors.green.light};}\`, 'a.jsx-1329679275{color:red;}']} />,
+  styles: <_JSXStyle id={\\"1329679275\\"}>{[\`div.jsx-1329679275{color:\${colors.green.light};}\`, 'a.jsx-1329679275{color:red;}']}</_JSXStyle>,
   className: 'jsx-1329679275'
 });
 
 const b = {
-  styles: <_JSXStyle styleId={\\"1329679275\\"} css={[\`div.jsx-1329679275{color:\${colors.green.light};}\`, 'a.jsx-1329679275{color:red;}']} />,
+  styles: <_JSXStyle id={\\"1329679275\\"}>{[\`div.jsx-1329679275{color:\${colors.green.light};}\`, 'a.jsx-1329679275{color:red;}']}</_JSXStyle>,
   className: 'jsx-1329679275'
 };
 
 const dynamic = colors => {
   const b = {
-    styles: <_JSXStyle styleId={\\"3325296745\\"} css={[\`div.__jsx-style-dynamic-selector{color:\${colors.green.light};}\`, 'a.__jsx-style-dynamic-selector{color:red;}']} dynamic={[colors.green.light]} />,
+    styles: <_JSXStyle id={\\"3325296745\\"} dynamic={[colors.green.light]}>{[\`div.__jsx-style-dynamic-selector{color:\${colors.green.light};}\`, 'a.__jsx-style-dynamic-selector{color:red;}']}</_JSXStyle>,
     className: _JSXStyle.dynamic([['3325296745', [colors.green.light]]])
   };
 };
 
 export default {
-  styles: <_JSXStyle styleId={\\"3290112549\\"} css={['div.jsx-3290112549{font-size:3em;}', \`p.jsx-3290112549{color:\${color};}\`]} />,
+  styles: <_JSXStyle id={\\"3290112549\\"}>{['div.jsx-3290112549{font-size:3em;}', \`p.jsx-3290112549{color:\${color};}\`]}</_JSXStyle>,
   className: 'jsx-3290112549'
 };"
 `;
@@ -62,7 +62,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function Test() {
   return <div>
-        <_style.default styleId={_App.default.__hash} css={_App.default} />
+        <_style.default id={_App.default.__hash}>{_App.default}</_style.default>
       </div>;
 }"
 `;
@@ -106,7 +106,7 @@ exports[`injects JSXStyle for nested scope 1`] = `
 
 function test() {
   ({
-    styles: <_JSXStyle styleId={\\"2886504620\\"} css={\\"div.jsx-2886504620{color:red;}\\"} />,
+    styles: <_JSXStyle id={\\"2886504620\\"}>{\\"div.jsx-2886504620{color:red;}\\"}</_JSXStyle>,
     className: 'jsx-2886504620'
   });
 }"
@@ -142,24 +142,24 @@ export const foo = new String(\`div.jsx-2299908427{color:\${color};}\`);
 
 foo.__hash = '2299908427';
 ({
-  styles: <_JSXStyle styleId={\\"1329679275\\"} css={\`div.jsx-1329679275{color:\${colors.green.light};}a.jsx-1329679275{color:red;}\`} />,
+  styles: <_JSXStyle id={\\"1329679275\\"}>{\`div.jsx-1329679275{color:\${colors.green.light};}a.jsx-1329679275{color:red;}\`}</_JSXStyle>,
   className: 'jsx-1329679275'
 });
 
 const b = {
-  styles: <_JSXStyle styleId={\\"1329679275\\"} css={\`div.jsx-1329679275{color:\${colors.green.light};}a.jsx-1329679275{color:red;}\`} />,
+  styles: <_JSXStyle id={\\"1329679275\\"}>{\`div.jsx-1329679275{color:\${colors.green.light};}a.jsx-1329679275{color:red;}\`}</_JSXStyle>,
   className: 'jsx-1329679275'
 };
 
 const dynamic = colors => {
   const b = {
-    styles: <_JSXStyle styleId={\\"3325296745\\"} css={\`div.__jsx-style-dynamic-selector{color:\${colors.green.light};}a.__jsx-style-dynamic-selector{color:red;}\`} dynamic={[colors.green.light]} />,
+    styles: <_JSXStyle id={\\"3325296745\\"} dynamic={[colors.green.light]}>{\`div.__jsx-style-dynamic-selector{color:\${colors.green.light};}a.__jsx-style-dynamic-selector{color:red;}\`}</_JSXStyle>,
     className: _JSXStyle.dynamic([['3325296745', [colors.green.light]]])
   };
 };
 
 export default {
-  styles: <_JSXStyle styleId={\\"3290112549\\"} css={\`div.jsx-3290112549{font-size:3em;}p.jsx-3290112549{color:\${color};}\`} />,
+  styles: <_JSXStyle id={\\"3290112549\\"}>{\`div.jsx-3290112549{font-size:3em;}p.jsx-3290112549{color:\${color};}\`}</_JSXStyle>,
   className: 'jsx-3290112549'
 };"
 `;
@@ -173,7 +173,7 @@ export default (({ level = 1 }) => {
 
   return <Element className={\`jsx-\${styles.__hash}\` + \\" \\" + \\"root\\"}>
       <p className={\`jsx-\${styles.__hash}\`}>dynamic element</p>
-      <_JSXStyle styleId={styles.__hash} css={styles} />
+      <_JSXStyle id={styles.__hash}>{styles}</_JSXStyle>
     </Element>;
 });"
 `;
@@ -188,9 +188,9 @@ export default (() => <div>
     <p>test</p>
     <div>woot</div>
     <p>woot</p>
-    <_JSXStyle styleId={styles2.__hash} css={styles2} />
-    <_JSXStyle styleId={styles3.__hash} css={styles3} />
-    <_JSXStyle styleId={styles.__hash} css={styles} />
+    <_JSXStyle id={styles2.__hash}>{styles2}</_JSXStyle>
+    <_JSXStyle id={styles3.__hash}>{styles3}</_JSXStyle>
+    <_JSXStyle id={styles.__hash}>{styles}</_JSXStyle>
   </div>);"
 `;
 
@@ -200,7 +200,7 @@ import styles from './styles';
 
 export default (() => <div className={\`jsx-\${styles.__hash}\`}>
     <p className={\`jsx-\${styles.__hash}\`}>test</p>
-    <_JSXStyle styleId={styles.__hash} css={styles} />
+    <_JSXStyle id={styles.__hash}>{styles}</_JSXStyle>
   </div>);"
 `;
 
@@ -213,18 +213,18 @@ import { foo as styles3 } from './styles';
 export default (() => <div className={'jsx-1646697228 ' + \`jsx-\${styles3.__hash} jsx-\${styles.__hash}\`}>
     <p className={'jsx-1646697228 ' + \`jsx-\${styles3.__hash} jsx-\${styles.__hash}\` + ' ' + 'foo'}>test</p>
     <p className={'jsx-1646697228 ' + \`jsx-\${styles3.__hash} jsx-\${styles.__hash}\`}>woot</p>
-    <_JSXStyle styleId={styles2.__hash} css={styles2} />
-    <_JSXStyle styleId={styles3.__hash} css={styles3} />
+    <_JSXStyle id={styles2.__hash}>{styles2}</_JSXStyle>
+    <_JSXStyle id={styles3.__hash}>{styles3}</_JSXStyle>
     <div className={'jsx-1646697228 ' + \`jsx-\${styles3.__hash} jsx-\${styles.__hash}\`}>woot</div>
-    <_JSXStyle styleId={\\"1646697228\\"} css={\\"p.jsx-1646697228{color:red;}div.jsx-1646697228{color:green;}\\"} />
-    <_JSXStyle styleId={styles.__hash} css={styles} />
+    <_JSXStyle id={\\"1646697228\\"}>{\\"p.jsx-1646697228{color:red;}div.jsx-1646697228{color:green;}\\"}</_JSXStyle>
+    <_JSXStyle id={styles.__hash}>{styles}</_JSXStyle>
   </div>);
 
 export const Test = () => <div className={'jsx-1646697228 ' + \`jsx-\${styles3.__hash}\`}>
     <p className={'jsx-1646697228 ' + \`jsx-\${styles3.__hash}\` + ' ' + 'foo'}>test</p>
     <p className={'jsx-1646697228 ' + \`jsx-\${styles3.__hash}\`}>woot</p>
-    <_JSXStyle styleId={styles3.__hash} css={styles3} />
+    <_JSXStyle id={styles3.__hash}>{styles3}</_JSXStyle>
     <div className={'jsx-1646697228 ' + \`jsx-\${styles3.__hash}\`}>woot</div>
-    <_JSXStyle styleId={\\"1646697228\\"} css={\\"p.jsx-1646697228{color:red;}div.jsx-1646697228{color:green;}\\"} />
+    <_JSXStyle id={\\"1646697228\\"}>{\\"p.jsx-1646697228{color:red;}div.jsx-1646697228{color:green;}\\"}</_JSXStyle>
   </div>;"
 `;

@@ -33,8 +33,8 @@ test(
     options.forEach(options => {
       const registry = makeRegistry(options)
       registry.add({
-        styleId: '123',
-        css: options.optimizeForSpeed ? [cssRule] : cssRule
+        id: '123',
+        children: options.optimizeForSpeed ? [cssRule] : cssRule
       })
 
       t.deepEqual(registry.cssRules(), [['jsx-123', cssRule]])
@@ -42,15 +42,15 @@ test(
       // Dedupe
 
       registry.add({
-        styleId: '123',
-        css: options.optimizeForSpeed ? [cssRule] : cssRule
+        id: '123',
+        children: options.optimizeForSpeed ? [cssRule] : cssRule
       })
 
       t.deepEqual(registry.cssRules(), [['jsx-123', cssRule]])
 
       registry.add({
-        styleId: '345',
-        css: options.optimizeForSpeed ? [cssRule] : cssRule
+        id: '345',
+        children: options.optimizeForSpeed ? [cssRule] : cssRule
       })
 
       t.deepEqual(registry.cssRules(), [
@@ -59,7 +59,7 @@ test(
       ])
 
       if (options.optimizeForSpeed) {
-        registry.add({ styleId: '456', css: [cssRule, cssRuleAlt] })
+        registry.add({ id: '456', children: [cssRule, cssRuleAlt] })
 
         t.deepEqual(registry.cssRules(), [
           ['jsx-123', cssRule],
@@ -77,13 +77,13 @@ test(
     const registry = makeRegistry()
 
     // Insert a valid rule
-    registry.add({ styleId: '123', css: [cssRule] })
+    registry.add({ id: '123', children: [cssRule] })
 
     // Insert an invalid rule
-    registry.add({ styleId: '456', css: [invalidRules[0]] })
+    registry.add({ id: '456', children: [invalidRules[0]] })
 
     // Insert another valid rule
-    registry.add({ styleId: '678', css: [cssRule] })
+    registry.add({ id: '678', children: [cssRule] })
 
     t.deepEqual(registry.cssRules(), [
       ['jsx-123', 'div { color: red }'],
@@ -98,11 +98,11 @@ test(
     const registry = makeRegistry()
 
     // Insert a valid rule
-    registry.add({ styleId: '123', css: [cssRule] })
+    registry.add({ id: '123', children: [cssRule] })
 
     t.notThrows(() => {
       // Insert an invalid rule
-      registry.add({ styleId: '456', css: [invalidRules[0]] })
+      registry.add({ id: '456', children: [invalidRules[0]] })
     })
 
     t.deepEqual(registry.cssRules(), [['jsx-123', 'div { color: red }']])
@@ -113,8 +113,8 @@ test('add - sanitizes dynamic CSS on the server', t => {
   const registry = makeRegistry({ optimizeForSpeed: false, isBrowser: false })
 
   registry.add({
-    styleId: '123',
-    css: [
+    id: '123',
+    children: [
       'div.__jsx-style-dynamic-selector { color: red</style><script>alert("howdy")</script> }'
     ],
     dynamic: ['red</style><script>alert("howdy")</script>']
@@ -144,7 +144,7 @@ test('add - nonce is properly fetched from meta tag', t => {
   }
 
   const registry = makeRegistry()
-  registry.add({ styleId: '123', css: [cssRule] })
+  registry.add({ id: '123', children: [cssRule] })
 
   t.is(registry._sheet._nonce, 'test-nonce')
 
@@ -166,29 +166,29 @@ test(
     options.forEach(options => {
       const registry = makeRegistry(options)
       registry.add({
-        styleId: '123',
-        css: options.optimizeForSpeed ? [cssRule] : cssRule
+        id: '123',
+        children: options.optimizeForSpeed ? [cssRule] : cssRule
       })
 
       registry.add({
-        styleId: '345',
-        css: options.optimizeForSpeed ? [cssRuleAlt] : cssRuleAlt
+        id: '345',
+        children: options.optimizeForSpeed ? [cssRuleAlt] : cssRuleAlt
       })
 
-      registry.remove({ styleId: '123' })
+      registry.remove({ id: '123' })
       t.deepEqual(registry.cssRules(), [['jsx-345', cssRuleAlt]])
 
       // Add a duplicate
       registry.add({
-        styleId: '345',
-        css: options.optimizeForSpeed ? [cssRuleAlt] : cssRuleAlt
+        id: '345',
+        children: options.optimizeForSpeed ? [cssRuleAlt] : cssRuleAlt
       })
       // and remove it
-      registry.remove({ styleId: '345' })
+      registry.remove({ id: '345' })
       // Still in the registry
       t.deepEqual(registry.cssRules(), [['jsx-345', cssRuleAlt]])
       // remove again
-      registry.remove({ styleId: '345' })
+      registry.remove({ id: '345' })
       // now the registry should be empty
       t.deepEqual(registry.cssRules(), [])
     })
@@ -210,20 +210,20 @@ test(
     options.forEach(options => {
       const registry = makeRegistry(options)
       registry.add({
-        styleId: '123',
-        css: options.optimizeForSpeed ? [cssRule] : cssRule
+        id: '123',
+        children: options.optimizeForSpeed ? [cssRule] : cssRule
       })
 
       registry.add({
-        styleId: '123',
-        css: options.optimizeForSpeed ? [cssRule] : cssRule
+        id: '123',
+        children: options.optimizeForSpeed ? [cssRule] : cssRule
       })
 
       registry.update(
-        { styleId: '123' },
+        { id: '123' },
         {
-          styleId: '345',
-          css: options.optimizeForSpeed ? [cssRuleAlt] : cssRuleAlt
+          id: '345',
+          children: options.optimizeForSpeed ? [cssRuleAlt] : cssRuleAlt
         }
       )
       // Doesn't remove when there are multiple instances of 123
@@ -232,15 +232,15 @@ test(
         ['jsx-345', cssRuleAlt]
       ])
 
-      registry.remove({ styleId: '345' })
+      registry.remove({ id: '345' })
       t.deepEqual(registry.cssRules(), [['jsx-123', cssRule]])
 
       // Update again
       registry.update(
-        { styleId: '123' },
+        { id: '123' },
         {
-          styleId: '345',
-          css: options.optimizeForSpeed ? [cssRuleAlt] : cssRuleAlt
+          id: '345',
+          children: options.optimizeForSpeed ? [cssRuleAlt] : cssRuleAlt
         }
       )
       // 123 replaced with 345
@@ -294,8 +294,8 @@ test(
     // simple
     t.deepEqual(
       utilRegistry.getIdAndRules({
-        styleId: '123',
-        css: '.test {} .jsx-123 { color: red } .jsx-123 { color: red }'
+        id: '123',
+        children: '.test {} .jsx-123 { color: red } .jsx-123 { color: red }'
       }),
       {
         styleId: 'jsx-123',
@@ -306,8 +306,8 @@ test(
     // dynamic
     t.deepEqual(
       utilRegistry.getIdAndRules({
-        styleId: '123',
-        css:
+        id: '123',
+        children:
           '.test {} .__jsx-style-dynamic-selector { color: red } .__jsx-style-dynamic-selector { color: red }',
         dynamic: ['test', 3, 'test']
       }),
@@ -322,8 +322,8 @@ test(
     // dynamic, css array
     t.deepEqual(
       utilRegistry.getIdAndRules({
-        styleId: '123',
-        css: [
+        id: '123',
+        children: [
           '.test {}',
           '.__jsx-style-dynamic-selector { color: red }',
           '.__jsx-style-dynamic-selector { color: red }'

@@ -105,18 +105,27 @@ test('server rendering', t => {
     return React.createElement(
       'div',
       null,
-      React.createElement(JSXStyle, {
-        css: 'p { color: red }',
-        styleId: 1
-      }),
-      React.createElement(JSXStyle, {
-        css: 'div { color: blue }',
-        styleId: 2
-      }),
-      React.createElement(JSXStyle, {
-        css: `div { color: ${color} }`,
-        styleId: 3
-      })
+      React.createElement(
+        JSXStyle,
+        {
+          id: 1
+        },
+        'p { color: red }'
+      ),
+      React.createElement(
+        JSXStyle,
+        {
+          id: 2
+        },
+        'div { color: blue }'
+      ),
+      React.createElement(
+        JSXStyle,
+        {
+          id: 3
+        },
+        `div { color: ${color} }`
+      )
     )
   }
   // Expected CSS
@@ -152,18 +161,27 @@ test('server rendering with nonce', t => {
     return React.createElement(
       'div',
       null,
-      React.createElement(JSXStyle, {
-        css: 'p { color: red }',
-        styleId: 1
-      }),
-      React.createElement(JSXStyle, {
-        css: 'div { color: blue }',
-        styleId: 2
-      }),
-      React.createElement(JSXStyle, {
-        css: `div { color: ${color} }`,
-        styleId: 3
-      })
+      React.createElement(
+        JSXStyle,
+        {
+          id: 1
+        },
+        'p { color: red }'
+      ),
+      React.createElement(
+        JSXStyle,
+        {
+          id: 2
+        },
+        'div { color: blue }'
+      ),
+      React.createElement(
+        JSXStyle,
+        {
+          id: 3
+        },
+        `div { color: ${color} }`
+      )
     )
   }
   // Expected CSS

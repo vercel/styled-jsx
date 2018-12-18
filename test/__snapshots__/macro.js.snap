@@ -5,7 +5,7 @@ exports[`can alias the named import 1`] = `
 
 
 ({
-    styles: <_JSXStyle styleId={\\"2886504620\\"} css={\\"div.jsx-2886504620{color:red;}\\"} />,
+    styles: <_JSXStyle id={\\"2886504620\\"}>{\\"div.jsx-2886504620{color:red;}\\"}</_JSXStyle>,
     className: 'jsx-2886504620'
 });"
 `;
@@ -16,7 +16,7 @@ exports[`injects JSXStyle for nested scope 1`] = `
 
 function test() {
   ({
-    styles: <_JSXStyle styleId={\\"2886504620\\"} css={\\"div.jsx-2886504620{color:red;}\\"} />,
+    styles: <_JSXStyle id={\\"2886504620\\"}>{\\"div.jsx-2886504620{color:red;}\\"}</_JSXStyle>,
     className: 'jsx-2886504620'
   });
 }"
@@ -27,22 +27,22 @@ exports[`transpiles correctly 1`] = `
 
 
 const { className, styles } = {
-  styles: <_JSXStyle styleId={\\"2052294191\\"} css={\\"div.jsx-2052294191{color:red;}\\"} />,
+  styles: <_JSXStyle id={\\"2052294191\\"}>{\\"div.jsx-2052294191{color:red;}\\"}</_JSXStyle>,
   className: 'jsx-2052294191'
 };
 
 const dynamicStyles = props => ({
-  styles: <_JSXStyle styleId={\\"290194820\\"} css={\`div.__jsx-style-dynamic-selector{color:\${props.color};}\`} dynamic={[props.color]} />,
+  styles: <_JSXStyle id={\\"290194820\\"} dynamic={[props.color]}>{\`div.__jsx-style-dynamic-selector{color:\${props.color};}\`}</_JSXStyle>,
   className: _JSXStyle.dynamic([['290194820', [props.color]]])
 });
 
 const test = {
-  styles: <_JSXStyle styleId={\\"2052294191\\"} css={\\"div.jsx-2052294191{color:red;}\\"} />,
+  styles: <_JSXStyle id={\\"2052294191\\"}>{\\"div.jsx-2052294191{color:red;}\\"}</_JSXStyle>,
   className: 'jsx-2052294191'
 };
 
 const dynamicStyles2 = props => ({
-  styles: <_JSXStyle styleId={\\"290194820\\"} css={\`div.__jsx-style-dynamic-selector{color:\${props.color};}\`} dynamic={[props.color]} />,
+  styles: <_JSXStyle id={\\"290194820\\"} dynamic={[props.color]}>{\`div.__jsx-style-dynamic-selector{color:\${props.color};}\`}</_JSXStyle>,
   className: _JSXStyle.dynamic([['290194820', [props.color]]])
 });
 

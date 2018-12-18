@@ -133,7 +133,7 @@ import _JSXStyle from 'styled-jsx/style'
 export default () => (
   <div className="jsx-123">
     <p className="jsx-123">only this paragraph will get the style :)</p>
-    <_JSXStyle styleId="123" css={`p.jsx-123 {color: red;}`} />
+    <_JSXStyle id="123">{`p.jsx-123 {color: red;}`}</_JSXStyle>
   </div>
 )
 ```
