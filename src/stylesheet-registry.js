@@ -171,19 +171,21 @@ export default class StyleSheetRegistry {
   }
 
   getIdAndRules(props) {
-    if (props.dynamic) {
-      const styleId = this.computeId(props.styleId, props.dynamic)
+    const { children: css, dynamic, id } = props
+
+    if (dynamic) {
+      const styleId = this.computeId(id, dynamic)
       return {
         styleId,
-        rules: Array.isArray(props.css)
-          ? props.css.map(rule => this.computeSelector(styleId, rule))
-          : [this.computeSelector(styleId, props.css)]
+        rules: Array.isArray(css)
+          ? css.map(rule => this.computeSelector(styleId, rule))
+          : [this.computeSelector(styleId, css)]
       }
     }
 
     return {
-      styleId: this.computeId(props.styleId),
-      rules: Array.isArray(props.css) ? props.css : [props.css]
+      styleId: this.computeId(id),
+      rules: Array.isArray(css) ? css : [css]
     }
   }
 

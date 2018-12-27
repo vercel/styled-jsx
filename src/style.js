@@ -22,7 +22,7 @@ export default class JSXStyle extends Component {
   // probably faster than PureComponent (shallowEqual)
   shouldComponentUpdate(otherProps) {
     return (
-      this.props.styleId !== otherProps.styleId ||
+      this.props.id !== otherProps.id ||
       // We do this check because `dynamic` is an array of strings or undefined.
       // These are the computed values for dynamic styles.
       String(this.props.dynamic) !== String(otherProps.dynamic)
@@ -38,7 +38,7 @@ export default class JSXStyle extends Component {
     // See https://github.com/zeit/styled-jsx/pull/484
     if (this.shouldComponentUpdate(this.prevProps)) {
       // Updates
-      if (this.prevProps.styleId) {
+      if (this.prevProps.id) {
         styleSheetRegistry.remove(this.prevProps)
       }
       styleSheetRegistry.add(this.props)

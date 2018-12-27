@@ -9,7 +9,6 @@ import {
   GLOBAL_ATTRIBUTE,
   STYLE_COMPONENT_ID,
   STYLE_COMPONENT,
-  STYLE_COMPONENT_CSS,
   STYLE_COMPONENT_DYNAMIC
 } from './_constants'
 
@@ -410,10 +409,6 @@ export const makeStyledJsxTag = (id, transformedCss, expressions = []) => {
       t.jSXExpressionContainer(
         typeof id === 'string' ? t.stringLiteral(id) : id
       )
-    ),
-    t.jSXAttribute(
-      t.jSXIdentifier(STYLE_COMPONENT_CSS),
-      t.jSXExpressionContainer(css)
     )
   ]
 
@@ -427,9 +422,9 @@ export const makeStyledJsxTag = (id, transformedCss, expressions = []) => {
   }
 
   return t.jSXElement(
-    t.jSXOpeningElement(t.jSXIdentifier(STYLE_COMPONENT), attributes, true),
-    null,
-    []
+    t.jSXOpeningElement(t.jSXIdentifier(STYLE_COMPONENT), attributes),
+    t.jSXClosingElement(t.jSXIdentifier(STYLE_COMPONENT)),
+    [t.jSXExpressionContainer(css)]
   )
 }
 

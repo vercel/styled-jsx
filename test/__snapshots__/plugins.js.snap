@@ -7,8 +7,8 @@ const color = 'red';
 
 export default (() => <div className={'jsx-3382438999 ' + \`jsx-\${styles.__hash}\`}>
     <p className={'jsx-3382438999 ' + \`jsx-\${styles.__hash}\`}>test</p>
-    <_JSXStyle styleId={\\"3382438999\\"} css={\`span.\${color}.jsx-3382438999{color:\${otherColor};}\`} />
-    <_JSXStyle styleId={styles.__hash} css={styles} />
+    <_JSXStyle id={\\"3382438999\\"}>{\`span.\${color}.jsx-3382438999{color:\${otherColor};}\`}</_JSXStyle>
+    <_JSXStyle id={styles.__hash}>{styles}</_JSXStyle>
   </div>);"
 `;
 
@@ -34,7 +34,7 @@ const color = 'red';
 
 export default (() => <div className={'jsx-3382438999 ' + \`jsx-\${styles.__hash}\`}>
     <p className={'jsx-3382438999 ' + \`jsx-\${styles.__hash}\`}>test</p>
-    <_JSXStyle styleId={\\"3382438999\\"} css={\\".test.jsx-3382438999{content:\\\\\\"{\\\\\\"foo\\\\\\":false,\\\\\\"babel\\\\\\":{\\\\\\"location\\\\\\":{\\\\\\"start\\\\\\":{\\\\\\"line\\\\\\":7,\\\\\\"column\\\\\\":16},\\\\\\"end\\\\\\":{\\\\\\"line\\\\\\":11,\\\\\\"column\\\\\\":5}},\\\\\\"vendorPrefixes\\\\\\":false,\\\\\\"sourceMaps\\\\\\":false,\\\\\\"isGlobal\\\\\\":false}}\\\\\\";}\\"} />
-    <_JSXStyle styleId={styles.__hash} css={styles} />
+    <_JSXStyle id={\\"3382438999\\"}>{\\".test.jsx-3382438999{content:\\\\\\"{\\\\\\"foo\\\\\\":false,\\\\\\"babel\\\\\\":{\\\\\\"location\\\\\\":{\\\\\\"start\\\\\\":{\\\\\\"line\\\\\\":7,\\\\\\"column\\\\\\":16},\\\\\\"end\\\\\\":{\\\\\\"line\\\\\\":11,\\\\\\"column\\\\\\":5}},\\\\\\"vendorPrefixes\\\\\\":false,\\\\\\"sourceMaps\\\\\\":false,\\\\\\"isGlobal\\\\\\":false}}\\\\\\";}\\"}</_JSXStyle>
+    <_JSXStyle id={styles.__hash}>{styles}</_JSXStyle>
   </div>);"
 `;
