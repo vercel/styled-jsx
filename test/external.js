@@ -49,14 +49,14 @@ test('does not transpile non-styled-jsx tagged teplate literals', async t => {
 })
 
 test('throws when using `this.something` in external stylesheets', async t => {
-  const { message } = await t.throws(
+  const { message } = await t.throwsAsync(() =>
     transform('./fixtures/styles-external-invalid.js')
   )
   t.regex(message, /this\.props/)
 })
 
 test('throws when referring an undefined value in external stylesheets', async t => {
-  const { message } = await t.throws(
+  const { message } = await t.throwsAsync(() =>
     transform('./fixtures/styles-external-invalid2.js')
   )
   t.regex(message, /props\.color/)

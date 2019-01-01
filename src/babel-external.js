@@ -1,4 +1,4 @@
-import * as t from 'babel-types'
+import * as t from '@babel/types'
 
 import { STYLE_COMPONENT } from './_constants'
 

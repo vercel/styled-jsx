@@ -20,6 +20,11 @@ test('works with stateless', async t => {
   t.snapshot(code)
 })
 
+test('works with fragment', async t => {
+  const { code } = await transform('./fixtures/fragment.js')
+  t.snapshot(code)
+})
+
 test('ignores whitespace around expression container', async t => {
   const { code } = await transform('./fixtures/whitespace.js')
   t.snapshot(code)
@@ -93,7 +98,7 @@ test('works with dynamic element in class', async t => {
 })
 
 test('does not transpile nested style tags', async t => {
-  const { message } = await t.throws(
+  const { message } = await t.throwsAsync(() =>
     transform('./fixtures/nested-style-tags.js')
   )
   t.regex(message, /detected nested style tag/i)

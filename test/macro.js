@@ -3,7 +3,7 @@ import test from 'ava'
 
 // Ours
 import macros from 'babel-plugin-macros'
-import jsx from 'babel-plugin-syntax-jsx'
+import jsx from '@babel/plugin-syntax-jsx'
 import _transform, { transformSource as _transformSource } from './_transform'
 
 const transform = (file, opts = {}) =>
@@ -14,6 +14,7 @@ const transform = (file, opts = {}) =>
 
 const transformSource = (src, opts = {}) =>
   _transformSource(src.trim(), {
+    filename: './index.js',
     plugins: [macros, jsx],
     ...opts
   })
@@ -24,7 +25,7 @@ test('transpiles correctly', async t => {
 })
 
 test('throws when using the default export directly', async t => {
-  const { message } = await t.throws(
+  const { message } = await t.throwsAsync(() =>
     transformSource(`
     import css from './src/macro'
 
@@ -36,7 +37,7 @@ test('throws when using the default export directly', async t => {
 })
 
 test('throws when using the default export directly and it is not called css', async t => {
-  const { message } = await t.throws(
+  const { message } = await t.throwsAsync(() =>
     transformSource(`
     import foo from './src/macro'
 
@@ -48,7 +49,7 @@ test('throws when using the default export directly and it is not called css', a
 })
 
 test('throws when using the default export directly and it is not called resolve', async t => {
-  const { message } = await t.throws(
+  const { message } = await t.throwsAsync(() =>
     transformSource(`
     import resolve from './src/macro'
 
@@ -60,7 +61,7 @@ test('throws when using the default export directly and it is not called resolve
 })
 
 test('throws when using an invalid method from the default export', async t => {
-  const { message } = await t.throws(
+  const { message } = await t.throwsAsync(() =>
     transformSource(`
     import css from './src/macro'
 
@@ -72,7 +73,7 @@ test('throws when using an invalid method from the default export', async t => {
 })
 
 test('throws when using a named import different than resolve', async t => {
-  const { message } = await t.throws(
+  const { message } = await t.throwsAsync(() =>
     transformSource(`
     import { foo } from './src/macro'
 
@@ -84,7 +85,7 @@ test('throws when using a named import different than resolve', async t => {
 })
 
 test('throws when using a named import as a member expression', async t => {
-  const { message } = await t.throws(
+  const { message } = await t.throwsAsync(() =>
     transformSource(`
     import { resolve } from './src/macro'
 

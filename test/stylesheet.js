@@ -143,9 +143,13 @@ test(
     const sheet = makeSheet()
     sheet.inject()
 
-    // eslint-disable-next-line unicorn/new-for-builtins
-    sheet.insertRule(new String('div { color: red }')) // eslint-disable-line no-new-wrappers
-    t.deepEqual(sheet.cssRules(), [{ cssText: 'div { color: red }' }])
+    /* eslint-disable unicorn/new-for-builtins,no-new-wrappers */
+
+    sheet.insertRule(new String('div { color: red }'))
+    t.deepEqual(sheet.cssRules(), [
+      { cssText: new String('div { color: red }') }
+    ])
+    /* eslint-enable */
   })
 )
 
