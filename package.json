@@ -25,30 +25,10 @@
     "format": "prettier --single-quote --no-semi --write *.js {src,test}/*.js",
     "precommit": "xo --quiet && ava && lint-staged"
   },
-  "babel": {
-    "presets": [
-      "@babel/preset-env"
-    ],
-    "plugins": [
-      "@babel/plugin-proposal-object-rest-spread"
-    ]
-  },
   "ava": {
     "require": [
       "@babel/register"
-    ],
-    "babel": {
-      "testOptions": {
-        "presets": [
-          "@babel/preset-env",
-          "@babel/preset-react"
-        ],
-        "plugins": [
-          "@babel/plugin-proposal-object-rest-spread",
-          "@babel/plugin-transform-runtime"
-        ]
-      }
-    }
+    ]
   },
   "xo": {
     "envs": [
@@ -74,8 +54,8 @@
     ]
   },
   "dependencies": {
-    "@babel/plugin-syntax-jsx": "7.2.0",
-    "@babel/types": "7.2.2",
+    "babel-plugin-syntax-jsx": "6.18.0",
+    "babel-types": "6.26.0",
     "convert-source-map": "1.5.1",
     "loader-utils": "1.1.0",
     "source-map": "0.7.3",
@@ -93,6 +73,7 @@
     "@babel/preset-react": "7.0.0",
     "@babel/register": "7.0.0",
     "@babel/runtime": "7.2.0",
+    "babel-core": "6.26.0",
     "ava": "1.0.1",
     "babel-plugin-macros": "2.4.3",
     "benchmark": "^2.1.4",

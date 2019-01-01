@@ -2,7 +2,7 @@
 import test from 'ava'
 
 // Ours
-import plugin from '../src/babel'
+import plugin from '../../src/babel'
 import _transform, { transformSource as _transformSource } from './_transform'
 
 const transform = (file, opts = {}) =>
@@ -17,24 +17,24 @@ const transformSource = (src, opts = {}) =>
   })
 
 test('transpiles external stylesheets', async t => {
-  const { code } = await transform('./fixtures/styles.js')
+  const { code } = await transform('../fixtures/styles.js')
   t.snapshot(code)
 })
 
 test('(optimized) transpiles external stylesheets', async t => {
-  const { code } = await transform('./fixtures/styles.js', {
+  const { code } = await transform('../fixtures/styles.js', {
     optimizeForSpeed: true
   })
   t.snapshot(code)
 })
 
 test('transpiles external stylesheets (CommonJS modules)', async t => {
-  const { code } = await transform('./fixtures/styles2.js')
+  const { code } = await transform('../fixtures/styles2.js')
   t.snapshot(code)
 })
 
 test('(optimized) transpiles external stylesheets (CommonJS modules)', async t => {
-  const { code } = await transform('./fixtures/styles2.js', {
+  const { code } = await transform('../fixtures/styles2.js', {
     optimizeForSpeed: true
   })
   t.snapshot(code)
@@ -42,39 +42,39 @@ test('(optimized) transpiles external stylesheets (CommonJS modules)', async t =
 
 test('does not transpile non-styled-jsx tagged teplate literals', async t => {
   const { code } = await transform(
-    './fixtures/not-styled-jsx-tagged-templates.js'
+    '../fixtures/not-styled-jsx-tagged-templates.js'
   )
   t.snapshot(code)
 })
 
 test('throws when using `this.something` in external stylesheets', async t => {
   const { message } = await t.throwsAsync(() =>
-    transform('./fixtures/styles-external-invalid.js')
+    transform('../fixtures/styles-external-invalid.js')
   )
   t.regex(message, /this\.props/)
 })
 
 test('throws when referring an undefined value in external stylesheets', async t => {
   const { message } = await t.throwsAsync(() =>
-    transform('./fixtures/styles-external-invalid2.js')
+    transform('../fixtures/styles-external-invalid2.js')
   )
   t.regex(message, /props\.color/)
 })
 
 test('use external stylesheets', async t => {
-  const { code } = await transform('./fixtures/external-stylesheet.js')
+  const { code } = await transform('../fixtures/external-stylesheet.js')
   t.snapshot(code)
 })
 
 test('use external stylesheets (multi-line)', async t => {
   const { code } = await transform(
-    './fixtures/external-stylesheet-multi-line.js'
+    '../fixtures/external-stylesheet-multi-line.js'
   )
   t.snapshot(code)
 })
 
 test('use external stylesheets (global only)', async t => {
-  const { code } = await transform('./fixtures/external-stylesheet-global.js')
+  const { code } = await transform('../fixtures/external-stylesheet-global.js')
   t.snapshot(code)
 })
 
@@ -90,26 +90,6 @@ test('injects JSXStyle for nested scope', async t => {
 })
 
 test('use external stylesheet and dynamic element', async t => {
-  const { code } = await transform('./fixtures/dynamic-element-external.js')
-  t.snapshot(code)
-})
-
-test('Makes sure that style nodes are not re-used', async t => {
-  const { code } = await transformSource(
-    `
-    import styles from './App.styles';
-
-    function Test() {
-      return <div>
-        <style jsx global>{styles}</style>
-      </div>
-    }
-      `,
-    {
-      babelrc: false,
-      plugins: [plugin, '@babel/plugin-transform-modules-commonjs']
-    }
-  )
-
+  const { code } = await transform('../fixtures/dynamic-element-external.js')
   t.snapshot(code)
 })
