@@ -61,6 +61,15 @@ export default function({ types: t }) {
       },
       JSXElement: {
         enter(path, state) {
+          // since JSXFragments don't visit JSXOpeningElement
+          // increment ignoreClosing for them here
+          if (t.isJSXFragment && t.isJSXFragment(path)) {
+            if (state.ignoreClosing === null) {
+              state.ignoreClosing = 0
+            }
+            state.ignoreClosing++
+          }
+
           if (state.hasJSXStyle !== null) {
             return
           }
@@ -183,18 +192,6 @@ export default function({ types: t }) {
           state.hasJSXStyle = true
           state.file.hasJSXStyle = true
 
-          // JSXOpeningElement isn't called for Fragments so
-          // initialize ignoreClosing here (not supported < babel 7)
-          if (t.isJSXFragment) {
-            t.traverseFast(path.node, p => {
-              if (t.isJSXFragment(p)) {
-                if (state.ignoreClosing === null) {
-                  state.ignoreClosing = 0
-                }
-                state.ignoreClosing++
-              }
-            })
-          }
           // Next visit will be: JSXOpeningElement
         },
         exit(path, state) {
