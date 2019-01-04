@@ -2,9 +2,17 @@ export default () => (
   <>
     <p>Testing!!!</p>
     <p className="foo">Bar</p>
-    <div>
+    <>
       <h3 id="head">Title...</h3>
-    </div>
+      <>
+        <p>hello</p>
+        <>
+          <p>foo</p>
+          <p>bar</p>
+        </>
+        <p>world</p>
+      </>
+    </>
     <style jsx>{`
       p {
         color: cyan;
