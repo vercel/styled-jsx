@@ -20,7 +20,7 @@ const transformSource = (src, opts = {}) =>
   })
 
 test('transpiles correctly', async t => {
-  const { code } = await transform('./fixtures/macro.js')
+  const { code } = await transform('../fixtures/macro.js')
   t.snapshot(code)
 })
 

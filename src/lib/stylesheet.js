@@ -123,7 +123,7 @@ export default class StyleSheet {
       // https://stackoverflow.com/questions/20007992/chrome-suddenly-stopped-accepting-insertrule
       try {
         sheet.insertRule(rule, index)
-      } catch (err) {
+      } catch (error) {
         if (!isProd) {
           console.warn(
             `StyleSheet: illegal rule: \n\n${rule}\n\nSee https://stackoverflow.com/q/20007992 for more info`
@@ -155,7 +155,7 @@ export default class StyleSheet {
 
       try {
         sheet.insertRule(rule, index)
-      } catch (err) {
+      } catch (error) {
         if (!isProd) {
           console.warn(
             `StyleSheet: illegal rule: \n\n${rule}\n\nSee https://stackoverflow.com/q/20007992 for more info`
@@ -207,9 +207,8 @@ export default class StyleSheet {
     return this._tags.reduce((rules, tag) => {
       if (tag) {
         rules = rules.concat(
-          this.getSheetForTag(tag).cssRules.map(
-            rule =>
-              rule.cssText === this._deletedRulePlaceholder ? null : rule
+          this.getSheetForTag(tag).cssRules.map(rule =>
+            rule.cssText === this._deletedRulePlaceholder ? null : rule
           )
         )
       } else {

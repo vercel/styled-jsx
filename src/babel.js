@@ -20,7 +20,7 @@ import {
 import { STYLE_COMPONENT } from './_constants'
 
 export default function({ types: t }) {
-  return {
+  const visitors = {
     inherits: jsx,
     visitor: {
       JSXOpeningElement(path, state) {
@@ -182,10 +182,12 @@ export default function({ types: t }) {
 
           state.hasJSXStyle = true
           state.file.hasJSXStyle = true
+
           // Next visit will be: JSXOpeningElement
         },
         exit(path, state) {
           const isGlobal = isGlobalEl(path.node.openingElement)
+
           if (state.hasJSXStyle && !--state.ignoreClosing && !isGlobal) {
             state.hasJSXStyle = null
             state.className = null
@@ -200,7 +202,7 @@ export default function({ types: t }) {
             let styleTagSrc
             try {
               styleTagSrc = path.getSource()
-            } catch (err) {}
+            } catch (error) {}
             throw path.buildCodeFrameError(
               'Detected nested style tag' +
                 (styleTagSrc ? `: \n\n${styleTagSrc}\n\n` : ' ') +
@@ -281,4 +283,29 @@ export default function({ types: t }) {
       ...externalStylesVisitor
     }
   }
+
+  // only apply JSXFragment visitor if supported
+  if (t.isJSXFragment) {
+    visitors.visitor.JSXFragment = visitors.visitor.JSXElement
+    visitors.visitor.JSXOpeningFragment = {
+      enter(_path, state) {
+        if (!state.hasJSXStyle) {
+          return
+        }
+
+        if (state.ignoreClosing === null) {
+          // We keep a counter of elements inside so that we
+          // can keep track of when we exit the parent to reset state
+          // note: if we wished to add an option to turn off
+          // selectors to reach parent elements, it would suffice to
+          // set this to `1` and do an early return instead
+          state.ignoreClosing = 0
+        }
+
+        state.ignoreClosing++
+      }
+    }
+  }
+
+  return visitors
 }

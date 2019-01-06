@@ -4,9 +4,9 @@ import React from 'react'
 import ReactDOM from 'react-dom/server'
 
 // Ours
-import plugin from '../src/babel'
-import JSXStyle from '../src/style'
-import flush, { flushToHTML } from '../src/server'
+import plugin from '../../src/babel'
+import JSXStyle from '../../src/style'
+import flush, { flushToHTML } from '../../src/server'
 import _transform from './_transform'
 
 const transform = (file, opts = {}) =>
@@ -16,90 +16,92 @@ const transform = (file, opts = {}) =>
   })
 
 test('works with stateless', async t => {
-  const { code } = await transform('./fixtures/stateless.js')
+  const { code } = await transform('../fixtures/stateless.js')
   t.snapshot(code)
 })
 
-test('works with fragment', async t => {
-  const { code } = await transform('./fixtures/fragment.js')
-  t.snapshot(code)
+test('does not handle shorthand fragment <>', async t => {
+  const { message } = await t.throwsAsync(() =>
+    transform('../fixtures/simple-fragment.js')
+  )
+  t.regex(message, /Unexpected token/)
 })
 
 test('ignores whitespace around expression container', async t => {
-  const { code } = await transform('./fixtures/whitespace.js')
+  const { code } = await transform('../fixtures/whitespace.js')
   t.snapshot(code)
 })
 
 test('works with class', async t => {
-  const { code } = await transform('./fixtures/class.js')
+  const { code } = await transform('../fixtures/class.js')
   t.snapshot(code)
 })
 
 test('ignores when attribute is absent', async t => {
-  const { code } = await transform('./fixtures/absent.js')
+  const { code } = await transform('../fixtures/absent.js')
   t.snapshot(code)
 })
 
 test('works with global styles', async t => {
-  const { code } = await transform('./fixtures/global.js')
+  const { code } = await transform('../fixtures/global.js')
   t.snapshot(code)
 })
 
 test('generates source maps', async t => {
-  const { code } = await transform('./fixtures/source-maps.js', {
+  const { code } = await transform('../fixtures/source-maps.js', {
     sourceMaps: true
   })
   t.snapshot(code)
 })
 
 test('mixed global and scoped', async t => {
-  const { code } = await transform('./fixtures/mixed-global-scoped.js')
+  const { code } = await transform('../fixtures/mixed-global-scoped.js')
   t.snapshot(code)
 })
 
 test('works with multiple jsx blocks', async t => {
-  const { code } = await transform('./fixtures/multiple-jsx.js')
+  const { code } = await transform('../fixtures/multiple-jsx.js')
   t.snapshot(code)
 })
 
 test('should not add the data-jsx attribute to components instances', async t => {
-  const { code } = await transform('./fixtures/component-attribute.js')
+  const { code } = await transform('../fixtures/component-attribute.js')
   t.snapshot(code)
 })
 
 test('works with expressions in template literals', async t => {
-  const { code } = await transform('./fixtures/expressions.js')
+  const { code } = await transform('../fixtures/expressions.js')
   t.snapshot(code)
 })
 
 test('should have different jsx ids', async t => {
-  const { code } = await transform('./fixtures/different-jsx-ids.js')
+  const { code } = await transform('../fixtures/different-jsx-ids.js')
   t.snapshot(code)
 })
 
 test('works with non styled-jsx styles', async t => {
-  const { code } = await transform('./fixtures/non-styled-jsx-style.js')
+  const { code } = await transform('../fixtures/non-styled-jsx-style.js')
   t.snapshot(code)
 })
 
 test('works with css tagged template literals in the same file', async t => {
-  const { code } = await transform('./fixtures/css-tag-same-file.js')
+  const { code } = await transform('../fixtures/css-tag-same-file.js')
   t.snapshot(code)
 })
 
 test('works with dynamic element', async t => {
-  const { code } = await transform('./fixtures/dynamic-element.js')
+  const { code } = await transform('../fixtures/dynamic-element.js')
   t.snapshot(code)
 })
 
 test('works with dynamic element in class', async t => {
-  const { code } = await transform('./fixtures/dynamic-element-class.js')
+  const { code } = await transform('../fixtures/dynamic-element-class.js')
   t.snapshot(code)
 })
 
 test('does not transpile nested style tags', async t => {
   const { message } = await t.throwsAsync(() =>
-    transform('./fixtures/nested-style-tags.js')
+    transform('../fixtures/nested-style-tags.js')
   )
   t.regex(message, /detected nested style tag/i)
 })

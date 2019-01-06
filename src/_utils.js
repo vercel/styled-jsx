@@ -90,7 +90,7 @@ export const getScope = path =>
   ).scope
 
 export const isGlobalEl = el =>
-  el.attributes.some(({ name }) => name && name.name === GLOBAL_ATTRIBUTE)
+  el && el.attributes.some(({ name }) => name && name.name === GLOBAL_ATTRIBUTE)
 
 export const isStyledJsx = ({ node: el }) =>
   t.isJSXElement(el) &&
@@ -169,7 +169,7 @@ export const isDynamic = (expr, scope) => {
   try {
     expr.traverse(validateExpressionVisitor, scope)
     return false
-  } catch (err) {}
+  } catch (error) {}
 
   return true
 }
@@ -201,10 +201,10 @@ const validateExternalExpressionsVisitor = {
 export const validateExternalExpressions = path => {
   try {
     path.traverse(validateExternalExpressionsVisitor)
-  } catch (err) {
+  } catch (error) {
     throw path.buildCodeFrameError(`
       Found an \`undefined\` or invalid value in your styles: \`${
-        err.message
+        error.message
       }\`.
 
       If you are trying to use dynamic styles in external files this is unfortunately not possible yet.
@@ -213,7 +213,7 @@ export const validateExternalExpressions = path => {
       <button>
         <style jsx>{externalStylesReference}</style>
         <style jsx>{\`
-          button { background-color: $\{${err.message}} }
+          button { background-color: $\{${error.message}} }
         \`}</style>
       </button>
     `)

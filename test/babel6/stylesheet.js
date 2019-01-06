@@ -2,8 +2,8 @@
 import test from 'ava'
 
 // Ours
-import StyleSheet from '../src/lib/stylesheet'
-import withMock, { withMockDocument } from './helpers/with-mock'
+import StyleSheet from '../../src/lib/stylesheet'
+import withMock, { withMockDocument } from '../helpers/with-mock'
 
 export const invalidRules = ['invalid rule']
 
