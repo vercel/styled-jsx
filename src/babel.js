@@ -61,15 +61,6 @@ export default function({ types: t }) {
       },
       JSXElement: {
         enter(path, state) {
-          // since JSXFragments don't visit JSXOpeningElement
-          // increment ignoreClosing for them here
-          if (t.isJSXFragment && t.isJSXFragment(path)) {
-            if (state.ignoreClosing === null) {
-              state.ignoreClosing = 0
-            }
-            state.ignoreClosing++
-          }
-
           if (state.hasJSXStyle !== null) {
             return
           }
@@ -296,6 +287,24 @@ export default function({ types: t }) {
   // only apply JSXFragment visitor if supported
   if (t.isJSXFragment) {
     visitors.visitor.JSXFragment = visitors.visitor.JSXElement
+    visitors.visitor.JSXOpeningFragment = {
+      enter(_path, state) {
+        if (!state.hasJSXStyle) {
+          return
+        }
+
+        if (state.ignoreClosing === null) {
+          // We keep a counter of elements inside so that we
+          // can keep track of when we exit the parent to reset state
+          // note: if we wished to add an option to turn off
+          // selectors to reach parent elements, it would suffice to
+          // set this to `1` and do an early return instead
+          state.ignoreClosing = 0
+        }
+
+        state.ignoreClosing++
+      }
+    }
   }
 
   return visitors

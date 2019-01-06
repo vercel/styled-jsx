@@ -29,3 +29,23 @@ export default () => (
     `}</style>
   </>
 )
+
+function Component1() {
+  return (
+    <>
+      <div>test</div>
+    </>
+  )
+}
+
+function Component2() {
+  return (
+    <div>
+      <style jsx>{`
+        div {
+          color: red;
+        }
+      `}</style>
+    </div>
+  )
+}
