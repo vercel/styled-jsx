@@ -20,6 +20,13 @@ test('works with stateless', async t => {
   t.snapshot(code)
 })
 
+test('does not handle shorthand fragment <>', async t => {
+  const { message } = await t.throwsAsync(() =>
+    transform('../fixtures/simple-fragment.js')
+  )
+  t.regex(message, /Unexpected token/)
+})
+
 test('ignores whitespace around expression container', async t => {
   const { code } = await transform('../fixtures/whitespace.js')
   t.snapshot(code)
