@@ -15,6 +15,16 @@ const transform = (file, opts = {}) =>
     ...opts
   })
 
+test('handles dynamic `this` value inside of arrow function', async t => {
+  const { code } = await transform(
+    './fixtures/dynamic-this-value-in-arrow.js',
+    {
+      plugins: ['@babel/plugin-transform-arrow-functions', plugin]
+    }
+  )
+  t.snapshot(code)
+})
+
 test('works with stateless', async t => {
   const { code } = await transform('./fixtures/stateless.js')
   t.snapshot(code)
