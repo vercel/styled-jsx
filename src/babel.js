@@ -20,10 +20,8 @@ import {
 import { STYLE_COMPONENT } from './_constants'
 
 export default function({ types: t }) {
-  let state = {}
-
   const jsxVisitors = {
-    JSXOpeningElement(path) {
+    JSXOpeningElement(path, state) {
       const el = path.node
       const { name } = el.name || {}
 
@@ -60,7 +58,7 @@ export default function({ types: t }) {
       // Next visit will be: JSXElement exit()
     },
     JSXElement: {
-      enter(path) {
+      enter(path, state) {
         if (state.hasJSXStyle !== null) {
           return
         }
@@ -185,7 +183,7 @@ export default function({ types: t }) {
 
         // Next visit will be: JSXOpeningElement
       },
-      exit(path) {
+      exit(path, state) {
         const isGlobal = isGlobalEl(path.node.openingElement)
 
         if (state.hasJSXStyle && !--state.ignoreClosing && !isGlobal) {
@@ -261,7 +259,7 @@ export default function({ types: t }) {
   if (t.isJSXFragment) {
     jsxVisitors.JSXFragment = jsxVisitors.JSXElement
     jsxVisitors.JSXOpeningFragment = {
-      enter() {
+      enter(path, state) {
         if (!state.hasJSXStyle) {
           return
         }
@@ -284,8 +282,7 @@ export default function({ types: t }) {
     inherits: jsx,
     visitor: {
       Program: {
-        enter(path, _state) {
-          state = _state
+        enter(path, state) {
           state.hasJSXStyle = null
           state.ignoreClosing = null
           state.file.hasJSXStyle = false
@@ -295,9 +292,9 @@ export default function({ types: t }) {
           // we need to beat the arrow function transform and
           // possibly others so we traverse from here or else
           // dynamic values in classNames could be incorrect
-          path.traverse(jsxVisitors)
+          path.traverse(jsxVisitors, state)
         },
-        exit({ node, scope }) {
+        exit({ node, scope }, state) {
           if (
             !(
               state.file.hasJSXStyle &&

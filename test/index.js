@@ -19,7 +19,7 @@ test('handles dynamic `this` value inside of arrow function', async t => {
   const { code } = await transform(
     './fixtures/dynamic-this-value-in-arrow.js',
     {
-      presets: ['@babel/preset-env']
+      plugins: ['@babel/plugin-transform-arrow-functions', plugin]
     }
   )
   t.snapshot(code)
