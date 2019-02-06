@@ -5,8 +5,6 @@ import ReactDOM from 'react-dom/server'
 
 // Ours
 import plugin from '../src/babel'
-import JSXStyle from '../src/style'
-import flush, { flushToHTML } from '../src/server'
 import _transform from './_transform'
 
 const transform = (file, opts = {}) =>
@@ -114,7 +112,18 @@ test('does not transpile nested style tags', async t => {
   t.regex(message, /detected nested style tag/i)
 })
 
+function clearModulesCache() {
+  ;['../src/lib/stylesheet', '../src/style', '../src/server'].forEach(
+    moduleName => {
+      delete require.cache[require.resolve(moduleName)]
+    }
+  )
+}
+
 test('server rendering', t => {
+  clearModulesCache()
+  const JSXStyle = require('../src/style').default
+  const { default: flush, flushToHTML } = require('../src/server')
   function App() {
     const color = 'green'
     return React.createElement(
@@ -171,6 +180,9 @@ test('server rendering', t => {
 })
 
 test('server rendering with nonce', t => {
+  clearModulesCache()
+  const JSXStyle = require('../src/style').default
+  const { default: flush, flushToHTML } = require('../src/server')
   function App() {
     const color = 'green'
     return React.createElement(
@@ -224,4 +236,31 @@ test('server rendering with nonce', t => {
   // Assert that memory is empty
   t.is(0, flush({ nonce: 'test-nonce' }).length)
   t.is('', flushToHTML({ nonce: 'test-nonce' }))
+})
+
+test('optimized styles do not contain new lines', t => {
+  clearModulesCache()
+  const JSXStyle = require('../src/style').default
+  const { default: flush } = require('../src/server')
+  function App() {
+    return React.createElement(
+      'div',
+      null,
+      React.createElement(
+        JSXStyle,
+        {
+          id: 1
+        },
+        ['p { color: red }', '.foo { color: hotpink }']
+      )
+    )
+  }
+  ReactDOM.renderToString(React.createElement(App))
+  const html = ReactDOM.renderToStaticMarkup(
+    React.createElement('head', null, flush())
+  )
+  const expected =
+    '<style id="__jsx-1">p { color: red }.foo { color: hotpink }</style>'
+
+  t.is(html, `<head>${expected}</head>`)
 })

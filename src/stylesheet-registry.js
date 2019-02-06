@@ -33,7 +33,7 @@ export default class StyleSheetRegistry {
 
   add(props) {
     if (undefined === this._optimizeForSpeed) {
-      this._optimizeForSpeed = Array.isArray(props.css)
+      this._optimizeForSpeed = Array.isArray(props.children)
       this._sheet.setOptimizeForSpeed(this._optimizeForSpeed)
       this._optimizeForSpeed = this._sheet.isOptimizeForSpeed()
     }
@@ -118,7 +118,7 @@ export default class StyleSheetRegistry {
           styleId,
           this._indices[styleId]
             .map(index => cssRules[index].cssText)
-            .join('\n')
+            .join(this._optimizeForSpeed ? '' : '\n')
         ])
         // filter out empty rules
         .filter(rule => Boolean(rule[1]))
