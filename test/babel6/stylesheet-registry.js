@@ -64,7 +64,7 @@ test(
         t.deepEqual(registry.cssRules(), [
           ['jsx-123', cssRule],
           ['jsx-345', cssRule],
-          ['jsx-456', 'div { color: red }\np { color: red }']
+          ['jsx-456', 'div { color: red }p { color: red }']
         ])
       }
     })
