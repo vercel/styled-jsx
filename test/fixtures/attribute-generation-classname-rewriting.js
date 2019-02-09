@@ -43,6 +43,9 @@ export default () => {
       <div {...{ className: 'foo' }} {...bar} />
       <div {...{ className: 'foo' }} {...bar} className="test" />
       <div className="test" {...{ className: 'foo' }} {...bar} />
+      <div className="test" {...{ className: props.className }} />
+      <div className="test" {...{ className: props.className }} {...bar} />
+      <div className="test" {...bar} {...{ className: props.className }} />
       <Element />
       <Element className="test" />
       <Element {...props} />
