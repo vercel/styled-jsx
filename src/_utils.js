@@ -46,31 +46,23 @@ export const addClassName = (path, jsxId) => {
           }
           break
         }
+        continue
       }
 
-      if (
-        t.isMemberExpression(node.argument) ||
-        t.isIdentifier(node.argument)
-      ) {
-        const name = node.argument.name
-        const attrNameDotClassName = t.memberExpression(
-          t.isMemberExpression(node.argument)
-            ? node.argument
-            : t.identifier(name),
-          t.identifier('className')
-        )
+      const name = node.argument.name
+      const attrNameDotClassName = t.memberExpression(
+        t.isIdentifier(node.argument) ? t.identifier(name) : node.argument,
+        t.identifier('className')
+      )
 
-        spreads.push(
-          // `${name}.className != null && ${name}.className`
-          and(
-            t.binaryExpression('!=', attrNameDotClassName, t.nullLiteral()),
-            attrNameDotClassName
-          )
+      spreads.push(
+        // `${name}.className != null && ${name}.className`
+        and(
+          t.binaryExpression('!=', attrNameDotClassName, t.nullLiteral()),
+          attrNameDotClassName
         )
-      }
-      continue
-    }
-    if (t.isJSXAttribute(attr) && node.name.name === 'className') {
+      )
+    } else if (t.isJSXAttribute(attr) && node.name.name === 'className') {
       className = attributes[i]
       // found className break the loop
       break
