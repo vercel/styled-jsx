@@ -39,6 +39,11 @@ export const addClassName = (path, jsxId) => {
 
         if (~index) {
           className = attr.get('argument').get(`properties.${index}`)
+
+          // Remove jsx spread attribute if there is only className property
+          if (node.argument.properties.length === 1) {
+            attr.remove()
+          }
           break
         }
       }
