@@ -89,8 +89,10 @@ function styledJsxMacro({ references, state }) {
         path: templateExpression,
         fileInfo: {
           file: state.file,
-          sourceFileName: state.file.opts.sourceFileName,
-          sourceMaps: state.opts.sourceMaps
+          sourceFileName:
+            state.file.opts.sourceFileName || state.file.sourceFileName,
+          sourceMaps: state.opts.sourceMaps,
+          filename: state.file.opts.filename || state.file.filename
         },
         splitRules:
           typeof state.opts.optimizeForSpeed === 'boolean'

@@ -591,7 +591,8 @@ export const processCss = (stylesInfo, options) => {
 
   if (useSourceMaps) {
     const generator = makeSourceMapGenerator(fileInfo.file)
-    const filename = fileInfo.sourceFileName
+    const filename = fileInfo.sourceFileName || fileInfo.filename
+
     transformedCss = addSourceMaps(
       transform(
         isGlobal ? '' : getPrefix(dynamic, staticClassName),
