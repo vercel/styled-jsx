@@ -70,6 +70,7 @@ export const addClassName = (path, jsxId) => {
       }
       continue
     }
+
     if (t.isJSXAttribute(attr) && node.name.name === 'className') {
       className = attributes[i]
       // found className break the loop
@@ -172,6 +173,7 @@ export const validateExpressionVisitor = {
           binding.scope.parent !== null || binding.kind !== 'const'
         break
       }
+
       targetScope = targetScope.parent
     }
 
@@ -203,6 +205,7 @@ const validateExternalExpressionsVisitor = {
     if (t.isMemberExpression(path.parentPath)) {
       return
     }
+
     const { name } = path.node
     if (!path.scope.hasBinding(name)) {
       throw path.buildCodeFrameError(path.getSource())
@@ -213,6 +216,7 @@ const validateExternalExpressionsVisitor = {
     if (!t.isIdentifier(node.object)) {
       return
     }
+
     if (!path.scope.hasBinding(node.object.name)) {
       throw path.buildCodeFrameError(path.getSource())
     }
@@ -317,6 +321,7 @@ export const computeClassNames = (styles, externalJsxId) => {
       } else {
         acc.dynamic.push(styles)
       }
+
       return acc
     },
     {
@@ -517,7 +522,6 @@ export const combinePlugins = plugins => {
 
       log('Loading plugin from path: ' + plugin)
 
-      // eslint-disable-next-line import/no-dynamic-require
       let p = require(plugin)
       if (p.default) {
         p = p.default
@@ -531,6 +535,7 @@ export const combinePlugins = plugins => {
           } to be a function but instead got ${type}`
         )
       }
+
       return {
         plugin: p,
         options
@@ -641,6 +646,7 @@ export const booleanOption = opts => {
       ret = opt
       return true
     }
+
     return false
   })
   return ret

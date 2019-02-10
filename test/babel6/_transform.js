@@ -13,6 +13,7 @@ export default (file, opts = {}) =>
         if (error) {
           return reject(error)
         }
+
         resolve(data)
       }
     )

@@ -5,15 +5,19 @@ function notTranspiledError(name) {
       '` tagged template literals were not transpiled.'
   )
 }
+
 function css() {
   notTranspiledError('css')
 }
+
 css.global = function() {
   notTranspiledError('global')
 }
+
 css.resolve = function() {
   notTranspiledError('resolve')
 }
+
 module.exports = css
 module.exports.global = css.global
 module.exports.resolve = css.resolve

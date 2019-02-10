@@ -135,6 +135,7 @@ test('server rendering', t => {
       )
     )
   }
+
   // Expected CSS
   const expected =
     '<style id="__jsx-1">p { color: red }</style>' +
@@ -191,6 +192,7 @@ test('server rendering with nonce', t => {
       )
     )
   }
+
   // Expected CSS
   const expected =
     '<style id="__jsx-1" nonce="test-nonce">p { color: red }</style>' +

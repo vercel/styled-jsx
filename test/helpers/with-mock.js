@@ -4,6 +4,7 @@ export default function withMock(mockFn, testFn) {
     if (typeof cleanUp !== 'function') {
       throw new TypeError('mockFn should return a cleanup function')
     }
+
     testFn(t)
     cleanUp(t)
   }
