@@ -11,8 +11,7 @@ import _transform from './_transform'
 
 const transform = (file, opts = {}) =>
   _transform(file, {
-    plugins: [plugin],
-    ...opts
+    plugins: [[plugin, opts]]
   })
 
 test('works with stateless', async t => {

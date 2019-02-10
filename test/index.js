@@ -9,12 +9,11 @@ import _transform from './_transform'
 
 const transform = (file, opts = {}) =>
   _transform(file, {
-    plugins: [plugin],
-    ...opts
+    plugins: [[plugin, opts]]
   })
 
 test('handles dynamic `this` value inside of arrow function', async t => {
-  const { code } = await transform(
+  const { code } = await _transform(
     './fixtures/dynamic-this-value-in-arrow.js',
     {
       plugins: ['@babel/plugin-transform-arrow-functions', plugin]

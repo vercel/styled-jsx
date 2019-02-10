@@ -458,7 +458,8 @@ export const makeStyledJsxTag = (id, transformedCss, expressions = []) => {
 }
 
 export const makeSourceMapGenerator = file => {
-  const filename = file.opts.sourceFileName
+  const filename =
+    file.opts.sourceFileName || file.opts.generatorOpts.sourceFileName
   const generator = new SourceMapGenerator({
     file: filename,
     sourceRoot: file.opts.sourceRoot

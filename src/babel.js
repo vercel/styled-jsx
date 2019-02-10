@@ -234,7 +234,9 @@ export default function({ types: t }) {
           fileInfo: {
             file: state.file,
             sourceFileName:
-              state.file.opts.sourceFileName || state.file.sourceFileName,
+              state.file.opts.sourceFileName ||
+              state.file.sourceFileName ||
+              state.file.opts.generatorOpts.sourceFileName,
             sourceMaps,
             filename: state.file.opts.filename || state.file.filename
           },
