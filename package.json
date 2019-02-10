@@ -43,7 +43,10 @@
     "rules": {
       "capitalized-comments": 0,
       "valid-jsdoc": 0,
-      "prefer-destructuring": 0
+      "prefer-destructuring": 0,
+      "padding-line-between-statements": 0,
+      "unicorn/prefer-node-append": 0,
+      "unicorn/prefer-query-selector": 0
     }
   },
   "lint-staged": {

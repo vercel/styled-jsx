@@ -2,8 +2,6 @@
 Based on Glamor's sheet
 https://github.com/threepointone/glamor/blob/667b480d31b3721a905021b26e1290ce92ca2879/src/sheet.js
 */
-/* eslint-disable unicorn/prefer-node-append */
-/* eslint-disable unicorn/prefer-query-selector */
 
 const isProd = process.env && process.env.NODE_ENV === 'production'
 const isString = o => Object.prototype.toString.call(o) === '[object String]'
