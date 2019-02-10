@@ -583,13 +583,9 @@ export const processCss = (stylesInfo, options) => {
     // According to https://babeljs.io/docs/en/options#source-map-options
     // filenameRelative = path.relative(file.opts.cwd, file.opts.filename)
     // sourceFileName = path.basename(filenameRelative)
-    (fileInfo.filename &&
-      path.basename(
-        path.relative(
-          file.opts.cwd || file.cwd || process.cwd(),
-          fileInfo.filename
-        )
-      ))
+    // or simply
+    // sourceFileName = path.basename(file.opts.filename)
+    (fileInfo.filename && path.basename(fileInfo.filename))
 
   const staticClassName =
     stylesInfo.staticClassName || `jsx-${hashString(hash)}`
