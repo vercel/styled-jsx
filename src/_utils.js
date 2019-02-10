@@ -41,28 +41,36 @@ export const addClassName = (path, jsxId) => {
           className = attr.get('argument').get(`properties.${index}`)
 
           // Remove jsx spread attribute if there is only className property
-          if (node.argument.properties.length === 1) {
+          if (properties.length === 1) {
             attr.remove()
           }
           break
         }
-        continue
       }
 
-      const name = node.argument.name
-      const attrNameDotClassName = t.memberExpression(
-        t.isIdentifier(node.argument) ? t.identifier(name) : node.argument,
-        t.identifier('className')
-      )
-
-      spreads.push(
-        // `${name}.className != null && ${name}.className`
-        and(
-          t.binaryExpression('!=', attrNameDotClassName, t.nullLiteral()),
-          attrNameDotClassName
+      if (
+        t.isMemberExpression(node.argument) ||
+        t.isIdentifier(node.argument)
+      ) {
+        const name = node.argument.name
+        const attrNameDotClassName = t.memberExpression(
+          t.isMemberExpression(node.argument)
+            ? node.argument
+            : t.identifier(name),
+          t.identifier('className')
         )
-      )
-    } else if (t.isJSXAttribute(attr) && node.name.name === 'className') {
+
+        spreads.push(
+          // `${name}.className != null && ${name}.className`
+          and(
+            t.binaryExpression('!=', attrNameDotClassName, t.nullLiteral()),
+            attrNameDotClassName
+          )
+        )
+      }
+      continue
+    }
+    if (t.isJSXAttribute(attr) && node.name.name === 'className') {
       className = attributes[i]
       // found className break the loop
       break
