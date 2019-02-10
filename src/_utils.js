@@ -28,22 +28,46 @@ export const addClassName = (path, jsxId) => {
   // Find className and collect spreads
   for (let i = attributes.length - 1, attr; (attr = attributes[i]); i--) {
     const node = attr.node
-    if (t.isJSXSpreadAttribute(attr)) {
-      const name = node.argument.name
-      const attrNameDotClassName = t.memberExpression(
-        t.isMemberExpression(node.argument)
-          ? node.argument
-          : t.identifier(name),
-        t.identifier('className')
-      )
 
-      spreads.push(
-        // `${name}.className != null && ${name}.className`
-        and(
-          t.binaryExpression('!=', attrNameDotClassName, t.nullLiteral()),
-          attrNameDotClassName
+    if (t.isJSXSpreadAttribute(attr)) {
+      if (t.isObjectExpression(node.argument)) {
+        const properties = node.argument.properties
+
+        const index = properties.findIndex(
+          property => property.key.name === 'className'
         )
-      )
+
+        if (~index) {
+          className = attr.get('argument').get(`properties.${index}`)
+
+          // Remove jsx spread attribute if there is only className property
+          if (properties.length === 1) {
+            attr.remove()
+          }
+          break
+        }
+      }
+
+      if (
+        t.isMemberExpression(node.argument) ||
+        t.isIdentifier(node.argument)
+      ) {
+        const name = node.argument.name
+        const attrNameDotClassName = t.memberExpression(
+          t.isMemberExpression(node.argument)
+            ? node.argument
+            : t.identifier(name),
+          t.identifier('className')
+        )
+
+        spreads.push(
+          // `${name}.className != null && ${name}.className`
+          and(
+            t.binaryExpression('!=', attrNameDotClassName, t.nullLiteral()),
+            attrNameDotClassName
+          )
+        )
+      }
       continue
     }
     if (t.isJSXAttribute(attr) && node.name.name === 'className') {
