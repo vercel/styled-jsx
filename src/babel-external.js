@@ -19,7 +19,7 @@ const isModuleExports = t.buildMatchMemberExpression('module.exports')
 export function processTaggedTemplateExpression({
   type,
   path,
-  fileInfo,
+  file,
   splitRules,
   plugins,
   vendorPrefixes
@@ -44,7 +44,7 @@ export function processTaggedTemplateExpression({
     {
       ...stylesInfo,
       staticClassName,
-      fileInfo,
+      file,
       isGlobal: type === 'global',
       plugins,
       vendorPrefixes
@@ -203,19 +203,14 @@ export const visitor = {
           processTaggedTemplateExpression({
             type,
             path,
-            fileInfo: {
-              file: state.file,
-              sourceFileName:
-                state.file.opts.sourceFileName || state.file.sourceFileName,
-              sourceMaps,
-              filename: state.file.opts.filename || state.file.filename
-            },
+            file: state.file,
             splitRules:
               typeof state.opts.optimizeForSpeed === 'boolean'
                 ? state.opts.optimizeForSpeed
                 : process.env.NODE_ENV === 'production',
             plugins: state.plugins,
-            vendorPrefixes
+            vendorPrefixes,
+            sourceMaps
           })
         })
       )

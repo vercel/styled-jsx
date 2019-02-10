@@ -55,7 +55,7 @@ test('works with global styles', async t => {
 
 test('generates source maps', async t => {
   const { code } = await transform('./fixtures/source-maps.js', {
-    sourceMaps: true
+    plugins: [[plugin, { sourceMaps: true }]]
   })
   t.snapshot(code)
 })

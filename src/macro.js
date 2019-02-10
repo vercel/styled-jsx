@@ -87,17 +87,14 @@ function styledJsxMacro({ references, state }) {
       processTaggedTemplateExpression({
         type: 'resolve',
         path: templateExpression,
-        fileInfo: {
-          file: state.file,
-          sourceFileName: state.file.opts.sourceFileName,
-          sourceMaps: state.opts.sourceMaps
-        },
+        file: state.file,
         splitRules:
           typeof state.opts.optimizeForSpeed === 'boolean'
             ? state.opts.optimizeForSpeed
             : process.env.NODE_ENV === 'production',
         plugins: state.plugins,
-        vendorPrefixes: state.opts.vendorPrefixes
+        vendorPrefixes: state.opts.vendorPrefixes,
+        sourceMaps: state.opts.sourceMaps
       })
 
       if (
