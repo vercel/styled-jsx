@@ -41,9 +41,11 @@ export default class JSXStyle extends Component {
       if (this.prevProps.id) {
         styleSheetRegistry.remove(this.prevProps)
       }
+
       styleSheetRegistry.add(this.props)
       this.prevProps = this.props
     }
+
     return null
   }
 }

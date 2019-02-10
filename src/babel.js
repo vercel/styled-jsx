@@ -201,6 +201,7 @@ export default function({ types: t }) {
           try {
             styleTagSrc = path.getSource()
           } catch (error) {}
+
           throw path.buildCodeFrameError(
             'Detected nested style tag' +
               (styleTagSrc ? `: \n\n${styleTagSrc}\n\n` : ' ') +
@@ -216,6 +217,7 @@ export default function({ types: t }) {
             if (!t.isJSXExpressionContainer(child)) {
               return false
             }
+
             const expression = child.get('expression')
             return expression && expression.isIdentifier()
           }).length === 1
@@ -304,6 +306,7 @@ export default function({ types: t }) {
           ) {
             return
           }
+
           state.hasInjectedJSXStyle = true
           const importDeclaration = createReactComponentImportDeclaration()
           node.body.unshift(importDeclaration)

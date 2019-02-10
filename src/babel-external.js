@@ -182,6 +182,7 @@ export const visitor = {
             } else {
               result.scoped.push(taggedTemplateExpression)
             }
+
             return result
           },
           {

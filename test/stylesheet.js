@@ -21,11 +21,13 @@ export default function makeSheet(
           if (invalidRules.includes(rule)) {
             throw new Error('invalid rule')
           }
+
           if (typeof index === 'number') {
             cssRules[index] = { cssText: rule }
           } else {
             cssRules.push({ cssText: rule })
           }
+
           return index
         },
         deleteRule: index => {
@@ -58,6 +60,7 @@ export default function makeSheet(
 
     return tag
   }
+
   return sheet
 }
 

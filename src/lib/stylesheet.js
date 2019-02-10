@@ -2,6 +2,8 @@
 Based on Glamor's sheet
 https://github.com/threepointone/glamor/blob/667b480d31b3721a905021b26e1290ce92ca2879/src/sheet.js
 */
+/* eslint-disable unicorn/prefer-node-append */
+/* eslint-disable unicorn/prefer-query-selector */
 
 const isProd = process.env && process.env.NODE_ENV === 'production'
 const isString = o => Object.prototype.toString.call(o) === '[object String]'
@@ -62,11 +64,13 @@ export default class StyleSheet {
         if (!isProd) {
           console.warn(
             'StyleSheet: optimizeForSpeed mode not supported falling back to standard mode.'
-          ) // eslint-disable-line no-console
+          )
         }
+
         this.flush()
         this._injected = true
       }
+
       return
     }
 
@@ -78,6 +82,7 @@ export default class StyleSheet {
         } else {
           this._serverSheet.cssRules.push({ cssText: rule })
         }
+
         return index
       },
       deleteRule: index => {
@@ -110,6 +115,7 @@ export default class StyleSheet {
       if (typeof index !== 'number') {
         index = this._serverSheet.cssRules.length
       }
+
       this._serverSheet.insertRule(rule, index)
       return this._rulesCount++
     }
@@ -119,6 +125,7 @@ export default class StyleSheet {
       if (typeof index !== 'number') {
         index = sheet.cssRules.length
       }
+
       // this weirdness for perf, and chrome's weird bug
       // https://stackoverflow.com/questions/20007992/chrome-suddenly-stopped-accepting-insertrule
       try {
@@ -127,8 +134,9 @@ export default class StyleSheet {
         if (!isProd) {
           console.warn(
             `StyleSheet: illegal rule: \n\n${rule}\n\nSee https://stackoverflow.com/q/20007992 for more info`
-          ) // eslint-disable-line no-console
+          )
         }
+
         return -1
       }
     } else {
@@ -159,8 +167,9 @@ export default class StyleSheet {
         if (!isProd) {
           console.warn(
             `StyleSheet: illegal rule: \n\n${rule}\n\nSee https://stackoverflow.com/q/20007992 for more info`
-          ) // eslint-disable-line no-console
+          )
         }
+
         // In order to preserve the indices we insert a deleteRulePlaceholder
         sheet.insertRule(this._deletedRulePlaceholder, index)
       }
@@ -169,6 +178,7 @@ export default class StyleSheet {
       invariant(tag, `old rule at index \`${index}\` not found`)
       tag.textContent = rule
     }
+
     return index
   }
 
@@ -204,6 +214,7 @@ export default class StyleSheet {
     if (!this._isBrowser) {
       return this._serverSheet.cssRules
     }
+
     return this._tags.reduce((rules, tag) => {
       if (tag) {
         rules = rules.concat(
@@ -214,6 +225,7 @@ export default class StyleSheet {
       } else {
         rules.push(null)
       }
+
       return rules
     }, [])
   }
@@ -225,19 +237,24 @@ export default class StyleSheet {
         'makeStyleTag acceps only strings as second parameter'
       )
     }
+
     const tag = document.createElement('style')
     if (this._nonce) tag.setAttribute('nonce', this._nonce)
     tag.type = 'text/css'
     tag.setAttribute(`data-${name}`, '')
+
     if (cssString) {
       tag.appendChild(document.createTextNode(cssString))
     }
+
     const head = document.head || document.getElementsByTagName('head')[0]
+
     if (relativeToTag) {
       head.insertBefore(tag, relativeToTag)
     } else {
       head.appendChild(tag)
     }
+
     return tag
   }
 

@@ -13,6 +13,7 @@ export default (file, opts = {}) =>
         if (error) {
           return reject(error)
         }
+
         resolve(data)
       }
     )
@@ -30,6 +31,7 @@ export const transformSource = (src, opts = {}) =>
         if (error) {
           return reject(error)
         }
+
         resolve(result)
       }
     )

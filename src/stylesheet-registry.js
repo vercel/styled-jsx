@@ -83,6 +83,7 @@ export default class StyleSheetRegistry {
         this._indices[styleId].forEach(index => this._sheet.deleteRule(index))
         delete this._indices[styleId]
       }
+
       delete this._instancesCounts[styleId]
     }
   }
@@ -136,12 +137,14 @@ export default class StyleSheetRegistry {
       if (!props) {
         return `jsx-${baseId}`
       }
+
       const propsToString = String(props)
       const key = baseId + propsToString
       // return `jsx-${hashString(`${baseId}-${propsToString}`)}`
       if (!cache[key]) {
         cache[key] = `jsx-${hashString(`${baseId}-${propsToString}`)}`
       }
+
       return cache[key]
     }
   }
@@ -162,10 +165,12 @@ export default class StyleSheetRegistry {
       if (!this._isBrowser) {
         css = sanitize(css)
       }
+
       const idcss = id + css
       if (!cache[idcss]) {
         cache[idcss] = css.replace(selectoPlaceholderRegexp, id)
       }
+
       return cache[idcss]
     }
   }

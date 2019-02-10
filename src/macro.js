@@ -56,6 +56,7 @@ function styledJsxMacro({ references, state }) {
             }\`div { color: red }\``
           )
         }
+
         // Otherwise enforce `css.resolve`
         if (tagPropertyName !== 'resolve') {
           throw new MacroError(
