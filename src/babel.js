@@ -231,17 +231,12 @@ export default function({ types: t }) {
         const { vendorPrefixes, sourceMaps } = state.opts
         const stylesInfo = {
           ...state.styles.shift(),
-          fileInfo: {
-            file: state.file,
-            sourceFileName:
-              state.file.opts.sourceFileName || state.file.sourceFileName,
-            sourceMaps,
-            filename: state.file.opts.filename || state.file.filename
-          },
+          file: state.file,
           staticClassName: state.staticClassName,
           isGlobal,
           plugins: state.plugins,
-          vendorPrefixes
+          vendorPrefixes,
+          sourceMaps
         }
         const splitRules =
           typeof state.opts.optimizeForSpeed === 'boolean'

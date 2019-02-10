@@ -1,3 +1,4 @@
+import path from 'path'
 import * as t from 'babel-types'
 import _hashString from 'string-hash'
 import { SourceMapGenerator } from 'source-map'
@@ -458,10 +459,10 @@ export const makeStyledJsxTag = (id, transformedCss, expressions = []) => {
 }
 
 export const makeSourceMapGenerator = file => {
-  const filename = file.opts.sourceFileName
+  const filename = file.sourceFileName
   const generator = new SourceMapGenerator({
     file: filename,
-    sourceRoot: file.opts.sourceRoot
+    sourceRoot: file.sourceRoot
   })
 
   generator.setSourceContent(filename, file.code)
@@ -563,18 +564,33 @@ export const processCss = (stylesInfo, options) => {
     expressions,
     dynamic,
     location,
-    fileInfo,
+    file,
     isGlobal,
     plugins,
-    vendorPrefixes
+    vendorPrefixes,
+    sourceMaps
   } = stylesInfo
+
+  const fileInfo = {
+    code: file.code,
+    sourceRoot: file.opts.sourceRoot,
+    filename: file.opts.filename || file.filename
+  }
+
+  fileInfo.sourceFileName =
+    file.opts.sourceFileName ||
+    file.sourceFileName ||
+    (fileInfo.filename &&
+      path.basename(
+        path.relative(file.opts.cwd || process.cwd(), fileInfo.filename)
+      ))
 
   const staticClassName =
     stylesInfo.staticClassName || `jsx-${hashString(hash)}`
 
   const { splitRules } = options
 
-  const useSourceMaps = Boolean(fileInfo.sourceMaps) && !splitRules
+  const useSourceMaps = Boolean(sourceMaps) && !splitRules
 
   const pluginsOptions = {
     location: {
@@ -590,8 +606,8 @@ export const processCss = (stylesInfo, options) => {
   let transformedCss
 
   if (useSourceMaps) {
-    const generator = makeSourceMapGenerator(fileInfo.file)
-    const filename = fileInfo.sourceFileName || fileInfo.filename
+    const generator = makeSourceMapGenerator(fileInfo)
+    const filename = fileInfo.sourceFileName
 
     transformedCss = addSourceMaps(
       transform(
