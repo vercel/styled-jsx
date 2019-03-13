@@ -13,7 +13,7 @@ module.exports = function(content) {
 
   // Calls type with the current file name.
   if (typeof options.type === 'function') {
-    options.type = options.type(this.resourcePath)
+    options.type = options.type(this.resourcePath, loaderUtils.parseQuery(this.resourceQuery || '?'))
   }
 
   if (!types.includes(options.type)) {
