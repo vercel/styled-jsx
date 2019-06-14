@@ -5,6 +5,9 @@ import ReactDOM from 'react-dom/server'
 
 // Ours
 import plugin from '../src/babel'
+import StylesheetRegistry from '../src/stylesheet-registry'
+import JSXStyle from '../src/style'
+import flush, { wrapWithProvider, flushToHTML } from '../src/server'
 import _transform from './_transform'
 
 const transform = (file, opts = {}) =>
@@ -121,9 +124,7 @@ function clearModulesCache() {
 }
 
 test('server rendering', t => {
-  clearModulesCache()
-  const JSXStyle = require('../src/style').default
-  const { default: flush, flushToHTML } = require('../src/server')
+  const registry = new StylesheetRegistry()
   function App() {
     const color = 'green'
     return React.createElement(
@@ -160,30 +161,35 @@ test('server rendering', t => {
     '<style id="__jsx-3">div { color: green }</style>'
 
   // Render using react
-  ReactDOM.renderToString(React.createElement(App))
+  ReactDOM.renderToString(wrapWithProvider(React.createElement(App), registry))
   const html = ReactDOM.renderToStaticMarkup(
-    React.createElement('head', null, flush())
+    React.createElement('head', null, flush(registry))
   )
 
   t.is(html, `<head>${expected}</head>`)
 
-  // Assert that memory is empty
-  t.is(0, flush().length)
-  t.is('', flushToHTML())
+  // Assert that registry is empty
+  t.is(0, flush(registry).length)
+  t.is('', flushToHTML(registry))
 
   // Render to html again
-  ReactDOM.renderToString(React.createElement(App))
-  t.is(expected, flushToHTML())
+  ReactDOM.renderToString(wrapWithProvider(React.createElement(App), registry))
+  t.is(expected, flushToHTML(registry))
 
-  // Assert that memory is empty
-  t.is(0, flush().length)
-  t.is('', flushToHTML())
+  // Assert that registry is empty
+  t.is(0, flush(registry).length)
+  t.is('', flushToHTML(registry))
 })
 
 test('server rendering with nonce', t => {
   clearModulesCache()
-  const JSXStyle = require('../src/style').default
-  const { default: flush, flushToHTML } = require('../src/server')
+  const {
+    default: flush,
+    wrapWithProvider,
+    flushToHTML
+  } = require('../src/server')
+  const registry = new StylesheetRegistry()
+
   function App() {
     const color = 'green'
     return React.createElement(
@@ -220,30 +226,29 @@ test('server rendering with nonce', t => {
     '<style id="__jsx-3" nonce="test-nonce">div { color: green }</style>'
 
   // Render using react
-  ReactDOM.renderToString(React.createElement(App))
+  ReactDOM.renderToString(wrapWithProvider(React.createElement(App), registry))
   const html = ReactDOM.renderToStaticMarkup(
-    React.createElement('head', null, flush({ nonce: 'test-nonce' }))
+    React.createElement('head', null, flush(registry, { nonce: 'test-nonce' }))
   )
 
   t.is(html, `<head>${expected}</head>`)
 
   // Assert that memory is empty
-  t.is(0, flush({ nonce: 'test-nonce' }).length)
-  t.is('', flushToHTML({ nonce: 'test-nonce' }))
+  t.is(0, flush(registry, { nonce: 'test-nonce' }).length)
+  t.is('', flushToHTML(registry, { nonce: 'test-nonce' }))
 
   // Render to html again
-  ReactDOM.renderToString(React.createElement(App))
-  t.is(expected, flushToHTML({ nonce: 'test-nonce' }))
+  ReactDOM.renderToString(wrapWithProvider(React.createElement(App), registry))
+  t.is(expected, flushToHTML(registry, { nonce: 'test-nonce' }))
 
   // Assert that memory is empty
-  t.is(0, flush({ nonce: 'test-nonce' }).length)
-  t.is('', flushToHTML({ nonce: 'test-nonce' }))
+  t.is(0, flush(registry, { nonce: 'test-nonce' }).length)
+  t.is('', flushToHTML(registry, { nonce: 'test-nonce' }))
 })
 
 test('optimized styles do not contain new lines', t => {
-  clearModulesCache()
-  const JSXStyle = require('../src/style').default
-  const { default: flush } = require('../src/server')
+  const registry = new StylesheetRegistry()
+
   function App() {
     return React.createElement(
       'div',
@@ -258,9 +263,9 @@ test('optimized styles do not contain new lines', t => {
     )
   }
 
-  ReactDOM.renderToString(React.createElement(App))
+  ReactDOM.renderToString(wrapWithProvider(React.createElement(App), registry))
   const html = ReactDOM.renderToStaticMarkup(
-    React.createElement('head', null, flush())
+    React.createElement('head', null, flush(registry))
   )
   const expected =
     '<style id="__jsx-1">p { color: red }.foo { color: hotpink }</style>'
