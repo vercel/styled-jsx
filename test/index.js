@@ -115,14 +115,6 @@ test('does not transpile nested style tags', async t => {
   t.regex(message, /detected nested style tag/i)
 })
 
-function clearModulesCache() {
-  ;['../src/lib/stylesheet', '../src/style', '../src/server'].forEach(
-    moduleName => {
-      delete require.cache[require.resolve(moduleName)]
-    }
-  )
-}
-
 test('server rendering', t => {
   const registry = new StylesheetRegistry()
   function App() {
@@ -182,12 +174,6 @@ test('server rendering', t => {
 })
 
 test('server rendering with nonce', t => {
-  clearModulesCache()
-  const {
-    default: flush,
-    wrapWithProvider,
-    flushToHTML
-  } = require('../src/server')
   const registry = new StylesheetRegistry()
 
   function App() {
