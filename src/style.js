@@ -7,16 +7,6 @@ export default class JSXStyle extends Component {
     this.prevProps = {}
   }
 
-  /* static dynamic(info) {
-    return info
-      .map(tagInfo => {
-        const baseId = tagInfo[0]
-        const props = tagInfo[1]
-        return styleSheetRegistry.computeId(baseId, props)
-      })
-      .join(' ')
-  } */
-
   // probably faster than PureComponent (shallowEqual)
   shouldComponentUpdate(otherProps) {
     return (
