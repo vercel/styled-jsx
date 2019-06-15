@@ -17,7 +17,7 @@ const methods = [
 methods.forEach(methodName => {
   defaultInstance[methodName] = () => {
     throw new Error(
-      `StylesheetRegistry.${methodName}: The style registry can no longer be referenced statically. You must wrap each render with a StyleSheetRegistryContext.Provider, and provide a unique registry for each render`
+      `StyleSheetRegistry.${methodName}: The style registry can no longer be referenced statically. You must wrap each render with a StyleSheetRegistryContext.Provider, and provide a unique registry for each render`
     )
   }
 })
@@ -25,3 +25,11 @@ methods.forEach(methodName => {
 const StyleSheetRegistryContext = React.createContext(defaultInstance)
 
 export default StyleSheetRegistryContext
+
+export function wrapElementWithProvider(element, registry) {
+  return React.createElement(
+    StyleSheetRegistryContext.Provider,
+    { value: registry },
+    element
+  )
+}

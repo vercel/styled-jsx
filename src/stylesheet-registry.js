@@ -1,3 +1,4 @@
+import React from 'react'
 import hashString from 'string-hash'
 import DefaultStyleSheet from './lib/stylesheet'
 
@@ -209,6 +210,33 @@ export default class StyleSheetRegistry {
       acc[id] = element
       return acc
     }, {})
+  }
+
+  toReact(options = {}) {
+    return this.cssRules().map(args => {
+      const id = args[0]
+      const css = args[1]
+      return React.createElement('style', {
+        id: `__${id}`,
+        // Avoid warnings upon render with a key
+        key: `__${id}`,
+        nonce: options.nonce ? options.nonce : undefined,
+        dangerouslySetInnerHTML: {
+          __html: css
+        }
+      })
+    })
+  }
+
+  toHTML(options = {}) {
+    return this.cssRules().reduce((html, args) => {
+      const id = args[0]
+      const css = args[1]
+      html += `<style id="__${id}"${
+        options.nonce ? ` nonce="${options.nonce}"` : ''
+      }>${css}</style>`
+      return html
+    }, '')
   }
 }
 
