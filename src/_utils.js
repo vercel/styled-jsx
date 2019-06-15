@@ -142,7 +142,7 @@ export const validateExpressionVisitor = {
         (t.isThisExpression(node.object) &&
           (node.property.name === 'props' ||
             node.property.name === 'state' ||
-            node.property.name === 'context'))) ||
+            node.property.name === 'registry.js'))) ||
       (t.isIdentifier(node.object) && scope.hasOwnBinding(node.object.name))
     ) {
       throw path.buildCodeFrameError(
