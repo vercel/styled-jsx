@@ -7,7 +7,6 @@
   "files": [
     "dist",
     "lib",
-    "server.js",
     "babel.js",
     "babel-test.js",
     "style.js",
