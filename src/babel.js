@@ -23,7 +23,7 @@ export default function({ types: t }) {
   const jsxVisitors = {
     JSXOpeningElement(path, state) {
       const el = path.node
-      const { name } = el.name || {}
+      const { name, type } = el.name || {}
 
       if (!state.hasJSXStyle) {
         return
@@ -40,18 +40,28 @@ export default function({ types: t }) {
 
       const tag = path.get('name')
 
+      const isStyleNode = name === 'style' || name === STYLE_COMPONENT
+      const isComponentNode =
+        type === 'JSXMemberExpression' ||
+        (name && name.charAt(0) === name.charAt(0).toUpperCase())
+
+      const hasClassName = path
+        .get('attributes')
+        .some(
+          attribute =>
+            attribute.get('name').node &&
+            attribute.get('name').node.name === 'className'
+        )
+      const hasBinding = Object.values(path.scope.bindings).some(binding =>
+        binding.referencePaths.some(r => r === tag)
+      )
+
       if (
-        name &&
-        name !== 'style' &&
-        name !== STYLE_COMPONENT &&
-        (name.charAt(0) !== name.charAt(0).toUpperCase() ||
-          Object.values(path.scope.bindings).some(binding =>
-            binding.referencePaths.some(r => r === tag)
-          ))
+        state.className &&
+        !isStyleNode &&
+        (!isComponentNode || hasClassName || hasBinding)
       ) {
-        if (state.className) {
-          addClassName(path, state.className)
-        }
+        addClassName(path, state.className)
       }
 
       state.ignoreClosing++
