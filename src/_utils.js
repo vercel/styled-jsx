@@ -54,18 +54,22 @@ export const addClassName = (path, jsxId) => {
         t.isIdentifier(node.argument)
       ) {
         const name = node.argument.name
+        const spreadObj = t.isMemberExpression(node.argument)
+          ? node.argument
+          : t.identifier(name)
         const attrNameDotClassName = t.memberExpression(
-          t.isMemberExpression(node.argument)
-            ? node.argument
-            : t.identifier(name),
+          spreadObj,
           t.identifier('className')
         )
 
         spreads.push(
-          // `${name}.className != null && ${name}.className`
+          // `${name} && ${name}.className != null && ${name}.className`
           and(
-            t.binaryExpression('!=', attrNameDotClassName, t.nullLiteral()),
-            attrNameDotClassName
+            spreadObj,
+            and(
+              t.binaryExpression('!=', attrNameDotClassName, t.nullLiteral()),
+              attrNameDotClassName
+            )
           )
         )
       }
