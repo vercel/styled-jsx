@@ -48,10 +48,17 @@ export default ({ display }) => (
     `}</style>
     <style jsx>{`
       @media (min-width: ${mediumScreen}) {
-        p { color: green }
-        p { color: ${`red`}}
+        p {
+          color: green;
+        }
+        p {
+          color: ${`red`};
+        }
       }
-      p { color: red }`}</style>
+      p {
+        color: red;
+      }
+    `}</style>
     <style jsx>{`
       p {
         animation-duration: ${animationDuration};
@@ -69,6 +76,12 @@ export default ({ display }) => (
     <style jsx>{`
       span {
         display: ${display ? 'block' : 'none'};
+      }
+    `}</style>
+    <style jsx>{`
+      span:before {
+        display: ${display ? 'block' : 'none'};
+        content: '\`';
       }
     `}</style>
   </div>
