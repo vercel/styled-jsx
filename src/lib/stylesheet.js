@@ -216,7 +216,7 @@ export default class StyleSheet {
     return this._tags.reduce((rules, tag) => {
       if (tag) {
         rules = rules.concat(
-          this.getSheetForTag(tag).cssRules.map(rule =>
+          Array.from(this.getSheetForTag(tag).cssRules).map(rule =>
             rule.cssText === this._deletedRulePlaceholder ? null : rule
           )
         )
