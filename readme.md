@@ -555,7 +555,7 @@ const stylesInfo = css.resolve`a { color: green; }`
 const stylesInfo2 = resolve`a { color: green; }`
 ```
 
-**Create React App** comes with `babel-plugin-macros` pre-installed so you just need to install `styled-jsx` and you can start to use `resolve right away.
+**Create React App** comes with `babel-plugin-macros` pre-installed so you just need to install `styled-jsx` and you can start to use `resolve` right away.
 
 
 #### Styles in regular CSS files

@@ -271,8 +271,8 @@ export const getJSXStyleInfo = (expr, scope) => {
   // Simple template literal without expressions
   if (node.expressions.length === 0) {
     return {
-      hash: hashString(node.quasis[0].value.cooked),
-      css: node.quasis[0].value.cooked,
+      hash: hashString(node.quasis[0].value.raw),
+      css: node.quasis[0].value.raw,
       expressions: [],
       dynamic: false,
       location
@@ -297,7 +297,7 @@ export const getJSXStyleInfo = (expr, scope) => {
   const dynamic = scope ? isDynamic(expr, scope) : false
   const css = quasis.reduce(
     (css, quasi, index) =>
-      `${css}${quasi.value.cooked}${
+      `${css}${quasi.value.raw}${
         quasis.length === index + 1 ? '' : `%%styled-jsx-placeholder-${index}%%`
       }`,
     ''
