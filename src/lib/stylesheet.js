@@ -3,7 +3,7 @@ Based on Glamor's sheet
 https://github.com/threepointone/glamor/blob/667b480d31b3721a905021b26e1290ce92ca2879/src/sheet.js
 */
 
-const isProd = process.env && process.env.NODE_ENV === 'production'
+const isProd = typeof process !== 'undefined' && process.env && process.env.NODE_ENV === 'production'
 const isString = o => Object.prototype.toString.call(o) === '[object String]'
 
 export default class StyleSheet {
@@ -216,7 +216,7 @@ export default class StyleSheet {
     return this._tags.reduce((rules, tag) => {
       if (tag) {
         rules = rules.concat(
-          this.getSheetForTag(tag).cssRules.map(rule =>
+          Array.prototype.map.call(this.getSheetForTag(tag).cssRules, rule =>
             rule.cssText === this._deletedRulePlaceholder ? null : rule
           )
         )

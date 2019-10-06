@@ -22,7 +22,8 @@ export function processTaggedTemplateExpression({
   file,
   splitRules,
   plugins,
-  vendorPrefixes
+  vendorPrefixes,
+  sourceMaps
 }) {
   const templateLiteral = path.get('quasi')
   let scope
@@ -47,7 +48,8 @@ export function processTaggedTemplateExpression({
       file,
       isGlobal: type === 'global',
       plugins,
-      vendorPrefixes
+      vendorPrefixes,
+      sourceMaps
     },
     { splitRules }
   )
