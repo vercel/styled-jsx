@@ -599,7 +599,7 @@ The plugin accepts a `type` option to configure whether the styles should be `sc
 type validTypes = 'scoped' | 'global' | 'resolve'
 type fileName = string
 type Options = {|
-  type: validTypes | (fileName, fileNameQuery) => validTypes
+  type: validTypes | (fileName, options) => validTypes
 |}
 ```
 ```js
@@ -613,7 +613,7 @@ config: {
       use: [{
         loader: require('styled-jsx/webpack').loader,
         options: {
-          type: (fileName, fileNameQuery) => fileNameQuery.type || 'scoped'
+          type: (fileName, options) => options.query.type || 'scoped'
         }
       }]
     ]
