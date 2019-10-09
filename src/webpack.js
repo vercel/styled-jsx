@@ -14,7 +14,7 @@ module.exports = function(content) {
   // Calls type with the current file name.
   if (typeof options.type === 'function') {
     options.type = options.type(this.resourcePath, {
-      parseQuery: loaderUtils.parseQuery(this.resourceQuery || '?')
+      query: loaderUtils.parseQuery(this.resourceQuery || '?') || {}
     })
   }
 
