@@ -593,14 +593,32 @@ config: {
 }
 ```
 
-The plugin accepts a `type` option to configure whether the styles should be `scoped`, `global` or `resolve` (see above). By default its values is set to `scoped`. `type` can also be a `function` which takes the file name that is being transpiled and must return a valid type.
+The plugin accepts a `type` option to configure whether the styles should be `scoped`, `global` or `resolve` (see above). By default its values is set to `scoped`. `type` can also be a `function` which takes the `fileName` and the `fileNameQuery` that is being transpiled and must return a valid type.
 
 ```js
 type validTypes = 'scoped' | 'global' | 'resolve'
 type fileName = string
 type Options = {|
-  type: validTypes | (fileName) => validTypes
+  type: validTypes | (fileName, options) => validTypes
 |}
+```
+```js
+import styles from './styles.css?type=global'
+
+// webpack
+config: {
+  module: {
+    rules: [
+      test: /\.css$/,
+      use: [{
+        loader: require('styled-jsx/webpack').loader,
+        options: {
+          type: (fileName, options) => options.query.type || 'scoped'
+        }
+      }]
+    ]
+  }
+}
 ```
 
 The type can also be set per individual CSS file via CSS comment:
