@@ -159,7 +159,7 @@ export default function({ types: t }) {
             externalJsxId = t.templateLiteral(
               [
                 t.templateElement({ raw: 'jsx-', cooked: 'jsx-' }),
-                ...[...new Array(expressionsLength - 1)].map(() =>
+                ...[...new Array(expressionsLength - 1).fill(null)].map(() =>
                   t.templateElement({ raw: ' jsx-', cooked: ' jsx-' })
                 ),
                 t.templateElement({ raw: '', cooked: '' }, true)
