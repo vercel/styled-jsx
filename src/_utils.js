@@ -476,7 +476,7 @@ export const makeSourceMapGenerator = file => {
 export const addSourceMaps = (code, generator, filename) => {
   const sourceMaps = [
     convert.fromObject(generator).toComment({ multiline: true }),
-    `/*@ sourceURL=${filename} */`
+    `/*@ sourceURL=${filename.replace(/\\/g, '\\\\')} */`
   ]
 
   if (Array.isArray(code)) {
