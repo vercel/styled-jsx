@@ -480,7 +480,9 @@ Like in externals styles `css` doesn't work with dynamic styles. If you have dyn
 
 #### The `resolve` tag
 
-The `resolve` tag from `styled-jsx/css` can be used when you need to scope some CSS and want back the generated scoped `className` and `styles`. This is usually the case when you want to style nested components from the parent.
+The `resolve` tag from `styled-jsx/css` can be used when you need to scope some CSS - for example, if you need to style nested components from the parent, such as the `Link` component in the example below.
+
+It works by returning the generated scoped `className` and related `styles`.
 
 ```jsx
 import React from 'react'
@@ -496,14 +498,14 @@ export default () => (
   <div>
     {/* use the className */}
     <Link className={className}>About</Link>
+
     {/* render the styles for it */}
     {styles}
-    <style jsx>{`div { border: 5px solid green }`}</style>
   </div>
 )
 ```
 
-The `resolve` tag also supports dynamic styles:
+The `resolve` tag also supports dynamic styles, via template string interpolation:
 
 ```jsx
 import React from 'react'
@@ -527,16 +529,18 @@ export default (props) => {
 }
 ```
 
-#### Using `resolve` as a babel macro
+#### Using `resolve` as a Babel macro
 
 The `resolve` tag can be used as a Babel macro thanks to the [`babel-plugin-macros`](https://github.com/kentcdodds/babel-plugin-macros) system.
+
+To set this up, first of all, install `styled-jsx` and `babel-plugin-macros`:
 
 ```bash
 npm i --save styled-jsx
 npm i --save-dev babel-plugin-macros
 ```
 
-Next add `babel-plugin-macros` to your babel configuration:
+Next, add `babel-plugin-macros` to your Babel configuration:
 
 ```json
 {
@@ -546,17 +550,33 @@ Next add `babel-plugin-macros` to your babel configuration:
 }
 ```
 
-You can then start to use `resolve` by importing it from `styled-jsx/macro`.
+You can then use `resolve` by importing it from `styled-jsx/macro`.
 
 ```jsx
-import css, { resolve } from 'styled-jsx/macro'
+import css from 'styled-jsx/macro'
 
-const stylesInfo = css.resolve`a { color: green; }`
-const stylesInfo2 = resolve`a { color: green; }`
+
+const { className, styles } = css.resolve`
+  a { color: green }
+`
+
+export default () => (
+  <div>
+    <Link className={className}>About</Link>
+    {styles}
+  </div>
+)
 ```
 
-**Create React App** comes with `babel-plugin-macros` pre-installed so you just need to install `styled-jsx` and you can start to use `resolve` right away.
+##### Usage with [`create-react-app`](https://create-react-app.dev)
 
+[Create React App](https://create-react-app.dev) comes with `babel-plugin-macros` already installed, so the only thing that needs to be done is to install `styled-jsx`:
+
+```bash
+npm i --save styled-jsx
+```
+
+Then `resolve` can be imported from `styled-jsx/macro` and used the same way as in the example in the [Using `resolve` as a Babel macro](https://github.com/zeit/styled-jsx/blob/master/readme.md#using-resolve-as-a-babel-macro) section above.
 
 #### Styles in regular CSS files
 
