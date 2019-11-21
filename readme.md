@@ -601,13 +601,15 @@ To use this feature you need to register the loader in your webpack config file,
 config: {
   module: {
     rules: [
-      test: /\.css$/,
-      use: [{
-        loader: require('styled-jsx/webpack').loader,
-        options: {
-          type: 'scoped'
-        }
-      }]
+      {
+        test: /\.css$/,
+        use: [{
+          loader: require('styled-jsx/webpack').loader,
+          options: {
+            type: 'scoped'
+          }
+        }]
+      }
     ]
   }
 }
@@ -634,7 +636,7 @@ config: {
         use: [{
           loader: require('styled-jsx/webpack').loader,
           options: {
-            type: 'scoped'
+            type: (fileName, options) => options.query.type || 'scoped'
           }
         }]
       }
