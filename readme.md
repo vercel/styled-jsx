@@ -629,13 +629,15 @@ import styles from './styles.css?type=global'
 config: {
   module: {
     rules: [
-      test: /\.css$/,
-      use: [{
-        loader: require('styled-jsx/webpack').loader,
-        options: {
-          type: (fileName, options) => options.query.type || 'scoped'
-        }
-      }]
+      {
+        test: /\.css$/,
+        use: [{
+          loader: require('styled-jsx/webpack').loader,
+          options: {
+            type: 'scoped'
+          }
+        }]
+      }
     ]
   }
 }
