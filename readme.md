@@ -531,7 +531,7 @@ export default (props) => {
 
 #### Using `resolve` as a Babel macro
 
-The `resolve` tag can be used as a Babel macro thanks to the [`babel-plugin-macros`](https://github.com/kentcdodds/babel-plugin-macros) system.
+If you can't (or would rather not) make changes to your `.babelrc`, the `resolve` tag can be used as a Babel macro, thanks to the [`babel-plugin-macros`](https://github.com/kentcdodds/babel-plugin-macros) system.
 
 To set this up, first of all, install `styled-jsx` and `babel-plugin-macros`:
 
