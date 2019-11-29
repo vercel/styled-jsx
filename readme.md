@@ -531,7 +531,7 @@ export default (props) => {
 
 #### Using `resolve` as a Babel macro
 
-The `resolve` tag can be used as a Babel macro thanks to the [`babel-plugin-macros`](https://github.com/kentcdodds/babel-plugin-macros) system.
+If you can't (or would rather not) make changes to your `.babelrc`, the `resolve` tag can be used as a Babel macro, thanks to the [`babel-plugin-macros`](https://github.com/kentcdodds/babel-plugin-macros) system.
 
 To set this up, first of all, install `styled-jsx` and `babel-plugin-macros`:
 
@@ -601,13 +601,15 @@ To use this feature you need to register the loader in your webpack config file,
 config: {
   module: {
     rules: [
-      test: /\.css$/,
-      use: [{
-        loader: require('styled-jsx/webpack').loader,
-        options: {
-          type: 'scoped'
-        }
-      }]
+      {
+        test: /\.css$/,
+        use: [{
+          loader: require('styled-jsx/webpack').loader,
+          options: {
+            type: 'scoped'
+          }
+        }]
+      }
     ]
   }
 }
@@ -629,13 +631,15 @@ import styles from './styles.css?type=global'
 config: {
   module: {
     rules: [
-      test: /\.css$/,
-      use: [{
-        loader: require('styled-jsx/webpack').loader,
-        options: {
-          type: (fileName, options) => options.query.type || 'scoped'
-        }
-      }]
+      {
+        test: /\.css$/,
+        use: [{
+          loader: require('styled-jsx/webpack').loader,
+          options: {
+            type: (fileName, options) => options.query.type || 'scoped'
+          }
+        }]
+      }
     ]
   }
 }
