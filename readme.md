@@ -14,10 +14,12 @@ Code and docs are for v3 which we highly recommend you to try. Looking for style
   * [`optimizeForSpeed`](#optimizeforspeed)
   * [`sourceMaps`](#sourcemaps)
   * [`vendorPrefixes`](#vendorprefixes)
+  * [`scopedChildComponents`](#scopedchildcomponents)
 - [Features](#features)
 - [How It Works](#how-it-works)
   * [Why It Works Like This](#why-it-works-like-this)
 - [Targeting The Root](#targeting-the-root)
+- [Scoped child Components](#scoped-child-components)
 - [Global styles](#global-styles)
   * [One-off global selectors](#one-off-global-selectors)
 - [Dynamic styles](#dynamic-styles)
@@ -110,6 +112,12 @@ Generates source maps (default: `false`)
 
 Turn on/off automatic vendor prefixing (default: `true`)
 
+#### `scopedChildComponents`
+
+Enable `jsx-123` classnames injection on child Components (default: `false`)
+
+
+
 ## Features
 
 - Full CSS support, no tradeoffs in power
@@ -166,6 +174,32 @@ export default () => (
   </div>
 )
 ```
+
+### Scoped child Components
+
+By *default*, child Components are ignored in the transpilation process but this can be changed by setting `scopedChildComponents` option.
+
+Child components must accept a `className` prop and be defined by the *user* for the component to be prefixed with class `jsx-123`
+
+```jsx
+const Button = (props) => <Button className={props.className}>{props.children}</Button>
+
+export default () => (
+  <div>
+    <Button className="btn">Send</Button>
+    <Button>Cancel</Button>	
+    <style jsx>{`
+      /* Button ".btn" will be prefixed, but button Cancel won't */
+
+      .btn {
+        color: red
+      }
+    `}</style>
+  </div>
+)
+```
+
+\* If the child Component does not accept a `className` prop you could use a one-off global selector like `:global()`
 
 ### Global styles
 
@@ -882,7 +916,7 @@ const StyledImage = ({ src, alt = '' }) => (
 
 ### Styling third parties / child components from the parent
 
-When the component accepts a `className` (or ad-hoc) prop as a way to allow customizations then you can use [the `resolve` tag from `styled-jsx/css`](#the-resolve-tag).
+When the component accepts a `className` (or ad-hoc) prop as a way to allow customizations then you can use [scoped child components](#scoped-child-components) or [the `resolve` tag from `styled-jsx/css`](#the-resolve-tag)
 
 When the component doesn't accept any `className` or doesn't expose any API to customize the component, then your only option is to use `:global()` styles:
 
