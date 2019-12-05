@@ -105,6 +105,13 @@ test('works with dynamic element in class', async t => {
   t.snapshot(code)
 })
 
+test('works with child components', async t => {
+  const { code } = await transform('./fixtures/child-component.js', {
+    plugins: [[plugin, { scopedChildComponents: true }]]
+  })
+  t.snapshot(code)
+})
+
 test('does not transpile nested style tags', async t => {
   const { message } = await t.throwsAsync(() =>
     transform('./fixtures/nested-style-tags.js')

@@ -693,11 +693,17 @@ export const setStateOptions = state => {
     state.file.opts.sourceMaps
   ])
   state.opts.sourceMaps = Boolean(sourceMaps)
+  const scopedChildComponents = booleanOption([
+    state.opts.scopedChildComponents,
+    state.file.opts.scopedChildComponents
+  ])
+  state.opts.scopedChildComponents = Boolean(scopedChildComponents)
 
   if (!state.plugins) {
     state.plugins = combinePlugins(state.opts.plugins, {
       sourceMaps: state.opts.sourceMaps,
-      vendorPrefixes: state.opts.vendorPrefixes
+      vendorPrefixes: state.opts.vendorPrefixes,
+      scopedChildComponents: state.opts.scopedChildComponents
     })
   }
 }

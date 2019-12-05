@@ -106,6 +106,13 @@ test('does not transpile nested style tags', async t => {
   t.regex(message, /detected nested style tag/i)
 })
 
+test('works with child components', async t => {
+  const { code } = await transform('../fixtures/child-component.js', {
+    plugins: [[plugin, { scopedChildComponents: true }]]
+  })
+  t.snapshot(code)
+})
+
 test('server rendering', t => {
   function App() {
     const color = 'green'
