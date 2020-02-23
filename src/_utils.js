@@ -1,5 +1,5 @@
 import path from 'path'
-import * as t from 'babel-types'
+import * as t from '@babel/types'
 import _hashString from 'string-hash'
 import { SourceMapGenerator } from 'source-map'
 import convert from 'convert-source-map'
