@@ -5,11 +5,17 @@ import ReactDOM from 'react-dom/server'
 
 // Ours
 import plugin from '../src/babel'
-import _transform from './_transform'
+import _transform, { transformSource as _transformSource } from './_transform'
 
 const transform = (file, opts = {}) =>
   _transform(file, {
     plugins: [plugin],
+    ...opts
+  })
+
+const transformSource = (src, opts = {}) =>
+  _transformSource(src.trim(), {
+    plugins: [[plugin, opts]],
     ...opts
   })
 
@@ -266,4 +272,40 @@ test('optimized styles do not contain new lines', t => {
     '<style id="__jsx-1">p { color: red }.foo { color: hotpink }</style>'
 
   t.is(html, `<head>${expected}</head>`)
+})
+
+test('Babel plugin matches import specifier styled-jsx/css', async t => {
+  const { code } = await transformSource(`
+    import css from 'styled-jsx/css'
+
+    css.resolve\`div { color: red }\`
+  `)
+  t.snapshot(code)
+})
+
+test('Babel plugin matches import specifier styled-jsx/css.mjs', async t => {
+  const { code } = await transformSource(`
+    import css from 'styled-jsx/css.mjs'
+
+    css.resolve\`div { color: red }\`
+  `)
+  t.snapshot(code)
+})
+
+test('Babel plugin matches import specifier styled-jsx/css.js', async t => {
+  const { code } = await transformSource(`
+    import css from 'styled-jsx/css.js'
+
+    css.resolve\`div { color: red }\`
+  `)
+  t.snapshot(code)
+})
+
+test('Babel plugin doesn’t match an unrelated import specifier', async t => {
+  const { code } = await transformSource(`
+    import css from 'x'
+
+    css.resolve\`div { color: red }\`
+  `)
+  t.snapshot(code)
 })

@@ -128,7 +128,7 @@ Turn on/off automatic vendor prefixing (default: `true`)
 The example above transpiles to the following:
 
 ```jsx
-import _JSXStyle from 'styled-jsx/style'
+import _JSXStyle from 'styled-jsx/style.js'
 
 export default () => (
   <div className="jsx-123">

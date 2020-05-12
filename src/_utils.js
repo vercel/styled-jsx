@@ -678,7 +678,7 @@ export const booleanOption = opts => {
 export const createReactComponentImportDeclaration = () =>
   t.importDeclaration(
     [t.importDefaultSpecifier(t.identifier(STYLE_COMPONENT))],
-    t.stringLiteral('styled-jsx/style')
+    t.stringLiteral('styled-jsx/style.js')
   )
 
 export const setStateOptions = state => {
