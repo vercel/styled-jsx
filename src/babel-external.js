@@ -129,8 +129,11 @@ function addHash(exportIdentifier, hash) {
 
 export const visitor = {
   ImportDeclaration(path, state) {
-    // import css from 'styled-jsx/css'
-    if (path.node.source.value !== 'styled-jsx/css') {
+    // Bail if the import doesn’t have one of these specifiers:
+    // - styled-jsx/css
+    // - styled-jsx/css.mjs
+    // - 'styled-jsx/css.js
+    if (!/^styled-jsx\/css(?:\.m?js)?$/.test(path.node.source.value)) {
       return
     }
 
@@ -218,7 +221,7 @@ export const visitor = {
       )
 
       // When using the `resolve` helper we need to add an import
-      // for the _JSXStyle component `styled-jsx/style`
+      // for the _JSXStyle component `styled-jsx/style.js`
       if (
         hasJSXStyle &&
         taggedTemplateExpressions.resolve.length > 0 &&
