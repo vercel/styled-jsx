@@ -26,7 +26,7 @@ Code and docs are for v3 which we highly recommend you to try. Looking for style
   * [Via inline `style`](#via-inline-style)
 - [Constants](#constants)
 - [Server-Side Rendering](#server-side-rendering)
-  * [`styled-jsx/server`](#styled-jsxserver)
+  * [`styled-jsx/server.js`](#styled-jsxserver)
 - [External CSS and styles outside of the component](#external-css-and-styles-outside-of-the-component)
   * [External styles](#external-styles)
   * [Styles outside of components](#styles-outside-of-components)
@@ -316,8 +316,8 @@ In this example, the padding defaults to the one set in `<style>` (`20`), but th
 It is possible to use constants like so:
 
 ```jsx
-import { colors, spacing } from '../theme'
-import { invertColor } from '../theme/utils'
+import { colors, spacing } from '../theme.mjs'
+import { invertColor } from '../theme/utils.mjs'
 
 const Button = ({ children }) => (
   <button>
@@ -337,15 +337,15 @@ Please keep in mind that constants defined outside of the component scope are tr
 
 ## Server-Side Rendering
 
-### `styled-jsx/server`
+### `styled-jsx/server.js`
 
 The main export flushes your styles to an array of `React.Element`:
 
 ```jsx
 import React from 'react'
-import ReactDOM from 'react-dom/server'
-import flush from 'styled-jsx/server'
-import App from './app'
+import ReactDOM from 'react-dom/server.js'
+import flush from 'styled-jsx/server.js'
+import App from './app.mjs'
 
 export default (req, res) => {
   const app = ReactDOM.renderToString(<App />)
@@ -364,9 +364,9 @@ We also expose `flushToHTML` to return generated HTML:
 
 ```jsx
 import React from 'react'
-import ReactDOM from 'react-dom/server'
-import { flushToHTML } from 'styled-jsx/server'
-import App from './app'
+import ReactDOM from 'react-dom/server.js'
+import { flushToHTML } from 'styled-jsx/server.js'
+import App from './app.mjs'
 
 export default (req, res) => {
   const app = ReactDOM.renderToString(<App />)
@@ -404,7 +404,7 @@ Your CSP policy must share the same nonce as well (the header nonce needs to mat
 
 ### External CSS and styles outside of the component
 
-In styled-jsx styles can be defined outside of the component's render method or in separate JavaScript modules using the `styled-jsx/css` library. `styled-jsx/css` exports three tags that can be used to tag your styles:
+In styled-jsx styles can be defined outside of the component's render method or in separate JavaScript modules using the `styled-jsx/css.mjs` library. `styled-jsx/css.mjs` exports three tags that can be used to tag your styles:
 
 * `css`, the default export, to define scoped styles.
 * `css.global` to define global styles.
@@ -416,7 +416,7 @@ In an external file:
 
 ```js
 /* styles.js */
-import css from 'styled-jsx/css'
+import css from 'styled-jsx/css.mjs'
 
 // Scoped styles
 export const button = css`button { color: hotpink; }`
@@ -436,7 +436,7 @@ export default css`div { color: green; }`
 You can then import and use those styles:
 
 ```jsx
-import styles, { button, body } from './styles'
+import styles, { button, body } from './styles.mjs'
 
 export default () => (
   <div>
@@ -450,21 +450,20 @@ export default () => (
 
 N.B. All the tags except for [`resolve`](#the-resolve-tag) don't support dynamic styles.
 
-`resolve` and `global` can also be imported individually:
+`global` and `resolve` can also be imported individually:
 
 ```js
-import { resolve } from 'styled-jsx/css'
-import { global } from 'styled-jsx/css'
+import { global, resolve } from 'styled-jsx/css.mjs'
 ```
 
 If you use Prettier we recommend you to use the default `css` export syntax since the tool doesn't support named imports.
 
 #### Styles outside of components
 
-The `css` tag from `styled-jsx/css` can be also used to define styles in your components files but outside of the component itself. This might help with keeping `render` methods smaller.
+The `css` tag from `styled-jsx/css.mjs` can be also used to define styles in your components files but outside of the component itself. This might help with keeping `render` methods smaller.
 
 ```jsx
-import css from 'styled-jsx/css'
+import css from 'styled-jsx/css.mjs'
 
 export default () => (
   <div>
@@ -480,7 +479,7 @@ Like in externals styles `css` doesn't work with dynamic styles. If you have dyn
 
 #### The `resolve` tag
 
-The `resolve` tag from `styled-jsx/css` can be used when you need to scope some CSS - for example, if you need to style nested components from the parent, such as the `Link` component in the example below.
+The `resolve` tag from `styled-jsx/css.mjs` can be used when you need to scope some CSS - for example, if you need to style nested components from the parent, such as the `Link` component in the example below.
 
 It works by returning the generated scoped `className` and related `styles`.
 
@@ -488,7 +487,7 @@ It works by returning the generated scoped `className` and related `styles`.
 import React from 'react'
 import Link from 'some-library'
 
-import css from 'styled-jsx/css'
+import css from 'styled-jsx/css.mjs'
 
 const { className, styles } = css.resolve`
   a { color: green }
@@ -509,7 +508,7 @@ The `resolve` tag also supports dynamic styles, via template string interpolatio
 
 ```jsx
 import React from 'react'
-import css from 'styled-jsx/css'
+import css from 'styled-jsx/css.mjs'
 
 function getLinkStyles(color) {
   return css.resolve`
@@ -851,13 +850,13 @@ The `styled-jsx/babel-test` solves this problem. It simply strips `jsx` attribut
 
 #### styled-jsx/css in tests
 
-When using `styled-jsx/babel-test`, `styled-jsx/css` throws the following error:
+When using `styled-jsx/babel-test`, `styled-jsx/css.mjs` throws the following error:
 
 ```
 styled-jsx/css: if you are getting this error it means that your `css` tagged template literals were not transpiled.
 ```
 
-to solve this issue you need to mock `styled-jsx/css`. You can find a guide at the following link https://kevinjalbert.com/jest-snapshots-reducing-styled-jsx-noise/
+to solve this issue you need to mock `styled-jsx/css.mjs`. You can find a guide at the following link https://kevinjalbert.com/jest-snapshots-reducing-styled-jsx-noise/
 
 ## FAQ
 
@@ -882,7 +881,7 @@ const StyledImage = ({ src, alt = '' }) => (
 
 ### Styling third parties / child components from the parent
 
-When the component accepts a `className` (or ad-hoc) prop as a way to allow customizations then you can use [the `resolve` tag from `styled-jsx/css`](#the-resolve-tag).
+When the component accepts a `className` (or ad-hoc) prop as a way to allow customizations then you can use [the `resolve` tag from `styled-jsx/css.mjs`](#the-resolve-tag).
 
 When the component doesn't accept any `className` or doesn't expose any API to customize the component, then your only option is to use `:global()` styles:
 
@@ -935,8 +934,8 @@ You get full CSS highlighting and autocompletion and it will last until you clos
 Additionally you can use language injection comments to enable all the IDE language features indefinitely using the language comment style:
 
 ```jsx
-import { colors, spacing } from '../theme'
-import { invertColor } from '../theme/utils'
+import { colors, spacing } from '../theme.mjs'
+import { invertColor } from '../theme/utils.mjs'
 
 const Button = ({ children }) => (
   <button>
