@@ -102,7 +102,7 @@ function styledJsxMacro({ references, state }) {
         !path.scope.hasBinding(STYLE_COMPONENT)
       ) {
         state.hasInjectedJSXStyle = true
-        const importDeclaration = createReactComponentImportDeclaration()
+        const importDeclaration = createReactComponentImportDeclaration(state)
         path.findParent(p => p.isProgram()).node.body.unshift(importDeclaration)
       }
     })

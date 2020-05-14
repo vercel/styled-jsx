@@ -13,6 +13,7 @@ Code and docs are for v3 which we highly recommend you to try. Looking for style
 - [Configuration options](#configuration-options)
   * [`optimizeForSpeed`](#optimizeforspeed)
   * [`sourceMaps`](#sourcemaps)
+  * [`styleModule`](#stylemodule)
   * [`vendorPrefixes`](#vendorprefixes)
 - [Features](#features)
 - [How It Works](#how-it-works)
@@ -105,6 +106,10 @@ Beware that when using this option source maps cannot be generated and styles ca
 #### `sourceMaps`
 
 Generates source maps (default: `false`)
+
+#### `styleModule`
+
+Module that the transpiled files should import (default: `styled-jsx/style`)
 
 #### `vendorPrefixes`
 
@@ -388,7 +393,7 @@ duplicate styles are avoided.
 
 ### Content Security Policy
 
-Strict [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) is supported. 
+Strict [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) is supported.
 
 You should generate a nonce **per request**.
 ```js

@@ -303,7 +303,7 @@ export default function({ types: t }) {
           }
 
           state.hasInjectedJSXStyle = true
-          const importDeclaration = createReactComponentImportDeclaration()
+          const importDeclaration = createReactComponentImportDeclaration(state)
           node.body.unshift(importDeclaration)
         }
       },
