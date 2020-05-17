@@ -1013,6 +1013,6 @@ If you're using `eslint-plugin-import`, the `css` import will generate errors, b
 
 ## Authors
 
-- Guillermo Rauch ([@rauchg](https://twitter.com/rauchg)) - [▲ZEIT](https://zeit.co)
-- Naoyuki Kanezawa ([@nkzawa](https://twitter.com/nkzawa)) - [▲ZEIT](https://zeit.co)
+- Guillermo Rauch ([@rauchg](https://twitter.com/rauchg)) - [▲Vercel](https://vercel.com)
+- Naoyuki Kanezawa ([@nkzawa](https://twitter.com/nkzawa)) - [▲Vercel](https://vercel.com)
 - Giuseppe Gurgone ([@giuseppegurgone](https://twitter.com/giuseppegurgone))

@@ -94,6 +94,7 @@
   },
   "keywords": [
     "babel-plugin-macros",
+    "vercel",
     "zeit",
     "css-in-js",
     "css"
