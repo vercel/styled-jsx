@@ -19,6 +19,11 @@ import {
 
 import { STYLE_COMPONENT } from './_constants'
 
+const getClassNameAttributeNameForElementName = name => {
+  const isLowerCase = name.charAt(0) === name.charAt(0).toLowerCase()
+  return isLowerCase && name.includes('-') ? 'class' : 'className'
+}
+
 export default function({ types: t }) {
   const jsxVisitors = {
     JSXOpeningElement(path, state) {
@@ -49,8 +54,9 @@ export default function({ types: t }) {
             binding.referencePaths.some(r => r === tag)
           ))
       ) {
+        const classNameAttribute = getClassNameAttributeNameForElementName(name)
         if (state.className) {
-          addClassName(path, state.className)
+          addClassName(path, state.className, classNameAttribute)
         }
       }
 
