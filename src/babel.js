@@ -50,7 +50,7 @@ export default function({ types: t }) {
           ))
       ) {
         if (state.className) {
-          addClassName(path, state.className)
+          addClassName(path, state.className, state.file.code)
         }
       }
 

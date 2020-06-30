@@ -21,8 +21,14 @@ const joinSpreads = spreads => spreads.reduce((acc, curr) => or(acc, curr))
 
 export const hashString = str => String(_hashString(str))
 
-export const addClassName = (path, jsxId) => {
-  const jsxIdWithSpace = concat(jsxId, t.stringLiteral(' '))
+export const addClassName = (path, jsxId, code) => {
+  const { name } = path.get('name').node
+  const isSelectingComponent =
+    name[0] === name[0].toUpperCase() && code.includes(`.${name}`)
+  const jsxIdWithName = isSelectingComponent
+    ? concat(jsxId, t.stringLiteral(` ${name}`))
+    : jsxId
+  const jsxIdWithSpace = concat(jsxIdWithName, t.stringLiteral(' '))
   const attributes = path.get('attributes')
   const spreads = []
   let className = null
@@ -99,7 +105,7 @@ export const addClassName = (path, jsxId) => {
   } else {
     className = t.jSXExpressionContainer(
       spreads.length === 0
-        ? jsxId
+        ? jsxIdWithName
         : concat(jsxIdWithSpace, or(joinSpreads(spreads), t.stringLiteral('')))
     )
   }
