@@ -976,7 +976,7 @@ const Button = ({ children }) => (
 ### Syntax Highlighting [Visual Studio Code Extension](https://marketplace.visualstudio.com/items?itemName=blanu.vscode-styled-jsx)
 Launch VS Code Quick Open (⌘+P), paste the following command, and press enter.
 ```
-ext install vscode-styled-jsx
+ext install Divlo.vscode-styled-jsx-syntax
 ```
 
 If you use Stylus instead of plain CSS, install [vscode-styled-jsx-stylus](https://marketplace.visualstudio.com/items?itemName=samuelroy.vscode-styled-jsx-stylus) or paste the command below.
@@ -987,7 +987,7 @@ ext install vscode-styled-jsx-stylus
 ### Autocomplete [Visual Studio Code Extension](https://marketplace.visualstudio.com/items?itemName=AndrewRazumovsky.vscode-styled-jsx-languageserver)
 Launch VS Code Quick Open (⌘+P), paste the following command, and press enter.
 ```
-ext install vscode-styled-jsx-languageserver
+ext install Divlo.vscode-styled-jsx-languageserver
 ```
 
 ### Vim
