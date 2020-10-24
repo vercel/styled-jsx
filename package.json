@@ -90,7 +90,7 @@
     "xo": "0.24.0"
   },
   "peerDependencies": {
-    "react": "15.x.x || 16.x.x"
+    "react": "15.x.x || 16.x.x || 17.x.x"
   },
   "keywords": [
     "babel-plugin-macros",
