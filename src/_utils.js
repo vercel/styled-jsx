@@ -136,75 +136,6 @@ export const findStyles = path => {
   return path.get('children').filter(isStyledJsx)
 }
 
-// The following visitor ensures that MemberExpressions and Identifiers
-// are not in the scope of the current Method (render) or function (Component).
-export const validateExpressionVisitor = {
-  MemberExpression(path, scope) {
-    const { node } = path
-    if (
-      (t.isIdentifier(node.property) &&
-        (t.isThisExpression(node.object) &&
-          (node.property.name === 'props' ||
-            node.property.name === 'state' ||
-            node.property.name === 'context'))) ||
-      (t.isIdentifier(node.object) && scope.hasOwnBinding(node.object.name))
-    ) {
-      throw path.buildCodeFrameError(
-        `Expected a constant ` +
-          `as part of the template literal expression ` +
-          `(eg: <style jsx>{\`p { color: $\{myColor}\`}</style>), ` +
-          `but got a MemberExpression: this.${node.property.name}`
-      )
-    }
-  },
-  Identifier(path, scope) {
-    const { name } = path.node
-
-    if (t.isMemberExpression(path.parentPath) && scope.hasOwnBinding(name)) {
-      return
-    }
-
-    let targetScope = path.scope
-    let isDynamicBinding = false
-
-    // Traversing scope chain in order to find current variable.
-    // If variable has no parent scope and it's `const` then we can interp. it
-    // as static in order to optimize styles.
-    // `let` and `var` can be changed during runtime.
-    while (targetScope) {
-      if (targetScope.hasOwnBinding(name)) {
-        const binding = targetScope.bindings[name]
-        isDynamicBinding =
-          binding.scope.parent !== null || binding.kind !== 'const'
-        break
-      }
-
-      targetScope = targetScope.parent
-    }
-
-    if (isDynamicBinding) {
-      throw path.buildCodeFrameError(
-        `Expected \`${name}\` ` +
-          `to not come from the closest scope.\n` +
-          `Styled JSX encourages the use of constants ` +
-          `instead of \`props\` or dynamic values ` +
-          `which are better set via inline styles or \`className\` toggling. ` +
-          `See https://github.com/zeit/styled-jsx#dynamic-styles`
-      )
-    }
-  }
-}
-
-// Use `validateExpressionVisitor` to determine whether the `expr`ession has dynamic values.
-export const isDynamic = (expr, scope) => {
-  try {
-    expr.traverse(validateExpressionVisitor, scope)
-    return false
-  } catch (error) {}
-
-  return true
-}
-
 const validateExternalExpressionsVisitor = {
   Identifier(path) {
     if (t.isMemberExpression(path.parentPath)) {
@@ -294,7 +225,21 @@ export const getJSXStyleInfo = (expr, scope) => {
 
   const { quasis, expressions } = node
   const hash = hashString(expr.getSource().slice(1, -1))
-  const dynamic = scope ? isDynamic(expr, scope) : false
+  let dynamic = Boolean(scope)
+  if (dynamic) {
+    try {
+      const val = expr.evaluate()
+      if (val.confident) {
+        dynamic = false
+      } else if (val.deopt) {
+        const computedObject = val.deopt
+          .get('object')
+          .resolve()
+          .evaluate()
+        dynamic = !computedObject.confident
+      }
+    } catch (_) {}
+  }
   const css = quasis.reduce(
     (css, quasi, index) =>
       `${css}${quasi.value.raw}${
