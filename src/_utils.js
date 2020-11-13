@@ -184,7 +184,7 @@ export const validateExternalExpressions = path => {
   }
 }
 
-export const getJSXStyleInfo = expr => {
+export const getJSXStyleInfo = (expr, scope) => {
   const { node } = expr
   const location = node.loc
 
@@ -225,10 +225,12 @@ export const getJSXStyleInfo = expr => {
 
   const { quasis, expressions } = node
   const hash = hashString(expr.getSource().slice(1, -1))
-  let dynamic = true
-  try {
-    dynamic = !expr.evaluate().confident
-  } catch (_) {}
+  let dynamic = Boolean(scope)
+  if (dynamic) {
+    try {
+      dynamic = !expr.evaluate().confident
+    } catch (_) {}
+  }
   const css = quasis.reduce(
     (css, quasi, index) =>
       `${css}${quasi.value.raw}${
