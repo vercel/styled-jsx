@@ -228,7 +228,16 @@ export const getJSXStyleInfo = (expr, scope) => {
   let dynamic = Boolean(scope)
   if (dynamic) {
     try {
-      dynamic = !expr.evaluate().confident
+      const val = expr.evaluate()
+      if (val.confident) {
+        dynamic = false
+      } else if (val.deopt) {
+        const computedObject = val.deopt
+          .get('object')
+          .resolve()
+          .evaluate()
+        dynamic = !computedObject.confident
+      }
     } catch (_) {}
   }
   const css = quasis.reduce(
