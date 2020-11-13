@@ -7,7 +7,7 @@
   "files": [
     "dist",
     "lib",
-    "server.js",
+    "registry.js",
     "babel.js",
     "babel-test.js",
     "style.js",

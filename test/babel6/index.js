@@ -6,7 +6,8 @@ import ReactDOM from 'react-dom/server'
 // Ours
 import plugin from '../../src/babel'
 import JSXStyle from '../../src/style'
-import flush, { flushToHTML } from '../../src/server'
+import StylesheetRegistry from '../../src/stylesheet-registry'
+import { wrapElementWithProvider } from '../../src/stylesheet-registry-context'
 import _transform from './_transform'
 
 const transform = (file, opts = {}) =>
@@ -107,6 +108,8 @@ test('does not transpile nested style tags', async t => {
 })
 
 test('server rendering', t => {
+  const registry = new StylesheetRegistry()
+
   function App() {
     const color = 'green'
     return React.createElement(
@@ -143,27 +146,34 @@ test('server rendering', t => {
     '<style id="__jsx-3">div { color: green }</style>'
 
   // Render using react
-  ReactDOM.renderToString(React.createElement(App))
+  ReactDOM.renderToString(
+    wrapElementWithProvider(React.createElement(App), registry)
+  )
   const html = ReactDOM.renderToStaticMarkup(
-    React.createElement('head', null, flush())
+    React.createElement('head', null, registry.toReact())
   )
 
   t.is(html, `<head>${expected}</head>`)
 
-  // Assert that memory is empty
-  t.is(0, flush().length)
-  t.is('', flushToHTML())
+  registry.flush()
+  // Assert that registry is empty
+  t.is(0, registry.toReact().length)
+  t.is('', registry.toHTML())
 
   // Render to html again
-  ReactDOM.renderToString(React.createElement(App))
-  t.is(expected, flushToHTML())
+  ReactDOM.renderToString(
+    wrapElementWithProvider(React.createElement(App), registry)
+  )
+  t.is(expected, registry.toHTML())
 
-  // Assert that memory is empty
-  t.is(0, flush().length)
-  t.is('', flushToHTML())
+  registry.flush()
+  // Assert that registry is empty
+  t.is(0, registry.toReact().length)
+  t.is('', registry.toHTML())
 })
 
 test('server rendering with nonce', t => {
+  const registry = new StylesheetRegistry()
   function App() {
     const color = 'green'
     return React.createElement(
@@ -200,22 +210,28 @@ test('server rendering with nonce', t => {
     '<style id="__jsx-3" nonce="test-nonce">div { color: green }</style>'
 
   // Render using react
-  ReactDOM.renderToString(React.createElement(App))
+  ReactDOM.renderToString(
+    wrapElementWithProvider(React.createElement(App), registry)
+  )
   const html = ReactDOM.renderToStaticMarkup(
-    React.createElement('head', null, flush({ nonce: 'test-nonce' }))
+    React.createElement('head', null, registry.toReact({ nonce: 'test-nonce' }))
   )
 
   t.is(html, `<head>${expected}</head>`)
 
-  // Assert that memory is empty
-  t.is(0, flush({ nonce: 'test-nonce' }).length)
-  t.is('', flushToHTML({ nonce: 'test-nonce' }))
+  registry.flush()
+  // Assert that registry is empty
+  t.is(0, registry.toReact({ nonce: 'test-nonce' }).length)
+  t.is('', registry.toHTML({ nonce: 'test-nonce' }))
 
   // Render to html again
-  ReactDOM.renderToString(React.createElement(App))
-  t.is(expected, flushToHTML({ nonce: 'test-nonce' }))
+  ReactDOM.renderToString(
+    wrapElementWithProvider(React.createElement(App), registry)
+  )
+  t.is(expected, registry.toHTML({ nonce: 'test-nonce' }))
 
-  // Assert that memory is empty
-  t.is(0, flush({ nonce: 'test-nonce' }).length)
-  t.is('', flushToHTML({ nonce: 'test-nonce' }))
+  registry.flush()
+  // Assert that registry is empty
+  t.is(0, registry.toReact({ nonce: 'test-nonce' }).length)
+  t.is('', registry.toHTML({ nonce: 'test-nonce' }))
 })
