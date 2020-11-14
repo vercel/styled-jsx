@@ -1,5 +1,6 @@
 export default () => {
-  const Element = 'div'
+  const Div = 'div'
+  const Span = 'span'
   return (
     <div>
       <div className="test" {...test.test} />
@@ -47,10 +48,13 @@ export default () => {
       <div className="test" {...{ className: props.className }} {...bar} />
       <div className="test" {...bar} {...{ className: props.className }} />
       <div className="test" {...bar()} />
-      <Element />
-      <Element className="test" />
-      <Element {...props} />
-      <style jsx>{'div { color: red }'}</style>
+      <Div />
+      <Div className="test" />
+      <Div {...props} />
+      <Span />
+      <Span className="test" />
+      <Span {...props} />
+      <style jsx>{'div { color: red } .Span { color: green; }'}</style>
     </div>
   )
 }

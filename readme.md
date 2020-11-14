@@ -21,6 +21,7 @@ Code and docs are for v3 which we highly recommend you to try. Looking for style
 - [Targeting The Root](#targeting-the-root)
 - [Global styles](#global-styles)
   * [One-off global selectors](#one-off-global-selectors)
+- [Styling components](#styling-components)
 - [Dynamic styles](#dynamic-styles)
   * [Via interpolated dynamic props](#via-interpolated-dynamic-props)
   * [Via `className` toggling](#via-classname-toggling)
@@ -213,6 +214,27 @@ export default () => (
 
       div :global(.react-select) {
         color: red
+      }
+    `}</style>
+  </div>
+)
+```
+
+### Styling components
+
+You may select components in styles if that components accepts `className` property:
+
+```jsx
+import React from 'react'
+import Link from 'some-library'
+
+export default () => (
+  <div>
+    <Link>About</Link>
+    
+    <style jsx>{`
+      .Link {
+        text-decoration: none;
       }
     `}</style>
   </div>
