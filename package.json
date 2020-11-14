@@ -1,6 +1,6 @@
 {
   "name": "styled-jsx",
-  "version": "3.3.1",
+  "version": "0.0.0-development",
   "license": "MIT",
   "repository": "vercel/styled-jsx",
   "description": "Full CSS support for JSX without compromises",
@@ -82,6 +82,7 @@
     "pretty-quick": "3.1.0",
     "react": "17.0.1",
     "react-dom": "17.0.1",
+    "semantic-release": "17.2.2",
     "xo": "0.24.0"
   },
   "peerDependencies": {
