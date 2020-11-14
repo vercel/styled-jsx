@@ -17,13 +17,15 @@
     "license.md"
   ],
   "scripts": {
-    "dev": "npm run build -- --watch",
     "build": "babel src --out-dir dist",
-    "prepare": "npm run build",
-    "test": "npm run lint && ava",
+    "test": "ava",
     "lint": "xo",
-    "format": "prettier --single-quote --no-semi --write *.js {src,test}/*.js",
-    "precommit": "xo --quiet && ava && lint-staged"
+    "prepublishOnly": "yarn build && yarn test && yarn lint --quiet"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
   },
   "ava": {
     "require": [
@@ -48,13 +50,6 @@
       "unicorn/prefer-node-append": 0,
       "unicorn/prefer-query-selector": 0
     }
-  },
-  "lint-staged": {
-    "*.js": [
-      "npm run lint",
-      "prettier --single-quote --no-semi --write",
-      "git add"
-    ]
   },
   "dependencies": {
     "@babel/types": "7.8.3",
@@ -81,10 +76,10 @@
     "babel-core": "6.26.3",
     "babel-plugin-macros": "2.8.0",
     "eslint-config-prettier": "4.0.0",
-    "husky": "1.3.1",
-    "lint-staged": "8.1.3",
+    "husky": "4.3.0",
     "mz": "2.7.0",
     "prettier": "1.16.4",
+    "pretty-quick": "3.1.0",
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "xo": "0.24.0"
