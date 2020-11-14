@@ -290,6 +290,9 @@ export default function({ types: t }) {
           // possibly others so we traverse from here or else
           // dynamic values in classNames could be incorrect
           path.traverse(jsxVisitors, state)
+
+          // Transpile external styles
+          path.traverse(externalStylesVisitor, state)
         },
         exit({ node, scope }, state) {
           if (
@@ -306,10 +309,7 @@ export default function({ types: t }) {
           const importDeclaration = createReactComponentImportDeclaration(state)
           node.body.unshift(importDeclaration)
         }
-      },
-
-      // Transpile external styles
-      ...externalStylesVisitor
+      }
     }
   }
 
