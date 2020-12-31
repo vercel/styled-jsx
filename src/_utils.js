@@ -10,7 +10,8 @@ import {
   GLOBAL_ATTRIBUTE,
   STYLE_COMPONENT_ID,
   STYLE_COMPONENT,
-  STYLE_COMPONENT_DYNAMIC
+  STYLE_COMPONENT_DYNAMIC,
+  STYLE_COMPONENT_NAMED_EXPORT
 } from './_constants'
 
 const concat = (a, b) => t.binaryExpression('+', a, b)
@@ -626,8 +627,10 @@ export const createReactComponentImportDeclaration = state => {
       ? state.opts.styleModule
       : 'styled-jsx/style'
 
+  const localIdentifier = t.identifier(STYLE_COMPONENT)
+  const namedExport = t.identifier(STYLE_COMPONENT_NAMED_EXPORT)
   return t.importDeclaration(
-    [t.importDefaultSpecifier(t.identifier(STYLE_COMPONENT))],
+    [t.importSpecifier(localIdentifier, namedExport)],
     t.stringLiteral(styleModule)
   )
 }

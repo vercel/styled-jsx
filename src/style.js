@@ -3,7 +3,7 @@ import StyleSheetRegistry from './stylesheet-registry'
 
 const styleSheetRegistry = new StyleSheetRegistry()
 
-export default class JSXStyle extends Component {
+export class JSXStyle extends Component {
   constructor(props) {
     super(props)
     this.prevProps = {}
@@ -49,6 +49,8 @@ export default class JSXStyle extends Component {
     return null
   }
 }
+
+export default JSXStyle
 
 export function flush() {
   const cssRules = styleSheetRegistry.cssRules()
