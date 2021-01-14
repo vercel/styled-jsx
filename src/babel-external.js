@@ -226,8 +226,7 @@ export const visitor = {
         !path.scope.hasBinding(STYLE_COMPONENT)
       ) {
         state.hasInjectedJSXStyle = true
-        const importDeclaration = createReactComponentImportDeclaration(state)
-        path.scope.path.node.body.unshift(importDeclaration)
+        createReactComponentImportDeclaration(state)
       }
     })
 

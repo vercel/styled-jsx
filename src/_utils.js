@@ -1,4 +1,5 @@
 import path from 'path'
+import { addDefault } from '@babel/helper-module-imports';
 import * as t from '@babel/types'
 import _hashString from 'string-hash'
 import { SourceMapGenerator } from 'source-map'
@@ -621,14 +622,12 @@ export const booleanOption = opts => {
 }
 
 export const createReactComponentImportDeclaration = state => {
-  const styleModule =
+  addDefault(
+    state.file.path,
     typeof state.opts.styleModule === 'string'
       ? state.opts.styleModule
-      : 'styled-jsx/style'
-
-  return t.importDeclaration(
-    [t.importDefaultSpecifier(t.identifier(STYLE_COMPONENT))],
-    t.stringLiteral(styleModule)
+      : 'styled-jsx/style',
+    { nameHint: STYLE_COMPONENT}
   )
 }
 
