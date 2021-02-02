@@ -33,7 +33,7 @@ module.exports = function(content) {
     options.type = commentType[1]
   }
 
-  let output = `import css from 'styled-jsx/css';\n\nexport default css`
+  let output = `import css from 'styled-jsx/css';\n\nconst styles = css`
 
   if (options.type === 'global') {
     // css.global``
@@ -46,7 +46,10 @@ module.exports = function(content) {
 
   // Escape backticks and backslashes: “`” ⇒ “\`”, “\” ⇒ “\\”
   // (c) https://git.io/fNZzr
-  output += `\`${content.replace(/[`\\]/g, match => '\\' + match)}\``
+  output += `\`${content.replace(
+    /[`\\]/g,
+    match => '\\' + match
+  )}\`;\n\nexport default styles;`
 
   this.callback(null, output)
 }
