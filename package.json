@@ -17,7 +17,7 @@
     "webpack.js",
     "license.md"
   ],
-  "typings": "./typings/index.d.ts",
+  "typings": "./index.d.ts",
   "scripts": {
     "build": "babel src --out-dir dist",
     "test": "ava",
