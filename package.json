@@ -7,13 +7,15 @@
   "files": [
     "dist",
     "lib",
-    "typings",
+    "index.d.ts",
     "server.js",
+    "server.d.ts",
     "babel.js",
     "babel-test.js",
     "style.js",
     "macro.js",
     "css.js",
+    "css.d.ts",
     "webpack.js",
     "license.md"
   ],
