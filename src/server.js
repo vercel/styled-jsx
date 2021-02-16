@@ -1,5 +1,11 @@
 import React from 'react'
-import { flush } from './style'
+import { styleSheetRegistry } from './style'
+
+function flush() {
+  const cssRules = styleSheetRegistry.cssRules()
+  styleSheetRegistry.flush()
+  return cssRules
+}
 
 export default function flushToReact(options = {}) {
   return flush().map(args => {

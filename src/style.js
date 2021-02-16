@@ -1,7 +1,7 @@
 import { Component } from 'react'
 import StyleSheetRegistry from './stylesheet-registry'
 
-const styleSheetRegistry = new StyleSheetRegistry()
+export const styleSheetRegistry = new StyleSheetRegistry()
 
 export default class JSXStyle extends Component {
   constructor(props) {
@@ -48,10 +48,4 @@ export default class JSXStyle extends Component {
 
     return null
   }
-}
-
-export function flush() {
-  const cssRules = styleSheetRegistry.cssRules()
-  styleSheetRegistry.flush()
-  return cssRules
 }
