@@ -18,6 +18,13 @@ test('rewrites className', async t => {
   t.snapshot(code)
 })
 
+test('rewrites class for custom components', async t => {
+  const { code } = await transform(
+    './fixtures/attribute-generation-custom-component-class-rewriting.js'
+  )
+  t.snapshot(code)
+})
+
 test('generate attribute for mixed modes (global, static, dynamic)', async t => {
   const { code } = await transform('./fixtures/attribute-generation-modes.js')
   t.snapshot(code)
