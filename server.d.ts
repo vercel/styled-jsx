@@ -1,16 +1,21 @@
 // Definitions by: @types/styled-jsx <https://www.npmjs.com/package/@types/styled-jsx>
 
-import { ReactElement } from 'react'
+import * as React from 'react'
 
 export declare class StyleSheetRegistry {
   constructor()
 
-  // These are marked private just so that we don't have to deal with specifying
-  // their return types (but they need to be here so that users don't just pass
-  // arbitrary objects in its place).
-  private cssRules()
-  private flush()
+  // These exist just to enforce the shape of StyleSheetRegistry without
+  // actually having to type the returns of these functions. This essentially
+  // just prevents users from passing in arbitrary objects in place of
+  // StyleSheetRegistry.
+  cssRules
+  flush
 }
+
+export declare const StyleSheetRegistryContext: React.Context<
+  StyleSheetRegistry
+>
 
 export interface FlushOpts {
   nonce?: string
@@ -19,5 +24,5 @@ export interface FlushOpts {
 
 export declare function flushToHTML(opts?: FlushOpts): string
 
-declare function flushToReact<T>(opts?: FlushOpts): Array<ReactElement<T>>
+declare function flushToReact<T>(opts?: FlushOpts): Array<React.ReactElement<T>>
 export default flushToReact
