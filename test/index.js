@@ -120,11 +120,14 @@ test('does not transpile nested style tags', async t => {
 })
 
 function clearModulesCache() {
-  ;['../src/lib/stylesheet', '../src/style', '../src/server'].forEach(
-    moduleName => {
-      delete require.cache[require.resolve(moduleName)]
-    }
-  )
+  ;[
+    '../src/lib/stylesheet',
+    '../src/style',
+    '../src/server',
+    '../src/stylesheet-registry'
+  ].forEach(moduleName => {
+    delete require.cache[require.resolve(moduleName)]
+  })
 }
 
 test('server rendering', t => {

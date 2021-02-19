@@ -1,5 +1,6 @@
 import hashString from 'string-hash'
 import DefaultStyleSheet from './lib/stylesheet'
+import React from 'react'
 
 const sanitize = rule => rule.replace(/\/style/gi, '\\/style')
 export default class StyleSheetRegistry {
@@ -211,6 +212,11 @@ export default class StyleSheetRegistry {
     }, {})
   }
 }
+
+export const globalStyleSheetRegistry = new StyleSheetRegistry()
+export const StyleSheetRegistryContext = React.createContext(
+  globalStyleSheetRegistry
+)
 
 function invariant(condition, message) {
   if (!condition) {

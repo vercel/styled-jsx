@@ -1,7 +1,8 @@
-import { Component } from 'react'
-import StyleSheetRegistry from './stylesheet-registry'
-
-const styleSheetRegistry = new StyleSheetRegistry()
+import React, { Component } from 'react'
+import {
+  globalStyleSheetRegistry,
+  StyleSheetRegistryContext
+} from './stylesheet-registry'
 
 export default class JSXStyle extends Component {
   constructor(props) {
@@ -9,12 +10,20 @@ export default class JSXStyle extends Component {
     this.prevProps = {}
   }
 
+  get styleSheetRegistry() {
+    return this.context
+  }
+
   static dynamic(info) {
     return info
       .map(tagInfo => {
         const baseId = tagInfo[0]
         const props = tagInfo[1]
-        return styleSheetRegistry.computeId(baseId, props)
+        // It's fine te reference globalStyleSheetRegistry here since all
+        // `computeId` does is calculate the classname (which is a pure function
+        // of baseId and props). It's only an instance method so that it can
+        // memoize the results.
+        return globalStyleSheetRegistry.computeId(baseId, props)
       })
       .join(' ')
   }
@@ -30,7 +39,7 @@ export default class JSXStyle extends Component {
   }
 
   componentWillUnmount() {
-    styleSheetRegistry.remove(this.props)
+    this.styleSheetRegistry.remove(this.props)
   }
 
   render() {
@@ -39,10 +48,10 @@ export default class JSXStyle extends Component {
     if (this.shouldComponentUpdate(this.prevProps)) {
       // Updates
       if (this.prevProps.id) {
-        styleSheetRegistry.remove(this.prevProps)
+        this.styleSheetRegistry.remove(this.prevProps)
       }
 
-      styleSheetRegistry.add(this.props)
+      this.styleSheetRegistry.add(this.props)
       this.prevProps = this.props
     }
 
@@ -50,7 +59,9 @@ export default class JSXStyle extends Component {
   }
 }
 
-export function flush() {
+JSXStyle.contextType = StyleSheetRegistryContext
+
+export function flush(styleSheetRegistry = globalStyleSheetRegistry) {
   const cssRules = styleSheetRegistry.cssRules()
   styleSheetRegistry.flush()
   return cssRules

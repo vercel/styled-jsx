@@ -1,8 +1,18 @@
 import React from 'react'
 import { flush } from './style'
 
+import StyleSheetRegistry, {
+  StyleSheetRegistryContext,
+  globalStyleSheetRegistry
+} from './stylesheet-registry'
+export {
+  StyleSheetRegistry,
+  StyleSheetRegistryContext,
+  globalStyleSheetRegistry
+}
+
 export default function flushToReact(options = {}) {
-  return flush().map(args => {
+  return flush(options.registry).map(args => {
     const id = args[0]
     const css = args[1]
     return React.createElement('style', {
@@ -18,7 +28,7 @@ export default function flushToReact(options = {}) {
 }
 
 export function flushToHTML(options = {}) {
-  return flush().reduce((html, args) => {
+  return flush(options.registry).reduce((html, args) => {
     const id = args[0]
     const css = args[1]
     html += `<style id="__${id}"${
