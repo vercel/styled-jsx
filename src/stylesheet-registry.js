@@ -1,6 +1,6 @@
 import hashString from 'string-hash'
-import DefaultStyleSheet from './lib/stylesheet'
 import React from 'react'
+import DefaultStyleSheet from './lib/stylesheet'
 
 const sanitize = rule => rule.replace(/\/style/gi, '\\/style')
 export default class StyleSheetRegistry {

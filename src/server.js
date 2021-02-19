@@ -1,15 +1,11 @@
 import React from 'react'
 import { flush } from './style'
 
-import StyleSheetRegistry, {
+export {
+  default as StyleSheetRegistry,
   StyleSheetRegistryContext,
   globalStyleSheetRegistry
 } from './stylesheet-registry'
-export {
-  StyleSheetRegistry,
-  StyleSheetRegistryContext,
-  globalStyleSheetRegistry
-}
 
 export default function flushToReact(options = {}) {
   return flush(options.registry).map(args => {
