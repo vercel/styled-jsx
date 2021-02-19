@@ -1,5 +1,5 @@
 import React from 'react'
-import { flush } from './style'
+import { globalStyleSheetRegistry } from './stylesheet-registry'
 
 export {
   default as StyleSheetRegistry,
@@ -7,15 +7,21 @@ export {
   globalStyleSheetRegistry
 } from './stylesheet-registry'
 
-export default function flushToReact(options = {}) {
-  return flush(options.registry).map(args => {
+/**
+ * Flush the registry to React <style /> elements.
+ */
+export default function flushToReact({
+  nonce,
+  registry = globalStyleSheetRegistry
+} = {}) {
+  return registry.flushRules().map(args => {
     const id = args[0]
     const css = args[1]
     return React.createElement('style', {
       id: `__${id}`,
       // Avoid warnings upon render with a key
       key: `__${id}`,
-      nonce: options.nonce ? options.nonce : undefined,
+      nonce,
       dangerouslySetInnerHTML: {
         __html: css
       }
@@ -23,13 +29,18 @@ export default function flushToReact(options = {}) {
   })
 }
 
-export function flushToHTML(options = {}) {
-  return flush(options.registry).reduce((html, args) => {
+/**
+ * Flush the registry to an HTML string containing <style /> elements.
+ */
+export function flushToHTML({
+  nonce,
+  registry = globalStyleSheetRegistry
+} = {}) {
+  return registry.flushRules().reduce((html, args) => {
     const id = args[0]
     const css = args[1]
-    html += `<style id="__${id}"${
-      options.nonce ? ` nonce="${options.nonce}"` : ''
-    }>${css}</style>`
+    const nonceAttr = nonce ? ` nonce="${nonce}"` : ''
+    html += `<style id="__${id}"${nonceAttr}>${css}</style>`
     return html
   }, '')
 }

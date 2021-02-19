@@ -105,6 +105,15 @@ export default class StyleSheetRegistry {
     this.computeSelector = this.createComputeSelector()
   }
 
+  /**
+   * Flush the registry and return the array of rules that it contained.
+   */
+  flushRules() {
+    const cssRules = this.cssRules()
+    this.flush()
+    return cssRules
+  }
+
   cssRules() {
     const fromServer = this._fromServer
       ? Object.keys(this._fromServer).map(styleId => [
@@ -135,18 +144,7 @@ export default class StyleSheetRegistry {
   createComputeId() {
     const cache = {}
     return function(baseId, props) {
-      if (!props) {
-        return `jsx-${baseId}`
-      }
-
-      const propsToString = String(props)
-      const key = baseId + propsToString
-      // return `jsx-${hashString(`${baseId}-${propsToString}`)}`
-      if (!cache[key]) {
-        cache[key] = `jsx-${hashString(`${baseId}-${propsToString}`)}`
-      }
-
-      return cache[key]
+      return computeId(baseId, props, cache)
     }
   }
 
@@ -217,6 +215,25 @@ export const globalStyleSheetRegistry = new StyleSheetRegistry()
 export const StyleSheetRegistryContext = React.createContext(
   globalStyleSheetRegistry
 )
+
+/**
+ * Compute a unique identifier for the given baseId and props.
+ *
+ * Use `StyleSheetRegistry.computeId` for automatic caching.
+ */
+export function computeId(baseId, props, cache = {}) {
+  if (!props) {
+    return `jsx-${baseId}`
+  }
+
+  const propsToString = String(props)
+  const key = baseId + propsToString
+  if (!cache[key]) {
+    cache[key] = `jsx-${hashString(`${baseId}-${propsToString}`)}`
+  }
+
+  return cache[key]
+}
 
 function invariant(condition, message) {
   if (!condition) {

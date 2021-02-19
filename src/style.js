@@ -1,8 +1,5 @@
 import { Component } from 'react'
-import {
-  globalStyleSheetRegistry,
-  StyleSheetRegistryContext
-} from './stylesheet-registry'
+import { computeId, StyleSheetRegistryContext } from './stylesheet-registry'
 
 export default class JSXStyle extends Component {
   constructor(props) {
@@ -19,11 +16,7 @@ export default class JSXStyle extends Component {
       .map(tagInfo => {
         const baseId = tagInfo[0]
         const props = tagInfo[1]
-        // It's fine te reference globalStyleSheetRegistry here since all
-        // `computeId` does is calculate the classname (which is a pure function
-        // of baseId and props). It's only an instance method so that it can
-        // memoize the results.
-        return globalStyleSheetRegistry.computeId(baseId, props)
+        return computeId(baseId, props)
       })
       .join(' ')
   }
@@ -60,9 +53,3 @@ export default class JSXStyle extends Component {
 }
 
 JSXStyle.contextType = StyleSheetRegistryContext
-
-export function flush(styleSheetRegistry = globalStyleSheetRegistry) {
-  const cssRules = styleSheetRegistry.cssRules()
-  styleSheetRegistry.flush()
-  return cssRules
-}
