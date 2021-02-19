@@ -11,6 +11,7 @@ export declare class StyleSheetRegistry {
   // StyleSheetRegistry.
   cssRules
   flush
+  flushRules
 }
 
 export declare const StyleSheetRegistryContext: React.Context<
