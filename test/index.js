@@ -282,7 +282,6 @@ test('multiple registry instances', t => {
   clearModulesCache()
   const JSXStyle = require('../src/style').default
   const {
-    default: flush,
     flushToHTML,
     StyleSheetRegistryContext,
     StyleSheetRegistry
