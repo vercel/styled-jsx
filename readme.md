@@ -397,9 +397,14 @@ while rendering. While this works for simple sites (including statically
 rendered pages), it can cause issues if using asynchronous rendering.
 
 To resolve these issues, you can wrap your app in a
-`StyleSheetRegistryContext.Provider` that is unique to the request.
+`StyleSheetRegistryContext.Provider` that is unique to the request and flush _that_
+registry at the end of the request.
 
-Using NextJS, your `_document.jsx` should look like this:
+<details>
+
+<summary>
+  NextJS example <code>_document.jsx</code> for asynchronous rendering
+</summary>
 
 ```jsx
 import Document from 'next/document'
@@ -445,6 +450,8 @@ class MyDocument extends Document {
 
 export default MyDocument
 ```
+
+</details>
 
 ### Content Security Policy
 
