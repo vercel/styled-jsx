@@ -1,11 +1,29 @@
 // Definitions by: @types/styled-jsx <https://www.npmjs.com/package/@types/styled-jsx>
 
-import { ReactElement } from 'react'
+import * as React from 'react'
 
-declare function flushToHTML(opts?: { nonce?: string }): string
-declare function flushToReact<T>(opts?: {
+export declare class StyleSheetRegistry {
+  constructor()
+
+  // These exist just to enforce the shape of StyleSheetRegistry without
+  // actually having to type the returns of these functions. This essentially
+  // just prevents users from passing in arbitrary objects in place of
+  // StyleSheetRegistry.
+  cssRules
+  flush
+  flushRules
+}
+
+export declare const StyleSheetRegistryContext: React.Context<
+  StyleSheetRegistry
+>
+
+export interface FlushOpts {
   nonce?: string
-}): Array<ReactElement<T>>
+  registry?: StyleSheetRegistry
+}
 
-export { flushToHTML }
+export declare function flushToHTML(opts?: FlushOpts): string
+
+declare function flushToReact<T>(opts?: FlushOpts): Array<React.ReactElement<T>>
 export default flushToReact

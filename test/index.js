@@ -120,11 +120,14 @@ test('does not transpile nested style tags', async t => {
 })
 
 function clearModulesCache() {
-  ;['../src/lib/stylesheet', '../src/style', '../src/server'].forEach(
-    moduleName => {
-      delete require.cache[require.resolve(moduleName)]
-    }
-  )
+  ;[
+    '../src/lib/stylesheet',
+    '../src/style',
+    '../src/server',
+    '../src/stylesheet-registry'
+  ].forEach(moduleName => {
+    delete require.cache[require.resolve(moduleName)]
+  })
 }
 
 test('server rendering', t => {
@@ -273,4 +276,43 @@ test('optimized styles do not contain new lines', t => {
     '<style id="__jsx-1">p { color: red }.foo { color: hotpink }</style>'
 
   t.is(html, `<head>${expected}</head>`)
+})
+
+test('multiple registry instances', t => {
+  clearModulesCache()
+  const JSXStyle = require('../src/style').default
+  const {
+    flushToHTML,
+    StyleSheetRegistryContext,
+    StyleSheetRegistry
+  } = require('../src/server')
+  const registry = new StyleSheetRegistry()
+  function App() {
+    return React.createElement(
+      StyleSheetRegistryContext.Provider,
+      { value: registry },
+      React.createElement(
+        'div',
+        null,
+        React.createElement(
+          JSXStyle,
+          {
+            id: 1
+          },
+          ['p { color: red }', '.foo { color: hotpink }']
+        )
+      )
+    )
+  }
+
+  ReactDOM.renderToString(React.createElement(App))
+
+  // check that it **didn't** use the global registry...
+  t.is(flushToHTML(), '')
+
+  // ...and that it **did** use our registry that was provided through context
+  t.is(
+    flushToHTML({ registry }),
+    '<style id="__jsx-1">p { color: red }.foo { color: hotpink }</style>'
+  )
 })
