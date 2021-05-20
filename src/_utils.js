@@ -1,5 +1,5 @@
 import path from 'path'
-import { addDefault } from '@babel/helper-module-imports';
+import { addDefault } from '@babel/helper-module-imports'
 import * as t from '@babel/types'
 import _hashString from 'string-hash'
 import { SourceMapGenerator } from 'source-map'
@@ -11,7 +11,8 @@ import {
   GLOBAL_ATTRIBUTE,
   STYLE_COMPONENT_ID,
   STYLE_COMPONENT,
-  STYLE_COMPONENT_DYNAMIC
+  STYLE_COMPONENT_DYNAMIC,
+  STYLE_COMPONENT_IMPORT
 } from './_constants'
 
 const concat = (a, b) => t.binaryExpression('+', a, b)
@@ -621,14 +622,36 @@ export const booleanOption = opts => {
   return ret
 }
 
+/**
+ * Adds an import declaration for the `JSXStyle` component
+ *
+ * ```
+ * import _JSXStyleImport from 'styled-jsx/style';
+ * var _JSXStyle = _JSXStyleImport;
+ * ```
+ */
 export const createReactComponentImportDeclaration = state => {
-  addDefault(
+  // The import identifier name can be `_JSXStyleImport`, `_JSXStyleImport2`, etc.
+  const importIdentifier = addDefault(
     state.file.path,
     typeof state.opts.styleModule === 'string'
       ? state.opts.styleModule
       : 'styled-jsx/style',
-    { nameHint: STYLE_COMPONENT}
+    { nameHint: STYLE_COMPONENT_IMPORT }
   )
+  // var _JSXStyle = _JSXStyleImport;
+  const variableDeclaration = t.variableDeclaration('var', [
+    t.variableDeclarator(t.identifier(STYLE_COMPONENT), importIdentifier)
+  ])
+  const fileBody = state.file.path.node.body
+  // The index of the import declaration that was added
+  const componentImportIndex = fileBody.findIndex(
+    type =>
+      t.isImportDeclaration(type) && type.source.value === importIdentifier.name
+  )
+
+  // Insert the variable declaration after the import declaration
+  fileBody.splice(componentImportIndex + 1, 0, variableDeclaration)
 }
 
 export const setStateOptions = state => {
