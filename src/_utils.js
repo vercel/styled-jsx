@@ -643,15 +643,30 @@ export const createReactComponentImportDeclaration = state => {
   const variableDeclaration = t.variableDeclaration('var', [
     t.variableDeclarator(t.identifier(STYLE_COMPONENT), importIdentifier)
   ])
-  const fileBody = state.file.path.node.body
-  // The index of the import declaration that was added
-  const componentImportIndex = fileBody.findIndex(
-    type =>
-      t.isImportDeclaration(type) && type.source.value === importIdentifier.name
-  )
 
   // Insert the variable declaration after the import declaration
-  fileBody.splice(componentImportIndex + 1, 0, variableDeclaration)
+  state.file.path.traverse({
+    // Handle CommonJS style imports
+    VariableDeclarator(path) {
+      if (
+        t.isIdentifier(path.node.id) &&
+        path.node.id.name === importIdentifier.name
+      ) {
+        path.parentPath.insertAfter(variableDeclaration)
+      }
+    },
+    // Handle ES6 style imports
+    ImportDeclaration(path) {
+      const firstSpecifier = path.node.specifiers[0]
+
+      if (
+        firstSpecifier &&
+        firstSpecifier.local.name === importIdentifier.name
+      ) {
+        path.insertAfter(variableDeclaration)
+      }
+    }
+  })
 }
 
 export const setStateOptions = state => {
