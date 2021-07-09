@@ -6,7 +6,8 @@ const styleSheetRegistry = new StyleSheetRegistry()
 export default class JSXStyle extends Component {
   constructor(props) {
     super(props)
-    this.prevProps = {}
+    // Empty state to get style registered on first render
+    this.state = {}
   }
 
   static dynamic(info) {
@@ -19,33 +20,29 @@ export default class JSXStyle extends Component {
       .join(' ')
   }
 
-  // probably faster than PureComponent (shallowEqual)
-  shouldComponentUpdate(otherProps) {
-    return (
-      this.props.id !== otherProps.id ||
+  static getDerivedStateFromProps(props, state) {
+    if (
+      props.id !== state.id ||
       // We do this check because `dynamic` is an array of strings or undefined.
       // These are the computed values for dynamic styles.
-      String(this.props.dynamic) !== String(otherProps.dynamic)
-    )
+      String(props.dynamic) !== String(state.dynamic)
+    ) {
+      if (state.id) {
+        styleSheetRegistry.remove(state)
+      }
+      styleSheetRegistry.add(props)
+      return props
+    }
+    return null
   }
 
   componentWillUnmount() {
-    styleSheetRegistry.remove(this.props)
+    if (this.state.id) {
+      styleSheetRegistry.remove(this.state)
+    }
   }
 
   render() {
-    // This is a workaround to make the side effect async safe in the "render" phase.
-    // See https://github.com/zeit/styled-jsx/pull/484
-    if (this.shouldComponentUpdate(this.prevProps)) {
-      // Updates
-      if (this.prevProps.id) {
-        styleSheetRegistry.remove(this.prevProps)
-      }
-
-      styleSheetRegistry.add(this.props)
-      this.prevProps = this.props
-    }
-
     return null
   }
 }
