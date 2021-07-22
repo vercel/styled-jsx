@@ -1,8 +1,10 @@
+import React, { useState, useContext, createContext, useMemo } from 'react'
 import hashString from 'string-hash'
 import DefaultStyleSheet from './lib/stylesheet'
 
 const sanitize = rule => rule.replace(/\/style/gi, '\\/style')
-export default class StyleSheetRegistry {
+
+export class StyleSheetRegistry {
   constructor({
     styleSheet = null,
     optimizeForSpeed = false,
@@ -216,4 +218,51 @@ function invariant(condition, message) {
   if (!condition) {
     throw new Error(`StyleSheetRegistry: ${message}.`)
   }
+}
+
+export const StyleSheetContext = createContext(new StyleSheetRegistry())
+
+export function StyleRegistry({ children }) {
+  const rootRegistry = useContext(StyleSheetContext)
+  const registry = useState(() => rootRegistry || new StyleSheetRegistry())
+
+  return React.createElement(
+    StyleSheetContext.Provider,
+    { value: registry },
+    children
+  )
+}
+
+export function useStyleRegistry() {
+  const registry = useContext(StyleSheetContext)
+
+  return useMemo(
+    () => ({
+      styles() {
+        return mapRulesToStyle(registry.cssRules())
+      },
+      flush() {
+        registry.flush()
+      }
+    }),
+    [registry]
+  )
+}
+
+function mapRulesToStyle(options = {}) {
+  const registry = useStyleRegistry()
+  const cssRules = registry.styles()
+  return cssRules.map(args => {
+    const id = args[0]
+    const css = args[1]
+    return React.createElement('style', {
+      id: `__${id}`,
+      // Avoid warnings upon render with a key
+      key: `__${id}`,
+      nonce: options.nonce ? options.nonce : undefined,
+      dangerouslySetInnerHTML: {
+        __html: css
+      }
+    })
+  })
 }

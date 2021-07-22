@@ -2,7 +2,7 @@
 import test from 'ava'
 
 // Ours
-import StyleSheetRegistry from '../src/stylesheet-registry'
+import { StyleSheetRegistry } from '../src/stylesheet-registry'
 import makeSheet, { invalidRules } from './stylesheet'
 import withMock, { withMockDocument } from './helpers/with-mock'
 
