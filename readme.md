@@ -1,6 +1,6 @@
 # styled-jsx
 
-[![Build Status](https://travis-ci.org/zeit/styled-jsx.svg?branch=master)](https://travis-ci.org/zeit/styled-jsx)
+[![build status](https://github.com/vercel/styled-jsx/actions/workflows/main.yml/badge.svg?branch=master)](https://github.com/vercel/styled-jsx/actions?query=branch%3Amaster)
 
 Need help?<br>
 [![Join the community on Spectrum](https://withspectrum.github.io/badge/badge.svg)](https://spectrum.chat/styled-jsx)
