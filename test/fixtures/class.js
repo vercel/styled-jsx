@@ -1,6 +1,6 @@
+export const _StyleImport = '123'
 export default class {
-
-  render () {
+  render() {
     return (
       <div>
         <p>test</p>
@@ -12,5 +12,4 @@ export default class {
       </div>
     )
   }
-
 }

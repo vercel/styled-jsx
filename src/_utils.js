@@ -1,5 +1,5 @@
 import path from 'path'
-import { addDefault } from '@babel/helper-module-imports';
+import { addDefault } from '@babel/helper-module-imports'
 import * as t from '@babel/types'
 import _hashString from 'string-hash'
 import { SourceMapGenerator } from 'source-map'
@@ -258,7 +258,7 @@ export const getJSXStyleInfo = (expr, scope) => {
   }
 }
 
-export const computeClassNames = (styles, externalJsxId) => {
+export const computeClassNames = (styles, externalJsxId, styleComponent) => {
   if (styles.length === 0) {
     return {
       className: externalJsxId
@@ -297,7 +297,7 @@ export const computeClassNames = (styles, externalJsxId) => {
   // _JSXStyle.dynamic([ ['1234', [props.foo, bar, fn(props)]], ... ])
   const dynamic = t.callExpression(
     // Callee: _JSXStyle.dynamic
-    t.memberExpression(t.identifier(STYLE_COMPONENT), t.identifier('dynamic')),
+    t.memberExpression(t.identifier(styleComponent), t.identifier('dynamic')),
     // Arguments
     [
       t.arrayExpression(
@@ -380,7 +380,12 @@ export const cssToBabelType = css => {
   return t.cloneDeep(css)
 }
 
-export const makeStyledJsxTag = (id, transformedCss, expressions = []) => {
+export const makeStyledJsxTag = (
+  id,
+  transformedCss,
+  expressions = [],
+  styleComponent
+) => {
   const css = cssToBabelType(transformedCss)
 
   const attributes = [
@@ -402,8 +407,8 @@ export const makeStyledJsxTag = (id, transformedCss, expressions = []) => {
   }
 
   return t.jSXElement(
-    t.jSXOpeningElement(t.jSXIdentifier(STYLE_COMPONENT), attributes),
-    t.jSXClosingElement(t.jSXIdentifier(STYLE_COMPONENT)),
+    t.jSXOpeningElement(t.jSXIdentifier(styleComponent), attributes),
+    t.jSXClosingElement(t.jSXIdentifier(styleComponent)),
     [t.jSXExpressionContainer(css)]
   )
 }
@@ -627,7 +632,7 @@ export const createReactComponentImportDeclaration = state => {
     typeof state.opts.styleModule === 'string'
       ? state.opts.styleModule
       : 'styled-jsx/style',
-    { nameHint: STYLE_COMPONENT}
+    { nameHint: state.styleComponent }
   )
 }
 
@@ -650,6 +655,7 @@ export const setStateOptions = state => {
       vendorPrefixes: state.opts.vendorPrefixes
     })
   }
+  state.styleComponent = STYLE_COMPONENT
 }
 
 export function log(message) {

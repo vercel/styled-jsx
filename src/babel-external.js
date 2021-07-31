@@ -1,7 +1,5 @@
 import * as t from '@babel/types'
 
-import { STYLE_COMPONENT } from './_constants'
-
 import {
   getJSXStyleInfo,
   processCss,
@@ -23,7 +21,8 @@ export function processTaggedTemplateExpression({
   splitRules,
   plugins,
   vendorPrefixes,
-  sourceMaps
+  sourceMaps,
+  styleComponent
 }) {
   const templateLiteral = path.get('quasi')
   let scope
@@ -39,7 +38,11 @@ export function processTaggedTemplateExpression({
 
   const stylesInfo = getJSXStyleInfo(templateLiteral, scope)
 
-  const { staticClassName, className } = computeClassNames([stylesInfo])
+  const { staticClassName, className } = computeClassNames(
+    [stylesInfo],
+    undefined,
+    styleComponent
+  )
 
   const styles = processCss(
     {
@@ -64,7 +67,7 @@ export function processTaggedTemplateExpression({
       t.objectExpression([
         t.objectProperty(
           t.identifier('styles'),
-          makeStyledJsxTag(hash, css, expressions)
+          makeStyledJsxTag(hash, css, expressions, styleComponent)
         ),
         t.objectProperty(t.identifier('className'), className)
       ])
@@ -212,7 +215,8 @@ export const visitor = {
                 : process.env.NODE_ENV === 'production',
             plugins: state.plugins,
             vendorPrefixes,
-            sourceMaps
+            sourceMaps,
+            styleComponent: state.styleComponent
           })
         })
       )
@@ -223,7 +227,7 @@ export const visitor = {
         hasJSXStyle &&
         taggedTemplateExpressions.resolve.length > 0 &&
         !state.hasInjectedJSXStyle &&
-        !path.scope.hasBinding(STYLE_COMPONENT)
+        !path.scope.hasBinding(state.styleComponent)
       ) {
         state.hasInjectedJSXStyle = true
         createReactComponentImportDeclaration(state)

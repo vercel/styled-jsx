@@ -172,7 +172,8 @@ export default function({ types: t }) {
         if (state.styles.length > 0 || externalJsxId) {
           const { staticClassName, className } = computeClassNames(
             state.styles,
-            externalJsxId
+            externalJsxId,
+            state.styleComponent
           )
           state.className = className
           state.staticClassName = staticClassName
@@ -224,7 +225,7 @@ export default function({ types: t }) {
         ) {
           const [id, css] = state.externalStyles.shift()
 
-          path.replaceWith(makeStyledJsxTag(id, css))
+          path.replaceWith(makeStyledJsxTag(id, css, [], state.styleComponent))
           return
         }
 
@@ -247,7 +248,9 @@ export default function({ types: t }) {
           splitRules
         })
 
-        path.replaceWith(makeStyledJsxTag(hash, css, expressions))
+        path.replaceWith(
+          makeStyledJsxTag(hash, css, expressions, state.styleComponent)
+        )
       }
     }
   }
@@ -285,6 +288,7 @@ export default function({ types: t }) {
           state.file.hasJSXStyle = false
 
           setStateOptions(state)
+          createReactComponentImportDeclaration(state)
 
           // we need to beat the arrow function transform and
           // possibly others so we traverse from here or else
@@ -299,14 +303,12 @@ export default function({ types: t }) {
             !(
               state.file.hasJSXStyle &&
               !state.hasInjectedJSXStyle &&
-              !scope.hasBinding(STYLE_COMPONENT)
+              !scope.hasBinding(state.styleComponent)
             )
           ) {
             return
           }
-
           state.hasInjectedJSXStyle = true
-          createReactComponentImportDeclaration(state)
         }
       }
     }

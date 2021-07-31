@@ -4,7 +4,6 @@ import {
   setStateOptions,
   createReactComponentImportDeclaration
 } from './_utils'
-import { STYLE_COMPONENT } from './_constants'
 
 export default createMacro(styledJsxMacro)
 
@@ -94,12 +93,13 @@ function styledJsxMacro({ references, state }) {
             : process.env.NODE_ENV === 'production',
         plugins: state.plugins,
         vendorPrefixes: state.opts.vendorPrefixes,
-        sourceMaps: state.opts.sourceMaps
+        sourceMaps: state.opts.sourceMaps,
+        styleComponent: state.styleComponent
       })
 
       if (
         !state.hasInjectedJSXStyle &&
-        !path.scope.hasBinding(STYLE_COMPONENT)
+        !path.scope.hasBinding(state.styleComponent)
       ) {
         state.hasInjectedJSXStyle = true
         createReactComponentImportDeclaration(state)
