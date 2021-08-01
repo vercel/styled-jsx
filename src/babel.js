@@ -291,7 +291,7 @@ export default function({ types: t }) {
           state.hasJSXStyle = null
           state.ignoreClosing = null
           state.file.hasJSXStyle = false
-          state.file.hasCssImports = false
+          state.file.hasCssResolve = false
           setStateOptions(state)
 
           // `addDefault` will generate unique id for the scope
@@ -308,9 +308,9 @@ export default function({ types: t }) {
           path.traverse(externalStylesVisitor, state)
         },
         exit(path, state) {
-          // For source that didn't really use styled-jsx imports,
+          // For source that didn't really need styled-jsx/style imports,
           // remove the injected import at the beginning
-          if (!state.file.hasJSXStyle && !state.file.hasCssImports) {
+          if (!state.file.hasJSXStyle && !state.file.hasCssResolve) {
             path.traverse({
               ImportDeclaration(importPath) {
                 if (importPath.node.source.value === state.styleModule) {

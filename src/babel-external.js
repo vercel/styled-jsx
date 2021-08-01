@@ -154,8 +154,6 @@ export const visitor = {
         return
       }
 
-      state.file.hasCssImports = true
-
       // Produces an object containing all the TaggedTemplateExpression paths detected.
       // The object contains { scoped, global, resolve }
       const taggedTemplateExpressions = binding.referencePaths
@@ -224,11 +222,11 @@ export const visitor = {
 
       // When using the `resolve` helper we need to add an import
       // for the _JSXStyle component `styled-jsx/style`
-      if (
-        hasJSXStyle &&
-        taggedTemplateExpressions.resolve.length > 0 &&
-        !state.hasInjectedJSXStyle
-      ) {
+      const useResolve =
+        hasJSXStyle && taggedTemplateExpressions.resolve.length > 0
+
+      if (useResolve) {
+        state.file.hasCssResolve = true
         state.hasInjectedJSXStyle = true
       }
     })
