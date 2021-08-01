@@ -1,4 +1,3 @@
-export const _StyleImport = '123'
 export default class {
   render() {
     return (

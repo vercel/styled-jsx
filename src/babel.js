@@ -17,8 +17,6 @@ import {
   setStateOptions
 } from './_utils'
 
-import { STYLE_COMPONENT } from './_constants'
-
 export default function({ types: t }) {
   const jsxVisitors = {
     JSXOpeningElement(path, state) {
@@ -43,7 +41,7 @@ export default function({ types: t }) {
       if (
         name &&
         name !== 'style' &&
-        name !== STYLE_COMPONENT &&
+        name !== state.styleComponentImportName &&
         (name.charAt(0) !== name.charAt(0).toUpperCase() ||
           Object.values(path.scope.bindings).some(binding =>
             binding.referencePaths.some(r => r === tag)
@@ -173,7 +171,7 @@ export default function({ types: t }) {
           const { staticClassName, className } = computeClassNames(
             state.styles,
             externalJsxId,
-            state.styleComponent
+            state.styleComponentImportName
           )
           state.className = className
           state.staticClassName = staticClassName
@@ -225,7 +223,9 @@ export default function({ types: t }) {
         ) {
           const [id, css] = state.externalStyles.shift()
 
-          path.replaceWith(makeStyledJsxTag(id, css, [], state.styleComponent))
+          path.replaceWith(
+            makeStyledJsxTag(id, css, [], state.styleComponentImportName)
+          )
           return
         }
 
@@ -249,7 +249,12 @@ export default function({ types: t }) {
         })
 
         path.replaceWith(
-          makeStyledJsxTag(hash, css, expressions, state.styleComponent)
+          makeStyledJsxTag(
+            hash,
+            css,
+            expressions,
+            state.styleComponentImportName
+          )
         )
       }
     }
@@ -286,9 +291,12 @@ export default function({ types: t }) {
           state.hasJSXStyle = null
           state.ignoreClosing = null
           state.file.hasJSXStyle = false
-
           setStateOptions(state)
-          createReactComponentImportDeclaration(state)
+
+          // `addDefault` will generate unique id for the scope
+          state.styleComponentImportName = createReactComponentImportDeclaration(
+            state
+          )
 
           // we need to beat the arrow function transform and
           // possibly others so we traverse from here or else
@@ -303,7 +311,7 @@ export default function({ types: t }) {
             !(
               state.file.hasJSXStyle &&
               !state.hasInjectedJSXStyle &&
-              !scope.hasBinding(state.styleComponent)
+              !scope.hasBinding(state.styleComponentImportName)
             )
           ) {
             return

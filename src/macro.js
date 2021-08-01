@@ -9,6 +9,7 @@ export default createMacro(styledJsxMacro)
 
 function styledJsxMacro({ references, state }) {
   setStateOptions(state)
+  state.styleComponentImportName = createReactComponentImportDeclaration(state)
 
   // Holds a reference to all the lines where strings are tagged using the `css` tag name.
   // We print a warning at the end of the macro in case there is any reference to css,
@@ -94,15 +95,11 @@ function styledJsxMacro({ references, state }) {
         plugins: state.plugins,
         vendorPrefixes: state.opts.vendorPrefixes,
         sourceMaps: state.opts.sourceMaps,
-        styleComponent: state.styleComponent
+        styleComponentImportName: state.styleComponentImportName
       })
 
-      if (
-        !state.hasInjectedJSXStyle &&
-        !path.scope.hasBinding(state.styleComponent)
-      ) {
+      if (!state.hasInjectedJSXStyle) {
         state.hasInjectedJSXStyle = true
-        createReactComponentImportDeclaration(state)
       }
     })
   })

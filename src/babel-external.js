@@ -8,7 +8,6 @@ import {
   getScope,
   computeClassNames,
   makeStyledJsxTag,
-  createReactComponentImportDeclaration,
   setStateOptions
 } from './_utils'
 
@@ -22,7 +21,7 @@ export function processTaggedTemplateExpression({
   plugins,
   vendorPrefixes,
   sourceMaps,
-  styleComponent
+  styleComponentImportName
 }) {
   const templateLiteral = path.get('quasi')
   let scope
@@ -41,7 +40,7 @@ export function processTaggedTemplateExpression({
   const { staticClassName, className } = computeClassNames(
     [stylesInfo],
     undefined,
-    styleComponent
+    styleComponentImportName
   )
 
   const styles = processCss(
@@ -67,7 +66,7 @@ export function processTaggedTemplateExpression({
       t.objectExpression([
         t.objectProperty(
           t.identifier('styles'),
-          makeStyledJsxTag(hash, css, expressions, styleComponent)
+          makeStyledJsxTag(hash, css, expressions, styleComponentImportName)
         ),
         t.objectProperty(t.identifier('className'), className)
       ])
@@ -216,7 +215,7 @@ export const visitor = {
             plugins: state.plugins,
             vendorPrefixes,
             sourceMaps,
-            styleComponent: state.styleComponent
+            styleComponentImportName: state.styleComponentImportName
           })
         })
       )
@@ -226,11 +225,9 @@ export const visitor = {
       if (
         hasJSXStyle &&
         taggedTemplateExpressions.resolve.length > 0 &&
-        !state.hasInjectedJSXStyle &&
-        !path.scope.hasBinding(state.styleComponent)
+        !state.hasInjectedJSXStyle
       ) {
         state.hasInjectedJSXStyle = true
-        createReactComponentImportDeclaration(state)
       }
     })
 

@@ -9,8 +9,8 @@ import transform from './lib/style-transform'
 import {
   STYLE_ATTRIBUTE,
   GLOBAL_ATTRIBUTE,
-  STYLE_COMPONENT_ID,
   STYLE_COMPONENT,
+  STYLE_COMPONENT_ID,
   STYLE_COMPONENT_DYNAMIC
 } from './_constants'
 
@@ -258,7 +258,11 @@ export const getJSXStyleInfo = (expr, scope) => {
   }
 }
 
-export const computeClassNames = (styles, externalJsxId, styleComponent) => {
+export const computeClassNames = (
+  styles,
+  externalJsxId,
+  styleComponentImportName
+) => {
   if (styles.length === 0) {
     return {
       className: externalJsxId
@@ -297,7 +301,10 @@ export const computeClassNames = (styles, externalJsxId, styleComponent) => {
   // _JSXStyle.dynamic([ ['1234', [props.foo, bar, fn(props)]], ... ])
   const dynamic = t.callExpression(
     // Callee: _JSXStyle.dynamic
-    t.memberExpression(t.identifier(styleComponent), t.identifier('dynamic')),
+    t.memberExpression(
+      t.identifier(styleComponentImportName),
+      t.identifier(STYLE_COMPONENT_DYNAMIC)
+    ),
     // Arguments
     [
       t.arrayExpression(
@@ -384,7 +391,7 @@ export const makeStyledJsxTag = (
   id,
   transformedCss,
   expressions = [],
-  styleComponent
+  styleComponentImportName
 ) => {
   const css = cssToBabelType(transformedCss)
 
@@ -407,8 +414,8 @@ export const makeStyledJsxTag = (
   }
 
   return t.jSXElement(
-    t.jSXOpeningElement(t.jSXIdentifier(styleComponent), attributes),
-    t.jSXClosingElement(t.jSXIdentifier(styleComponent)),
+    t.jSXOpeningElement(t.jSXIdentifier(styleComponentImportName), attributes),
+    t.jSXClosingElement(t.jSXIdentifier(styleComponentImportName)),
     [t.jSXExpressionContainer(css)]
   )
 }
@@ -627,13 +634,9 @@ export const booleanOption = opts => {
 }
 
 export const createReactComponentImportDeclaration = state => {
-  addDefault(
-    state.file.path,
-    typeof state.opts.styleModule === 'string'
-      ? state.opts.styleModule
-      : 'styled-jsx/style',
-    { nameHint: state.styleComponent }
-  )
+  return addDefault(state.file.path, state.styleModule, {
+    nameHint: STYLE_COMPONENT
+  }).name
 }
 
 export const setStateOptions = state => {
@@ -655,7 +658,10 @@ export const setStateOptions = state => {
       vendorPrefixes: state.opts.vendorPrefixes
     })
   }
-  state.styleComponent = STYLE_COMPONENT
+  state.styleModule =
+    typeof state.opts.styleModule === 'string'
+      ? state.opts.styleModule
+      : 'styled-jsx/style'
 }
 
 export function log(message) {
