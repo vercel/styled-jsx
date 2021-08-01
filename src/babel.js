@@ -291,6 +291,7 @@ export default function({ types: t }) {
           state.hasJSXStyle = null
           state.ignoreClosing = null
           state.file.hasJSXStyle = false
+          state.file.hasCssImports = false
           setStateOptions(state)
 
           // `addDefault` will generate unique id for the scope
@@ -306,12 +307,24 @@ export default function({ types: t }) {
           // Transpile external styles
           path.traverse(externalStylesVisitor, state)
         },
-        exit({ scope }, state) {
+        exit(path, state) {
+          // For source that didn't really use styled-jsx imports,
+          // remove the injected import at the beginning
+          if (!state.file.hasJSXStyle && !state.file.hasCssImports) {
+            path.traverse({
+              ImportDeclaration(importPath) {
+                if (importPath.node.source.value === state.styleModule) {
+                  importPath.remove()
+                }
+              }
+            })
+          }
+
           if (
             !(
               state.file.hasJSXStyle &&
               !state.hasInjectedJSXStyle &&
-              !scope.hasBinding(state.styleComponentImportName)
+              !path.scope.hasBinding(state.styleComponentImportName)
             )
           ) {
             return

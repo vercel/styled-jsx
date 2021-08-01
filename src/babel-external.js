@@ -154,6 +154,8 @@ export const visitor = {
         return
       }
 
+      state.file.hasCssImports = true
+
       // Produces an object containing all the TaggedTemplateExpression paths detected.
       // The object contains { scoped, global, resolve }
       const taggedTemplateExpressions = binding.referencePaths
