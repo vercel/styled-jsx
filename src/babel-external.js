@@ -1,7 +1,5 @@
 import * as t from '@babel/types'
 
-import { STYLE_COMPONENT } from './_constants'
-
 import {
   getJSXStyleInfo,
   processCss,
@@ -10,7 +8,6 @@ import {
   getScope,
   computeClassNames,
   makeStyledJsxTag,
-  createReactComponentImportDeclaration,
   setStateOptions
 } from './_utils'
 
@@ -23,7 +20,8 @@ export function processTaggedTemplateExpression({
   splitRules,
   plugins,
   vendorPrefixes,
-  sourceMaps
+  sourceMaps,
+  styleComponentImportName
 }) {
   const templateLiteral = path.get('quasi')
   let scope
@@ -39,7 +37,11 @@ export function processTaggedTemplateExpression({
 
   const stylesInfo = getJSXStyleInfo(templateLiteral, scope)
 
-  const { staticClassName, className } = computeClassNames([stylesInfo])
+  const { staticClassName, className } = computeClassNames(
+    [stylesInfo],
+    undefined,
+    styleComponentImportName
+  )
 
   const styles = processCss(
     {
@@ -64,7 +66,7 @@ export function processTaggedTemplateExpression({
       t.objectExpression([
         t.objectProperty(
           t.identifier('styles'),
-          makeStyledJsxTag(hash, css, expressions)
+          makeStyledJsxTag(hash, css, expressions, styleComponentImportName)
         ),
         t.objectProperty(t.identifier('className'), className)
       ])
@@ -212,21 +214,20 @@ export const visitor = {
                 : process.env.NODE_ENV === 'production',
             plugins: state.plugins,
             vendorPrefixes,
-            sourceMaps
+            sourceMaps,
+            styleComponentImportName: state.styleComponentImportName
           })
         })
       )
 
       // When using the `resolve` helper we need to add an import
       // for the _JSXStyle component `styled-jsx/style`
-      if (
-        hasJSXStyle &&
-        taggedTemplateExpressions.resolve.length > 0 &&
-        !state.hasInjectedJSXStyle &&
-        !path.scope.hasBinding(STYLE_COMPONENT)
-      ) {
+      const useResolve =
+        hasJSXStyle && taggedTemplateExpressions.resolve.length > 0
+
+      if (useResolve) {
+        state.file.hasCssResolve = true
         state.hasInjectedJSXStyle = true
-        createReactComponentImportDeclaration(state)
       }
     })
 

@@ -1,6 +1,5 @@
 export default class {
-
-  render () {
+  render() {
     return (
       <div>
         <p>test</p>
@@ -12,5 +11,4 @@ export default class {
       </div>
     )
   }
-
 }

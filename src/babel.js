@@ -17,8 +17,6 @@ import {
   setStateOptions
 } from './_utils'
 
-import { STYLE_COMPONENT } from './_constants'
-
 export default function({ types: t }) {
   const jsxVisitors = {
     JSXOpeningElement(path, state) {
@@ -43,7 +41,7 @@ export default function({ types: t }) {
       if (
         name &&
         name !== 'style' &&
-        name !== STYLE_COMPONENT &&
+        name !== state.styleComponentImportName &&
         (name.charAt(0) !== name.charAt(0).toUpperCase() ||
           Object.values(path.scope.bindings).some(binding =>
             binding.referencePaths.some(r => r === tag)
@@ -172,7 +170,8 @@ export default function({ types: t }) {
         if (state.styles.length > 0 || externalJsxId) {
           const { staticClassName, className } = computeClassNames(
             state.styles,
-            externalJsxId
+            externalJsxId,
+            state.styleComponentImportName
           )
           state.className = className
           state.staticClassName = staticClassName
@@ -224,7 +223,9 @@ export default function({ types: t }) {
         ) {
           const [id, css] = state.externalStyles.shift()
 
-          path.replaceWith(makeStyledJsxTag(id, css))
+          path.replaceWith(
+            makeStyledJsxTag(id, css, [], state.styleComponentImportName)
+          )
           return
         }
 
@@ -247,7 +248,14 @@ export default function({ types: t }) {
           splitRules
         })
 
-        path.replaceWith(makeStyledJsxTag(hash, css, expressions))
+        path.replaceWith(
+          makeStyledJsxTag(
+            hash,
+            css,
+            expressions,
+            state.styleComponentImportName
+          )
+        )
       }
     }
   }
@@ -283,8 +291,13 @@ export default function({ types: t }) {
           state.hasJSXStyle = null
           state.ignoreClosing = null
           state.file.hasJSXStyle = false
-
+          state.file.hasCssResolve = false
           setStateOptions(state)
+
+          // `addDefault` will generate unique id for the scope
+          state.styleComponentImportName = createReactComponentImportDeclaration(
+            state
+          )
 
           // we need to beat the arrow function transform and
           // possibly others so we traverse from here or else
@@ -294,19 +307,29 @@ export default function({ types: t }) {
           // Transpile external styles
           path.traverse(externalStylesVisitor, state)
         },
-        exit({ scope }, state) {
+        exit(path, state) {
+          // For source that didn't really need styled-jsx/style imports,
+          // remove the injected import at the beginning
+          if (!state.file.hasJSXStyle && !state.file.hasCssResolve) {
+            path.traverse({
+              ImportDeclaration(importPath) {
+                if (importPath.node.source.value === state.styleModule) {
+                  importPath.remove()
+                }
+              }
+            })
+          }
+
           if (
             !(
               state.file.hasJSXStyle &&
               !state.hasInjectedJSXStyle &&
-              !scope.hasBinding(STYLE_COMPONENT)
+              !path.scope.hasBinding(state.styleComponentImportName)
             )
           ) {
             return
           }
-
           state.hasInjectedJSXStyle = true
-          createReactComponentImportDeclaration(state)
         }
       }
     }
