@@ -13,7 +13,8 @@ export default function JSXStyle(props) {
     return () => {
       styleSheetRegistry.remove(props)
     }
-  }, [props.id, props.children, String(props.dynamic)])
+    // props.children can be string[], will be striped since id is identical
+  }, [props.id, String(props.dynamic)])
   return null
 }
 
