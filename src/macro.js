@@ -89,7 +89,7 @@ function styledJsxMacro({ references, state }) {
           STYLE_COMPONENT
         ).name
         const importDeclaration = createReactComponentImportDeclaration(state)
-        programPath.unshiftContainer('body', importDeclaration)[0]
+        programPath.unshiftContainer('body', importDeclaration)
       }
 
       // Finally transform the path :)

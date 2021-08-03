@@ -5,7 +5,6 @@ import {
   processCss,
   cssToBabelType,
   validateExternalExpressions,
-  createReactComponentImportDeclaration,
   getScope,
   computeClassNames,
   makeStyledJsxTag,
