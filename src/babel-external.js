@@ -221,17 +221,13 @@ export const visitor = {
         })
       )
 
+      const hasCssResolve =
+        hasJSXStyle && taggedTemplateExpressions.resolve.length > 0
+
       // When using the `resolve` helper we need to add an import
       // for the _JSXStyle component `styled-jsx/style`
-      if (
-        hasJSXStyle &&
-        taggedTemplateExpressions.resolve.length > 0 &&
-        !state.hasInjectedJSXStyle &&
-        !path.scope.getBinding(state.styleComponentImportName)
-      ) {
-        state.hasInjectedJSXStyle = true
-        const importDeclaration = createReactComponentImportDeclaration(state)
-        path.scope.path.node.body.unshift(importDeclaration)
+      if (hasCssResolve) {
+        state.file.hasCssResolve = true
       }
     })
 

@@ -84,10 +84,12 @@ function styledJsxMacro({ references, state }) {
       }
 
       if (!state.styleComponentImportName) {
-        const program = path.findParent(p => p.isProgram())
-        state.styleComponentImportName = program.scope.generateUidIdentifier(
+        const programPath = path.findParent(p => p.isProgram())
+        state.styleComponentImportName = programPath.scope.generateUidIdentifier(
           STYLE_COMPONENT
         ).name
+        const importDeclaration = createReactComponentImportDeclaration(state)
+        programPath.unshiftContainer('body', importDeclaration)[0]
       }
 
       // Finally transform the path :)
@@ -104,15 +106,6 @@ function styledJsxMacro({ references, state }) {
         sourceMaps: state.opts.sourceMaps,
         styleComponentImportName: state.styleComponentImportName
       })
-
-      if (
-        !state.hasInjectedJSXStyle &&
-        !path.scope.getBinding(state.styleComponentImportName)
-      ) {
-        state.hasInjectedJSXStyle = true
-        const importDeclaration = createReactComponentImportDeclaration(state)
-        path.findParent(p => p.isProgram()).node.body.unshift(importDeclaration)
-      }
     })
   })
 

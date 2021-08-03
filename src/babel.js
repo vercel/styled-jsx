@@ -289,15 +289,20 @@ export default function({ types: t }) {
     visitor: {
       Program: {
         enter(path, state) {
+          setStateOptions(state)
           state.hasJSXStyle = null
           state.ignoreClosing = null
           state.file.hasJSXStyle = false
+          state.file.hasCssResolve = false
           // create unique identifier for _JSXStyle component
           state.styleComponentImportName = path.scope.generateUidIdentifier(
             STYLE_COMPONENT
           ).name
-
-          setStateOptions(state)
+          const importDeclaration = createReactComponentImportDeclaration(state)
+          state.styleImportPath = path.unshiftContainer(
+            'body',
+            importDeclaration
+          )[0]
 
           // we need to beat the arrow function transform and
           // possibly others so we traverse from here or else
@@ -308,19 +313,9 @@ export default function({ types: t }) {
           path.traverse(externalStylesVisitor, state)
         },
         exit(path, state) {
-          if (
-            !(
-              state.file.hasJSXStyle &&
-              !state.hasInjectedJSXStyle &&
-              // `hashBinding` will return `true` for generated uid
-              !path.scope.getBinding(state.styleComponentImportName)
-            )
-          ) {
-            return
+          if (!state.file.hasJSXStyle && !state.file.hasCssResolve) {
+            state.styleImportPath.remove()
           }
-          state.hasInjectedJSXStyle = true
-          const importDeclaration = createReactComponentImportDeclaration(state)
-          path.unshiftContainer('body', importDeclaration)
         }
       }
     }
