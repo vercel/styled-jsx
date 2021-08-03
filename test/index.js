@@ -28,14 +28,6 @@ test('works with stateless', async t => {
   t.snapshot(code)
 })
 
-test('works with a CJS module', async t => {
-  const { code } = await transform('./fixtures/cjs-module.js', {
-    sourceType: 'script',
-    plugins: [plugin, '@babel/plugin-transform-modules-commonjs']
-  })
-  t.snapshot(code)
-})
-
 test('works with fragment', async t => {
   const { code } = await transform('./fixtures/fragment.js')
   t.snapshot(code)
