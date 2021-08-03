@@ -6,6 +6,6 @@ declare namespace css {
   function resolve(
     chunks: TemplateStringsArray,
     ...args: any[]
-  ): { className: string; styles: JSX.Element }
+  ): { className: string; styles: string }
 }
-export { css }
+export = css
