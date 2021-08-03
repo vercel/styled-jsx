@@ -4,12 +4,12 @@ import {
   setStateOptions,
   createReactComponentImportDeclaration
 } from './_utils'
+import { STYLE_COMPONENT } from './_constants'
 
 export default createMacro(styledJsxMacro)
 
 function styledJsxMacro({ references, state }) {
   setStateOptions(state)
-  state.styleComponentImportName = createReactComponentImportDeclaration(state)
 
   // Holds a reference to all the lines where strings are tagged using the `css` tag name.
   // We print a warning at the end of the macro in case there is any reference to css,
@@ -83,6 +83,13 @@ function styledJsxMacro({ references, state }) {
         }
       }
 
+      if (!state.styleComponentImportName) {
+        const program = path.findParent(p => p.isProgram())
+        state.styleComponentImportName = program.scope.generateUidIdentifier(
+          STYLE_COMPONENT
+        ).name
+      }
+
       // Finally transform the path :)
       processTaggedTemplateExpression({
         type: 'resolve',
@@ -98,8 +105,13 @@ function styledJsxMacro({ references, state }) {
         styleComponentImportName: state.styleComponentImportName
       })
 
-      if (!state.hasInjectedJSXStyle) {
+      if (
+        !state.hasInjectedJSXStyle &&
+        !path.scope.getBinding(state.styleComponentImportName)
+      ) {
         state.hasInjectedJSXStyle = true
+        const importDeclaration = createReactComponentImportDeclaration(state)
+        path.findParent(p => p.isProgram()).node.body.unshift(importDeclaration)
       }
     })
   })

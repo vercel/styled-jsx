@@ -5,6 +5,7 @@ import {
   processCss,
   cssToBabelType,
   validateExternalExpressions,
+  createReactComponentImportDeclaration,
   getScope,
   computeClassNames,
   makeStyledJsxTag,
@@ -222,12 +223,15 @@ export const visitor = {
 
       // When using the `resolve` helper we need to add an import
       // for the _JSXStyle component `styled-jsx/style`
-      const useResolve =
-        hasJSXStyle && taggedTemplateExpressions.resolve.length > 0
-
-      if (useResolve) {
-        state.file.hasCssResolve = true
+      if (
+        hasJSXStyle &&
+        taggedTemplateExpressions.resolve.length > 0 &&
+        !state.hasInjectedJSXStyle &&
+        !path.scope.getBinding(state.styleComponentImportName)
+      ) {
         state.hasInjectedJSXStyle = true
+        const importDeclaration = createReactComponentImportDeclaration(state)
+        path.scope.path.node.body.unshift(importDeclaration)
       }
     })
 
