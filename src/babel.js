@@ -298,11 +298,6 @@ export default function({ types: t }) {
           state.styleComponentImportName = path.scope.generateUidIdentifier(
             STYLE_COMPONENT
           ).name
-          const importDeclaration = createReactComponentImportDeclaration(state)
-          state.styleImportPath = path.unshiftContainer(
-            'body',
-            importDeclaration
-          )[0]
 
           // we need to beat the arrow function transform and
           // possibly others so we traverse from here or else
@@ -314,8 +309,11 @@ export default function({ types: t }) {
         },
         exit(path, state) {
           if (!state.file.hasJSXStyle && !state.file.hasCssResolve) {
-            state.styleImportPath.remove()
+            return
           }
+          state.file.hasJSXStyle = true
+          const importDeclaration = createReactComponentImportDeclaration(state)
+          path.unshiftContainer('body', importDeclaration)
         }
       }
     }
