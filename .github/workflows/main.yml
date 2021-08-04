@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - alpha
     tags:
       - '!*'
   pull_request:
@@ -50,7 +51,7 @@ jobs:
           CI: true
 
       - name: Release
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/alpha')
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
