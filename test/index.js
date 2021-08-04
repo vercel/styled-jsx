@@ -117,6 +117,14 @@ test('does not transpile nested style tags', async t => {
   t.regex(message, /detected nested style tag/i)
 })
 
+test('works with module.exports component (CommonJS modules)', async t => {
+  const { code } = await transform('./fixtures/cjs-module.js', {
+    sourceType: 'module',
+    plugins: [plugin, '@babel/plugin-transform-modules-commonjs']
+  })
+  t.snapshot(code)
+})
+
 function clearModulesCache() {
   ;['../src/lib/stylesheet', '../src/style', '../src/server'].forEach(
     moduleName => {
