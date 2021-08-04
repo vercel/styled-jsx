@@ -8,4 +8,4 @@ declare namespace css {
     ...args: any[]
   ): { className: string; styles: JSX.Element }
 }
-export { css }
+export = css
