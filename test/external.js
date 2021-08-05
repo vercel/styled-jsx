@@ -117,7 +117,7 @@ test('Makes sure that style nodes are not re-used', async t => {
 test('Make sure that it works with the new automatic transform', async t => {
   const { code } = await transformSource(
     `
-    import { css } from "styled-jsx/css";
+    import css from "styled-jsx/css";
 
     const A = css.resolve\`
       div {
