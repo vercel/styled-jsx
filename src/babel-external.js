@@ -220,14 +220,13 @@ export const visitor = {
         })
       )
 
-      // When using the `resolve` helper we need to add an import
-      // for the _JSXStyle component `styled-jsx/style`
-      const useResolve =
+      const hasCssResolve =
         hasJSXStyle && taggedTemplateExpressions.resolve.length > 0
 
-      if (useResolve) {
+      // When using the `resolve` helper we need to add an import
+      // for the _JSXStyle component `styled-jsx/style`
+      if (hasCssResolve) {
         state.file.hasCssResolve = true
-        state.hasInjectedJSXStyle = true
       }
     })
 

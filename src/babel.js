@@ -16,6 +16,7 @@ import {
   createReactComponentImportDeclaration,
   setStateOptions
 } from './_utils'
+import { STYLE_COMPONENT } from './_constants'
 
 export default function({ types: t }) {
   const jsxVisitors = {
@@ -288,16 +289,15 @@ export default function({ types: t }) {
     visitor: {
       Program: {
         enter(path, state) {
+          setStateOptions(state)
           state.hasJSXStyle = null
           state.ignoreClosing = null
           state.file.hasJSXStyle = false
           state.file.hasCssResolve = false
-          setStateOptions(state)
-
-          // `addDefault` will generate unique id for the scope
-          state.styleComponentImportName = createReactComponentImportDeclaration(
-            state
-          )
+          // create unique identifier for _JSXStyle component
+          state.styleComponentImportName = path.scope.generateUidIdentifier(
+            STYLE_COMPONENT
+          ).name
 
           // we need to beat the arrow function transform and
           // possibly others so we traverse from here or else
@@ -308,28 +308,12 @@ export default function({ types: t }) {
           path.traverse(externalStylesVisitor, state)
         },
         exit(path, state) {
-          // For source that didn't really need styled-jsx/style imports,
-          // remove the injected import at the beginning
           if (!state.file.hasJSXStyle && !state.file.hasCssResolve) {
-            path.traverse({
-              ImportDeclaration(importPath) {
-                if (importPath.node.source.value === state.styleModule) {
-                  importPath.remove()
-                }
-              }
-            })
-          }
-
-          if (
-            !(
-              state.file.hasJSXStyle &&
-              !state.hasInjectedJSXStyle &&
-              !path.scope.hasBinding(state.styleComponentImportName)
-            )
-          ) {
             return
           }
-          state.hasInjectedJSXStyle = true
+          state.file.hasJSXStyle = true
+          const importDeclaration = createReactComponentImportDeclaration(state)
+          path.unshiftContainer('body', importDeclaration)
         }
       }
     }

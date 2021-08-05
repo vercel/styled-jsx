@@ -1,5 +1,4 @@
 import path from 'path'
-import { addDefault } from '@babel/helper-module-imports'
 import * as t from '@babel/types'
 import _hashString from 'string-hash'
 import { SourceMapGenerator } from 'source-map'
@@ -9,7 +8,6 @@ import transform from './lib/style-transform'
 import {
   STYLE_ATTRIBUTE,
   GLOBAL_ATTRIBUTE,
-  STYLE_COMPONENT,
   STYLE_COMPONENT_ID,
   STYLE_COMPONENT_DYNAMIC
 } from './_constants'
@@ -634,9 +632,10 @@ export const booleanOption = opts => {
 }
 
 export const createReactComponentImportDeclaration = state => {
-  return addDefault(state.file.path, state.styleModule, {
-    nameHint: STYLE_COMPONENT
-  }).name
+  return t.importDeclaration(
+    [t.importDefaultSpecifier(t.identifier(state.styleComponentImportName))],
+    t.stringLiteral(state.styleModule)
+  )
 }
 
 export const setStateOptions = state => {
