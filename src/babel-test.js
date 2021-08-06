@@ -1,4 +1,4 @@
-import jsx from 'babel-plugin-syntax-jsx'
+import jsx from '@babel/plugin-syntax-jsx'
 
 export default function() {
   return {
