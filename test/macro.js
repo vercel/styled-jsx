@@ -3,7 +3,7 @@ import test from 'ava'
 
 // Ours
 import macros from 'babel-plugin-macros'
-import jsx from 'babel-plugin-syntax-jsx'
+import jsx from '@babel/plugin-syntax-jsx'
 import _transform, { transformSource as _transformSource } from './_transform'
 
 const transform = (file, opts = {}) =>
