@@ -5,11 +5,17 @@ import ReactDOM from 'react-dom/server'
 
 // Ours
 import plugin from '../src/babel'
-import _transform from './_transform'
+import _transform, { transformSource as _transformSource } from './_transform'
 
 const transform = (file, opts = {}) =>
   _transform(file, {
     plugins: [plugin],
+    ...opts
+  })
+
+const transformSource = (src, opts = {}) =>
+  _transformSource(src.trim(), {
+    plugins: [[plugin, opts]],
     ...opts
   })
 
@@ -25,13 +31,6 @@ test('handles dynamic `this` value inside of arrow function', async t => {
 
 test('works with stateless', async t => {
   const { code } = await transform('./fixtures/stateless.js')
-  t.snapshot(code)
-})
-
-test('works with a CJS module', async t => {
-  const { code } = await transform('./fixtures/cjs-module.js', {
-    sourceType: 'script'
-  })
   t.snapshot(code)
 })
 
@@ -122,6 +121,26 @@ test('does not transpile nested style tags', async t => {
     transform('./fixtures/nested-style-tags.js')
   )
   t.regex(message, /detected nested style tag/i)
+})
+
+test('works with exported jsx-style (CommonJS modules)', async t => {
+  const { code } = await transformSource(
+    'module.exports = () => <p><style jsx>{`p { color:red; }`}</style></p>',
+    {
+      plugins: [plugin, '@babel/plugin-transform-modules-commonjs']
+    }
+  )
+  t.snapshot(code)
+})
+
+test('works with exported non-jsx style (CommonJS modules)', async t => {
+  const { code } = await transformSource(
+    'module.exports = () => <p><style>{`p { color:red; }`}</style></p>',
+    {
+      plugins: [plugin, '@babel/plugin-transform-modules-commonjs']
+    }
+  )
+  t.snapshot(code)
 })
 
 function clearModulesCache() {
