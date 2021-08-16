@@ -468,7 +468,7 @@ export const combinePlugins = plugins => {
 
   combinedPluginsCache.plugins = pluginsToString
   combinedPluginsCache.combined = plugins
-    .map((plugin, i) => {
+    .map(async (plugin, i) => {
       let options = {}
       if (Array.isArray(plugin)) {
         options = plugin[1] || {}
@@ -483,7 +483,7 @@ export const combinePlugins = plugins => {
 
       log('Loading plugin from path: ' + plugin)
 
-      let p = require(plugin)
+      let p = await import(plugin)
       if (p.default) {
         p = p.default
       }
