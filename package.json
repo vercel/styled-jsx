@@ -23,7 +23,7 @@
   "scripts": {
     "build": "babel src --out-dir dist",
     "test": "ava",
-    "lint": "xo",
+    "lint": "eslint ./src",
     "prepublishOnly": "yarn build && yarn test && yarn lint --quiet"
   },
   "husky": {
@@ -36,23 +36,26 @@
       "@babel/register"
     ]
   },
-  "xo": {
-    "envs": [
-      "node",
-      "browser"
+  "eslintConfig": {
+    "env": {
+      "node": true,
+      "browser": true,
+      "es6": true
+    },
+    "extends": [
+      "eslint:recommended",
+      "prettier"
     ],
-    "extends": "prettier",
-    "ignores": [
-      "lib/style-transform.js",
-      "babel-test.js"
-    ],
+    "parserOptions": {
+      "ecmaVersion": 11,
+      "sourceType": "module"
+    },
     "rules": {
+      "no-empty": 0,
       "capitalized-comments": 0,
       "valid-jsdoc": 0,
       "prefer-destructuring": 0,
-      "padding-line-between-statements": 0,
-      "unicorn/prefer-node-append": 0,
-      "unicorn/prefer-query-selector": 0
+      "padding-line-between-statements": 0
     }
   },
   "dependencies": {
@@ -78,18 +81,20 @@
     "@babel/runtime": "7.12.5",
     "ava": "1.2.1",
     "babel-plugin-macros": "2.8.0",
+    "eslint": "7.32.0",
     "eslint-config-prettier": "4.0.0",
     "husky": "4.3.0",
-    "mz": "2.7.0",
     "prettier": "1.16.4",
     "pretty-quick": "3.1.0",
     "react": "17.0.1",
     "react-dom": "17.0.1",
-    "semantic-release": "17.2.2",
-    "xo": "0.24.0"
+    "semantic-release": "17.2.2"
   },
   "peerDependencies": {
     "react": ">= 16.8.0 || 17.x.x || 18.x.x"
+  },
+  "engines": {
+    "node": ">= 12.0.0"
   },
   "keywords": [
     "babel-plugin-macros",
