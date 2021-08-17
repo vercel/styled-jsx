@@ -1,9 +1,7 @@
 import React, { useState, useContext, createContext, useMemo } from 'react'
-import hashString from 'string-hash'
+
 import DefaultStyleSheet from './lib/stylesheet'
-
-const sanitize = rule => rule.replace(/\/style/gi, '\\/style')
-
+import { computeId, computeSelector } from './lib/hash'
 export class StyleSheetRegistry {
   constructor({
     styleSheet = null,
@@ -28,9 +26,6 @@ export class StyleSheetRegistry {
     this._fromServer = undefined
     this._indices = {}
     this._instancesCounts = {}
-
-    this.computeId = this.createComputeId()
-    this.computeSelector = this.createComputeSelector()
   }
 
   add(props) {
@@ -101,9 +96,6 @@ export class StyleSheetRegistry {
     this._fromServer = undefined
     this._indices = {}
     this._instancesCounts = {}
-
-    this.computeId = this.createComputeId()
-    this.computeSelector = this.createComputeSelector()
   }
 
   cssRules() {
@@ -128,70 +120,21 @@ export class StyleSheetRegistry {
     )
   }
 
-  /**
-   * createComputeId
-   *
-   * Creates a function to compute and memoize a jsx id from a basedId and optionally props.
-   */
-  createComputeId() {
-    const cache = {}
-    return function(baseId, props) {
-      if (!props) {
-        return `jsx-${baseId}`
-      }
-
-      const propsToString = String(props)
-      const key = baseId + propsToString
-      // return `jsx-${hashString(`${baseId}-${propsToString}`)}`
-      if (!cache[key]) {
-        cache[key] = `jsx-${hashString(`${baseId}-${propsToString}`)}`
-      }
-
-      return cache[key]
-    }
-  }
-
-  /**
-   * createComputeSelector
-   *
-   * Creates a function to compute and memoize dynamic selectors.
-   */
-  createComputeSelector(
-    selectoPlaceholderRegexp = /__jsx-style-dynamic-selector/g
-  ) {
-    const cache = {}
-    return function(id, css) {
-      // Sanitize SSR-ed CSS.
-      // Client side code doesn't need to be sanitized since we use
-      // document.createTextNode (dev) and the CSSOM api sheet.insertRule (prod).
-      if (!this._isBrowser) {
-        css = sanitize(css)
-      }
-
-      const idcss = id + css
-      if (!cache[idcss]) {
-        cache[idcss] = css.replace(selectoPlaceholderRegexp, id)
-      }
-
-      return cache[idcss]
-    }
-  }
-
   getIdAndRules(props) {
     const { children: css, dynamic, id } = props
 
     if (dynamic) {
-      const styleId = this.computeId(id, dynamic)
+      const styleId = computeId(id, dynamic)
       return {
         styleId,
         rules: Array.isArray(css)
-          ? css.map(rule => this.computeSelector(styleId, rule))
-          : [this.computeSelector(styleId, css)]
+          ? css.map(rule => computeSelector(styleId, rule))
+          : [computeSelector(styleId, css)]
       }
     }
 
     return {
-      styleId: this.computeId(id),
+      styleId: computeId(id),
       rules: Array.isArray(css) ? css : [css]
     }
   }

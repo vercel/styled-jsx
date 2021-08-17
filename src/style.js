@@ -1,6 +1,6 @@
 import { useLayoutEffect, useContext } from 'react'
 import { StyleSheetContext } from './stylesheet-registry'
-
+import { computeId } from './lib/hash'
 export default function JSXStyle(props) {
   const registry = useContext(StyleSheetContext)
   if (typeof window === 'undefined') {
@@ -18,12 +18,11 @@ export default function JSXStyle(props) {
 }
 
 JSXStyle.dynamic = info => {
-  const registry = useContext(StyleSheetContext)
   return info
     .map(tagInfo => {
       const baseId = tagInfo[0]
       const props = tagInfo[1]
-      return registry.computeId(baseId, props)
+      return computeId(baseId, props)
     })
     .join(' ')
 }
