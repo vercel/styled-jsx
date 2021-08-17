@@ -20,7 +20,7 @@ const joinSpreads = spreads => spreads.reduce((acc, curr) => or(acc, curr))
 
 export const hashString = str => String(_hashString(str))
 
-export const addClassName = (path, jsxId) => {
+export const addClassName = (path, jsxId, classNameAttribute = 'className') => {
   const jsxIdWithSpace = concat(jsxId, t.stringLiteral(' '))
   const attributes = path.get('attributes')
   const spreads = []
@@ -34,7 +34,7 @@ export const addClassName = (path, jsxId) => {
         const properties = node.argument.properties
 
         const index = properties.findIndex(
-          property => property.key.name === 'className'
+          property => property.key.name === classNameAttribute
         )
 
         if (~index) {
@@ -58,7 +58,7 @@ export const addClassName = (path, jsxId) => {
           : t.identifier(name)
         const attrNameDotClassName = t.memberExpression(
           spreadObj,
-          t.identifier('className')
+          t.identifier(classNameAttribute)
         )
 
         spreads.push(
@@ -75,7 +75,7 @@ export const addClassName = (path, jsxId) => {
       continue
     }
 
-    if (t.isJSXAttribute(attr) && node.name.name === 'className') {
+    if (t.isJSXAttribute(attr) && node.name.name === classNameAttribute) {
       className = attributes[i]
       // found className break the loop
       break
@@ -104,7 +104,7 @@ export const addClassName = (path, jsxId) => {
   }
 
   path.node.attributes.push(
-    t.jSXAttribute(t.jSXIdentifier('className'), className)
+    t.jSXAttribute(t.jSXIdentifier(classNameAttribute), className)
   )
 }
 
