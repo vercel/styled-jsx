@@ -1,5 +1,5 @@
 import { resolve } from 'path'
-import { readFile } from 'mz/fs'
+import { readFile } from 'fs/promises'
 
 export default async path => {
   const buffer = await readFile(resolve(__dirname, path))

@@ -4,7 +4,6 @@ const stylisRuleSheet = require('stylis-rule-sheet')
 const stylis = new Stylis()
 
 function disableNestingPlugin(...args) {
-  // eslint-disable-next-line unicorn/no-unreadable-array-destructuring
   let [context, , , parent = [], line, column] = args
   if (context === 2) {
     // replace null characters and trim
@@ -24,7 +23,6 @@ let filename
 let offset
 
 function sourceMapsPlugin(...args) {
-  // eslint-disable-next-line unicorn/no-unreadable-array-destructuring
   const [context, , , , line, column, length] = args
 
   // Pre-processed, init source map
