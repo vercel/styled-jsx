@@ -93,6 +93,9 @@
   "peerDependencies": {
     "react": ">= 16.8.0 || 17.x.x || 18.x.x"
   },
+  "engines": {
+    "node": ">= 10"
+  },
   "keywords": [
     "babel-plugin-macros",
     "vercel",
