@@ -343,6 +343,7 @@ import App from './app'
 function Head() {
   const registry = useStyleRegistry()
   const styles = registry.styles()
+  registry.flush()
   return <head>{styles}</head>
 }
 
@@ -378,7 +379,7 @@ import nanoid from 'nanoid'
 const nonce = Buffer.from(nanoid()).toString('base64') //ex: N2M0MDhkN2EtMmRkYi00MTExLWFhM2YtNDhkNTc4NGJhMjA3
 ```
 
-You must then pass a nonce to either `flushToReact({ nonce })` or `flushToHTML({ nonce })` **and** set a `<meta property="csp-nonce" content={nonce} />` tag.
+You must then pass a nonce to `registry.styles({ nonce })` **and** set a `<meta property="csp-nonce" content={nonce} />` tag.
 
 Your CSP policy must share the same nonce as well (the header nonce needs to match the html nonce and remain unpredictable).
 `Content-Security-Policy: default-src 'self'; style-src 'self' 'nonce-N2M0MDhkN2EtMmRkYi00MTExLWFhM2YtNDhkNTc4NGJhMjA3';`

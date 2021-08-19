@@ -8,7 +8,8 @@ import plugin from '../src/babel'
 import JSXStyle from '../src/style'
 import {
   StyleSheetRegistry,
-  StyleSheetContext
+  StyleSheetContext,
+  useStyleRegistry
 } from '../src/stylesheet-registry'
 import _transform, { transformSource as _transformSource } from './_transform'
 
@@ -25,9 +26,7 @@ const flushToHTML = (registry, options = {}) => {
   }, '')
 }
 
-function flushToReact(registry, options = {}) {
-  const cssRules = registry.cssRules()
-  registry.flush()
+function mapCssRulesToReact(cssRules, options = {}) {
   return cssRules.map(args => {
     const id = args[0]
     const css = args[1]
@@ -41,6 +40,12 @@ function flushToReact(registry, options = {}) {
       }
     })
   })
+}
+
+function flushToReact(registry, options = {}) {
+  const cssRules = registry.cssRules()
+  registry.flush()
+  return mapCssRulesToReact(cssRules, options)
 }
 
 const transform = (file, opts = {}) =>
@@ -180,6 +185,16 @@ test('works with exported non-jsx style (CommonJS modules)', async t => {
 })
 
 test('sever rendering with hook api', t => {
+  function Head() {
+    const registry = useStyleRegistry()
+    const styles = registry.styles()
+    registry.flush()
+    // should be empty and `push` won't effect styles
+    const stylesAfterFlushed = registry.styles()
+    styles.push(...stylesAfterFlushed)
+    return React.createElement('head', null, styles)
+  }
+
   function App() {
     const color = 'green'
     return React.createElement(
@@ -190,25 +205,25 @@ test('sever rendering with hook api', t => {
     )
   }
 
-  // Expected CSS
-  const expected =
+  // Expected DOM string
+  const styles =
     '<style id="__jsx-2">div { color: blue }</style>' +
     '<style id="__jsx-3">div { color: green }</style>'
 
+  const expected = `<head>${styles}</head>`
+
   const registry = new StyleSheetRegistry()
-  const createApp = () =>
+  const createContextualApp = type =>
     React.createElement(
       StyleSheetContext.Provider,
       { value: registry },
-      React.createElement(App)
+      React.createElement(type)
     )
 
   // Render using react
-  ReactDOM.renderToString(createApp())
-  const html = ReactDOM.renderToStaticMarkup(
-    React.createElement('head', null, flushToReact(registry))
-  )
-  t.is(html, `<head>${expected}</head>`)
+  ReactDOM.renderToString(createContextualApp(App))
+  const html = ReactDOM.renderToStaticMarkup(createContextualApp(Head))
+  t.is(html, expected)
 })
 
 test('server rendering', t => {

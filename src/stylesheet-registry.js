@@ -181,8 +181,8 @@ export function useStyleRegistry() {
 
   return useMemo(
     () => ({
-      styles() {
-        return mapRulesToStyle(registry.cssRules())
+      styles(options) {
+        return mapRulesToStyle(registry.cssRules(), options)
       },
       flush() {
         registry.flush()
@@ -192,9 +192,7 @@ export function useStyleRegistry() {
   )
 }
 
-function mapRulesToStyle(options = {}) {
-  const registry = useStyleRegistry()
-  const cssRules = registry.styles()
+function mapRulesToStyle(cssRules, options = {}) {
   return cssRules.map(args => {
     const id = args[0]
     const css = args[1]
