@@ -1,18 +1,22 @@
 html {
-  background-image:
-    linear-gradient(0deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)),
+  background-image: linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.8),
+      rgba(255, 255, 255, 0.8)
+    ),
     url(/static/background.svg);
 }
 
 :global(p) {
-  color: blue
-}
-
-:global(p){
   color: blue;
 }
 
-:global(p), a {
+:global(p) {
+  color: blue;
+}
+
+:global(p),
+a {
   color: blue;
 }
 
@@ -21,22 +25,23 @@ html {
 }
 
 :global(body) {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial,
+    sans-serif;
 }
 
 p {
   color: red;
 }
 
-p{
-  color: red
+p {
+  color: red;
 }
 
 * {
   color: blue;
 }
 
-[href="woot"] {
+[href='woot'] {
   color: red;
 }
 
@@ -45,18 +50,19 @@ p a span {
 }
 
 p :global(span) {
-  background: blue
+  background: blue;
 }
 
 p a[title="'w ' '  t'"] {
-  margin: auto
+  margin: auto;
 }
 
 p :global(span:not(.test)) {
-  color: green
+  color: green;
 }
 
-p, h1 {
+p,
+h1 {
   color: blue;
   animation: hahaha 3s ease forwards infinite;
   animation-name: hahaha;
@@ -100,13 +106,21 @@ p > a {
 }
 
 @keyframes hahaha {
-  from { top: 0 }
-  to { top: 100 }
+  from {
+    top: 0;
+  }
+  to {
+    top: 100;
+  }
 }
 
 @keyframes hehehe {
-  from { left: 0 }
-  to { left: 100 }
+  from {
+    left: 0;
+  }
+  to {
+    left: 100;
+  }
 }
 
 @media (min-width: 500px) {
@@ -133,10 +147,10 @@ test
 }
 
 .test {
-  box-shadow: 0 0 10px black, inset 0 0 5px black
+  box-shadow: 0 0 10px black, inset 0 0 5px black;
 }
 
-.test[title=","] {
+.test[title=','] {
   display: inline-block;
 }
 
@@ -145,8 +159,7 @@ test
 }
 
 .a-selector:hover,
-.a-selector:focus
-{
+.a-selector:focus {
   outline: none;
 }
 

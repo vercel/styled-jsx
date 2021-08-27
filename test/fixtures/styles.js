@@ -22,7 +22,11 @@ const a = global`
 
 export const uh = bar
 
-export const foo = css`div { color: ${color}}`
+export const foo = css`
+  div {
+    color: ${color};
+  }
+`
 
 css.resolve`
   div {

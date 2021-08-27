@@ -1,9 +1,8 @@
 import styles from './styles'
 
-export default () =>
+export default () => (
   <div>
     <p>test</p>
-    <style jsx>
-      {styles}
-    </style>
+    <style jsx>{styles}</style>
   </div>
+)

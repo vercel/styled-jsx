@@ -4,7 +4,9 @@ const attrs = {
 
 const Test1 = () => (
   <div>
-    <span {...attrs} data-test="test">test</span>
+    <span {...attrs} data-test="test">
+      test
+    </span>
     <Component />
     <style jsx>{`
       span {
@@ -28,7 +30,7 @@ const Test3 = () => (
 )
 
 export default class {
-  render () {
+  render() {
     return (
       <div>
         <p>test</p>

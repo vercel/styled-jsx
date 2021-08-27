@@ -1,6 +1,6 @@
 import styles from './styles'
 
-export default () =>
+export default () => (
   <div>
     <span>
       test
@@ -18,8 +18,9 @@ export default () =>
       }
     `}</style>
   </div>
+)
 
-export const Test = () =>
+export const Test = () => (
   <div>
     <span>
       test
@@ -46,7 +47,6 @@ export const Test = () =>
         color: red;
       }
     `}</style>
-    <style jsx>
-      {styles}
-    </style>
+    <style jsx>{styles}</style>
   </div>
+)
