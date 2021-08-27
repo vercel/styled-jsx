@@ -9,7 +9,11 @@ const bar = css`
 `
 export const uh = bar
 
-export const foo = css`div { color: ${color}}`
+export const foo = css`
+  div {
+    color: ${color};
+  }
+`
 
 export default css`
   div {
@@ -25,6 +29,8 @@ const Title = styled.h1`
   font-size: 50px;
 `
 
-const AnotherTitle = Title.extend`color: blue;`
+const AnotherTitle = Title.extend`
+  color: blue;
+`
 
 export const Component = () => <AnotherTitle>My page</AnotherTitle>
