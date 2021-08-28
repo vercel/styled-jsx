@@ -69,8 +69,8 @@
     "stylis-rule-sheet": "0.0.10"
   },
   "devDependencies": {
-    "@babel/core": "7.12.3",
     "@babel/cli": "7.12.1",
+    "@babel/core": "7.12.3",
     "@babel/plugin-proposal-object-rest-spread": "7.12.1",
     "@babel/plugin-transform-arrow-functions": "7.12.1",
     "@babel/plugin-transform-modules-commonjs": "7.12.1",
