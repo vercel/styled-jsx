@@ -2,11 +2,14 @@ const Test = () => (
   <div>
     <style jsx global>{`
       body {
-        color: red
+        color: red;
       }
 
-      :hover { color: red; display: flex;
-        animation: foo 1s ease-out }
+      :hover {
+        color: red;
+        display: flex;
+        animation: foo 1s ease-out;
+      }
 
       div a {
         display: none;
@@ -19,4 +22,8 @@ const Test = () => (
   </div>
 )
 
-const Test2 = () => <style global jsx>{'p { color: red }'}</style>
+const Test2 = () => (
+  <style global jsx>
+    {'p { color: red }'}
+  </style>
+)
