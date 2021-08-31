@@ -337,7 +337,7 @@ Please keep in mind that constants defined outside of the component scope are tr
 ```jsx
 import React from 'react'
 import ReactDOM from 'react-dom/server'
-import { StyleRegistry, useStyles } from 'styled-jsx'
+import { StyleRegistry, useStyleRegistry } from 'styled-jsx'
 import App from './app'
 
 function Head() {
