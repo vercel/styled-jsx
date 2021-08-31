@@ -167,7 +167,7 @@ export const StyleSheetContext = createContext(new StyleSheetRegistry())
 
 export function StyleRegistry({ children }) {
   const rootRegistry = useContext(StyleSheetContext)
-  const registry = useState(() => rootRegistry || new StyleSheetRegistry())
+  const [registry] = useState(() => rootRegistry || new StyleSheetRegistry())
 
   return React.createElement(
     StyleSheetContext.Provider,

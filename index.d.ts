@@ -6,7 +6,7 @@ declare module 'react' {
 }
 
 export type StyleRegistry = {
-  styles(options: { nonce?: boolean }): JSX.Element
+  styles(options?: { nonce?: boolean }): JSX.Element
   flush(): void
 }
 export function useStyleRegistry(): StyleRegistry

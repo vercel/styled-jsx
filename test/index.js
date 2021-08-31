@@ -7,9 +7,12 @@ import ReactDOM from 'react-dom/server'
 import plugin from '../src/babel'
 import JSXStyle from '../src/style'
 import {
+  // internal API
   StyleSheetRegistry,
   StyleSheetContext,
-  useStyleRegistry
+  // exposed API
+  useStyleRegistry,
+  StyleRegistry
 } from '../src/stylesheet-registry'
 import _transform, { transformSource as _transformSource } from './_transform'
 
@@ -212,13 +215,8 @@ test('sever rendering with hook api', t => {
 
   const expected = `<head>${styles}</head>`
 
-  const registry = new StyleSheetRegistry()
   const createContextualApp = type =>
-    React.createElement(
-      StyleSheetContext.Provider,
-      { value: registry },
-      React.createElement(type)
-    )
+    React.createElement(StyleRegistry, null, React.createElement(type))
 
   // Render using react
   ReactDOM.renderToString(createContextualApp(App))
