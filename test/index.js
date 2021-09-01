@@ -7,12 +7,9 @@ import ReactDOM from 'react-dom/server'
 import plugin from '../src/babel'
 import JSXStyle from '../src/style'
 import {
-  // internal API
-  StyleSheetRegistry,
-  StyleSheetContext,
-  // exposed API
+  StyleRegistry,
   useStyleRegistry,
-  StyleRegistry
+  createStyleRegistry
 } from '../src/stylesheet-registry'
 import _transform, { transformSource as _transformSource } from './_transform'
 
@@ -188,6 +185,7 @@ test('works with exported non-jsx style (CommonJS modules)', async t => {
 })
 
 test('sever rendering with hook api', t => {
+  const registry = createStyleRegistry()
   function Head() {
     const registry = useStyleRegistry()
     const styles = registry.styles()
@@ -203,6 +201,7 @@ test('sever rendering with hook api', t => {
     return React.createElement(
       'div',
       null,
+      React.createElement(Head),
       React.createElement(JSXStyle, { id: 2 }, 'div { color: blue }'),
       React.createElement(JSXStyle, { id: 3 }, `div { color: ${color} }`)
     )
@@ -216,7 +215,7 @@ test('sever rendering with hook api', t => {
   const expected = `<head>${styles}</head>`
 
   const createContextualApp = type =>
-    React.createElement(StyleRegistry, null, React.createElement(type))
+    React.createElement(StyleRegistry, { registry }, React.createElement(type))
 
   // Render using react
   ReactDOM.renderToString(createContextualApp(App))
@@ -260,13 +259,9 @@ test('server rendering', t => {
     '<style id="__jsx-2">div { color: blue }</style>' +
     '<style id="__jsx-3">div { color: green }</style>'
 
-  const registry = new StyleSheetRegistry()
+  const registry = createStyleRegistry()
   const createApp = () =>
-    React.createElement(
-      StyleSheetContext.Provider,
-      { value: registry },
-      React.createElement(App)
-    )
+    React.createElement(StyleRegistry, { registry }, React.createElement(App))
 
   // Render using react
   ReactDOM.renderToString(createApp())
@@ -319,13 +314,9 @@ test('server rendering with nonce', t => {
     )
   }
 
-  const registry = new StyleSheetRegistry()
+  const registry = createStyleRegistry()
   const createApp = () =>
-    React.createElement(
-      StyleSheetContext.Provider,
-      { value: registry },
-      React.createElement(App)
-    )
+    React.createElement(StyleRegistry, { registry }, React.createElement(App))
 
   // Expected CSS
   const expected =
@@ -373,13 +364,9 @@ test('optimized styles do not contain new lines', t => {
     )
   }
 
-  const registry = new StyleSheetRegistry()
+  const registry = createStyleRegistry()
   const createApp = () =>
-    React.createElement(
-      StyleSheetContext.Provider,
-      { value: registry },
-      React.createElement(App)
-    )
+    React.createElement(StyleRegistry, { registry }, React.createElement(App))
 
   ReactDOM.renderToString(createApp())
   const html = ReactDOM.renderToStaticMarkup(
