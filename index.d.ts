@@ -1,3 +1,5 @@
+import React from 'react'
+
 declare module 'react' {
   interface StyleHTMLAttributes<T> extends HTMLAttributes<T> {
     jsx?: boolean
@@ -8,10 +10,15 @@ declare module 'react' {
 export type StyleRegistry = {
   styles(options?: { nonce?: boolean }): JSX.Element
   flush(): void
+  add(props: any): void
+  remove(props: any): void
 }
 export function useStyleRegistry(): StyleRegistry
 export function StyleRegistry({
-  children
+  children,
+  registry
 }: {
-  children: JSX.Element
+  children: JSX.Element | React.ReactNode
+  registry?: StyleRegistry
 }): JSX.Element
+export function createStyleRegistry(): StyleRegistry

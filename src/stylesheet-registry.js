@@ -2,6 +2,22 @@ import React, { useState, useContext, createContext, useMemo } from 'react'
 
 import DefaultStyleSheet from './lib/stylesheet'
 import { computeId, computeSelector } from './lib/hash'
+
+function mapRulesToStyle(cssRules, options = {}) {
+  return cssRules.map(args => {
+    const id = args[0]
+    const css = args[1]
+    return React.createElement('style', {
+      id: `__${id}`,
+      // Avoid warnings upon render with a key
+      key: `__${id}`,
+      nonce: options.nonce ? options.nonce : undefined,
+      dangerouslySetInnerHTML: {
+        __html: css
+      }
+    })
+  })
+}
 export class StyleSheetRegistry {
   constructor({
     styleSheet = null,
@@ -120,6 +136,10 @@ export class StyleSheetRegistry {
     )
   }
 
+  styles(options) {
+    return mapRulesToStyle(this.cssRules(), options)
+  }
+
   getIdAndRules(props) {
     const { children: css, dynamic, id } = props
 
@@ -163,11 +183,17 @@ function invariant(condition, message) {
   }
 }
 
-export const StyleSheetContext = createContext(new StyleSheetRegistry())
+export const StyleSheetContext = createContext(null)
 
-export function StyleRegistry({ children }) {
+export function createStyleRegistry() {
+  return new StyleSheetRegistry()
+}
+
+export function StyleRegistry({ registry: configuredRegistry, children }) {
   const rootRegistry = useContext(StyleSheetContext)
-  const [registry] = useState(() => rootRegistry || new StyleSheetRegistry())
+  const [registry] = useState(
+    () => configuredRegistry || rootRegistry || createStyleRegistry()
+  )
 
   return React.createElement(
     StyleSheetContext.Provider,
@@ -179,31 +205,5 @@ export function StyleRegistry({ children }) {
 export function useStyleRegistry() {
   const registry = useContext(StyleSheetContext)
 
-  return useMemo(
-    () => ({
-      styles(options) {
-        return mapRulesToStyle(registry.cssRules(), options)
-      },
-      flush() {
-        registry.flush()
-      }
-    }),
-    [registry]
-  )
-}
-
-function mapRulesToStyle(cssRules, options = {}) {
-  return cssRules.map(args => {
-    const id = args[0]
-    const css = args[1]
-    return React.createElement('style', {
-      id: `__${id}`,
-      // Avoid warnings upon render with a key
-      key: `__${id}`,
-      nonce: options.nonce ? options.nonce : undefined,
-      dangerouslySetInnerHTML: {
-        __html: css
-      }
-    })
-  })
+  return useMemo(() => registry, [registry])
 }
