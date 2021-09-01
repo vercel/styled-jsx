@@ -1,4 +1,4 @@
-import React, { useState, useContext, createContext, useMemo } from 'react'
+import React, { useState, useContext, createContext } from 'react'
 
 import DefaultStyleSheet from './lib/stylesheet'
 import { computeId, computeSelector } from './lib/hash'
@@ -192,7 +192,7 @@ export function createStyleRegistry() {
 export function StyleRegistry({ registry: configuredRegistry, children }) {
   const rootRegistry = useContext(StyleSheetContext)
   const [registry] = useState(
-    () => configuredRegistry || rootRegistry || createStyleRegistry()
+    () => rootRegistry || configuredRegistry || createStyleRegistry()
   )
 
   return React.createElement(
@@ -203,7 +203,5 @@ export function StyleRegistry({ registry: configuredRegistry, children }) {
 }
 
 export function useStyleRegistry() {
-  const registry = useContext(StyleSheetContext)
-
-  return useMemo(() => registry, [registry])
+  return useContext(StyleSheetContext)
 }
