@@ -340,11 +340,11 @@ import ReactDOM from 'react-dom/server'
 import { StyleRegistry, useStyleRegistry } from 'styled-jsx'
 import App from './app'
 
-function Head() {
+function Styles() {
   const registry = useStyleRegistry()
   const styles = registry.styles()
   registry.flush()
-  return <head>{styles}</head>
+  return <>{styles}</>
 }
 
 export default (req, res) => {
@@ -352,7 +352,9 @@ export default (req, res) => {
   const html = ReactDOM.renderToStaticMarkup(
     <StyleRegistry>
       <html>
-        <Head />
+        <head>
+          <Styles />
+        </head>
         <body>
           <div id="root" dangerouslySetInnerHTML={{ __html: app }} />
         </body>
@@ -686,8 +688,8 @@ Styles can be preprocessed via plugins.
 
 Plugins are regular JavaScript modules that export a simple function with the following signature:
 
-```js
-;(css: string, options: Object) => string
+```ts
+function plugin(css: string, options: Object): string
 ```
 
 Basically they accept a CSS string in input, optionally modify it and finally return it.
