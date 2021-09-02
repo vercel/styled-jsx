@@ -255,9 +255,6 @@ test(
 test(
   'createComputeId',
   withMock(withMockDocument, t => {
-    // const utilRegistry = makeRegistry()
-    // const computeId = utilRegistry.createComputeId()
-
     // without props
     t.is(computeId('123'), 'jsx-123')
 
@@ -271,11 +268,6 @@ test(
 test(
   'createComputeSelector',
   withMock(withMockDocument, t => {
-    // const utilRegistry = makeRegistry()
-    // const computeSelector = utilRegistry
-    // .createComputeSelector()
-    // .bind(utilRegistry)
-
     t.is(
       computeSelector(
         'jsx-123',
