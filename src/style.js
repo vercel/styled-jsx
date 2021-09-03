@@ -1,17 +1,16 @@
-import { useLayoutEffect } from 'react'
-import StyleSheetRegistry from './stylesheet-registry'
-
-const styleSheetRegistry = new StyleSheetRegistry()
-
+import { useLayoutEffect, useContext } from 'react'
+import { StyleSheetContext } from './stylesheet-registry'
+import { computeId } from './lib/hash'
 export default function JSXStyle(props) {
+  const registry = useContext(StyleSheetContext)
   if (typeof window === 'undefined') {
-    styleSheetRegistry.add(props)
+    registry.add(props)
     return null
   }
   useLayoutEffect(() => {
-    styleSheetRegistry.add(props)
+    registry.add(props)
     return () => {
-      styleSheetRegistry.remove(props)
+      registry.remove(props)
     }
     // props.children can be string[], will be striped since id is identical
   }, [props.id, String(props.dynamic)])
@@ -23,13 +22,7 @@ JSXStyle.dynamic = info => {
     .map(tagInfo => {
       const baseId = tagInfo[0]
       const props = tagInfo[1]
-      return styleSheetRegistry.computeId(baseId, props)
+      return computeId(baseId, props)
     })
     .join(' ')
-}
-
-export function flush() {
-  const cssRules = styleSheetRegistry.cssRules()
-  styleSheetRegistry.flush()
-  return cssRules
 }
