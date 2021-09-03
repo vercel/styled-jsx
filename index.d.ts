@@ -1,6 +1,4 @@
-// Definitions by: @types/styled-jsx <https://www.npmjs.com/package/@types/styled-jsx>
-
-import 'react'
+import React from 'react'
 
 declare module 'react' {
   interface StyleHTMLAttributes<T> extends HTMLAttributes<T> {
@@ -8,3 +6,19 @@ declare module 'react' {
     global?: boolean
   }
 }
+
+export type StyleRegistry = {
+  styles(options?: { nonce?: boolean }): JSX.Element
+  flush(): void
+  add(props: any): void
+  remove(props: any): void
+}
+export function useStyleRegistry(): StyleRegistry
+export function StyleRegistry({
+  children,
+  registry
+}: {
+  children: JSX.Element | React.ReactNode
+  registry?: StyleRegistry
+}): JSX.Element
+export function createStyleRegistry(): StyleRegistry

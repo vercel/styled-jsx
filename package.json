@@ -8,8 +8,7 @@
     "dist",
     "lib",
     "index.d.ts",
-    "server.js",
-    "server.d.ts",
+    "index.js",
     "babel.js",
     "babel-test.js",
     "style.js",
@@ -25,7 +24,7 @@
     "test": "ava",
     "lint": "eslint ./src",
     "format": "prettier --write \"./{src,test}/**/*.{js,css}\"",
-    "prepublishOnly": "yarn build && yarn test && yarn lint --quiet"
+    "prepublishOnly": "rm -rf dist && yarn build && yarn test && yarn lint --quiet"
   },
   "husky": {
     "hooks": {

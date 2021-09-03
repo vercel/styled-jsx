@@ -5,7 +5,48 @@ import ReactDOM from 'react-dom/server'
 
 // Ours
 import plugin from '../src/babel'
+import JSXStyle from '../src/style'
+import {
+  StyleRegistry,
+  useStyleRegistry,
+  createStyleRegistry
+} from '../src/stylesheet-registry'
 import _transform, { transformSource as _transformSource } from './_transform'
+
+const flushToHTML = (registry, options = {}) => {
+  const cssRules = registry.cssRules()
+  registry.flush()
+  return cssRules.reduce((html, args) => {
+    const id = args[0]
+    const css = args[1]
+    html += `<style id="__${id}"${
+      options.nonce ? ` nonce="${options.nonce}"` : ''
+    }>${css}</style>`
+    return html
+  }, '')
+}
+
+function mapCssRulesToReact(cssRules, options = {}) {
+  return cssRules.map(args => {
+    const id = args[0]
+    const css = args[1]
+    return React.createElement('style', {
+      id: `__${id}`,
+      // Avoid warnings upon render with a key
+      key: `__${id}`,
+      nonce: options.nonce ? options.nonce : undefined,
+      dangerouslySetInnerHTML: {
+        __html: css
+      }
+    })
+  })
+}
+
+function flushToReact(registry, options = {}) {
+  const cssRules = registry.cssRules()
+  registry.flush()
+  return mapCssRulesToReact(cssRules, options)
+}
 
 const transform = (file, opts = {}) =>
   _transform(file, {
@@ -143,18 +184,46 @@ test('works with exported non-jsx style (CommonJS modules)', async t => {
   t.snapshot(code)
 })
 
-function clearModulesCache() {
-  ;['../src/lib/stylesheet', '../src/style', '../src/server'].forEach(
-    moduleName => {
-      delete require.cache[require.resolve(moduleName)]
-    }
-  )
-}
+test('sever rendering with hook api', t => {
+  const registry = createStyleRegistry()
+  function Head() {
+    const registry = useStyleRegistry()
+    const styles = registry.styles()
+    registry.flush()
+    // should be empty and `push` won't effect styles
+    const stylesAfterFlushed = registry.styles()
+    styles.push(...stylesAfterFlushed)
+    return React.createElement('head', null, styles)
+  }
+
+  function App() {
+    const color = 'green'
+    return React.createElement(
+      'div',
+      null,
+      React.createElement(Head),
+      React.createElement(JSXStyle, { id: 2 }, 'div { color: blue }'),
+      React.createElement(JSXStyle, { id: 3 }, `div { color: ${color} }`)
+    )
+  }
+
+  // Expected DOM string
+  const styles =
+    '<style id="__jsx-2">div { color: blue }</style>' +
+    '<style id="__jsx-3">div { color: green }</style>'
+
+  const expected = `<head>${styles}</head>`
+
+  const createContextualApp = type =>
+    React.createElement(StyleRegistry, { registry }, React.createElement(type))
+
+  // Render using react
+  ReactDOM.renderToString(createContextualApp(App))
+  const html = ReactDOM.renderToStaticMarkup(createContextualApp(Head))
+  t.is(html, expected)
+})
 
 test('server rendering', t => {
-  clearModulesCache()
-  const JSXStyle = require('../src/style').default
-  const { default: flush, flushToHTML } = require('../src/server')
   function App() {
     const color = 'green'
     return React.createElement(
@@ -190,31 +259,32 @@ test('server rendering', t => {
     '<style id="__jsx-2">div { color: blue }</style>' +
     '<style id="__jsx-3">div { color: green }</style>'
 
+  const registry = createStyleRegistry()
+  const createApp = () =>
+    React.createElement(StyleRegistry, { registry }, React.createElement(App))
+
   // Render using react
-  ReactDOM.renderToString(React.createElement(App))
+  ReactDOM.renderToString(createApp())
   const html = ReactDOM.renderToStaticMarkup(
-    React.createElement('head', null, flush())
+    React.createElement('head', null, flushToReact(registry))
   )
 
   t.is(html, `<head>${expected}</head>`)
 
   // Assert that memory is empty
-  t.is(0, flush().length)
-  t.is('', flushToHTML())
+  t.is(0, registry.cssRules().length)
+  t.is('', flushToHTML(registry))
 
   // Render to html again
-  ReactDOM.renderToString(React.createElement(App))
-  t.is(expected, flushToHTML())
+  ReactDOM.renderToString(createApp())
+  t.is(expected, flushToHTML(registry))
 
   // Assert that memory is empty
-  t.is(0, flush().length)
-  t.is('', flushToHTML())
+  t.is(0, flushToReact(registry).length)
+  t.is('', flushToHTML(registry))
 })
 
 test('server rendering with nonce', t => {
-  clearModulesCache()
-  const JSXStyle = require('../src/style').default
-  const { default: flush, flushToHTML } = require('../src/server')
   function App() {
     const color = 'green'
     return React.createElement(
@@ -244,6 +314,10 @@ test('server rendering with nonce', t => {
     )
   }
 
+  const registry = createStyleRegistry()
+  const createApp = () =>
+    React.createElement(StyleRegistry, { registry }, React.createElement(App))
+
   // Expected CSS
   const expected =
     '<style id="__jsx-1" nonce="test-nonce">p { color: red }</style>' +
@@ -251,30 +325,31 @@ test('server rendering with nonce', t => {
     '<style id="__jsx-3" nonce="test-nonce">div { color: green }</style>'
 
   // Render using react
-  ReactDOM.renderToString(React.createElement(App))
+  ReactDOM.renderToString(createApp())
   const html = ReactDOM.renderToStaticMarkup(
-    React.createElement('head', null, flush({ nonce: 'test-nonce' }))
+    React.createElement(
+      'head',
+      null,
+      flushToReact(registry, { nonce: 'test-nonce' })
+    )
   )
 
   t.is(html, `<head>${expected}</head>`)
 
   // Assert that memory is empty
-  t.is(0, flush({ nonce: 'test-nonce' }).length)
-  t.is('', flushToHTML({ nonce: 'test-nonce' }))
+  t.is(0, flushToReact(registry, { nonce: 'test-nonce' }).length)
+  t.is('', flushToHTML(registry, { nonce: 'test-nonce' }))
 
   // Render to html again
-  ReactDOM.renderToString(React.createElement(App))
-  t.is(expected, flushToHTML({ nonce: 'test-nonce' }))
+  ReactDOM.renderToString(createApp())
+  t.is(expected, flushToHTML(registry, { nonce: 'test-nonce' }))
 
   // Assert that memory is empty
-  t.is(0, flush({ nonce: 'test-nonce' }).length)
-  t.is('', flushToHTML({ nonce: 'test-nonce' }))
+  t.is(0, flushToReact(registry, { nonce: 'test-nonce' }).length)
+  t.is('', flushToHTML(registry, { nonce: 'test-nonce' }))
 })
 
 test('optimized styles do not contain new lines', t => {
-  clearModulesCache()
-  const JSXStyle = require('../src/style').default
-  const { default: flush } = require('../src/server')
   function App() {
     return React.createElement(
       'div',
@@ -289,9 +364,13 @@ test('optimized styles do not contain new lines', t => {
     )
   }
 
-  ReactDOM.renderToString(React.createElement(App))
+  const registry = createStyleRegistry()
+  const createApp = () =>
+    React.createElement(StyleRegistry, { registry }, React.createElement(App))
+
+  ReactDOM.renderToString(createApp())
   const html = ReactDOM.renderToStaticMarkup(
-    React.createElement('head', null, flush())
+    React.createElement('head', null, flushToReact(registry))
   )
   const expected =
     '<style id="__jsx-1">p { color: red }.foo { color: hotpink }</style>'
