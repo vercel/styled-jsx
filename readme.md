@@ -4,7 +4,7 @@
 
 Full, scoped and component-friendly CSS support for JSX (rendered on the server or the client).
 
-Code and docs are for v3 which we highly recommend you to try. Looking for styled-jsx v2? Switch to the [v2 branch](https://github.com/zeit/styled-jsx/tree/v2).
+Code and docs are for v3 which we highly recommend you to try. Looking for styled-jsx v2? Switch to the [v2 branch](https://github.com/vercel/styled-jsx/tree/v2).
 
 - [Getting started](#getting-started)
 - [Configuration options](#configuration-options)
@@ -37,7 +37,7 @@ Code and docs are for v3 which we highly recommend you to try. Looking for style
   - [Warning: unknown `jsx` prop on &lt;style&gt; tag](#warning-unknown-jsx-prop-on-style-tag)
   - [Can I return an array of components when using React 16?](#can-i-return-an-array-of-components-when-using-react-16)
   - [Styling third parties / child components from the parent](#styling-third-parties--child-components-from-the-parent)
-  - [Some styles are missing in production](https://github.com/zeit/styled-jsx/issues/319#issuecomment-349239326)
+  - [Some styles are missing in production](https://github.com/vercel/styled-jsx/issues/319#issuecomment-349239326)
   - [Build a component library with styled-jsx](#build-a-component-library-with-styled-jsx)
 - [Syntax Highlighting](#syntax-highlighting)
 
@@ -571,7 +571,7 @@ export default () => (
 npm i --save styled-jsx
 ```
 
-Then `resolve` can be imported from `styled-jsx/macro` and used the same way as in the example in the [Using `resolve` as a Babel macro](https://github.com/zeit/styled-jsx/blob/master/readme.md#using-resolve-as-a-babel-macro) section above.
+Then `resolve` can be imported from `styled-jsx/macro` and used the same way as in the example in the [Using `resolve` as a Babel macro](https://github.com/vercel/styled-jsx/blob/master/readme.md#using-resolve-as-a-babel-macro) section above.
 
 #### Styles in regular CSS files
 
@@ -923,7 +923,7 @@ There's an [article](https://medium.com/@tomaszmularczyk89/guide-to-building-a-r
 
 When working with template literals a common drawback is missing syntax highlighting. The following editors currently have support for highlighting CSS inside `<style jsx>` elements.
 
-_If you have a solution for an editor not on the list_ **please [open a PR](https://github.com/zeit/styled-jsx/pull/new/master)** _and let us now._
+_If you have a solution for an editor not on the list_ **please [open a PR](https://github.com/vercel/styled-jsx/pull/new/master)** _and let us now._
 
 ### Atom
 
