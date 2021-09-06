@@ -1,10 +1,17 @@
-const Stylis = require('stylis')
-const stylisRuleSheet = require('stylis-rule-sheet')
-
-const stylis = new Stylis()
+const {
+  compile,
+  serialize,
+  stringify,
+  middleware,
+  rulesheet,
+  prefixer,
+  namespace
+} = require('stylis')
 
 function disableNestingPlugin(...args) {
   let [context, , , parent = [], line, column] = args
+  // TODO: migrate disable nesting plugin
+  // console.log('context', context)
   if (context === 2) {
     // replace null characters and trim
     // eslint-disable-next-line no-control-regex
@@ -71,16 +78,8 @@ function sourceMapsPlugin(...args) {
  */
 let splitRules = []
 
-const splitRulesPlugin = stylisRuleSheet(rule => {
+const splitRulesPlugin = rulesheet(rule => {
   splitRules.push(rule)
-})
-
-stylis.use(disableNestingPlugin)
-stylis.use(sourceMapsPlugin)
-stylis.use(splitRulesPlugin)
-stylis.set({
-  cascade: false,
-  compress: true
 })
 
 /**
@@ -97,19 +96,29 @@ function transform(hash, styles, settings = {}) {
   filename = settings.filename
   splitRules = []
 
-  stylis.set({
-    prefix:
-      typeof settings.vendorPrefixes === 'boolean'
-        ? settings.vendorPrefixes
-        : true
-  })
-
-  stylis(hash, styles)
+  const usePrefixing =
+    typeof settings.vendorPrefixes === 'boolean'
+      ? settings.vendorPrefixes
+      : true
+  serialize(
+    compile(`${hash}{${styles}}`),
+    middleware(
+      [
+        disableNestingPlugin,
+        sourceMapsPlugin,
+        usePrefixing && prefixer,
+        namespace,
+        stringify,
+        splitRulesPlugin
+      ].filter(Boolean)
+    )
+  )
 
   if (settings.splitRules) {
     return splitRules
   }
 
+  // return str
   return splitRules.join('')
 }
 
