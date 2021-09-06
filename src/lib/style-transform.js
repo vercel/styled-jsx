@@ -10,6 +10,8 @@ const {
 
 function disableNestingPlugin(...args) {
   let [context, , , parent = [], line, column] = args
+  // TODO: migrate disable nesting plugin
+  // console.log('context', context)
   if (context === 2) {
     // replace null characters and trim
     // eslint-disable-next-line no-control-regex
@@ -102,11 +104,11 @@ function transform(hash, styles, settings = {}) {
     compile(`${hash}{${styles}}`),
     middleware(
       [
-        namespace,
-        usePrefixing && prefixer,
-        stringify,
         disableNestingPlugin,
         sourceMapsPlugin,
+        usePrefixing && prefixer,
+        namespace,
+        stringify,
         splitRulesPlugin
       ].filter(Boolean)
     )
