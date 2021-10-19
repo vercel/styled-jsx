@@ -1,6 +1,7 @@
-import { useLayoutEffect } from 'react'
+import React from 'react'
 import { useStyleRegistry } from './stylesheet-registry'
 import { computeId } from './lib/hash'
+
 export default function JSXStyle(props) {
   const registry = useStyleRegistry()
 
@@ -14,7 +15,9 @@ export default function JSXStyle(props) {
     return null
   }
 
-  useLayoutEffect(() => {
+  const useDOMEffects =
+    React.unstable_useInsertionEffect || React.useLayoutEffect
+  useDOMEffects(() => {
     registry.add(props)
     return () => {
       registry.remove(props)
