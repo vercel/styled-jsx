@@ -15,8 +15,7 @@ export default function JSXStyle(props) {
     return null
   }
 
-  const useDOMEffects =
-    React.unstable_useInsertionEffect || React.useLayoutEffect
+  const useDOMEffects = React.useInsertionEffect || React.useLayoutEffect
   useDOMEffects(() => {
     registry.add(props)
     return () => {
