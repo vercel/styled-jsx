@@ -2,6 +2,7 @@ import React from 'react'
 import { useStyleRegistry } from './stylesheet-registry'
 import { computeId } from './lib/hash'
 
+const useDOMEffects = React.useInsertionEffect || React.useLayoutEffect
 export default function JSXStyle(props) {
   const registry = useStyleRegistry()
 
@@ -15,7 +16,6 @@ export default function JSXStyle(props) {
     return null
   }
 
-  const useDOMEffects = React.useInsertionEffect || React.useLayoutEffect
   useDOMEffects(() => {
     registry.add(props)
     return () => {
