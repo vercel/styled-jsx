@@ -2,7 +2,9 @@ import React from 'react'
 import { useStyleRegistry } from './stylesheet-registry'
 import { computeId } from './lib/hash'
 
-const useDOMEffects = React.useInsertionEffect || React.useLayoutEffect
+// Opt-into the new `useInsertionEffect` API in React 18, fallback to `useLayoutEffect`.
+// https://github.com/reactwg/react-18/discussions/110
+const useInsertionEffect = React.useInsertionEffect || React.useLayoutEffect
 export default function JSXStyle(props) {
   const registry = useStyleRegistry()
 
@@ -16,7 +18,7 @@ export default function JSXStyle(props) {
     return null
   }
 
-  useDOMEffects(() => {
+  useInsertionEffect(() => {
     registry.add(props)
     return () => {
       registry.remove(props)
