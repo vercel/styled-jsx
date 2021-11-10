@@ -235,7 +235,7 @@ export default class StyleSheet {
     if (cssString) {
       invariant(
         isString(cssString),
-        'makeStyleTag acceps only strings as second parameter'
+        'makeStyleTag accepts only strings as second parameter'
       )
     }
 
