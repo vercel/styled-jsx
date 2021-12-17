@@ -34,7 +34,7 @@ function mapCssRulesToReact(cssRules, options = {}) {
       id: `__${id}`,
       // Avoid warnings upon render with a key
       key: `__${id}`,
-      nonce: options.nonce ? options.nonce : undefined,
+      nonce: options.nonce ? options.nonce.toString() : undefined,
       dangerouslySetInnerHTML: {
         __html: css
       }
