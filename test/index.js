@@ -20,7 +20,7 @@ const flushToHTML = (registry, options = {}) => {
     const id = args[0]
     const css = args[1]
     html += `<style id="__${id}"${
-      options.nonce ? ` nonce="${options.nonce.toString()}"` : ''
+      options.nonce ? ` nonce="${options.nonce}"` : ''
     }>${css}</style>`
     return html
   }, '')
@@ -34,7 +34,7 @@ function mapCssRulesToReact(cssRules, options = {}) {
       id: `__${id}`,
       // Avoid warnings upon render with a key
       key: `__${id}`,
-      nonce: options.nonce ? options.nonce.toString() : undefined,
+      nonce: options.nonce ? options.nonce : undefined,
       dangerouslySetInnerHTML: {
         __html: css
       }

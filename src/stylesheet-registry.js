@@ -11,7 +11,7 @@ function mapRulesToStyle(cssRules, options = {}) {
       id: `__${id}`,
       // Avoid warnings upon render with a key
       key: `__${id}`,
-      nonce: options.nonce ? options.nonce.toString() : undefined,
+      nonce: options.nonce ? options.nonce : undefined,
       dangerouslySetInnerHTML: {
         __html: css
       }
