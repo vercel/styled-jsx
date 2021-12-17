@@ -18,14 +18,12 @@ If you are here to report a bug or request a feature please remove this introduc
 
 #### If the current behavior is a bug, please provide the steps to reproduce and possibly a minimal demo or testcase in the form of a Next.js app, CodeSandbox URL or similar
 
-1. 2.
-
 #### What is the expected behavior?
 
 #### Environment (include versions)
 
-- OS:
+- Version of styled-jsx (or next.js if you're using with it):
 - Browser:
-- styled-jsx (version):
+- OS:
 
 #### Did this work in previous versions?
