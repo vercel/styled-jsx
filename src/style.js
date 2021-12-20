@@ -7,8 +7,7 @@ import { computeId } from './lib/hash'
 const useInsertionEffect = React.useInsertionEffect || React.useLayoutEffect
 
 const isBrowser = typeof window !== 'undefined'
-const defaultRegistry =
-  typeof window !== 'undefined' ? createStyleRegistry() : undefined
+const defaultRegistry = isBrowser ? createStyleRegistry() : undefined
 export default function JSXStyle(props) {
   const registry = defaultRegistry ? defaultRegistry : useStyleRegistry()
 
