@@ -6,8 +6,8 @@ import { computeId } from './lib/hash'
 // https://github.com/reactwg/react-18/discussions/110
 const useInsertionEffect = React.useInsertionEffect || React.useLayoutEffect
 
-const isBrowser = typeof window !== 'undefined'
-const defaultRegistry = isBrowser ? createStyleRegistry() : undefined
+const defaultRegistry =
+  typeof window !== 'undefined' ? createStyleRegistry() : undefined
 export default function JSXStyle(props) {
   const registry = defaultRegistry ? defaultRegistry : useStyleRegistry()
 
@@ -16,7 +16,7 @@ export default function JSXStyle(props) {
     return null
   }
 
-  if (!isBrowser) {
+  if (typeof window === 'undefined') {
     registry.add(props)
     return null
   }
