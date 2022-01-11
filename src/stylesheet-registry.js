@@ -22,7 +22,7 @@ export class StyleSheetRegistry {
   constructor({
     styleSheet = null,
     optimizeForSpeed = false,
-    isBrowser = typeof window !== 'undefined'
+    isBrowser = typeof document !== 'undefined'
   } = {}) {
     this._sheet =
       styleSheet ||
