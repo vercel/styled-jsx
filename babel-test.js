@@ -1,2 +1,2 @@
 /* eslint-ignore */
-module.exports = require('./dist/babel-test')
+module.exports = require('./dist/babel').test()

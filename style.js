@@ -1,1 +1,1 @@
-module.exports = require('./dist/style')
+module.exports = require('./dist/index').style
