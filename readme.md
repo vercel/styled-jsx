@@ -120,6 +120,10 @@ Turn on/off automatic vendor prefixing (default: `true`)
 - Dynamic styles and themes support
 - CSS Preprocessing via Plugins
 
+## Using in Next.js
+
+Next.js automatically configures `styled-jsx` with babel or swc, you don't have to configure it manually.
+
 ## How It Works
 
 The example above transpiles to the following:
@@ -334,6 +338,13 @@ Please keep in mind that constants defined outside of the component scope are tr
 
 ## Server-Side Rendering
 
+`styled-jsx` v5 introduced `StyledRegistry` component and `useStyleRegistry` hook to let you scope styles rendering in each SSR render to keep concurrent-safe.
+
+- `registry.styles()` will return the array of react components for style tags.
+- `registry.flush()` can clean the existing styles in the registry, it's optional for SSR when you have a standalone registry for each SSR render.
+
+> Next.js 12 integrates with `styled-jsx` v5 and manages the registry for you.
+
 ```jsx
 import React from 'react'
 import ReactDOM from 'react-dom/server'
@@ -343,7 +354,6 @@ import App from './app'
 function Styles() {
   const registry = useStyleRegistry()
   const styles = registry.styles()
-  registry.flush()
   return <>{styles}</>
 }
 
