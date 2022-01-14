@@ -122,7 +122,7 @@ Turn on/off automatic vendor prefixing (default: `true`)
 
 ## Using in Next.js
 
-Next.js 12+ includes SWC compiler and transformer. You don't have to configure it in babel plugins.
+Next.js automatically configures `styled-jsx` with babel or swc, you don't have to configure it manually.
 
 ## How It Works
 
