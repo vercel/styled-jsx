@@ -122,7 +122,7 @@ Turn on/off automatic vendor prefixing (default: `true`)
 
 ## Using in Next.js
 
-Next.js now has SWC compiler and transformer to transile it in fast speed. You don't have to configure it in babel plugins.
+Next.js 12+ includes SWC compiler and transformer. You don't have to configure it in babel plugins.
 
 ## How It Works
 
