@@ -22,7 +22,7 @@ If you are here to report a bug or request a feature please remove this introduc
 
 #### Environment (include versions)
 
-- Version of styled-jsx (or next.js if you're using with it):
+- Version of styled-jsx (or next.js if it's being used):
 - Browser:
 - OS:
 
