@@ -25,8 +25,8 @@
 
 #### Usage
 
-If you're only use styled-jsx in pure client side, nothing will effect you.
-If you're using styled-jsx inside Next.js without customization, Next.js will manage the new gaps and it's same as previous.
+If you're only using styled-jsx purely client side, nothing will effect you.
+If you're using styled-jsx inside Next.js without customization, Next.js will automatically handle the changes for you.
 
 If you have your own customization with styled-jsx in Next.js, for example you have a custom `_document`:
 By default, doing this will let Next.js collect styles and pass them down.

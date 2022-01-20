@@ -375,7 +375,7 @@ export default (req, res) => {
 }
 ```
 
-There's also a new API `createStyleRegistry` is introduced when you have to create a registry manually. In this way you can operate the registry yourself to extract the rendered styles (`registry.styles()`) or flush them out (`registry.flush()`).
+There's also a new API `createStyleRegistry` that is introduced when you have to create a registry manually. In this way you can operate the registry yourself to extract the rendered styles (`registry.styles()`) or flush them out (`registry.flush()`).
 
 ```js
 const registry = createStyleRegistry()
