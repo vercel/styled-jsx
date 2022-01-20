@@ -103,6 +103,13 @@
       "optional": true
     }
   },
+  "release": {
+    "branches": [
+      "main",
+      "alpha",
+      "beta"
+    ]
+  },
   "engines": {
     "node": ">= 12.0.0"
   },
