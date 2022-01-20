@@ -13,7 +13,7 @@ export default class StyleSheet {
   constructor({
     name = 'stylesheet',
     optimizeForSpeed = isProd,
-    isBrowser = typeof window !== 'undefined'
+    isBrowser = typeof document !== 'undefined'
   } = {}) {
     invariant(isString(name), '`name` must be a string')
     this._name = name
