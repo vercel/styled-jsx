@@ -1,6 +1,6 @@
 # styled-jsx
 
-[![build status](https://github.com/vercel/styled-jsx/actions/workflows/main.yml/badge.svg?branch=master)](https://github.com/vercel/styled-jsx/actions?query=branch%3Amaster)
+[![build status](https://github.com/vercel/styled-jsx/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/vercel/styled-jsx/actions?query=branch%3Amain)
 
 Full, scoped and component-friendly CSS support for JSX (rendered on the server or the client).
 
@@ -598,7 +598,7 @@ export default () => (
 npm i --save styled-jsx
 ```
 
-Then `resolve` can be imported from `styled-jsx/macro` and used the same way as in the example in the [Using `resolve` as a Babel macro](https://github.com/vercel/styled-jsx/blob/master/readme.md#using-resolve-as-a-babel-macro) section above.
+Then `resolve` can be imported from `styled-jsx/macro` and used the same way as in the example in the [Using `resolve` as a Babel macro](https://github.com/vercel/styled-jsx/blob/main/readme.md#using-resolve-as-a-babel-macro) section above.
 
 #### Styles in regular CSS files
 
@@ -950,7 +950,7 @@ There's an [article](https://medium.com/@tomaszmularczyk89/guide-to-building-a-r
 
 When working with template literals a common drawback is missing syntax highlighting. The following editors currently have support for highlighting CSS inside `<style jsx>` elements.
 
-_If you have a solution for an editor not on the list_ **please [open a PR](https://github.com/vercel/styled-jsx/pull/new/master)** _and let us now._
+_If you have a solution for an editor not on the list_ **please [open a PR](https://github.com/vercel/styled-jsx/pull/new/main)** _and let us now._
 
 ### Atom
 
