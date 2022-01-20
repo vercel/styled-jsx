@@ -375,6 +375,23 @@ export default (req, res) => {
 }
 ```
 
+There's also a new API `createStyleRegistry` that is introduced when you have to create a registry manually. In this way you can operate the registry yourself to extract the rendered styles (`registry.styles()`) or flush them out (`registry.flush()`).
+
+```js
+const registry = createStyleRegistry()
+const styles = registry.styles() // access styles
+
+function Page() {
+  return (
+    <StyleRegistry registry={registry}>
+      <App />
+    </StyleRegistry>
+  )
+}
+```
+
+By default `<StyleRegistry />` will use the `registry` from root top `StyleRegistry`, which means there's only one `registry` in the react tree.
+
 It's **paramount** that you use one of these two functions so that
 the generated styles can be diffed when the client loads and
 duplicate styles are avoided.
