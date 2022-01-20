@@ -1,6 +1,6 @@
 # styled-jsx
 
-[![build status](https://github.com/vercel/styled-jsx/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/vercel/styled-jsx/actions?query=branch%3Ammain)
+[![build status](https://github.com/vercel/styled-jsx/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/vercel/styled-jsx/actions?query=branch%3Amain)
 
 Full, scoped and component-friendly CSS support for JSX (rendered on the server or the client).
 
