@@ -93,7 +93,7 @@
     "stylis-rule-sheet": "0.0.10"
   },
   "peerDependencies": {
-    "react": ">= 16.8.0 || 17.x.x || 18.x.x"
+    "react": ">= 16.8.0 || 17.x.x || ^18.0.0-0"
   },
   "peerDependenciesMeta": {
     "@babel/core": {
