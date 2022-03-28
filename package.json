@@ -13,6 +13,7 @@
     "babel-test.js",
     "style.js",
     "macro.js",
+    "macro.d.ts",
     "css.js",
     "css.d.ts",
     "webpack.js",
