@@ -18,6 +18,14 @@ import {
 } from './_utils'
 import { STYLE_COMPONENT } from './_constants'
 
+export function macro() {
+  return require('./macro')
+}
+
+export function test() {
+  return require('./babel-test')
+}
+
 export default function({ types: t }) {
   const jsxVisitors = {
     JSXOpeningElement(path, state) {
