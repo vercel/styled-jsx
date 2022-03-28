@@ -40,6 +40,9 @@ Code and docs are for v3 which we highly recommend you to try. Looking for style
   - [Some styles are missing in production](https://github.com/vercel/styled-jsx/issues/319#issuecomment-349239326)
   - [Build a component library with styled-jsx](#build-a-component-library-with-styled-jsx)
 - [Syntax Highlighting](#syntax-highlighting)
+- [ESLint](#eslint)
+- [TypeScript](#typescript)
+- [Credits](#credits)
 
 ## Getting started
 
@@ -1038,6 +1041,14 @@ If you're using `eslint-plugin-import`, the `css` import will generate errors, b
 
 ```
 "settings": {"import/core-modules": ["styled-jsx/css"] }
+```
+
+## TypeScript
+
+If you're using TypeScript, then in order to allow `<style jsx>` tags to be properly understood by it, create a file named "styled-jsx.d.ts" anywhere within your project containing the following, or add this line to the top of any single existing .ts file within your project:
+
+```ts
+/// <reference types="styled-jsx" />
 ```
 
 ## Credits
