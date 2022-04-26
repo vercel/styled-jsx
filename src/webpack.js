@@ -45,7 +45,7 @@ module.exports = function(content) {
   // default css``
 
   // Escape backticks and backslashes: “`” ⇒ “\`”, “\” ⇒ “\\”
-  // (c) https://git.io/fNZzr
+  // (c) https://github.com/coox/styled-jsx-css-loader/blob/97a38e90dddf2c4b066e9247db0612c8f95302de/index.js#L6
   output += `\`${content.replace(
     /[`\\]/g,
     match => '\\' + match
