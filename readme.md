@@ -1051,6 +1051,8 @@ If you're using TypeScript, then in order to allow `<style jsx>` tags to be prop
 /// <reference types="styled-jsx" />
 ```
 
+> If you're using babel to transform styled-jsx code with TypeScript, you need to specify `"jsx": "preserve"` in your tsconfig.json to keep the original JSX and let babel parse and transform with styled-jsx babel plugin.
+
 ## Credits
 
 - **Pedram Emrouznejad** ([rijs](https://github.com/rijs/fullstack)) suggested attribute selectors over my initial class prefixing idea.
