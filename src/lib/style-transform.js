@@ -113,4 +113,4 @@ function transform(hash, styles, settings = {}) {
   return splitRules.join('')
 }
 
-module.exports = transform
+export default transform
