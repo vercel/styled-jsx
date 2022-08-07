@@ -12,6 +12,7 @@
     "babel.js",
     "babel-test.js",
     "style.js",
+    "style.d.ts",
     "macro.js",
     "macro.d.ts",
     "css.js",
