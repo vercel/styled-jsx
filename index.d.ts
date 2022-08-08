@@ -7,18 +7,20 @@ declare module 'react' {
   }
 }
 
-export type StyleRegistry = {
-  styles(options?: { nonce?: string }): JSX.Element[]
-  flush(): void
-  add(props: any): void
-  remove(props: any): void
+declare module 'styled-jsx' {
+  export type StyledJsxStyleRegistry = {
+    styles(options?: { nonce?: string }): JSX.Element[]
+    flush(): void
+    add(props: any): void
+    remove(props: any): void
+  }
+  export function useStyleRegistry(): StyledJsxStyleRegistry
+  export function StyleRegistry({
+    children,
+    registry
+  }: {
+    children: JSX.Element | React.ReactNode
+    registry?: StyledJsxStyleRegistry
+  }): JSX.Element
+  export function createStyleRegistry(): StyledJsxStyleRegistry
 }
-export function useStyleRegistry(): StyleRegistry
-export function StyleRegistry({
-  children,
-  registry
-}: {
-  children: JSX.Element | React.ReactNode
-  registry?: StyleRegistry
-}): JSX.Element
-export function createStyleRegistry(): StyleRegistry
