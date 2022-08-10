@@ -7,6 +7,7 @@
   "files": [
     "dist",
     "lib",
+    "global.d.ts",
     "index.d.ts",
     "index.js",
     "babel.js",

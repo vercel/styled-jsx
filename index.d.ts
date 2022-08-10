@@ -1,13 +1,6 @@
-import React from 'react'
-
-declare module 'react' {
-  interface StyleHTMLAttributes<T> extends HTMLAttributes<T> {
-    jsx?: boolean
-    global?: boolean
-  }
-}
-
 declare module 'styled-jsx' {
+  import React from 'react'
+
   export type StyledJsxStyleRegistry = {
     styles(options?: { nonce?: string }): JSX.Element[]
     flush(): void
