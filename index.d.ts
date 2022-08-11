@@ -1,12 +1,3 @@
-import React from 'react'
-
-declare module 'react' {
-  interface StyleHTMLAttributes<T> extends HTMLAttributes<T> {
-    jsx?: boolean
-    global?: boolean
-  }
-}
-
 declare module 'styled-jsx' {
   export type StyledJsxStyleRegistry = {
     styles(options?: { nonce?: string }): JSX.Element[]
@@ -19,7 +10,7 @@ declare module 'styled-jsx' {
     children,
     registry
   }: {
-    children: JSX.Element | React.ReactNode
+    children: JSX.Element | import('react').ReactNode
     registry?: StyledJsxStyleRegistry
   }): JSX.Element
   export function createStyleRegistry(): StyledJsxStyleRegistry
