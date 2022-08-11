@@ -1,6 +1,4 @@
 declare module 'styled-jsx' {
-  import React from 'react'
-
   export type StyledJsxStyleRegistry = {
     styles(options?: { nonce?: string }): JSX.Element[]
     flush(): void
@@ -12,7 +10,7 @@ declare module 'styled-jsx' {
     children,
     registry
   }: {
-    children: JSX.Element | React.ReactNode
+    children: JSX.Element | import('react').ReactNode
     registry?: StyledJsxStyleRegistry
   }): JSX.Element
   export function createStyleRegistry(): StyledJsxStyleRegistry
