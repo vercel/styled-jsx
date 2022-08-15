@@ -78,7 +78,7 @@
     "@babel/runtime": "7.12.5",
     "@babel/types": "7.15.0",
     "@vercel/ncc": "0.33.1",
-    "ava": "1.2.1",
+    "ava": "4.3.1",
     "babel-plugin-macros": "2.8.0",
     "convert-source-map": "1.7.0",
     "eslint": "7.32.0",
