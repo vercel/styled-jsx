@@ -24,9 +24,9 @@
   "typings": "./index.d.ts",
   "scripts": {
     "build": "rm -rf dist && rm -rf out && yarn build-babel && yarn build-webpack && yarn build-index",
-    "build-babel": "bunchee src/babel.js -f cjs --target node -e react -e babel-plugin-macros -o dist/babel/index.js --no-sourcemap",
-    "build-webpack": "bunchee src/webpack.js -f cjs --target node -o dist/webpack/index.js --no-sourcemap",
-    "build-index": "bunchee src/index.js -f cjs --target node -e react -o dist/index/index.js --no-sourcemap",
+    "build-babel": "bunchee src/babel.js -f cjs --target node -e react -e babel-plugin-macros -o dist/babel/index.js",
+    "build-webpack": "bunchee src/webpack.js -f cjs --target node -o dist/webpack/index.js",
+    "build-index": "bunchee src/index.js -f cjs --target node -e react -o dist/index/index.js",
     "test": "ava",
     "lint": "eslint ./src",
     "format": "prettier --write \"./{src,test}/**/*.{js,css}\"",
