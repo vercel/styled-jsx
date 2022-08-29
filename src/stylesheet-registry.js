@@ -3,6 +3,8 @@ import React, { useState, useContext, createContext } from 'react'
 import DefaultStyleSheet from './lib/stylesheet'
 import { computeId, computeSelector } from './lib/hash'
 
+const isBrowser = typeof window !== 'undefined'
+
 function mapRulesToStyle(cssRules, options = {}) {
   return cssRules.map(args => {
     const id = args[0]
@@ -19,11 +21,7 @@ function mapRulesToStyle(cssRules, options = {}) {
   })
 }
 export class StyleSheetRegistry {
-  constructor({
-    styleSheet = null,
-    optimizeForSpeed = false,
-    isBrowser = typeof window !== 'undefined'
-  } = {}) {
+  constructor({ styleSheet = null, optimizeForSpeed = false } = {}) {
     this._sheet =
       styleSheet ||
       new DefaultStyleSheet({
@@ -37,8 +35,6 @@ export class StyleSheetRegistry {
       this._optimizeForSpeed = this._sheet.isOptimizeForSpeed()
     }
 
-    this._isBrowser = isBrowser
-
     this._fromServer = undefined
     this._indices = {}
     this._instancesCounts = {}
@@ -51,7 +47,7 @@ export class StyleSheetRegistry {
       this._optimizeForSpeed = this._sheet.isOptimizeForSpeed()
     }
 
-    if (this._isBrowser && !this._fromServer) {
+    if (isBrowser && !this._fromServer) {
       this._fromServer = this.selectFromServer()
       this._instancesCounts = Object.keys(this._fromServer).reduce(
         (acc, tagName) => {
