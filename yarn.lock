@@ -2144,10 +2144,10 @@ builtins@^1.0.3:
   resolved "https://registry.yarnpkg.com/builtins/-/builtins-1.0.3.tgz#cb94faeb61c8696451db36534e1422f94f0aee88"
   integrity sha512-uYBjakWipfaO/bXI7E8rq6kpwHRZK5cNYrUv2OzZSI/FvmdMyXJ2tG9dKcjEC5YHmHpUAwsargWIZNWdxb/bnQ==
 
-bunchee@2.0.0-beta.4:
-  version "2.0.0-beta.4"
-  resolved "https://registry.yarnpkg.com/bunchee/-/bunchee-2.0.0-beta.4.tgz#0fe943a8efb17bf645f0249ea23757bf2e8ea0c6"
-  integrity sha512-9yPfTwj8gu5xHtEVU6+NE9y0DYffRlK0nK5mGwl+ATBA7PQSpN8oDctqQ5kZV5uU+HXJK3ruL1uNwBYOIqCTYQ==
+bunchee@2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/bunchee/-/bunchee-2.0.2.tgz#48ce6dd1987c4c062b688cbd08a200e1c20dd648"
+  integrity sha512-MyRMhyIBMSqdvkeQlDv3qCGDg3lr3f6u5yTX6yulS6xgLyPz47atmoIXbnGK93ayqGLy7PE2cpJLEPQeKSB/mw==
   dependencies:
     "@rollup/plugin-commonjs" "22.0.2"
     "@rollup/plugin-json" "4.1.0"
