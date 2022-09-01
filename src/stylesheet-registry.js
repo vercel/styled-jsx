@@ -19,11 +19,7 @@ function mapRulesToStyle(cssRules, options = {}) {
   })
 }
 export class StyleSheetRegistry {
-  constructor({
-    styleSheet = null,
-    optimizeForSpeed = false,
-    isBrowser = typeof window !== 'undefined'
-  } = {}) {
+  constructor({ styleSheet = null, optimizeForSpeed = false } = {}) {
     this._sheet =
       styleSheet ||
       new DefaultStyleSheet({
@@ -37,8 +33,6 @@ export class StyleSheetRegistry {
       this._optimizeForSpeed = this._sheet.isOptimizeForSpeed()
     }
 
-    this._isBrowser = isBrowser
-
     this._fromServer = undefined
     this._indices = {}
     this._instancesCounts = {}
@@ -51,7 +45,7 @@ export class StyleSheetRegistry {
       this._optimizeForSpeed = this._sheet.isOptimizeForSpeed()
     }
 
-    if (this._isBrowser && !this._fromServer) {
+    if (typeof window !== 'undefined' && !this._fromServer) {
       this._fromServer = this.selectFromServer()
       this._instancesCounts = Object.keys(this._fromServer).reduce(
         (acc, tagName) => {

@@ -11,9 +11,9 @@ export default function withMock(mockFn, testFn) {
 }
 
 export function withMockDocument(t) {
-  const originalDocument = global.document
+  const originalDocument = globalThis.document
   // We need to stub a document in order to simulate the meta tag
-  global.document = {
+  globalThis.document = {
     querySelector(query) {
       t.is(query, 'meta[property="csp-nonce"]')
       return {
@@ -26,6 +26,6 @@ export function withMockDocument(t) {
   }
 
   return () => {
-    global.document = originalDocument
+    globalThis.document = originalDocument
   }
 }

@@ -7,7 +7,7 @@ import makeSheet, { invalidRules } from './stylesheet'
 import withMock, { withMockDocument } from './helpers/with-mock'
 import { computeId, computeSelector } from '../src/lib/hash'
 
-function makeRegistry(options = { optimizeForSpeed: true, isBrowser: true }) {
+function makeRegistry(options = { optimizeForSpeed: true }) {
   const registry = new StyleSheetRegistry({
     styleSheet: makeSheet(options),
     ...options
@@ -32,7 +32,12 @@ test(
     ]
 
     options.forEach(options => {
+      if (options.isBrowser) {
+        globalThis.window = globalThis
+      }
+
       const registry = makeRegistry(options)
+
       registry.add({
         id: '123',
         children: options.optimizeForSpeed ? [cssRule] : cssRule
@@ -68,6 +73,10 @@ test(
           ['jsx-456', 'div { color: red }p { color: red }']
         ])
       }
+
+      if (options.isBrowser) {
+        delete globalThis.window
+      }
     })
   })
 )
@@ -75,6 +84,8 @@ test(
 test(
   'add - filters out invalid rules (index `-1`)',
   withMock(withMockDocument, t => {
+    globalThis.window = globalThis
+
     const registry = makeRegistry()
 
     // Insert a valid rule
@@ -90,12 +101,16 @@ test(
       ['jsx-123', 'div { color: red }'],
       ['jsx-678', 'div { color: red }']
     ])
+
+    delete globalThis.window
   })
 )
 
 test(
   'it does not throw when inserting an invalid rule',
   withMock(withMockDocument, t => {
+    globalThis.window = globalThis
+
     const registry = makeRegistry()
 
     // Insert a valid rule
@@ -107,11 +122,13 @@ test(
     })
 
     t.deepEqual(registry.cssRules(), [['jsx-123', 'div { color: red }']])
+
+    delete globalThis.window
   })
 )
 
 test('add - sanitizes dynamic CSS on the server', t => {
-  const registry = makeRegistry({ optimizeForSpeed: false, isBrowser: false })
+  const registry = makeRegistry({ optimizeForSpeed: false })
 
   registry.add({
     id: '123',
@@ -130,9 +147,9 @@ test('add - sanitizes dynamic CSS on the server', t => {
 })
 
 test('add - nonce is properly fetched from meta tag', t => {
-  const originalDocument = global.document
+  const originalDocument = globalThis.document
   // We need to stub a document in order to simulate the meta tag
-  global.document = {
+  globalThis.document = {
     querySelector(query) {
       t.is(query, 'meta[property="csp-nonce"]')
       return {
@@ -144,12 +161,16 @@ test('add - nonce is properly fetched from meta tag', t => {
     }
   }
 
+  globalThis.window = globalThis
+
   const registry = makeRegistry()
   registry.add({ id: '123', children: [cssRule] })
 
   t.is(registry._sheet._nonce, 'test-nonce')
 
-  global.document = originalDocument
+  globalThis.document = originalDocument
+
+  delete globalThis.window
 })
 
 // registry.remove
@@ -165,6 +186,10 @@ test(
     ]
 
     options.forEach(options => {
+      if (options.isBrowser) {
+        globalThis.window = globalThis
+      }
+
       const registry = makeRegistry(options)
       registry.add({
         id: '123',
@@ -192,6 +217,10 @@ test(
       registry.remove({ id: '345' })
       // now the registry should be empty
       t.deepEqual(registry.cssRules(), [])
+
+      if (options.isBrowser) {
+        delete globalThis.window
+      }
     })
   })
 )
@@ -209,6 +238,10 @@ test(
     ]
 
     options.forEach(options => {
+      if (options.isBrowser) {
+        globalThis.window = globalThis
+      }
+
       const registry = makeRegistry(options)
       registry.add({
         id: '123',
@@ -246,6 +279,10 @@ test(
       )
       // 123 replaced with 345
       t.deepEqual(registry.cssRules(), [['jsx-345', cssRuleAlt]])
+
+      if (options.isBrowser) {
+        delete globalThis.window
+      }
     })
   })
 )
