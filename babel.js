@@ -1,1 +1,1 @@
-module.exports = require('./dist/babel').babel
+module.exports = require('./dist/babel').default

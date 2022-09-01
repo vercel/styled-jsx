@@ -19,7 +19,7 @@ import { STYLE_COMPONENT } from './_constants'
 export { default as macro } from './macro'
 export { default as test } from './babel-test'
 
-export function babel({ types: t }) {
+export default function({ types: t }) {
   const jsxVisitors = {
     JSXOpeningElement(path, state) {
       const el = path.node
