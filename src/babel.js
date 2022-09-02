@@ -16,8 +16,16 @@ import {
 } from './_utils'
 import { STYLE_COMPONENT } from './_constants'
 
-export { default as macro } from './macro'
-export { default as test } from './babel-test'
+import { default as babelMacro } from './macro'
+import { default as babelTest } from './babel-test'
+
+export function macro() {
+  return babelMacro
+}
+
+export function test() {
+  return babelTest
+}
 
 export default function({ types: t }) {
   const jsxVisitors = {
