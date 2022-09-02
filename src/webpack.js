@@ -1,8 +1,8 @@
-const loaderUtils = require('loader-utils')
+import loaderUtils from 'loader-utils'
 
 const types = ['scoped', 'global', 'resolve']
 
-module.exports = function(content) {
+export default function(content) {
   if (this.cacheable) this.cacheable()
   this.addDependency(this.resourcePath)
   const options = Object.assign({}, loaderUtils.getOptions(this))

@@ -1,5 +1,5 @@
-const Stylis = require('stylis')
-const stylisRuleSheet = require('stylis-rule-sheet')
+import Stylis from 'stylis'
+import stylisRuleSheet from 'stylis-rule-sheet'
 
 const stylis = new Stylis()
 
@@ -113,4 +113,4 @@ function transform(hash, styles, settings = {}) {
   return splitRules.join('')
 }
 
-module.exports = transform
+export default transform

@@ -1,8 +1,6 @@
-// Packages
 import jsx from '@babel/plugin-syntax-jsx'
 
 import { visitor as externalStylesVisitor } from './babel-external'
-
 import {
   isGlobalEl,
   isStyledJsx,
@@ -18,12 +16,15 @@ import {
 } from './_utils'
 import { STYLE_COMPONENT } from './_constants'
 
+import { default as babelMacro } from './macro'
+import { default as babelTest } from './babel-test'
+
 export function macro() {
-  return require('./macro')
+  return babelMacro
 }
 
 export function test() {
-  return require('./babel-test')
+  return babelTest
 }
 
 export default function({ types: t }) {
