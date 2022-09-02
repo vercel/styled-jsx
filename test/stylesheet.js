@@ -7,9 +7,7 @@ import withMock, { withMockDocument } from './helpers/with-mock'
 
 export const invalidRules = ['invalid rule']
 
-export default function makeSheet(
-  options = { optimizeForSpeed: true, isBrowser: true }
-) {
+export default function makeSheet(options = { optimizeForSpeed: true }) {
   const sheet = new StyleSheet(options)
   // mocks
   sheet.makeStyleTag = function(name, cssString) {
@@ -69,6 +67,8 @@ export default function makeSheet(
 test(
   'can change optimizeForSpeed only when the stylesheet is empty',
   withMock(withMockDocument, t => {
+    globalThis.window = globalThis
+
     const sheet = makeSheet()
 
     sheet.inject()
@@ -85,6 +85,8 @@ test(
     t.notThrows(() => {
       sheet.setOptimizeForSpeed(false)
     })
+
+    delete globalThis.window
   })
 )
 
@@ -100,6 +102,10 @@ test(
     ]
 
     options.forEach(options => {
+      if (options.isBrowser) {
+        globalThis.window = globalThis
+      }
+
       const sheet = makeSheet(options)
       sheet.inject()
 
@@ -111,6 +117,10 @@ test(
         { cssText: 'div { color: red }' },
         { cssText: 'div { color: green }' }
       ])
+
+      if (options.isBrowser) {
+        delete globalThis.window
+      }
     })
   })
 )
@@ -118,6 +128,8 @@ test(
 test(
   'insertRule - returns the rule index',
   withMock(withMockDocument, t => {
+    globalThis.window = globalThis
+
     const sheet = makeSheet()
     sheet.inject()
 
@@ -126,23 +138,31 @@ test(
 
     i = sheet.insertRule('div { color: red }')
     t.is(i, 1)
+
+    delete globalThis.window
   })
 )
 
 test(
   'insertRule - handles invalid rules and returns -1 as index',
   withMock(withMockDocument, t => {
+    globalThis.window = globalThis
+
     const sheet = makeSheet()
     sheet.inject()
 
     const i = sheet.insertRule(invalidRules[0])
     t.is(i, -1)
+
+    delete globalThis.window
   })
 )
 
 test(
   'insertRule - does not fail when the css is a String object',
   withMock(withMockDocument, t => {
+    globalThis.window = globalThis
+
     const sheet = makeSheet()
     sheet.inject()
 
@@ -152,6 +172,8 @@ test(
     t.deepEqual(sheet.cssRules(), [
       { cssText: new String('div { color: red }') }
     ])
+
+    delete globalThis.window
     /* eslint-enable */
   })
 )
@@ -169,6 +191,10 @@ test(
     ]
 
     options.forEach(options => {
+      if (options.isBrowser) {
+        globalThis.window = globalThis
+      }
+
       const sheet = makeSheet(options)
       sheet.inject()
 
@@ -181,6 +207,10 @@ test(
       t.is(sheet.length, rulesCount)
 
       t.deepEqual(sheet.cssRules(), [{ cssText: 'div { color: red }' }, null])
+
+      if (options.isBrowser) {
+        delete globalThis.window
+      }
     })
   })
 )
@@ -188,12 +218,16 @@ test(
 test(
   'deleteRule - does not throw when the rule at index does not exist',
   withMock(withMockDocument, t => {
+    globalThis.window = globalThis
+
     const sheet = makeSheet()
     sheet.inject()
 
     t.notThrows(() => {
       sheet.deleteRule(sheet.length + 1)
     })
+
+    delete globalThis.window
   })
 )
 
@@ -210,6 +244,10 @@ test(
     ]
 
     options.forEach(options => {
+      if (options.isBrowser) {
+        globalThis.window = globalThis
+      }
+
       const sheet = makeSheet(options)
       sheet.inject()
 
@@ -217,6 +255,10 @@ test(
       sheet.replaceRule(index, 'p { color: hotpink }')
 
       t.deepEqual(sheet.cssRules(), [{ cssText: 'p { color: hotpink }' }])
+
+      if (options.isBrowser) {
+        delete globalThis.window
+      }
     })
   })
 )
@@ -224,6 +266,8 @@ test(
 test(
   'replaceRule - handles invalid rules gracefully',
   withMock(withMockDocument, t => {
+    globalThis.window = globalThis
+
     const sheet = makeSheet()
     sheet.inject()
 
@@ -240,5 +284,7 @@ test(
     // therefore the lib must insert a delete placeholder which resolves to `null`
     // when `cssRules()` is called.
     t.deepEqual(sheet.cssRules(), [{ cssText: 'div { color: red }' }, null])
+
+    delete globalThis.window
   })
 )

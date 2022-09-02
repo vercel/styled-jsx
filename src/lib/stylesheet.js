@@ -10,11 +10,7 @@ const isProd =
 const isString = o => Object.prototype.toString.call(o) === '[object String]'
 
 export default class StyleSheet {
-  constructor({
-    name = 'stylesheet',
-    optimizeForSpeed = isProd,
-    isBrowser = typeof window !== 'undefined'
-  } = {}) {
+  constructor({ name = 'stylesheet', optimizeForSpeed = isProd } = {}) {
     invariant(isString(name), '`name` must be a string')
     this._name = name
     this._deletedRulePlaceholder = `#${name}-deleted-rule____{}`
@@ -24,15 +20,14 @@ export default class StyleSheet {
       '`optimizeForSpeed` must be a boolean'
     )
     this._optimizeForSpeed = optimizeForSpeed
-    this._isBrowser = isBrowser
-
     this._serverSheet = undefined
     this._tags = []
     this._injected = false
     this._rulesCount = 0
 
     const node =
-      this._isBrowser && document.querySelector('meta[property="csp-nonce"]')
+      typeof window !== 'undefined' &&
+      document.querySelector('meta[property="csp-nonce"]')
     this._nonce = node ? node.getAttribute('content') : null
   }
 
@@ -58,7 +53,7 @@ export default class StyleSheet {
   inject() {
     invariant(!this._injected, 'sheet already injected')
     this._injected = true
-    if (this._isBrowser && this._optimizeForSpeed) {
+    if (typeof window !== 'undefined' && this._optimizeForSpeed) {
       this._tags[0] = this.makeStyleTag(this._name)
       this._optimizeForSpeed = 'insertRule' in this.getSheet()
       if (!this._optimizeForSpeed) {
@@ -112,7 +107,7 @@ export default class StyleSheet {
   insertRule(rule, index) {
     invariant(isString(rule), '`insertRule` accepts only strings')
 
-    if (!this._isBrowser) {
+    if (typeof window === 'undefined') {
       if (typeof index !== 'number') {
         index = this._serverSheet.cssRules.length
       }
@@ -149,8 +144,9 @@ export default class StyleSheet {
   }
 
   replaceRule(index, rule) {
-    if (this._optimizeForSpeed || !this._isBrowser) {
-      const sheet = this._isBrowser ? this.getSheet() : this._serverSheet
+    if (this._optimizeForSpeed || typeof window === 'undefined') {
+      const sheet =
+        typeof window !== 'undefined' ? this.getSheet() : this._serverSheet
       if (!rule.trim()) {
         rule = this._deletedRulePlaceholder
       }
@@ -184,7 +180,7 @@ export default class StyleSheet {
   }
 
   deleteRule(index) {
-    if (!this._isBrowser) {
+    if (typeof window === 'undefined') {
       this._serverSheet.deleteRule(index)
       return
     }
@@ -202,7 +198,7 @@ export default class StyleSheet {
   flush() {
     this._injected = false
     this._rulesCount = 0
-    if (this._isBrowser) {
+    if (typeof window !== 'undefined') {
       this._tags.forEach(tag => tag && tag.parentNode.removeChild(tag))
       this._tags = []
     } else {
@@ -212,7 +208,7 @@ export default class StyleSheet {
   }
 
   cssRules() {
-    if (!this._isBrowser) {
+    if (typeof window === 'undefined') {
       return this._serverSheet.cssRules
     }
 
