@@ -1,4 +1,4 @@
-import css, { resolve } from '../../src/macro'
+import css, { resolve } from '../../test/helpers/babel-test.macro'
 
 const { className, styles } = resolve`
   div { color: red }

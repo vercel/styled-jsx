@@ -20,7 +20,7 @@ import { default as babelMacro } from './macro'
 import { default as babelTest } from './babel-test'
 
 export function macro() {
-  return babelMacro
+  return babelMacro(require('babel-plugin-macros'))
 }
 
 export function test() {
