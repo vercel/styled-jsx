@@ -1,10 +1,11 @@
-import { createMacro, MacroError } from 'babel-plugin-macros'
 import { processTaggedTemplateExpression } from './babel-external'
 import {
   setStateOptions,
   createReactComponentImportDeclaration
 } from './_utils'
 import { STYLE_COMPONENT } from './_constants'
+
+const { createMacro, MacroError } = (() => require('babel-plugin-macros'))()
 
 export default createMacro(styledJsxMacro)
 
