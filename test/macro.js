@@ -27,7 +27,7 @@ test('transpiles correctly', async t => {
 test('throws when using the default export directly', async t => {
   const { message } = await t.throwsAsync(() =>
     transformSource(`
-    import css from './src/macro'
+    import css from './test/helpers/babel-test.macro'
 
     css\`div { color: red }\`
   `)
@@ -39,7 +39,7 @@ test('throws when using the default export directly', async t => {
 test('throws when using the default export directly and it is not called css', async t => {
   const { message } = await t.throwsAsync(() =>
     transformSource(`
-    import foo from './src/macro'
+    import foo from './test/helpers/babel-test.macro'
 
     foo\`div { color: red }\`
   `)
@@ -51,7 +51,7 @@ test('throws when using the default export directly and it is not called css', a
 test('throws when using the default export directly and it is not called resolve', async t => {
   const { message } = await t.throwsAsync(() =>
     transformSource(`
-    import resolve from './src/macro'
+    import resolve from './test/helpers/babel-test.macro'
 
     resolve\`div { color: red }\`
   `)
@@ -63,7 +63,7 @@ test('throws when using the default export directly and it is not called resolve
 test('throws when using an invalid method from the default export', async t => {
   const { message } = await t.throwsAsync(() =>
     transformSource(`
-    import css from './src/macro'
+    import css from './test/helpers/babel-test.macro'
 
     css.foo\`div { color: red }\`
   `)
@@ -75,7 +75,7 @@ test('throws when using an invalid method from the default export', async t => {
 test('throws when using a named import different than resolve', async t => {
   const { message } = await t.throwsAsync(() =>
     transformSource(`
-    import { foo } from './src/macro'
+    import { foo } from './test/helpers/babel-test.macro'
 
     foo\`div { color: red }\`
   `)
@@ -87,7 +87,7 @@ test('throws when using a named import different than resolve', async t => {
 test('throws when using a named import as a member expression', async t => {
   const { message } = await t.throwsAsync(() =>
     transformSource(`
-    import { resolve } from './src/macro'
+    import { resolve } from './test/helpers/babel-test.macro'
 
     resolve.foo\`div { color: red }\`
   `)
@@ -98,7 +98,7 @@ test('throws when using a named import as a member expression', async t => {
 
 test('can alias the named import', async t => {
   const { code } = await transformSource(`
-    import { resolve as foo } from './src/macro'
+    import { resolve as foo } from './test/helpers/babel-test.macro'
 
     foo\`div { color: red }\`
   `)
@@ -107,7 +107,7 @@ test('can alias the named import', async t => {
 
 test('injects JSXStyle for nested scope', async t => {
   const { code } = await transformSource(`
-    import { resolve } from './src/macro'
+    import { resolve } from './test/helpers/babel-test.macro'
 
     function test() {
       resolve\`div { color: red }\`
