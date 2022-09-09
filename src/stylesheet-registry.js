@@ -178,6 +178,7 @@ function invariant(condition, message) {
 }
 
 export const StyleSheetContext = createContext(null)
+StyleSheetContext.displayName = 'StyleSheetContext'
 
 export function createStyleRegistry() {
   return new StyleSheetRegistry()
