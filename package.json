@@ -80,7 +80,6 @@
     "ava": "4.3.1",
     "babel-plugin-macros": "2.8.0",
     "bunchee": "2.1.5",
-    "client-only": "0.0.1",
     "convert-source-map": "1.7.0",
     "eslint": "7.32.0",
     "eslint-config-prettier": "4.0.0",
@@ -123,5 +122,8 @@
     "zeit",
     "css-in-js",
     "css"
-  ]
+  ],
+  "dependencies": {
+    "client-only": "0.0.1"
+  }
 }
