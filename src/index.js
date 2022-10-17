@@ -1,3 +1,5 @@
+import 'client-only'
+
 export {
   StyleRegistry,
   createStyleRegistry,
