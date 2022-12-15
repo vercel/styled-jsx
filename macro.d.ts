@@ -1,5 +1,5 @@
-declare module 'styled-jsx/marco' {
-  namespace marco {
+declare module 'styled-jsx/macro' {
+  namespace macro {
     function resolve(
       chunks: TemplateStringsArray,
       ...args: any[]
@@ -9,5 +9,5 @@ declare module 'styled-jsx/marco' {
     }
   }
 
-  export = marco
+  export = macro
 }
