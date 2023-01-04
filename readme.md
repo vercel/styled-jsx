@@ -358,7 +358,7 @@ Please keep in mind that constants defined outside of the component scope are tr
 - `registry.styles()` will return the array of react components for style tags.
 - `registry.flush()` can clean the existing styles in the registry, it's optional for SSR when you have a standalone registry for each SSR render.
 
-> Next.js 12 integrates with `styled-jsx` v5 and manages the registry for you.
+> Next.js 12 and over integrates with `styled-jsx` v5 and manages the registry for you.
 
 ```jsx
 import React from 'react'
