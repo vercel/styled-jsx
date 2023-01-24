@@ -1,3 +1,8 @@
+/// <reference types="./css" />
+/// <reference types="./macro" />
+/// <reference types="./style" />
+/// <reference types="./global" />
+
 declare module 'styled-jsx' {
   export type StyledJsxStyleRegistry = {
     styles(options?: { nonce?: string }): JSX.Element[]
