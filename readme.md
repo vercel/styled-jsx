@@ -943,7 +943,7 @@ export default () => (
 )
 ```
 
-Please keep in mind that `:global()` styles will affect the entire subtree, so in many cases you may want to be careful and use the children (direct descendant) selector `>`.
+Please keep in mind that if omitting `>` before `:global()` in the above example, `:global()` styles will affect the entire subtree, so in many cases you may want to be careful and use the children (direct descendant) selector `>`.
 
 ### Build a component library with styled-jsx
 
