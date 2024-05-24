@@ -1,10 +1,11 @@
-import type { JSX } from "react";
 /// <reference types="./css" />
 /// <reference types="./macro" />
 /// <reference types="./style" />
 /// <reference types="./global" />
 
 declare module 'styled-jsx' {
+  import type { JSX } from "react";
+
   export type StyledJsxStyleRegistry = {
     styles(options?: { nonce?: string }): JSX.Element[]
     flush(): void

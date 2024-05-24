@@ -1,5 +1,6 @@
-import type { JSX } from "react";
 declare module 'styled-jsx/macro' {
+  import type { JSX } from "react";
+
   namespace macro {
     function resolve(
       chunks: TemplateStringsArray,

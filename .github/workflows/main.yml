@@ -51,6 +51,11 @@ jobs:
         env:
           CI: true
 
+      - name: Test types
+        run: yarn test-types
+        env:
+          CI: true
+
       - name: Release
         if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/alpha' || github.ref == 'refs/heads/beta')
         env:

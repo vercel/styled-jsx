@@ -1,7 +1,8 @@
-import type { JSX } from "react";
 // Definitions by: @types/styled-jsx <https://www.npmjs.com/package/@types/styled-jsx>
 
 declare module 'styled-jsx/css' {
+  import type { JSX } from "react";
+
   function css(chunks: TemplateStringsArray, ...args: any[]): JSX.Element
   namespace css {
     export function global(
