@@ -28,6 +28,7 @@
     "build-webpack": "bunchee src/webpack.js -f cjs --runtime node -o dist/webpack/index.js",
     "build-index": "bunchee src/index.js -f cjs --runtime node -o dist/index/index.js",
     "test": "ava",
+    "test-types": "tsc --project tsconfig.json --noEmit",
     "lint": "eslint ./src",
     "format": "prettier --write \"./{src,test}/**/*.{js,css}\"",
     "prepublishOnly": "yarn build && yarn test && yarn lint --quiet"
@@ -77,6 +78,7 @@
     "@babel/register": "7.12.1",
     "@babel/runtime": "7.12.5",
     "@babel/types": "7.15.0",
+    "@types/react": "18.3.3",
     "ava": "4.3.1",
     "babel-plugin-macros": "2.8.0",
     "bunchee": "2.1.5",
@@ -124,6 +126,7 @@
     "css"
   ],
   "dependencies": {
-    "client-only": "0.0.1"
+    "client-only": "0.0.1",
+    "typescript": "~5.0.0"
   }
 }
