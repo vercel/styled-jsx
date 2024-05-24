@@ -1,3 +1,4 @@
+import type { JSX } from "react";
 /// <reference types="./css" />
 /// <reference types="./macro" />
 /// <reference types="./style" />
