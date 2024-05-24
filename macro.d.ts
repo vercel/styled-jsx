@@ -1,3 +1,4 @@
+import type { JSX } from "react";
 declare module 'styled-jsx/macro' {
   namespace macro {
     function resolve(
