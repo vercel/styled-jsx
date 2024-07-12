@@ -1,6 +1,6 @@
 <!--
 
-Before you open a new issue please take a look at our [**Frequent Asked Questions**](https://github.com/vercel/styled-jsx#faq) and [**open issues**](https://github.com/vercel/styled-jsx/issues). Or if you're using styled-jsx with Next.js but found issue there, please fill an issue to [**Next.js**](https://github.com/verce/next.js/issues) instead.
+Before you open a new issue please take a look at our [**Frequent Asked Questions**](https://github.com/vercel/styled-jsx#faq) and [**open issues**](https://github.com/vercel/styled-jsx/issues). Or if you're using styled-jsx with Next.js but found issue there, please fill an issue to [**Next.js**](https://github.com/vercel/next.js/issues) instead.
 
 Remember, often time asking in chat or looking at the FAQ/issues can be \*faster than waiting for us to reply to a new issue\*\*.
 
