@@ -169,6 +169,7 @@ test('splits rules for `optimizeForSpeed`', t => {
     a, div { color: red }
     @import "./test.css";
     @media (min-width: 400px) { div, span { color: red } }
+    @container (min-width: 400px) { span { color: red } }
   `,
     [
       '@import "./test.css";',
@@ -176,7 +177,8 @@ test('splits rules for `optimizeForSpeed`', t => {
       '@supports (display:-webkit-box) or (display:-webkit-flex) or (display:-ms-flexbox) or (display:flex){div{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}}',
       'div{color:red;}',
       'a,div{color:red;}',
-      '@media (min-width:400px){div,span{color:red;}}'
+      '@media (min-width:400px){div,span{color:red;}}',
+      '@container (min-width:400px){span{color:red;}}'
     ]
   )
 
