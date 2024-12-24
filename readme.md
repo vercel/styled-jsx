@@ -155,7 +155,7 @@ Unique classnames give us style encapsulation and `_JSXStyle` is heavily optimiz
 
 Notice that the outer `<div>` from the example above also gets a `jsx-123` classname. We do this so that
 you can target the "root" element, in the same manner that
-[`:host`](https://www.html5rocks.com/en/tutorials/webcomponents/shadowdom-201/#toc-style-host) works with Shadow DOM.
+[`:host`](https://web.dev/articles/shadowdom-v1) works with Shadow DOM.
 
 If you want to target _only_ the host, we suggest you use a class:
 
