@@ -1,17 +1,18 @@
-import React from 'react'
+import React, { useLayoutEffect, useRef } from 'react'
 import { useStyleRegistry, createStyleRegistry } from './stylesheet-registry'
 import { computeId } from './lib/hash'
 
 // Opt-into the new `useInsertionEffect` API in React 18, fallback to `useLayoutEffect`.
 // https://github.com/reactwg/react-18/discussions/110
-const useInsertionEffect = React.useInsertionEffect || React.useLayoutEffect
+const useInsertionEffect = React.useInsertionEffect || useLayoutEffect
 
 const defaultRegistry =
   typeof window !== 'undefined' ? createStyleRegistry() : undefined
 export default function JSXStyle(props) {
   const registry = defaultRegistry ? defaultRegistry : useStyleRegistry()
+  const insertionEffectCalled = useRef(false)
 
-  // If `registry` does not exist, we do nothing here.
+  // `registry` might not exist while server-side rendering
   if (!registry) {
     return null
   }
@@ -22,6 +23,22 @@ export default function JSXStyle(props) {
   }
 
   useInsertionEffect(() => {
+    // ReactDOM removes all DOM during hydration in certain cases
+    if (!document.head) {
+      return
+    }
+    registry.add(props)
+    insertionEffectCalled.current = true
+    return () => {
+      insertionEffectCalled.current = false
+      registry.remove(props)
+    }
+  }, [props.id, String(props.dynamic)])
+
+  useLayoutEffect(() => {
+    if (!document.head || insertionEffectCalled.current) {
+      return
+    }
     registry.add(props)
     return () => {
       registry.remove(props)
