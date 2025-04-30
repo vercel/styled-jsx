@@ -16,20 +16,12 @@ jobs:
 
     steps:
       - name: Begin CI...
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      - name: Use Node 12
-        uses: actions/setup-node@v1
+      - name: Use Node 20
+        uses: actions/setup-node@v4
         with:
-          node-version: 12.x
-
-      - name: Use cached node_modules
-        uses: actions/cache@v1
-        with:
-          path: node_modules
-          key: nodeModules-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            nodeModules-
+          node-version: 20.x
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
