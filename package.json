@@ -24,14 +24,14 @@
   "typings": "./index.d.ts",
   "scripts": {
     "build-babel": "bunchee src/babel.js -f cjs -e babel-plugin-macros --runtime node -o dist/babel/index.js",
-    "build": "rm -rf dist && rm -rf out && yarn build-webpack && yarn build-index && yarn build-babel",
+    "build": "rm -rf dist && rm -rf out && pnpm build-webpack && pnpm build-index && pnpm build-babel",
     "build-webpack": "bunchee src/webpack.js -f cjs --runtime node -o dist/webpack/index.js",
     "build-index": "bunchee src/index.js -f cjs --runtime node -o dist/index/index.js",
     "test": "ava",
     "test-types": "tsc --project tsconfig.json --noEmit",
     "lint": "eslint ./src",
     "format": "prettier --write \"./{src,test}/**/*.{js,css}\"",
-    "prepublishOnly": "yarn build && yarn test && yarn lint --quiet"
+    "prepublishOnly": "pnpm build && pnpm test && pnpm lint --quiet"
   },
   "husky": {
     "hooks": {
@@ -129,5 +129,5 @@
   "dependencies": {
     "client-only": "0.0.1"
   },
-  "packageManager": "yarn@1.22.22"
+  "packageManager": "pnpm@10.33.0+sha512.10568bb4a6afb58c9eb3630da90cc9516417abebd3fabbe6739f0ae795728da1491e9db5a544c76ad8eb7570f5c4bb3d6c637b2cb41bfdcdb47fa823c8649319"
 }
