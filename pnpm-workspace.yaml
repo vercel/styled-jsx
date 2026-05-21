@@ -1,0 +1,5 @@
+minimumReleaseAge: 2880
+onlyBuiltDependencies:
+  - "@swc/core"
+ignoredBuiltDependencies:
+  - husky

@@ -23,28 +23,31 @@ jobs:
         with:
           node-version: 20.x
 
+      - name: Enable pnpm
+        run: corepack enable pnpm
+
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
         env:
           CI: true
 
       - name: Build
-        run: yarn build
+        run: pnpm build
         env:
           CI: true
 
       - name: Lint
-        run: yarn lint
+        run: pnpm lint
         env:
           CI: true
 
       - name: Test
-        run: yarn test
+        run: pnpm test
         env:
           CI: true
 
       - name: Test types
-        run: yarn test-types
+        run: pnpm test-types
         env:
           CI: true
 
@@ -53,4 +56,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN_ELEVATED }}
-        run: yarn semantic-release
+        run: pnpm semantic-release
