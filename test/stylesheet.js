@@ -231,6 +231,29 @@ test(
   })
 )
 
+test(
+  'deleteRule and flush - do not throw when the tag was already removed',
+  withMock(withMockDocument, t => {
+    globalThis.window = globalThis
+
+    const sheet = makeSheet({ optimizeForSpeed: false })
+    sheet.inject()
+    sheet.insertRule('div { color: red }')
+    sheet.insertRule('div { color: green }')
+
+    for (const tag of sheet._tags) {
+      tag.parentNode = null
+    }
+
+    t.notThrows(() => {
+      sheet.deleteRule(0)
+      sheet.flush()
+    })
+
+    delete globalThis.window
+  })
+)
+
 // sheet.replaceRule
 
 test(

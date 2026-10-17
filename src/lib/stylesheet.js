@@ -190,7 +190,7 @@ export default class StyleSheet {
     } else {
       const tag = this._tags[index]
       invariant(tag, `rule at index \`${index}\` not found`)
-      tag.parentNode.removeChild(tag)
+      removeTag(tag)
       this._tags[index] = null
     }
   }
@@ -199,7 +199,7 @@ export default class StyleSheet {
     this._injected = false
     this._rulesCount = 0
     if (typeof window !== 'undefined') {
-      this._tags.forEach(tag => tag && tag.parentNode.removeChild(tag))
+      this._tags.forEach(tag => tag && removeTag(tag))
       this._tags = []
     } else {
       // simpler on server
@@ -263,5 +263,12 @@ export default class StyleSheet {
 function invariant(condition, message) {
   if (!condition) {
     throw new Error(`StyleSheet: ${message}.`)
+  }
+}
+
+// The tag may already be detached, e.g. by a browser extension or scraper.
+function removeTag(tag) {
+  if (tag.parentNode) {
+    tag.parentNode.removeChild(tag)
   }
 }

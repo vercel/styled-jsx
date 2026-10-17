@@ -84,7 +84,7 @@ export class StyleSheetRegistry {
     if (this._instancesCounts[styleId] < 1) {
       const tagFromServer = this._fromServer && this._fromServer[styleId]
       if (tagFromServer) {
-        tagFromServer.parentNode.removeChild(tagFromServer)
+        removeTag(tagFromServer)
         delete this._fromServer[styleId]
       } else {
         this._indices[styleId].forEach(index => this._sheet.deleteRule(index))
@@ -168,6 +168,13 @@ export class StyleSheetRegistry {
       acc[id] = element
       return acc
     }, {})
+  }
+}
+
+// The tag may already be detached, e.g. by a browser extension or scraper.
+function removeTag(tag) {
+  if (tag.parentNode) {
+    tag.parentNode.removeChild(tag)
   }
 }
 
